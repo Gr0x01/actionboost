@@ -50,7 +50,8 @@
   --color-border: var(--border);
 
   /* Fonts */
-  --font-sans: var(--font-space-grotesk), system-ui, sans-serif;
+  --font-sans: var(--font-manrope), system-ui, sans-serif;
+  --font-serif: var(--font-tienne), Georgia, serif;
   --font-mono: var(--font-jetbrains-mono), monospace;
 
   /* Border radius - tighter, Stripe-like */

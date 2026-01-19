@@ -1,36 +1,35 @@
-import { Sparkles } from "lucide-react";
 import { SectionCard } from "../SectionCard";
+import { MarkdownContent } from "../MarkdownContent";
 
 interface ExecutiveSummaryProps {
   content: string;
 }
 
 export function ExecutiveSummary({ content }: ExecutiveSummaryProps) {
+  // Split into first paragraph and rest for different styling
   const paragraphs = content.split("\n\n").filter(Boolean);
+  const firstParagraph = paragraphs[0] || "";
+  const remainingContent = paragraphs.slice(1).join("\n\n");
 
   return (
-    <SectionCard id="executive-summary" icon={Sparkles} title="Executive Summary" accentColor="primary">
-      {/* Large opening quote style */}
-      <div className="relative">
-        {/* Decorative quote mark */}
-        <div className="absolute -left-2 -top-2 text-6xl text-primary/10 font-serif leading-none select-none">
-          "
+    <SectionCard id="executive-summary" title="Executive Summary" isFirst>
+      {/* First paragraph - larger, with left border accent */}
+      {firstParagraph && (
+        <div className="pl-6 border-l-2 border-primary/30 mb-6">
+          <MarkdownContent
+            content={firstParagraph}
+            className="text-lg text-foreground leading-relaxed [&>p]:mb-0"
+          />
         </div>
+      )}
 
-        {/* First paragraph - larger, more prominent */}
-        {paragraphs[0] && (
-          <p className="text-lg text-foreground leading-relaxed mb-6 pl-6 border-l-2 border-primary/30">
-            {paragraphs[0]}
-          </p>
-        )}
-
-        {/* Remaining paragraphs */}
-        <div className="space-y-4 text-muted leading-relaxed">
-          {paragraphs.slice(1).map((paragraph, i) => (
-            <p key={i}>{paragraph}</p>
-          ))}
-        </div>
-      </div>
+      {/* Remaining paragraphs */}
+      {remainingContent && (
+        <MarkdownContent
+          content={remainingContent}
+          className="text-muted leading-relaxed"
+        />
+      )}
     </SectionCard>
   );
 }

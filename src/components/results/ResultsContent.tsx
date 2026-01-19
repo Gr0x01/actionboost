@@ -14,7 +14,7 @@ interface ResultsContentProps {
 
 export function ResultsContent({ strategy }: ResultsContentProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-0">
       {/* Executive Summary - most important, always first */}
       {strategy.executiveSummary && (
         <ExecutiveSummary content={strategy.executiveSummary.content} />

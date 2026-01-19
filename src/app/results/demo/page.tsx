@@ -442,8 +442,8 @@ export default function DemoResultsPage() {
 
       <main className="flex-1">
         <div className="mx-auto max-w-7xl px-6">
-          {/* Export bar - full width */}
-          <div className="max-w-4xl mx-auto lg:max-w-none lg:ml-[220px]">
+          {/* Export bar */}
+          <div className="lg:ml-[220px]">
             <ExportBar
               markdown={DEMO_STRATEGY}
               runId="demo"
@@ -452,18 +452,20 @@ export default function DemoResultsPage() {
             />
           </div>
 
-          {/* Mobile TOC - horizontal tabs */}
-          <TableOfContents strategy={strategy} />
+          {/* Mobile TOC - full width horizontal tabs */}
+          <div className="lg:hidden">
+            <TableOfContents strategy={strategy} variant="mobile" />
+          </div>
 
           {/* Desktop layout: sidebar + content */}
           <div className="lg:flex lg:gap-8 py-8">
-            {/* Desktop sidebar - hidden on mobile */}
+            {/* Desktop sidebar */}
             <div className="hidden lg:block lg:w-[200px] lg:flex-shrink-0">
-              <TableOfContents strategy={strategy} />
+              <TableOfContents strategy={strategy} variant="desktop" />
             </div>
 
-            {/* Main content */}
-            <div className="flex-1 max-w-4xl">
+            {/* Main content - max-w-prose for optimal reading (65ch) */}
+            <div className="flex-1 max-w-prose">
               <ResultsContent strategy={strategy} />
             </div>
           </div>
