@@ -1,4 +1,4 @@
-# Product: ActionBoost
+# Product: Actionboo.st
 
 ## Value Prop
 

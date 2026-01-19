@@ -56,7 +56,7 @@ Key architectural and product decisions. Reference this when you need to underst
 - Simpler implementation
 - No password reset flow needed
 - Email is already required for receipts
-- Solo founders don't want another password
+- Users don't want another password
 
 **Implementation**:
 - `auth_id` column on `public.users` links to `auth.users.id`

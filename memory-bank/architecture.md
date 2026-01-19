@@ -1,4 +1,4 @@
-# Architecture: ActionBoost
+# Architecture: Actionboo.st
 
 ## System Overview
 
@@ -159,7 +159,7 @@ This keeps costs proportional to how useful SEO data is for each problem type.
 
 ### Test Scripts
 ```bash
-npx tsx scripts/test-pipeline.ts   # ActionBoost example
+npx tsx scripts/test-pipeline.ts   # Actionboo.st example
 npx tsx scripts/test-inkdex.ts     # Real project test
 ```
 
@@ -246,7 +246,7 @@ generateStrategy(input, research, userHistory)
 ### Chunk Types
 | Type | Source | Example |
 |------|--------|---------|
-| `product` | run_input | "Product: AI growth strategist for solo founders" |
+| `product` | run_input | "Product: AI growth strategist for startups and entrepreneurs" |
 | `traction` | run_input | "Traction (2025-01-19): 500 users, $2k MRR" |
 | `tactic` | run_input | "Tactics tried: Twitter threads, cold email" |
 | `insight` | run_output | "Advice to stop: Generic content marketing" |

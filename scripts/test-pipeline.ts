@@ -4,9 +4,9 @@ import { runResearch } from '../src/lib/ai/research'
 import { generateStrategy } from '../src/lib/ai/generate'
 import type { RunInput, ResearchContext } from '../src/lib/ai/types'
 
-// Test input based on ActionBoost itself
+// Test input based on Actionboo.st itself
 const TEST_INPUT: RunInput = {
-  productDescription: `ActionBoost is a one-shot AI growth strategist for solo founders who are stuck.
+  productDescription: `Actionboo.st is a one-shot AI growth strategist for startups and entrepreneurs who are stuck.
 Users pay $15, describe their situation (product, traction, what they've tried), and get a personalized
 growth strategy built on live competitive research (Tavily + DataForSEO) and Claude Opus 4.5 reasoning.
 The output is a comprehensive markdown document with executive summary, competitive analysis,
@@ -38,8 +38,8 @@ Can dedicate ~20 hours/week to this project alongside consulting work.`,
 }
 
 async function main() {
-  console.log('=== ActionBoost AI Pipeline Test ===\n')
-  console.log('Testing with ActionBoost as the example product...\n')
+  console.log('=== Actionboo.st AI Pipeline Test ===\n')
+  console.log('Testing with Actionboo.st as the example product...\n')
 
   // Verify environment variables
   const requiredEnvVars = ['ANTHROPIC_API_KEY', 'TAVILY_API']

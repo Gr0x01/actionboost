@@ -1,8 +1,8 @@
-# ActionBoost
+# Actionboo.st
 
 ## The Product
 
-**AI growth strategist for solo founders who are stuck.**
+**AI growth strategist for startups and entrepreneurs who are stuck.**
 
 Not another ChatGPT wrapper. Not generic "have you tried content marketing?" advice.
 
@@ -36,12 +36,12 @@ Not another ChatGPT wrapper. Not generic "have you tried content marketing?" adv
 
 ## Pricing & Economics
 
-| Product | Price | Cost | Margin |
-|---------|-------|------|--------|
-| Single | $7.99 | ~$0.30 | ~$7.50 (94%) |
-| 3-Pack | $19.99 | ~$0.90 | ~$18.50 (93%) |
+| Product | Price | Cost |
+|---------|-------|------|
+| Single | $7.99 | ~$0.50 |
+| 3-Pack | $19.99 | ~$1.50 |
 
-Per-run cost: ~$0.30 (Opus + research APIs). Stripe fees ~3%.
+Per-run cost: ~$0.50 (Opus + research APIs). Margin covers development, hosting, Stripe fees (~3%), marketing, and future features.
 
 ---
 

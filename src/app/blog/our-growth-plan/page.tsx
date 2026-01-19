@@ -9,16 +9,16 @@ import { SocialShareButtons } from "@/components/ui/SocialShareButtons";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Our Growth Plan | ActionBoost",
-  description: "We ran ActionBoost on itself. Here's the AI-generated growth strategy for our own product - real competitive research, actionable tactics, and a 30-day roadmap.",
+  title: "Our Growth Plan | Actionboo.st",
+  description: "We ran Actionboo.st on itself. Here's the AI-generated growth strategy for our own product - real competitive research, actionable tactics, and a 30-day roadmap.",
   openGraph: {
-    title: "We Ran ActionBoost on Itself - Our Growth Plan",
+    title: "We Ran Actionboo.st on Itself - Our Growth Plan",
     description: "See what happens when an AI growth strategist analyzes its own product. Real strategy, real research, real results.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
-    title: "We Ran ActionBoost on Itself - Our Growth Plan",
+    title: "We Ran Actionboo.st on Itself - Our Growth Plan",
     description: "See what happens when an AI growth strategist analyzes its own product.",
   },
 };
@@ -37,7 +37,7 @@ export default async function GrowthPlanPage() {
   const markdown = await getGrowthPlan();
 
   // Remove the title line since we'll render it separately
-  const contentWithoutTitle = markdown.replace(/^# ActionBoost Growth Plan\n+/, "");
+  const contentWithoutTitle = markdown.replace(/^# Actionboo\.st Growth Plan\n+/, "");
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -48,14 +48,14 @@ export default async function GrowthPlanPage() {
           {/* Hero section */}
           <div className="mb-12 text-center">
             <p className="text-sm font-medium text-primary mb-3">
-              We ran ActionBoost on itself
+              We ran Actionboo.st on itself
             </p>
             <h1 className="text-4xl font-bold text-foreground mb-4 tracking-tight">
               Our Growth Plan
             </h1>
             <p className="text-lg text-muted max-w-xl mx-auto">
               What happens when an AI growth strategist analyzes its own product?
-              Here&apos;s the real strategy we&apos;re following to grow ActionBoost.
+              Here&apos;s the real strategy we&apos;re following to grow Actionboo.st.
             </p>
             <p className="text-sm text-muted mt-4">
               January 2026 · 15 min read
@@ -64,7 +64,7 @@ export default async function GrowthPlanPage() {
               <span className="text-sm text-muted">Share:</span>
               <SocialShareButtons
                 url="https://actionboo.st/blog/our-growth-plan"
-                text="ActionBoost ran their AI on their own product. Here's the result:"
+                text="Actionboo.st ran their AI on their own product. Here's the result:"
                 source="blog"
               />
             </div>
@@ -94,7 +94,7 @@ export default async function GrowthPlanPage() {
               Ready to get your own growth strategy?
             </h2>
             <p className="text-muted max-w-md mx-auto">
-              ActionBoost uses live competitive research and Claude Opus to create
+              Actionboo.st uses live competitive research and Claude Opus to create
               actionable strategies specifically for your product.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">

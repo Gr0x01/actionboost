@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const run = await getSharedRun(slug);
 
   if (!run || run.status !== "complete") {
-    return { title: "Strategy Not Found | ActionBoost" };
+    return { title: "Strategy Not Found | Actionboo.st" };
   }
 
   // Extract product description for meta
@@ -38,8 +38,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const productDesc = input?.productDescription?.slice(0, 100) || "Growth Strategy";
 
   return {
-    title: `${productDesc} | ActionBoost`,
-    description: "AI-powered growth strategy for solo founders. Real competitive research, actionable tactics, 30-day roadmap.",
+    title: `${productDesc} | Actionboo.st`,
+    description: "AI-powered growth strategy for startups and entrepreneurs. Real competitive research, actionable tactics, 30-day roadmap.",
     openGraph: {
       title: `Growth Strategy: ${productDesc}`,
       description: "AI-powered growth strategy built with live competitive research.",
@@ -89,13 +89,13 @@ export default async function SharePage({ params }: PageProps) {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-lg bg-surface border border-border">
               <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                 <p className="text-sm text-muted">
-                  This strategy was created with ActionBoost
+                  This strategy was created with Actionboo.st
                 </p>
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-muted hidden sm:inline">|</span>
                   <SocialShareButtons
                     url={`https://actionboo.st/share/${slug}`}
-                    text="Interesting growth strategy I found on ActionBoost"
+                    text="Interesting growth strategy I found on Actionboo.st"
                     source="share_page"
                   />
                 </div>
@@ -131,7 +131,7 @@ export default async function SharePage({ params }: PageProps) {
                 Want a growth strategy for your product?
               </h2>
               <p className="text-muted max-w-md mx-auto">
-                ActionBoost uses live competitive research and AI to create actionable strategies for solo founders.
+                Actionboo.st uses live competitive research and AI to create actionable strategies for startups and entrepreneurs.
               </p>
               <Link href="/start">
                 <Button size="lg">Get Started - $7.99</Button>
