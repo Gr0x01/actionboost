@@ -1,0 +1,46 @@
+# Allow search engines and AI crawlers
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: DuckDuckBot
+User-agent: Slurp
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: Claude-Web
+User-agent: anthropic-ai
+User-agent: Google-Extended
+User-agent: PerplexityBot
+User-agent: Applebot
+Allow: /
+
+# Block known bad bots and scrapers
+User-agent: AhrefsBot
+User-agent: SemrushBot
+User-agent: MJ12bot
+User-agent: DotBot
+User-agent: BLEXBot
+User-agent: MegaIndex
+User-agent: Bytespider
+User-agent: PetalBot
+User-agent: Sogou
+User-agent: YandexBot
+User-agent: DataForSeoBot
+User-agent: SerpstatBot
+User-agent: Rogerbot
+User-agent: BomboraBot
+User-agent: MauiBot
+User-agent: Screaming Frog
+User-agent: Zoominfobot
+User-agent: VelenPublicWebCrawler
+User-agent: Clarabot
+User-agent: linkfluence
+User-agent: proximic
+User-agent: webcompanycrawler
+User-agent: Seekport
+Disallow: /
+
+# Block catch-all scrapers
+User-agent: *
+Disallow: /api/
+Allow: /
+
+Sitemap: https://actionboo.st/sitemap.xml
