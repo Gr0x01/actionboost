@@ -384,12 +384,12 @@ src/
 
 **Pricing**:
 - Single: $7.99 (1 credit)
-- 3-Pack: $19.99 (3 credits)
 
 **Routes**:
 | Route | Purpose |
 |-------|---------|
 | `POST /api/checkout/create-session` | Creates checkout session, stores form in metadata |
+| `POST /api/checkout/buy-credits` | Buy credits without form data (from pricing page) |
 | `POST /api/webhooks/stripe` | Handles `checkout.session.completed` |
 
 **Webhook flow**:
@@ -406,7 +406,6 @@ STRIPE_SECRET_KEY
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 STRIPE_WEBHOOK_SECRET
 STRIPE_PRICE_SINGLE
-STRIPE_PRICE_3PACK
 ```
 
 ---

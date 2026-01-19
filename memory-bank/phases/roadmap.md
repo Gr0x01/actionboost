@@ -15,23 +15,61 @@
 
 ---
 
-## v2: Connected Growth Advisor (Future)
+## v2: Growth Board + Subscription (Future)
 
-**The real product.** Subscription model after v1 validates output quality.
+**The real product.** One-shot validates quality, subscription is the business.
+
+One-shot = advice. Subscription = accountability partner.
+
+### Core Concept: Living Growth System
+
+Strategy output isn't a static doc — it's a **kanban board** of tasks:
+- Quick Wins → "This Week" column
+- 30-Day Roadmap → "Week 1/2/3/4" columns
+- Start Doing → "Backlog" prioritized by ICE
+
+User interacts:
+- Mark tasks done, add notes about outcomes
+- Upload data (screenshots, analytics exports)
+- Connect analytics tools for automatic context
+- AI sees all this → adjusts future recommendations
+
+**Training users to feed context**: The more they add (notes, data, connected analytics), the smarter the AI gets about *their* business.
+
+### Features
 
 | Feature | Description |
 |---------|-------------|
-| Integrations | Connect PostHog, Mixpanel, GA4, Stripe |
-| Weekly Analysis | Automated email: "Here's what's happening + 3 things to try" |
-| Reply to Ask | Email replies trigger follow-up analysis |
-| Pricing | $29-49/mo |
+| Growth Board | Kanban of recommended actions, auto-populated from runs |
+| Notes & Uploads | Mark done + add outcome notes + upload supporting data |
+| Integrations | Connect PostHog, Mixpanel, GA4 for automatic insights |
+| Periodic Analysis | System analyzes progress 2-3x/day |
+| Weekly Digest | Email summary: what you did, what changed, what to try next |
+| Pricing | ~$30/mo |
 
-**Why it's bigger:**
-- Recurring revenue (not one-shot)
-- Gets smarter over time (sees what worked)
-- Way stickier than single runs
-- Natural upsell from v1 users
+### Pricing Funnel
+
+```
+FREE MINI          →    SINGLE RUN ($X)    →    SUBSCRIPTION (~$30/mo)
+Taste the value         Full experience         Ongoing partner
+(no competitor               │
+research?)                   └── Subscribe within X days?
+                                 Credit toward first month
+```
+
+- **Kill the 3-pack** - simpler mental model, subscription is the upsell
+- **Free mini** - qualifies leads, shows value (maybe no competitor research)
+- **Single run** - full experience, proves quality
+- **Credit window** - reduces conversion friction ("I already paid $8" doesn't block)
+
+### Why It Works
+
+- Subscription tied to *usage*, not just time
+- Board creates accountability ("you said you'd do X...")
+- AI gets smarter per-user (what works for YOUR situation)
+- Way stickier than static advice
 - "Fractional growth person" positioning
+- Clear upgrade path at each tier
 
 ---
 
@@ -44,7 +82,7 @@ Supabase schema, RLS policies, client utilities.
 Tavily research → Claude Opus 4.5 → markdown output. The core value.
 
 ### 3. Payments
-Stripe checkout ($7.99 single, $19.99 3-pack), webhooks trigger pipeline, credit system.
+Stripe checkout ($7.99 single run), webhooks trigger pipeline. 3-pack removed — subscription is the upsell path.
 
 ### 4. Landing + Input
 Marketing page, form with all fields, localStorage persistence.

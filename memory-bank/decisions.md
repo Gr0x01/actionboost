@@ -203,16 +203,35 @@ Can add more account features later if needed.
 
 ---
 
-## Pricing: $7.99 Single, $19.99 3-Pack
+## Pricing: Funnel to Subscription
 
-**Decision**: Two price points, no subscription for v1.
+**Decision**: Three-tier funnel for v2.
 
-**Why**:
-- $7.99 single is impulse-buy range
-- 3-pack ($6.66/run) rewards commitment without subscription complexity
-- Cost per run ~$0.30 (Claude + DataForSEO), healthy margin
+```
+FREE MINI → SINGLE RUN ($X) → SUBSCRIPTION (~$30/mo)
+```
 
-**v2 consideration**: Subscription model for "Connected Growth Advisor" after validating output quality.
+**v1 (current)**: $7.99 single run only. 3-pack removed.
+
+**v2 (planned)**:
+- **Free mini** - Teaser audit, no competitor research. Captures email, shows value.
+- **Single run** - Full experience at ~$7.99. Proves quality.
+- **Subscription** - ~$30/mo for Growth Board, integrations, periodic analysis, weekly digest.
+- **Credit window** - Subscribe within X days of single run, get credited toward first month.
+
+**Why kill the 3-pack**:
+- Simpler mental model (no pack math)
+- People buying 3 are proto-subscribers anyway
+- Subscription is the real upsell, not bulk credits
+
+**Why credit window**:
+- Removes "I just paid $8" objection to subscribing
+- Makes single run feel lower risk
+- Stripe can handle via coupons or manual credits
+
+**Economics**:
+- Cost per run: ~$0.50 (Claude Opus + research APIs)
+- $30/mo subscription with 2-3x/day analysis = healthy margin at low volume
 
 ---
 

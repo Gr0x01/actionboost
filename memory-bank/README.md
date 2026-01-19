@@ -29,7 +29,7 @@ Not another ChatGPT wrapper. Not generic "have you tried content marketing?" adv
 | **Claude Opus 4.5** | Strategy generation | Best reasoning model |
 | **Tavily** | Web search | Real-time competitive intel, recent content, trends |
 | **DataForSEO** | SEO/traffic data | Competitor traffic estimates, keyword gaps |
-| **Stripe** | Payments | $7.99 single, $19.99 for 3-pack |
+| **Stripe** | Payments | $7.99 single run |
 | **Supabase** | DB + Auth | Magic links, run storage, credits |
 
 **Model ID**: `claude-opus-4-5-20251101` - DO NOT CHANGE without approval.
@@ -38,10 +38,13 @@ Not another ChatGPT wrapper. Not generic "have you tried content marketing?" adv
 
 | Product | Price | Cost |
 |---------|-------|------|
-| Single | $7.99 | ~$0.50 |
-| 3-Pack | $19.99 | ~$1.50 |
+| One-shot | $7.99 | ~$0.50 |
+| Free mini-audit | $0 | ~$0.04 |
+| Subscription (v2) | $29/mo | TBD |
 
-Per-run cost: ~$0.50 (Opus + research APIs). Margin covers development, hosting, Stripe fees (~3%), marketing, and future features.
+Per-run cost: ~$0.50 (Opus + research APIs). Free tier uses Sonnet + Tavily only (~$0.04).
+
+3-pack removed — subscription is the upsell path, not bulk credits.
 
 ---
 

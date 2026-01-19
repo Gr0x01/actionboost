@@ -4,17 +4,13 @@ import { FormInput, validateForm } from "@/lib/types/form";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-// Price IDs from Stripe Dashboard
-const PRICES = {
-  single: process.env.STRIPE_PRICE_SINGLE!, // $7.99 for 1 credit
-  pack3: process.env.STRIPE_PRICE_3PACK!, // $19.99 for 3 credits
-};
+// Price ID from Stripe Dashboard
+const PRICE_SINGLE = process.env.STRIPE_PRICE_SINGLE!; // $7.99 for 1 credit
 
 export async function POST(request: NextRequest) {
   try {
-    const { input, pack, posthogDistinctId } = (await request.json()) as {
+    const { input, posthogDistinctId } = (await request.json()) as {
       input: FormInput;
-      pack?: number;
       posthogDistinctId?: string;
     };
 
@@ -34,9 +30,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const isPack = pack === 3;
-    const priceId = isPack ? PRICES.pack3 : PRICES.single;
-
     // Store form data in metadata (500 char limit per key)
     const metadata: Record<string, string> = {
       form_product: input.productDescription.slice(0, 500),
@@ -48,7 +41,7 @@ export async function POST(request: NextRequest) {
       form_website: input.websiteUrl || "",
       form_analytics: (input.analyticsSummary || "").slice(0, 500),
       form_constraints: (input.constraints || "").slice(0, 500),
-      credits: isPack ? "3" : "1",
+      credits: "1",
       posthog_distinct_id: posthogDistinctId || "",
     };
 
@@ -57,7 +50,7 @@ export async function POST(request: NextRequest) {
       payment_method_types: ["card"],
       line_items: [
         {
-          price: priceId,
+          price: PRICE_SINGLE,
           quantity: 1,
         },
       ],

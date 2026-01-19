@@ -1,32 +1,24 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-// Price IDs from Stripe Dashboard
-const PRICES = {
-  single: process.env.STRIPE_PRICE_SINGLE!, // $7.99 for 1 credit
-  pack3: process.env.STRIPE_PRICE_3PACK!, // $19.99 for 3 credits
-};
+// Price ID from Stripe Dashboard
+const PRICE_SINGLE = process.env.STRIPE_PRICE_SINGLE!; // $7.99 for 1 credit
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
-    const { pack } = (await request.json()) as { pack?: number };
-
-    const isPack = pack === 3;
-    const priceId = isPack ? PRICES.pack3 : PRICES.single;
-
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
       line_items: [
         {
-          price: priceId,
+          price: PRICE_SINGLE,
           quantity: 1,
         },
       ],
       metadata: {
-        credits: isPack ? "3" : "1",
+        credits: "1",
         credits_only: "true", // Flag to indicate no form data
       },
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/start?credits_purchased=true`,

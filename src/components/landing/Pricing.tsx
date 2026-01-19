@@ -13,18 +13,18 @@ const features = [
 ];
 
 export function Pricing() {
-  const [loading, setLoading] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
 
   // Hide pricing section when feature flag is off
   if (!config.pricingEnabled) return null;
 
-  async function handleBuyCredits(pack: number) {
-    setLoading(pack);
+  async function handleBuyCredits() {
+    setLoading(true);
     try {
       const res = await fetch("/api/checkout/buy-credits", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pack }),
+        body: JSON.stringify({}),
       });
       const data = await res.json();
       if (data.url) {
@@ -32,7 +32,7 @@ export function Pricing() {
       }
     } catch (error) {
       console.error("Checkout error:", error);
-      setLoading(null);
+      setLoading(false);
     }
   }
 
@@ -66,72 +66,25 @@ export function Pricing() {
             ))}
           </div>
 
-          {/* Pricing options - stacked, not compared */}
-          <div className="max-w-xl mx-auto space-y-4">
-            {/* Single Strategy */}
+          {/* Single pricing option */}
+          <div className="max-w-md mx-auto">
             <button
-              onClick={() => handleBuyCredits(1)}
-              disabled={loading !== null}
-              className="group block relative w-full rounded-xl border border-border bg-background p-6 transition-all duration-300 hover:border-primary/30 hover:shadow-md text-left disabled:opacity-70 disabled:cursor-wait"
+              onClick={handleBuyCredits}
+              disabled={loading}
+              className="group block relative w-full rounded-xl border-2 border-primary/30 bg-background p-6 transition-all duration-300 hover:border-primary hover:shadow-lg hover:shadow-primary/10 text-left disabled:opacity-70 disabled:cursor-wait"
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-surface font-mono text-lg font-bold text-foreground">
-                    1x
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-foreground">Single Strategy</h3>
-                    <p className="text-sm text-muted">One complete analysis</p>
-                  </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground">Growth Strategy</h3>
+                  <p className="text-sm text-muted">Complete competitive analysis</p>
                 </div>
                 <div className="text-right">
-                  <span className="text-3xl font-bold text-foreground">$7.99</span>
+                  <span className="text-3xl font-bold text-foreground">{config.singlePrice}</span>
                 </div>
               </div>
-              {loading === 1 && (
+              {loading && (
                 <div className="absolute right-6 top-1/2 -translate-y-1/2">
                   <div className="h-5 w-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                </div>
-              )}
-            </button>
-
-            {/* 3-Pack - Recommended */}
-            <button
-              onClick={() => handleBuyCredits(3)}
-              disabled={loading !== null}
-              className="group block relative w-full rounded-xl border-2 border-cta/50 bg-gradient-to-r from-cta/5 to-accent/5 p-6 transition-all duration-300 hover:border-cta hover:shadow-lg hover:shadow-cta/10 text-left disabled:opacity-70 disabled:cursor-wait"
-            >
-              {/* Best value indicator */}
-              <div className="absolute -top-3 left-6">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-cta to-cta-hover px-3 py-1 text-xs font-bold text-white uppercase tracking-wide shadow-md">
-                  Save 33%
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between pt-1">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-cta/10 font-mono text-lg font-bold text-cta">
-                    3x
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-foreground">Strategy 3-Pack</h3>
-                    <p className="text-sm text-muted">
-                      Three credits to use anytime
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-foreground">$19.99</span>
-                    <span className="text-lg text-muted line-through">$24</span>
-                  </div>
-                  <p className="text-xs text-cta font-semibold">$6.66 each</p>
-                </div>
-              </div>
-
-              {loading === 3 && (
-                <div className="absolute right-6 top-1/2 -translate-y-1/2">
-                  <div className="h-5 w-5 border-2 border-cta border-t-transparent rounded-full animate-spin" />
                 </div>
               )}
             </button>
@@ -139,15 +92,8 @@ export function Pricing() {
 
           {/* CTA Buttons */}
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-6 animate-slide-up stagger-2">
-            <Button
-              size="lg"
-              onClick={() => handleBuyCredits(3)}
-              disabled={loading !== null}
-            >
-              {loading === 3 ? "Loading..." : "Buy 3-Pack — $19.99"}
-            </Button>
             <Link href="/start">
-              <Button variant="outline" size="lg">
+              <Button size="lg">
                 Get Started
               </Button>
             </Link>

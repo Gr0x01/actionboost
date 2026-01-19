@@ -5,5 +5,4 @@ export const config = {
 
   // Pricing display (for consistency across UI)
   singlePrice: "$7.99",
-  threePackPrice: "$19.99",
 };

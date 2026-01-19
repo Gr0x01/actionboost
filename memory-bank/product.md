@@ -59,7 +59,6 @@ Display these to prove there's real methodology:
 
 ### Pricing
 - $7.99 for one strategy
-- $19.99 for 3 (shown but not primary CTA)
 
 ### Social Proof
 - Sample output snippet (show quality)
@@ -138,10 +137,9 @@ Display these to prove there's real methodology:
 | Product | Price | Credits |
 |---------|-------|---------|
 | Single | $7.99 | 1 |
-| 3-Pack | $19.99 | 3 |
 
-**Per-run cost**: ~$1.50-3.00 (Opus + research + Stripe fees)
-**Margin**: ~80%
+**Per-run cost**: ~$0.50 (Opus + research APIs)
+**Margin**: ~90%
 
 ---
 
