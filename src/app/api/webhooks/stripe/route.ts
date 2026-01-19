@@ -3,6 +3,8 @@ import Stripe from "stripe";
 import { createServiceClient } from "@/lib/supabase/server";
 import { Json } from "@/lib/types/database";
 import { runPipeline } from "@/lib/ai/pipeline";
+import { sendMagicLink } from "@/lib/auth/send-magic-link";
+import { sendReceiptEmail } from "@/lib/email/resend";
 import { trackServerEvent, identifyUser } from "@/lib/analytics";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -93,9 +95,32 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     });
   }
 
-  // If credits-only purchase, we're done - user will use credits later via form
+  // If credits-only purchase, send receipt + magic link and we're done
   if (isCreditsOnly) {
     console.log("Credits-only purchase:", credits, "credits for session:", session.id);
+    if (email) {
+      const amount = session.amount_total
+        ? `$${(session.amount_total / 100).toFixed(2)}`
+        : "$7.99";
+      const date = new Date().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+
+      sendReceiptEmail({
+        to: email,
+        productName: credits > 1 ? `${credits} Growth Strategy Credits` : "Growth Strategy Credit",
+        amount,
+        date,
+      }).catch((err) => {
+        console.error("Receipt email failed for credits-only:", session.id, err);
+      });
+
+      sendMagicLink(email, "/dashboard").catch((err) => {
+        console.error("Magic link failed for credits-only:", session.id, err);
+      });
+    }
     return;
   }
 
@@ -140,4 +165,29 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   runPipeline(run.id).catch((err) => {
     console.error("Pipeline failed for run:", run.id, err);
   });
+
+  // Send receipt + magic link for dashboard access (fire and forget)
+  if (email) {
+    const amount = session.amount_total
+      ? `$${(session.amount_total / 100).toFixed(2)}`
+      : "$7.99";
+    const date = new Date().toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
+    sendReceiptEmail({
+      to: email,
+      productName: "Growth Strategy Run",
+      amount,
+      date,
+    }).catch((err) => {
+      console.error("Receipt email failed for run:", run.id, err);
+    });
+
+    sendMagicLink(email, "/dashboard").catch((err) => {
+      console.error("Magic link failed for run:", run.id, err);
+    });
+  }
 }
