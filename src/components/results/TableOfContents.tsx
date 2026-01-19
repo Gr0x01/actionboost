@@ -27,7 +27,11 @@ interface TableOfContentsProps {
 
 export function TableOfContents({ strategy, variant }: TableOfContentsProps) {
   const [activeSection, setActiveSection] = useState<string>("executive-summary");
+  const [mobileNavVisible, setMobileNavVisible] = useState(true);
+  const [underlineStyle, setUnderlineStyle] = useState({ left: 0, width: 0 });
   const mobileNavRef = useRef<HTMLDivElement>(null);
+  const lastScrollY = useRef(0);
+  const keepVisibleUntilScroll = useRef(false);
 
   // Filter sections based on what's actually in the strategy
   const availableSections = SECTIONS.filter((section) => {
@@ -74,23 +78,83 @@ export function TableOfContents({ strategy, variant }: TableOfContentsProps) {
     };
   }, [availableSections]);
 
-  // Auto-scroll mobile nav to keep active item visible
+  // Update underline position when active section changes
   useEffect(() => {
     if (!mobileNavRef.current) return;
 
-    const activeButton = mobileNavRef.current.querySelector(`[data-section="${activeSection}"]`);
+    const container = mobileNavRef.current;
+    const activeButton = container.querySelector(`[data-section="${activeSection}"]`) as HTMLElement;
     if (activeButton) {
-      activeButton.scrollIntoView({
+      // Update underline position
+      setUnderlineStyle({
+        left: activeButton.offsetLeft,
+        width: activeButton.offsetWidth,
+      });
+
+      // Auto-scroll to keep active button centered
+      const containerWidth = container.offsetWidth;
+      const scrollLeft = activeButton.offsetLeft - (containerWidth / 2) + (activeButton.offsetWidth / 2);
+      container.scrollTo({
+        left: scrollLeft,
         behavior: "smooth",
-        block: "nearest",
-        inline: "center",
       });
     }
   }, [activeSection]);
 
+  // Initialize underline position on mount
+  useEffect(() => {
+    if (!mobileNavRef.current) return;
+
+    // Small delay to ensure buttons are rendered
+    const timer = setTimeout(() => {
+      const container = mobileNavRef.current;
+      if (!container) return;
+
+      const activeButton = container.querySelector(`[data-section="${activeSection}"]`) as HTMLElement;
+      if (activeButton) {
+        setUnderlineStyle({
+          left: activeButton.offsetLeft,
+          width: activeButton.offsetWidth,
+        });
+      }
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Hide mobile nav on scroll down, show on scroll up
+  useEffect(() => {
+    const handleScroll = () => {
+      // Skip if we're in "keep visible" mode (after clicking a tab)
+      if (keepVisibleUntilScroll.current) {
+        lastScrollY.current = window.scrollY;
+        return;
+      }
+
+      const currentScrollY = window.scrollY;
+      const scrollingUp = currentScrollY < lastScrollY.current;
+
+      // Only hide after scrolling past the header area
+      if (currentScrollY > 150) {
+        setMobileNavVisible(scrollingUp);
+      } else {
+        setMobileNavVisible(true);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
+      // Keep nav visible during programmatic scroll
+      keepVisibleUntilScroll.current = true;
+      setMobileNavVisible(true);
+
       const headerOffset = 140; // Account for sticky header + export bar + some padding
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.scrollY - headerOffset;
@@ -99,15 +163,24 @@ export function TableOfContents({ strategy, variant }: TableOfContentsProps) {
         top: offsetPosition,
         behavior: "smooth",
       });
+
+      // Re-enable hide behavior after scroll completes
+      setTimeout(() => {
+        keepVisibleUntilScroll.current = false;
+      }, 800);
     }
   };
 
   // Mobile horizontal tabs
   const mobileNav = (
-    <div className="sticky top-[104px] z-30 -mx-6 px-2 py-2 bg-background/95 backdrop-blur-sm border-b border-border">
+    <div
+      className={`fixed top-16 left-0 right-0 z-40 px-4 bg-background/95 backdrop-blur-sm border-b border-border transition-opacity duration-200 ${
+        mobileNavVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+      }`}
+    >
       <div
         ref={mobileNavRef}
-        className="flex gap-1 overflow-x-auto scrollbar-hide pb-1"
+        className="relative flex gap-1 overflow-x-auto scrollbar-hide"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {availableSections.map((section) => {
@@ -119,18 +192,23 @@ export function TableOfContents({ strategy, variant }: TableOfContentsProps) {
               data-section={section.id}
               onClick={() => scrollToSection(section.id)}
               className={`
-                px-3 py-1.5 rounded-full text-sm font-medium
-                whitespace-nowrap transition-all shrink-0
-                ${isActive
-                  ? "bg-primary text-white shadow-sm"
-                  : "bg-surface text-muted hover:text-foreground hover:bg-surface/80"
-                }
+                px-3 py-3 text-sm font-medium
+                whitespace-nowrap transition-colors shrink-0
+                ${isActive ? "text-primary" : "text-muted hover:text-foreground"}
               `}
             >
               {section.shortLabel}
             </button>
           );
         })}
+        {/* Sliding underline */}
+        <div
+          className="absolute bottom-0 h-0.5 bg-primary transition-all duration-300 ease-out"
+          style={{
+            left: underlineStyle.left,
+            width: underlineStyle.width,
+          }}
+        />
       </div>
     </div>
   );
