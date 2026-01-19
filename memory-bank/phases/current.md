@@ -1,6 +1,48 @@
-# Current: Results Page Redesign Complete
+# Current: Legal Pages Complete
 
-## Latest Update: Clean Document Style ✅
+## Latest Update: Privacy Policy & Terms of Service ✅
+
+**Completed Jan 2025** - Added legal pages with GDPR/CCPA compliance.
+
+### What Was Built
+```
+src/app/
+├── privacy/page.tsx    # Privacy policy
+└── terms/page.tsx      # Terms of service
+```
+
+### Privacy Policy Covers
+- Data controller (Texas, USA)
+- Legal basis for processing (GDPR Art. 6)
+- All third-party services (Stripe, Supabase, Anthropic, OpenAI, Tavily, DataForSEO, PostHog)
+- International data transfers
+- Data retention periods
+- User rights (access, deletion, export, correction)
+- CCPA "do not sell" disclosure
+- EU right to lodge complaint
+
+### Terms of Service Covers
+- Eligibility (18+)
+- Pricing ($7.99 single, $19.99 3-pack)
+- No refunds policy
+- AI disclaimer (not professional consulting, no guaranteed results)
+- Case studies with consent
+- Prohibited uses
+- Indemnification
+- Dispute resolution (30-day informal first)
+- Governing law (Texas)
+
+### Design
+- Typography: Tienne (serif) for body, Manrope (sans) for headings
+- Consistent card styling with rest of site
+- Contact: team@actionboo.st
+
+### Footer Links
+Already wired up in `src/components/layout/Footer.tsx` → `/privacy` and `/terms`
+
+---
+
+## Previous: Results Page Redesign ✅
 
 **Completed Jan 2025** - Results page redesigned from "SaaS dashboard" to "clean document" style for better readability.
 
