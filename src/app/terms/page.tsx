@@ -45,15 +45,14 @@ export default function TermsPage() {
                 </h2>
                 <ul className="text-sm text-muted space-y-2 list-disc list-inside">
                   <li>
-                    <strong className="text-foreground">Single strategy</strong> — $7.99 USD
+                    <strong className="text-foreground">Free mini audit</strong> — $0 (limited analysis)
                   </li>
                   <li>
-                    <strong className="text-foreground">3-pack</strong> — $19.99 USD (credits never
-                    expire)
+                    <strong className="text-foreground">Full strategy</strong> — $7.99 USD
                   </li>
                 </ul>
                 <p className="text-sm text-muted leading-relaxed mt-3">
-                  All payments are processed securely through Stripe.
+                  Paid purchases are processed securely through Stripe.
                 </p>
               </section>
 
@@ -160,7 +159,7 @@ export default function TermsPage() {
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
                   We reserve the right to suspend or terminate your access if you violate these
-                  terms. Unused credits may be forfeited upon termination for cause.
+                  terms.
                 </p>
               </section>
 
