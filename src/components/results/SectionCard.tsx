@@ -3,6 +3,7 @@ import type { LucideIcon } from "lucide-react";
 type AccentColor = "primary" | "green" | "red" | "amber" | "blue";
 
 interface SectionCardProps {
+  id?: string;
   icon: LucideIcon;
   title: string;
   accentColor?: AccentColor;
@@ -64,6 +65,7 @@ const accentStyles: Record<
 };
 
 export function SectionCard({
+  id,
   icon: Icon,
   title,
   accentColor = "primary",
@@ -74,6 +76,7 @@ export function SectionCard({
 
   return (
     <section
+      id={id}
       className={`
         relative overflow-hidden
         rounded-2xl border border-border/50 border-l-4 ${styles.border}

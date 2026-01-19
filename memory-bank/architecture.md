@@ -20,12 +20,12 @@ Simple serverless architecture. No queues, no workers - just API routes.
 
 ### New Run (happy path)
 1. User fills form on `/start`, stored in localStorage
-2. User enters email, clicks "Generate - $15"
-3. `POST /api/stripe/checkout` → creates Stripe session + pending run in DB
+2. User clicks "Generate - $7.99"
+3. `POST /api/checkout/create-session` → creates Stripe session with form in metadata
 4. Redirect to Stripe Checkout
-5. Payment success → Stripe webhook fires
-6. Webhook: add credits, update run to "processing", trigger AI pipeline
-7. Redirect to `/processing/[runId]` → polls for status
+5. Payment success → `checkout.session.completed` webhook fires
+6. Webhook: create user, add credits, create run, trigger AI pipeline
+7. Redirect to `/processing/[sessionId]` → polls for status
 8. AI completes → status = "complete"
 9. Redirect to `/results/[runId]`
 
@@ -37,24 +37,46 @@ Simple serverless architecture. No queues, no workers - just API routes.
 ### Magic Link Auth
 1. User clicks "View Past Runs" or link in email
 2. `POST /api/auth/magic-link` → Supabase sends email
-3. User clicks link → `/auth/callback` sets session
-4. Redirect to `/dashboard`
+3. User clicks link → `/auth/callback` exchanges code for session
+4. Callback links `auth.users` to `public.users` via `auth_id` column
+5. Redirect to `/dashboard`
+
+### Auth Architecture
+```
+auth.users (Supabase Auth)     public.users (our table)
+    id  ←───── auth_id ─────→  id
+    email                       email
+                                created_at
+```
+
+**Why two tables?**
+- `public.users` created via Stripe webhook (before auth)
+- `auth.users` created when user logs in
+- Linked by email match, stored as `auth_id` FK
+
+**Auth helper** (`src/lib/auth/session.ts`):
+- `getAuthUser()` - Get current user or null
+- `requireAuth()` - Redirect to /login if not logged in
+- `linkAuthToPublicUser()` - Connect auth to public user by email
 
 ---
 
 ## API Routes
 
-| Route | Method | Purpose |
-|-------|--------|---------|
-| `/api/runs` | POST | Create new run |
-| `/api/runs/[id]` | GET | Get run status/results |
-| `/api/stripe/checkout` | POST | Create Stripe session |
-| `/api/stripe/webhook` | POST | Handle payment events |
-| `/api/codes/redeem` | POST | Redeem coupon code |
-| `/api/share/create` | POST | Generate share link |
-| `/api/export/pdf` | GET | Generate PDF |
+| Route | Method | Purpose | Auth | Status |
+|-------|--------|---------|------|--------|
+| `/api/checkout/create-session` | POST | Create Stripe session | No | ✅ |
+| `/api/webhooks/stripe` | POST | Handle payment → trigger pipeline | Signature | ✅ |
+| `/api/runs/[runId]` | GET | Get run data | Owner or share | ✅ |
+| `/api/runs/[runId]/status` | GET | Poll run status | Owner or share | ✅ |
+| `/api/runs/[runId]/share` | POST | Generate share link | No | ✅ |
+| `/api/runs/create-with-code` | POST | Create run using promo code | No | ✅ |
+| `/api/codes/validate` | POST | Validate promo code | No | ✅ |
+| `/api/upload` | POST | Upload attachments | No | ✅ |
+| `/api/auth/magic-link` | POST | Send magic link email | No | ✅ |
+| `/api/user/runs` | GET | Get user's runs | Required | ✅ |
 
-**Auth pattern**: Check `auth.uid()` matches `run.user_id`, OR valid `share_slug` for public access.
+**Auth pattern**: Check user's `auth_id` links to `public.users`, then verify `user_id` matches, OR valid `share_slug` for public access.
 
 **Error pattern**: Return `{ success: false, error: string, code: string }`
 
@@ -77,7 +99,7 @@ src/lib/ai/
 ```
 1. Research (Tavily + DataForSEO) - ~6-20s
    - Parallel Tavily searches (competitor, trends, tactics)
-   - Sequential DataForSEO for competitor domains
+   - DataForSEO endpoints selected by focus area
    - Promise.race for proper timeout handling
 
 2. Generate (Claude Opus 4.5) - ~100-120s
@@ -91,13 +113,18 @@ src/lib/ai/
 ```
 
 ### AARRR Focus Areas
-Users select their biggest challenge - each gets tailored guidance:
-- `acquisition` - "How do I get more users?"
-- `activation` - "Users sign up but don't stick"
-- `retention` - "Users leave after a few weeks"
-- `referral` - "How do I get users to spread the word?"
-- `monetization` - "I have users but no revenue"
-- `custom` - Free-form challenge input
+Users select their biggest challenge - each gets tailored guidance AND different DataForSEO depth:
+
+| Focus Area | SEO Depth | Endpoints |
+|------------|-----------|-----------|
+| `acquisition` | Heavy | domain_metrics, ranked_keywords, competitors, backlinks, referrers |
+| `referral` | Medium | domain_metrics, backlinks, referrers |
+| `activation` | Light | domain_metrics only |
+| `retention` | Light | domain_metrics only |
+| `monetization` | Light | domain_metrics only |
+| `custom` | Heavy | All endpoints |
+
+This keeps costs proportional to how useful SEO data is for each problem type.
 
 ### Output Structure (8 sections)
 1. Executive Summary
@@ -110,7 +137,7 @@ Users select their biggest challenge - each gets tailored guidance:
 8. Metrics to Track
 
 ### Cost & Performance
-- Cost per run: ~$0.12-0.15
+- Cost per run: ~$0.30
 - Total time: ~2 minutes
 - Graceful degradation: Research fails → proceed with limited context
 
@@ -157,33 +184,33 @@ src/lib/types/database.ts    # Generated types + Attachment type
 
 ---
 
-## File Structure (target)
+## File Structure
 
 ```
 src/
 ├── app/
 │   ├── page.tsx                    # Landing
 │   ├── start/page.tsx              # Input form
-│   ├── checkout/page.tsx
+│   ├── login/page.tsx              # Magic link login
+│   ├── dashboard/page.tsx          # User's runs + credits
 │   ├── processing/[runId]/page.tsx
 │   ├── results/[runId]/page.tsx
-│   ├── share/[slug]/page.tsx
-│   ├── dashboard/page.tsx
+│   ├── auth/callback/route.ts      # Magic link callback
 │   └── api/
-│       ├── runs/
-│       ├── stripe/
-│       ├── codes/
-│       └── ...
+│       ├── auth/magic-link/        # Send magic link
+│       ├── user/runs/              # Get user's runs
+│       ├── runs/                   # Run CRUD
+│       ├── checkout/               # Stripe
+│       └── codes/                  # Promo codes
 ├── components/
 │   ├── ui/                         # Button, Input, Card, etc.
-│   ├── forms/                      # StrategyForm
-│   └── layout/                     # Header, Footer
-├── lib/
-│   ├── supabase/                   # Client utilities
-│   ├── stripe/                     # Stripe helpers
-│   ├── ai/                         # Claude + Tavily
-│   └── types/                      # Shared types
-└── middleware.ts                   # Auth middleware
+│   ├── results/                    # Strategy display
+│   └── layout/                     # Header (auth-aware), Footer
+└── lib/
+    ├── supabase/                   # Client utilities
+    ├── auth/session.ts             # Auth helpers (DAL pattern)
+    ├── ai/                         # Claude + Tavily
+    └── types/                      # Shared types
 ```
 
 ---
@@ -201,6 +228,32 @@ src/
 - Use `search_depth: 'advanced'` for better results
 
 ### Stripe
-- Checkout Sessions for payment
-- Webhook for `checkout.session.completed`
-- Always verify webhook signature
+
+**Status**: ✅ Complete
+
+**Pricing**:
+- Single: $7.99 (1 credit)
+- 3-Pack: $19.99 (3 credits)
+
+**Routes**:
+| Route | Purpose |
+|-------|---------|
+| `POST /api/checkout/create-session` | Creates checkout session, stores form in metadata |
+| `POST /api/webhooks/stripe` | Handles `checkout.session.completed` |
+
+**Webhook flow**:
+1. Verify signature with `STRIPE_WEBHOOK_SECRET`
+2. Parse form data from session metadata
+3. Get/create user by email
+4. Add credits to `run_credits`
+5. Create run with form data
+6. Trigger AI pipeline (fire-and-forget)
+
+**Env vars**:
+```
+STRIPE_SECRET_KEY
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+STRIPE_WEBHOOK_SECRET
+STRIPE_PRICE_SINGLE
+STRIPE_PRICE_3PACK
+```

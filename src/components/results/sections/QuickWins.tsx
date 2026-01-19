@@ -12,14 +12,14 @@ export function QuickWins({ content }: QuickWinsProps) {
   // Fallback if parsing fails
   if (wins.length === 0) {
     return (
-      <SectionCard icon={Zap} title="Quick Wins" accentColor="amber">
+      <SectionCard id="quick-wins" icon={Zap} title="Quick Wins" accentColor="amber">
         <div className="text-muted whitespace-pre-wrap">{content}</div>
       </SectionCard>
     );
   }
 
   return (
-    <SectionCard icon={Zap} title="Quick Wins" accentColor="amber">
+    <SectionCard id="quick-wins" icon={Zap} title="Quick Wins" accentColor="amber">
       {/* Urgency banner */}
       <div className="flex items-center gap-2 mb-6 py-2 px-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-500 text-sm">
         <Zap className="h-4 w-4" />

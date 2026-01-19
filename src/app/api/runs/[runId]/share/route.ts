@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
+import { getAuthenticatedUserId } from "@/lib/auth/session";
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -25,17 +26,32 @@ export async function POST(
     return NextResponse.json({ error: "Invalid run ID" }, { status: 400 });
   }
 
+  // Require authentication
+  const userId = await getAuthenticatedUserId();
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const supabase = createServiceClient();
 
-  // Check if already has a slug
-  const { data: existing } = await supabase
+  // Get run and verify ownership
+  const { data: run } = await supabase
     .from("runs")
-    .select("share_slug")
+    .select("share_slug, user_id")
     .eq("id", runId)
     .single();
 
-  if (existing?.share_slug) {
-    return NextResponse.json({ share_slug: existing.share_slug });
+  if (!run) {
+    return NextResponse.json({ error: "Run not found" }, { status: 404 });
+  }
+
+  if (userId !== run.user_id) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  // Return existing slug if already shared
+  if (run.share_slug) {
+    return NextResponse.json({ share_slug: run.share_slug });
   }
 
   // Generate new slug

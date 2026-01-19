@@ -91,7 +91,7 @@ export function ExportBar({
 
   return (
     <>
-      <div className="sticky top-0 z-40 -mx-6 px-6 py-3 bg-background/80 backdrop-blur-sm border-b border-border mb-8">
+      <div className="sticky top-16 z-40 -mx-6 px-6 py-3 bg-background/80 backdrop-blur-sm border-b border-border mb-8">
         <div className="flex items-center justify-between max-w-4xl mx-auto">
           <span className="text-sm text-muted font-medium">Your Growth Strategy</span>
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import { FormInput } from "@/lib/types/form";
 import { Json } from "@/lib/types/database";
+import { runPipeline } from "@/lib/ai/pipeline";
 
 export async function POST(request: NextRequest) {
   try {
@@ -84,6 +85,11 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    // Trigger AI pipeline (fire and forget)
+    runPipeline(run.id).catch((err) => {
+      console.error("Pipeline failed for run:", run.id, err);
+    });
 
     return NextResponse.json({ runId: run.id });
   } catch (error) {

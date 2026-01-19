@@ -12,14 +12,14 @@ export function MetricsToTrack({ content }: MetricsToTrackProps) {
   // Fallback if parsing fails
   if (metrics.length === 0) {
     return (
-      <SectionCard icon={LineChart} title="Metrics to Track" accentColor="blue">
+      <SectionCard id="metrics" icon={LineChart} title="Metrics to Track" accentColor="blue">
         <div className="text-muted whitespace-pre-wrap">{content}</div>
       </SectionCard>
     );
   }
 
   return (
-    <SectionCard icon={LineChart} title="Metrics to Track" accentColor="blue">
+    <SectionCard id="metrics" icon={LineChart} title="Metrics to Track" accentColor="blue">
       <p className="text-muted text-sm mb-6">
         Measure what matters. These KPIs will show if your strategy is working.
       </p>

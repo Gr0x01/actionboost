@@ -118,18 +118,71 @@ export type Database = {
           },
         ]
       }
+      user_context_chunks: {
+        Row: {
+          chunk_type: string
+          content: string
+          created_at: string | null
+          embedding: string | null
+          id: string
+          metadata: Json | null
+          source_id: string | null
+          source_type: string
+          user_id: string
+        }
+        Insert: {
+          chunk_type: string
+          content: string
+          created_at?: string | null
+          embedding?: string | null
+          id?: string
+          metadata?: Json | null
+          source_id?: string | null
+          source_type: string
+          user_id: string
+        }
+        Update: {
+          chunk_type?: string
+          content?: string
+          created_at?: string | null
+          embedding?: string | null
+          id?: string
+          metadata?: Json | null
+          source_id?: string | null
+          source_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_context_chunks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
+          auth_id: string | null
+          context: Json | null
+          context_updated_at: string | null
           created_at: string | null
           email: string
           id: string
         }
         Insert: {
+          auth_id?: string | null
+          context?: Json | null
+          context_updated_at?: string | null
           created_at?: string | null
           email: string
           id?: string
         }
         Update: {
+          auth_id?: string | null
+          context?: Json | null
+          context_updated_at?: string | null
           created_at?: string | null
           email?: string
           id?: string
@@ -165,9 +218,12 @@ export type User = Tables<"users">
 export type Run = Tables<"runs">
 export type RunCredit = Tables<"run_credits">
 export type Code = Tables<"codes">
+export type UserContextChunk = Tables<"user_context_chunks">
 
 export type RunStatus = "pending" | "processing" | "complete" | "failed"
 export type CreditSource = "stripe" | "code" | "manual"
+export type ChunkType = "product" | "traction" | "tactic" | "insight" | "recommendation"
+export type SourceType = "run_input" | "run_output" | "delta_update"
 
 // File attachment metadata (stored in runs.attachments JSONB)
 export type Attachment = {

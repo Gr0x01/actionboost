@@ -29,16 +29,16 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     const charCount = typeof value === "string" ? value.length : 0;
 
     return (
-      <div className="space-y-1">
+      <div className="space-y-2">
         <label
           htmlFor={textareaId}
           className="block text-sm font-medium text-foreground"
         >
           {label}
-          {required && <span className="text-cta ml-1">*</span>}
+          {required && <span className="text-cta ml-0.5">*</span>}
         </label>
 
-        {hint && <p className="text-sm text-muted">{hint}</p>}
+        {hint && <p className="text-sm text-muted -mt-0.5">{hint}</p>}
 
         <textarea
           ref={ref}
@@ -47,13 +47,15 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           value={value}
           maxLength={maxLength}
           className={`
-            w-full rounded-lg border bg-background px-4 py-3 text-foreground
-            placeholder:text-muted/60
-            border-border
-            focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary-light
+            w-full rounded-lg bg-surface/50 px-4 py-3 text-base text-foreground
+            placeholder:text-muted/50
+            border border-border/60
+            transition-all duration-200
+            hover:border-border
+            focus:bg-background focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20
             disabled:cursor-not-allowed disabled:opacity-50
             resize-y min-h-[120px]
-            ${error ? "border-red-500 focus:border-red-500 focus:ring-red-200" : ""}
+            ${error ? "border-red-400 focus:border-red-400 focus:ring-red-100" : ""}
             ${className}
           `}
           aria-invalid={error ? "true" : "false"}

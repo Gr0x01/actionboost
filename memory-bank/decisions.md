@@ -8,7 +8,7 @@ Key architectural and product decisions. Reference this when you need to underst
 
 **Decision**: Use `claude-opus-4-5-20251101` for strategy generation.
 
-**Why**: Best reasoning capabilities for complex strategic analysis. Worth the cost at $15/run pricing.
+**Why**: Best reasoning capabilities for complex strategic analysis. Cost ~$0.12-0.15 per run, well within margin at $7.99 pricing.
 
 **Constraint**: Do NOT change the model name without explicit user approval. This is documented in CLAUDE.md as a critical rule.
 
@@ -37,6 +37,16 @@ Key architectural and product decisions. Reference this when you need to underst
 - No password reset flow needed
 - Email is already required for receipts
 - Solo founders don't want another password
+
+**Implementation**:
+- `auth_id` column on `public.users` links to `auth.users.id`
+- Users created via Stripe before auth (by email)
+- Linked when they first log in (by email match)
+- DAL pattern: auth checks in Server Components, not middleware
+
+**Protected routes**:
+- `/dashboard` - requires login
+- `/results/[runId]` - requires login OR share slug
 
 ---
 
@@ -143,4 +153,43 @@ Can add more account features later if needed.
 
 **Why**: Tavily SDK doesn't support AbortSignal. Promise.race ensures we don't hang forever if API is slow.
 
-**Implementation**: 15s timeout per Tavily search, 20s for DataForSEO.
+**Implementation**: 15s timeout per Tavily search, 10s per DataForSEO endpoint.
+
+---
+
+## DataForSEO: Focus-Area Routing
+
+**Decision**: Different AARRR focus areas trigger different DataForSEO endpoints.
+
+**Mapping**:
+| Focus Area | Endpoints | Cost |
+|------------|-----------|------|
+| acquisition | domain_metrics, ranked_keywords, competitors, backlinks, referrers | ~$0.50 |
+| referral | domain_metrics, backlinks, referrers | ~$0.20 |
+| activation/retention/monetization | domain_metrics only | ~$0.05 |
+| custom | All endpoints | ~$0.50 |
+
+**Why**:
+- SEO data is highly relevant for acquisition, less so for retention/activation
+- Keeps costs proportional to value delivered
+- Parallel fetching within each domain for speed
+
+**Available DataForSEO endpoints**:
+- `domain_metrics_by_categories` - traffic, keyword count
+- `ranked_keywords` - top keywords with positions/volumes
+- `competitors_domain` - competitor overlap
+- `backlinks/summary` - backlink count, referring domains, domain rank
+- `backlinks/referring_domains` - top link sources
+
+---
+
+## Pricing: $7.99 Single, $19.99 3-Pack
+
+**Decision**: Two price points, no subscription for v1.
+
+**Why**:
+- $7.99 single is impulse-buy range
+- 3-pack ($6.66/run) rewards commitment without subscription complexity
+- Cost per run ~$0.30 (Claude + DataForSEO), healthy margin
+
+**v2 consideration**: Subscription model for "Connected Growth Advisor" after validating output quality.

@@ -16,14 +16,14 @@ export function Roadmap({ content }: RoadmapProps) {
   // Fallback if parsing fails
   if (weeks.length === 0) {
     return (
-      <SectionCard icon={Calendar} title="30-Day Roadmap" accentColor="primary">
+      <SectionCard id="roadmap" icon={Calendar} title="30-Day Roadmap" accentColor="primary">
         <div className="text-muted whitespace-pre-wrap">{content}</div>
       </SectionCard>
     );
   }
 
   return (
-    <SectionCard icon={Calendar} title="30-Day Roadmap" accentColor="primary">
+    <SectionCard id="roadmap" icon={Calendar} title="30-Day Roadmap" accentColor="primary">
       <p className="text-muted text-sm mb-8">
         Your week-by-week execution plan. Focus on one week at a time.
       </p>

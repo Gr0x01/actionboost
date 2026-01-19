@@ -1,8 +1,38 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { createBrowserClient } from "@supabase/ssr";
 import { Button } from "@/components/ui";
-import { Zap } from "lucide-react";
+import { Zap, User, LayoutDashboard } from "lucide-react";
+import type { User as AuthUser } from "@supabase/supabase-js";
 
 export function Header() {
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
+    // Get initial session
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+      setLoading(false);
+    });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   return (
     <header className="sticky top-0 z-50 w-full glass border-b border-border/50">
       <div className="mx-auto max-w-6xl px-6">
@@ -17,10 +47,38 @@ export function Header() {
             </span>
           </Link>
 
-          {/* CTA */}
-          <Link href="/start">
-            <Button size="sm">Get Started</Button>
-          </Link>
+          {/* Right side */}
+          <div className="flex items-center gap-3">
+            {!loading && user ? (
+              <>
+                <Link href="/dashboard">
+                  <Button variant="ghost" size="sm">
+                    <LayoutDashboard className="h-4 w-4 mr-2" />
+                    Dashboard
+                  </Button>
+                </Link>
+                <Link href="/start">
+                  <Button size="sm">New Strategy</Button>
+                </Link>
+              </>
+            ) : !loading ? (
+              <>
+                <Link href="/login">
+                  <Button variant="ghost" size="sm">
+                    <User className="h-4 w-4 mr-2" />
+                    Login
+                  </Button>
+                </Link>
+                <Link href="/start">
+                  <Button size="sm">Get Started</Button>
+                </Link>
+              </>
+            ) : (
+              <Link href="/start">
+                <Button size="sm">Get Started</Button>
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </header>

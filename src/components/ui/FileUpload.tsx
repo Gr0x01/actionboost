@@ -152,7 +152,7 @@ export function FileUpload({
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       {label && (
         <label className="block text-sm font-medium text-foreground">
           {label}
@@ -166,12 +166,12 @@ export function FileUpload({
         onDragLeave={handleDragLeave}
         onClick={() => fileInputRef.current?.click()}
         className={`
-          relative cursor-pointer rounded-xl border-2 border-dashed p-6
+          relative cursor-pointer rounded-lg border-2 border-dashed p-6
           transition-all duration-200
           ${
             isDragging
-              ? "border-primary bg-primary/5 scale-[1.02]"
-              : "border-border hover:border-primary/50 hover:bg-surface/50"
+              ? "border-primary bg-primary/5"
+              : "border-border/60 hover:border-primary/40 hover:bg-surface/50"
           }
           ${isUploading ? "pointer-events-none opacity-60" : ""}
         `}
@@ -188,13 +188,13 @@ export function FileUpload({
         <div className="flex flex-col items-center gap-2 text-center">
           {isUploading ? (
             <>
-              <Loader2 className="h-8 w-8 text-primary animate-spin" />
+              <Loader2 className="h-6 w-6 text-primary animate-spin" />
               <p className="text-sm text-muted">Uploading...</p>
             </>
           ) : (
             <>
-              <div className="p-3 rounded-full bg-primary/10">
-                <Upload className="h-6 w-6 text-primary" />
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <Upload className="h-5 w-5 text-primary" />
               </div>
               <p className="text-sm text-foreground">
                 <span className="font-medium text-primary">Click to upload</span>{" "}
@@ -220,16 +220,16 @@ export function FileUpload({
           {files.map((file) => (
             <div
               key={file.id}
-              className="flex items-center gap-3 p-3 rounded-lg bg-surface border border-border"
+              className="flex items-center gap-3 p-3 rounded-lg bg-surface/50 border border-border/60"
             >
               {file.type.startsWith("image/") ? (
                 <img
                   src={file.url}
                   alt={file.name}
-                  className="h-10 w-10 rounded object-cover"
+                  className="h-10 w-10 rounded-md object-cover"
                 />
               ) : (
-                <div className="h-10 w-10 rounded bg-cta/10 flex items-center justify-center">
+                <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center">
                   {getFileIcon(file.type)}
                 </div>
               )}
@@ -242,9 +242,9 @@ export function FileUpload({
               <button
                 type="button"
                 onClick={() => removeFile(file.id)}
-                className="p-1 rounded hover:bg-border transition-colors"
+                className="p-1.5 rounded-md hover:bg-surface transition-colors"
               >
-                <X className="h-4 w-4 text-muted" />
+                <X className="h-4 w-4 text-muted hover:text-foreground" />
               </button>
             </div>
           ))}

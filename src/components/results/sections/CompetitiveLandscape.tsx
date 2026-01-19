@@ -48,7 +48,7 @@ export function CompetitiveLandscape({ content }: CompetitiveLandscapeProps) {
   flushList();
 
   return (
-    <SectionCard icon={Users} title="Competitive Landscape" accentColor="blue">
+    <SectionCard id="competitive-landscape" icon={Users} title="Competitive Landscape" accentColor="blue">
       <div className="leading-relaxed">{elements}</div>
     </SectionCard>
   );

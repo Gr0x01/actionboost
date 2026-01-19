@@ -1,96 +1,571 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
-import { Header, Footer } from "@/components/layout";
-import { Button, Textarea, Input, RadioGroup, FileUpload } from "@/components/ui";
-import { ChevronLeft, ChevronRight, Check, X, Loader2, Gift } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Header } from "@/components/layout";
+import { Check, Loader2, ArrowRight, Globe, ChevronRight } from "lucide-react";
 import {
   FormInput,
-  FOCUS_AREA_OPTIONS,
+  FocusArea,
   INITIAL_FORM_STATE,
-  MAX_TOTAL_CHARS,
-  getTotalCharCount,
-  validateForm,
 } from "@/lib/types/form";
 
-const STORAGE_KEY = "actionboost-form-v2"; // Versioned to handle schema changes
-const TOTAL_STEPS = 4;
+const STORAGE_KEY = "actionboost-form-v3";
 
-const STEPS = [
-  { id: 1, label: "Product", title: "Tell us about your product" },
-  { id: 2, label: "Traction", title: "What's your current traction?" },
-  { id: 3, label: "History", title: "What have you tried?" },
-  { id: 4, label: "Focus", title: "Where should we focus?" },
+// Question definitions
+const QUESTIONS = [
+  {
+    id: "websiteUrl",
+    question: "What's your website?",
+    acknowledgment: "Got it, I'll analyze this",
+    type: "url" as const,
+  },
+  {
+    id: "productDescription",
+    question: "Tell me about your product in a sentence or two",
+    acknowledgment: "Interesting product",
+    type: "textarea" as const,
+  },
+  {
+    id: "currentTraction",
+    question: "What traction do you have so far?",
+    acknowledgment: "Good baseline",
+    type: "traction" as const,
+  },
+  {
+    id: "triedTactics",
+    question: "What growth tactics have you tried?",
+    acknowledgment: "Noted",
+    type: "textarea" as const,
+  },
+  {
+    id: "workingOrNot",
+    question: "What's working? What's falling flat?",
+    acknowledgment: "This helps a lot",
+    type: "textarea" as const,
+  },
+  {
+    id: "focusArea",
+    question: "Where should we focus?",
+    acknowledgment: null, // No acknowledgment, goes to competitors
+    type: "focus" as const,
+  },
+  {
+    id: "competitors",
+    question: "Any competitors I should study?",
+    acknowledgment: null,
+    type: "competitors" as const,
+    optional: true,
+  },
 ];
 
-function StepIndicator({ currentStep }: { currentStep: number }) {
+
+// Progress bar component
+function ProgressBar({ current, total }: { current: number; total: number }) {
+  const progress = ((current) / total) * 100;
+
   return (
-    <div className="flex items-center justify-between max-w-md mx-auto">
-      {STEPS.map((step, index) => {
-        const isCompleted = step.id < currentStep;
-        const isCurrent = step.id === currentStep;
-
-        return (
-          <div key={step.id} className="flex items-center flex-1 last:flex-none">
-            {/* Step circle + label group */}
-            <div className="flex items-center gap-2.5">
-              <div
-                className={`
-                  w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold
-                  transition-all duration-300
-                  ${isCompleted
-                    ? "bg-primary text-white"
-                    : isCurrent
-                    ? "bg-primary text-white shadow-md shadow-primary/30"
-                    : "bg-surface text-muted/70 border border-border"
-                  }
-                `}
-              >
-                {isCompleted ? (
-                  <Check className="h-4 w-4" strokeWidth={2.5} />
-                ) : (
-                  step.id
-                )}
-              </div>
-              <span
-                className={`text-sm hidden sm:block transition-colors ${
-                  isCurrent ? "text-foreground font-medium" : isCompleted ? "text-primary font-medium" : "text-muted"
-                }`}
-              >
-                {step.label}
-              </span>
-            </div>
-
-            {/* Connector line */}
-            {index < STEPS.length - 1 && (
-              <div className="flex-1 mx-3 hidden sm:block">
-                <div
-                  className={`h-px w-full transition-colors duration-300 ${
-                    isCompleted ? "bg-primary" : "bg-border"
-                  }`}
-                />
-              </div>
-            )}
-          </div>
-        );
-      })}
+    <div className="w-full max-w-md mx-auto">
+      <div className="h-1 bg-border/30 rounded-full overflow-hidden">
+        <motion.div
+          className="h-full bg-gradient-to-r from-primary to-primary/80"
+          initial={{ width: 0 }}
+          animate={{ width: `${progress}%` }}
+          transition={{ type: "spring", stiffness: 100, damping: 20 }}
+        />
+      </div>
     </div>
   );
 }
 
+// URL input with favicon
+function UrlInput({
+  value,
+  onChange,
+  onSubmit,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  onSubmit: () => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [favicon, setFavicon] = useState<string | null>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    if (value && value.includes(".")) {
+      try {
+        const url = value.startsWith("http") ? value : `https://${value}`;
+        const domain = new URL(url).hostname;
+        setFavicon(`https://www.google.com/s2/favicons?domain=${domain}&sz=32`);
+      } catch {
+        setFavicon(null);
+      }
+    } else {
+      setFavicon(null);
+    }
+  }, [value]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && value.trim()) {
+      onSubmit();
+    }
+  };
+
+  return (
+    <div className="relative">
+      <div className="flex items-center gap-3 bg-surface/50 border border-border/60 rounded-xl px-4 py-4 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+        {favicon ? (
+          <img src={favicon} alt="" className="w-5 h-5 rounded" />
+        ) : (
+          <Globe className="w-5 h-5 text-muted" />
+        )}
+        <input
+          ref={inputRef}
+          type="url"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="https://yourproduct.com"
+          className="flex-1 bg-transparent text-lg text-foreground placeholder:text-muted/50 outline-none"
+        />
+        {value.trim() && (
+          <button
+            onClick={onSubmit}
+            className="p-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors"
+          >
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+      <p className="text-xs text-muted mt-2 text-center">Press Enter to continue</p>
+    </div>
+  );
+}
+
+// Textarea input
+function TextareaInput({
+  value,
+  onChange,
+  onSubmit,
+  placeholder,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  onSubmit: () => void;
+  placeholder?: string;
+}) {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    textareaRef.current?.focus();
+  }, []);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey && value.trim()) {
+      e.preventDefault();
+      onSubmit();
+    }
+  };
+
+  // Auto-resize
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+    }
+  }, [value]);
+
+  return (
+    <div className="relative">
+      <div className="bg-surface/50 border border-border/60 rounded-xl px-4 py-4 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+        <textarea
+          ref={textareaRef}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholder || "Type your answer..."}
+          rows={2}
+          className="w-full bg-transparent text-lg text-foreground placeholder:text-muted/50 outline-none resize-none min-h-[60px]"
+        />
+      </div>
+      <div className="flex items-center justify-between mt-2">
+        <p className="text-xs text-muted">Press Enter to continue (Shift+Enter for new line)</p>
+        {value.trim() && (
+          <button
+            onClick={onSubmit}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors"
+          >
+            Continue
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Traction input with chips
+function TractionInput({
+  value,
+  onChange,
+  onSubmit,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  onSubmit: () => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const chips = ["Pre-launch", "< 100 users", "100-1K users", "1K-10K users", "10K+ users"];
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  const handleChipClick = (chip: string) => {
+    onChange(chip);
+    setTimeout(onSubmit, 150);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && value.trim()) {
+      onSubmit();
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap gap-2 justify-center">
+        {chips.map((chip) => (
+          <button
+            key={chip}
+            onClick={() => handleChipClick(chip)}
+            className={`px-4 py-2 rounded-full border text-sm font-medium transition-all ${
+              value === chip
+                ? "bg-primary text-white border-primary"
+                : "bg-surface/50 border-border/60 text-foreground hover:border-primary/50 hover:bg-surface"
+            }`}
+          >
+            {chip}
+          </button>
+        ))}
+      </div>
+      <div className="text-center text-muted text-sm">or type specifics</div>
+      <div className="bg-surface/50 border border-border/60 rounded-xl px-4 py-3 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+        <input
+          ref={inputRef}
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="e.g., 500 users, $2k MRR, 10k monthly visitors"
+          className="w-full bg-transparent text-lg text-foreground placeholder:text-muted/50 outline-none"
+        />
+      </div>
+      {value.trim() && !chips.includes(value) && (
+        <div className="flex justify-center">
+          <button
+            onClick={onSubmit}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors"
+          >
+            Continue
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Focus area cards
+function FocusInput({
+  value,
+  onChange,
+  onSubmit,
+}: {
+  value: FocusArea;
+  onChange: (v: FocusArea) => void;
+  onSubmit: () => void;
+}) {
+  const options: { value: FocusArea; label: string; description: string }[] = [
+    {
+      value: "growth",
+      label: "Growth & Acquisition",
+      description: "Get more users and expand reach",
+    },
+    {
+      value: "monetization",
+      label: "Monetization",
+      description: "Convert users and increase revenue",
+    },
+    {
+      value: "positioning",
+      label: "Positioning",
+      description: "Differentiate and own your market",
+    },
+  ];
+
+  const handleSelect = (v: FocusArea) => {
+    onChange(v);
+    setTimeout(onSubmit, 200);
+  };
+
+  return (
+    <div className="grid gap-3 max-w-lg mx-auto">
+      {options.map((option) => (
+        <button
+          key={option.value}
+          onClick={() => handleSelect(option.value)}
+          className={`p-5 rounded-xl border text-left transition-all ${
+            value === option.value
+              ? "bg-primary/10 border-primary shadow-sm"
+              : "bg-surface/50 border-border/60 hover:border-primary/50 hover:bg-surface"
+          }`}
+        >
+          <div className="font-semibold text-foreground">{option.label}</div>
+          <div className="text-sm text-muted mt-1">{option.description}</div>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// Competitor URLs input
+function CompetitorInput({
+  value,
+  onChange,
+  onSubmit,
+  onSkip,
+}: {
+  value: string[];
+  onChange: (v: string[]) => void;
+  onSubmit: () => void;
+  onSkip: () => void;
+}) {
+  const [current, setCurrent] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  const addCompetitor = () => {
+    if (current.trim() && value.length < 3) {
+      onChange([...value, current.trim()]);
+      setCurrent("");
+    }
+  };
+
+  const removeCompetitor = (index: number) => {
+    onChange(value.filter((_, i) => i !== index));
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (current.trim()) {
+        addCompetitor();
+      } else if (value.length > 0) {
+        onSubmit();
+      }
+    }
+  };
+
+  return (
+    <div className="space-y-4 max-w-lg mx-auto">
+      {value.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {value.map((url, i) => (
+            <span
+              key={i}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-sm"
+            >
+              {url}
+              <button
+                onClick={() => removeCompetitor(i)}
+                className="text-muted hover:text-foreground"
+              >
+                ×
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+
+      {value.length < 3 && (
+        <div className="bg-surface/50 border border-border/60 rounded-xl px-4 py-3 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+          <input
+            ref={inputRef}
+            type="url"
+            value={current}
+            onChange={(e) => setCurrent(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="https://competitor.com"
+            className="w-full bg-transparent text-lg text-foreground placeholder:text-muted/50 outline-none"
+          />
+        </div>
+      )}
+
+      <div className="flex items-center justify-center gap-3">
+        <button
+          onClick={onSkip}
+          className="px-4 py-2 text-sm text-muted hover:text-foreground transition-colors"
+        >
+          {value.length > 0 ? "Done" : "Skip"}
+        </button>
+        {current.trim() && (
+          <button
+            onClick={addCompetitor}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-surface border border-border text-sm font-medium hover:bg-surface/80 transition-colors"
+          >
+            Add
+            <span className="text-muted">({value.length}/3)</span>
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Acknowledgment display
+function Acknowledgment({ text }: { text: string }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      className="flex items-center justify-center gap-2 text-primary"
+    >
+      <Check className="w-5 h-5" />
+      <span className="text-lg font-medium">{text}</span>
+    </motion.div>
+  );
+}
+
+// Checkout/Submit section
+function CheckoutSection({
+  onSubmit,
+  isSubmitting,
+  hasValidCode,
+  promoCode,
+  setPromoCode,
+  codeStatus,
+  validateCode,
+  isValidatingCode,
+  clearCode,
+}: {
+  onSubmit: () => void;
+  isSubmitting: boolean;
+  hasValidCode: boolean;
+  promoCode: string;
+  setPromoCode: (v: string) => void;
+  codeStatus: { valid: boolean; credits?: number; error?: string } | null;
+  validateCode: () => void;
+  isValidatingCode: boolean;
+  clearCode: () => void;
+}) {
+  const [showCode, setShowCode] = useState(false);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="text-center space-y-6"
+    >
+      <div>
+        <h2 className="text-2xl font-bold text-foreground mb-2">Ready to generate your strategy</h2>
+        <p className="text-muted">Our AI will analyze your inputs and create a custom growth playbook</p>
+      </div>
+
+      <button
+        onClick={onSubmit}
+        disabled={isSubmitting}
+        className={`px-8 py-4 rounded-xl text-lg font-semibold transition-all ${
+          hasValidCode
+            ? "bg-green-600 hover:bg-green-700 text-white"
+            : "bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25"
+        } disabled:opacity-50 disabled:cursor-not-allowed`}
+      >
+        {isSubmitting ? (
+          <span className="flex items-center gap-2">
+            <Loader2 className="w-5 h-5 animate-spin" />
+            Processing...
+          </span>
+        ) : hasValidCode ? (
+          "Generate Strategy — Free"
+        ) : (
+          "Generate Strategy — $15"
+        )}
+      </button>
+
+      {/* Promo code */}
+      <div>
+        {!showCode && !hasValidCode && (
+          <button
+            onClick={() => setShowCode(true)}
+            className="text-sm text-primary hover:text-primary/80 transition-colors"
+          >
+            Have a promo code?
+          </button>
+        )}
+
+        {showCode && !hasValidCode && (
+          <div className="max-w-xs mx-auto mt-4 space-y-2">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={promoCode}
+                onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                placeholder="Enter code"
+                className="flex-1 px-3 py-2 rounded-lg border border-border/60 bg-surface/50 text-sm text-foreground placeholder:text-muted/50 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
+              />
+              <button
+                onClick={validateCode}
+                disabled={!promoCode.trim() || isValidatingCode}
+                className="px-4 py-2 rounded-lg bg-surface border border-border text-sm font-medium hover:bg-surface/80 transition-colors disabled:opacity-50"
+              >
+                {isValidatingCode ? <Loader2 className="w-4 h-4 animate-spin" /> : "Apply"}
+              </button>
+            </div>
+            {codeStatus && !codeStatus.valid && (
+              <p className="text-sm text-red-500">{codeStatus.error || "Invalid code"}</p>
+            )}
+          </div>
+        )}
+
+        {hasValidCode && (
+          <div className="flex items-center justify-center gap-2 text-green-600">
+            <Check className="w-4 h-4" />
+            <span className="text-sm font-medium">
+              Code applied: {codeStatus?.credits} free {codeStatus?.credits === 1 ? "strategy" : "strategies"}
+            </span>
+            <button onClick={clearCode} className="text-muted hover:text-foreground ml-2">
+              ×
+            </button>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
+// Main component
 export default function StartPage() {
   const router = useRouter();
   const posthog = usePostHog();
-  const [step, setStep] = useState(1);
+
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [showAcknowledgment, setShowAcknowledgment] = useState(false);
   const [form, setForm] = useState<FormInput>(INITIAL_FORM_STATE);
-  const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const formStartedTracked = useRef(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Promo code state
-  const [showCodeInput, setShowCodeInput] = useState(false);
   const [promoCode, setPromoCode] = useState("");
   const [codeStatus, setCodeStatus] = useState<{
     valid: boolean;
@@ -99,41 +574,27 @@ export default function StartPage() {
   } | null>(null);
   const [isValidatingCode, setIsValidatingCode] = useState(false);
 
-  // Load from localStorage on mount
+  const question = QUESTIONS[currentQuestion];
+  const isComplete = currentQuestion >= QUESTIONS.length;
+
+  // Load from localStorage
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        // Validate schema before merging
-        if (
-          parsed &&
-          typeof parsed === "object" &&
-          typeof parsed.productDescription === "string"
-        ) {
-          // Ensure attachments is always an array
-          if (!Array.isArray(parsed.attachments)) {
-            parsed.attachments = [];
-          }
+        if (parsed && typeof parsed === "object" && typeof parsed.productDescription === "string") {
+          if (!Array.isArray(parsed.attachments)) parsed.attachments = [];
           setForm({ ...INITIAL_FORM_STATE, ...parsed });
-          // Track form started with restored data
-          if (!formStartedTracked.current) {
-            posthog?.capture("form_started", { source: "localStorage" });
-            formStartedTracked.current = true;
-          }
         }
       } catch {
-        // Invalid JSON, ignore
+        // Invalid JSON
       }
     }
-    // Track fresh form start if no saved data
-    if (!formStartedTracked.current) {
-      posthog?.capture("form_started", { source: "fresh" });
-      formStartedTracked.current = true;
-    }
+    posthog?.capture("form_started", { version: "rapid-fire" });
   }, [posthog]);
 
-  // Save to localStorage on change
+  // Save to localStorage
   useEffect(() => {
     const timeout = setTimeout(() => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(form));
@@ -143,30 +604,31 @@ export default function StartPage() {
 
   const hasValidCode = codeStatus?.valid === true;
 
-  const updateField = <K extends keyof FormInput>(
-    field: K,
-    value: FormInput[K]
-  ) => {
+  const updateField = useCallback(<K extends keyof FormInput>(field: K, value: FormInput[K]) => {
     setForm((prev) => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors((prev) => {
-        const next = { ...prev };
-        delete next[field];
-        return next;
-      });
-    }
-  };
+  }, []);
 
-  const updateCompetitor = (index: number, value: string) => {
-    const newCompetitors = [...form.competitors];
-    newCompetitors[index] = value;
-    updateField("competitors", newCompetitors);
-  };
+  const goToNext = useCallback(() => {
+    const ack = QUESTIONS[currentQuestion]?.acknowledgment;
+
+    if (ack) {
+      setShowAcknowledgment(true);
+      setTimeout(() => {
+        setShowAcknowledgment(false);
+        setCurrentQuestion((c) => c + 1);
+      }, 600);
+    } else {
+      setCurrentQuestion((c) => c + 1);
+    }
+
+    posthog?.capture("question_answered", {
+      question_id: QUESTIONS[currentQuestion]?.id,
+      question_index: currentQuestion,
+    });
+  }, [currentQuestion, posthog]);
 
   const validateCode = async () => {
     if (!promoCode.trim()) return;
-
-    posthog?.capture("promo_code_entered", { code_length: promoCode.length });
     setIsValidatingCode(true);
     setCodeStatus(null);
 
@@ -176,16 +638,10 @@ export default function StartPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: promoCode }),
       });
-
       const data = await res.json();
       setCodeStatus(data);
-      posthog?.capture("promo_code_validated", {
-        valid: data.valid,
-        credits: data.credits,
-      });
     } catch {
-      setCodeStatus({ valid: false, error: "Failed to validate code" });
-      posthog?.capture("promo_code_validated", { valid: false });
+      setCodeStatus({ valid: false, error: "Failed to validate" });
     } finally {
       setIsValidatingCode(false);
     }
@@ -196,71 +652,10 @@ export default function StartPage() {
     setCodeStatus(null);
   };
 
-  // Validate current step before proceeding
-  const validateStep = (): boolean => {
-    const stepErrors: Record<string, string> = {};
-
-    if (step === 1) {
-      if (!form.productDescription.trim()) {
-        stepErrors.productDescription = "Please describe your product";
-      }
-    } else if (step === 2) {
-      if (!form.currentTraction.trim()) {
-        stepErrors.currentTraction = "Please describe your current traction";
-      }
-    } else if (step === 3) {
-      if (!form.triedTactics.trim()) {
-        stepErrors.triedTactics = "Please describe what you've tried";
-      }
-      if (!form.workingOrNot.trim()) {
-        stepErrors.workingOrNot = "Please describe what's working or not";
-      }
-    } else if (step === 4) {
-      // focusArea has a default, so always valid
-      // Optional fields don't need validation
-    }
-
-    if (Object.keys(stepErrors).length > 0) {
-      setErrors(stepErrors);
-      return false;
-    }
-
-    setErrors({});
-    return true;
-  };
-
-  const handleNext = () => {
-    if (validateStep()) {
-      posthog?.capture("form_step_completed", {
-        step,
-        step_name: STEPS[step - 1].label,
-      });
-      setStep((s) => Math.min(s + 1, TOTAL_STEPS));
-    }
-  };
-
-  const handleBack = () => {
-    posthog?.capture("form_step_back", { from_step: step });
-    setStep((s) => Math.max(s - 1, 1));
-  };
-
   const handleSubmit = async () => {
-    // Prevent double-submit
     if (isSubmitting) return;
-
-    // Final validation
-    const validationErrors = validateForm(form);
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
-    posthog?.capture("checkout_initiated", {
-      focus_area: form.focusArea,
-      has_promo: hasValidCode,
-    });
-
     setIsSubmitting(true);
+    setError(null);
 
     try {
       if (hasValidCode) {
@@ -269,15 +664,12 @@ export default function StartPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ code: promoCode, input: form }),
         });
-
         const data = await res.json();
-
         if (!res.ok) {
-          setErrors({ submit: data.error || "Failed to create run" });
+          setError(data.error || "Failed to create run");
           setIsSubmitting(false);
           return;
         }
-
         localStorage.removeItem(STORAGE_KEY);
         router.push(`/processing/${data.runId}`);
       } else {
@@ -289,305 +681,150 @@ export default function StartPage() {
             posthogDistinctId: posthog?.get_distinct_id(),
           }),
         });
-
         const data = await res.json();
-
         if (!res.ok) {
-          setErrors({ submit: data.error || "Failed to create checkout" });
+          setError(data.error || "Failed to create checkout");
           setIsSubmitting(false);
           return;
         }
-
         window.location.href = data.url;
       }
     } catch {
-      setErrors({ submit: "Something went wrong. Please try again." });
+      setError("Something went wrong");
       setIsSubmitting(false);
     }
   };
 
-  const totalChars = getTotalCharCount(form);
-  const charPercentage = (totalChars / MAX_TOTAL_CHARS) * 100;
+  // Get current value for the question
+  const getValue = (id: string) => {
+    if (id === "competitors") return form.competitors.filter(Boolean);
+    return form[id as keyof FormInput] as string;
+  };
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface/30">
+    <div className="min-h-screen flex flex-col bg-background">
       <Header />
 
-      <main className="flex-1 py-10 sm:py-14">
-        <div className="mx-auto max-w-xl px-4 sm:px-6">
-          {/* Step indicator */}
-          <div className="mb-10">
-            <StepIndicator currentStep={step} />
+      <main className="flex-1 flex flex-col items-center justify-center px-6 py-12">
+        <div className="w-full max-w-2xl">
+          {/* Progress bar */}
+          <div className="mb-12">
+            <ProgressBar current={currentQuestion} total={QUESTIONS.length} />
           </div>
 
-          {/* Form card */}
-          <div className="bg-background rounded-xl shadow-lg shadow-foreground/5 border border-border/50 p-6 sm:p-8">
-            {/* Step title */}
-            <div className="mb-8">
-              <h1 className="text-2xl font-semibold text-foreground tracking-tight">
-                {STEPS[step - 1].title}
-              </h1>
-              <p className="text-muted mt-1.5 text-sm">
-                Step {step} of {TOTAL_STEPS}
-              </p>
-            </div>
-
-            {/* Step content */}
-            <div className="space-y-6">
-            {step === 1 && (
-              <Textarea
-                label="What does your product do?"
-                hint="Describe your product in 1-2 sentences. What problem does it solve?"
-                placeholder="e.g., We're a project management tool for remote teams that focuses on async communication..."
-                required
-                value={form.productDescription}
-                onChange={(e) => updateField("productDescription", e.target.value)}
-                error={errors.productDescription}
-              />
-            )}
-
-            {step === 2 && (
-              <Textarea
-                label="Current traction"
-                hint="Users, revenue, traffic, whatever matters for your business."
-                placeholder="e.g., 500 registered users, 50 paying customers, $2k MRR, 10k monthly visitors..."
-                required
-                value={form.currentTraction}
-                onChange={(e) => updateField("currentTraction", e.target.value)}
-                error={errors.currentTraction}
-              />
-            )}
-
-            {step === 3 && (
-              <>
-                <Textarea
-                  label="What have you tried so far?"
-                  hint="Channels, tactics, experiments, marketing efforts."
-                  placeholder="e.g., SEO content, Twitter/X threads, Product Hunt launch, cold outreach..."
-                  required
-                  value={form.triedTactics}
-                  onChange={(e) => updateField("triedTactics", e.target.value)}
-                  error={errors.triedTactics}
+          <AnimatePresence mode="wait">
+            {showAcknowledgment ? (
+              <motion.div
+                key="ack"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="min-h-[300px] flex items-center justify-center"
+              >
+                <Acknowledgment text={QUESTIONS[currentQuestion]?.acknowledgment || ""} />
+              </motion.div>
+            ) : isComplete ? (
+              <motion.div
+                key="checkout"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="min-h-[300px] flex items-center justify-center"
+              >
+                <CheckoutSection
+                  onSubmit={handleSubmit}
+                  isSubmitting={isSubmitting}
+                  hasValidCode={hasValidCode}
+                  promoCode={promoCode}
+                  setPromoCode={setPromoCode}
+                  codeStatus={codeStatus}
+                  validateCode={validateCode}
+                  isValidatingCode={isValidatingCode}
+                  clearCode={clearCode}
                 />
+              </motion.div>
+            ) : (
+              <motion.div
+                key={question.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="min-h-[300px]"
+              >
+                {/* Question */}
+                <h1 className="text-2xl sm:text-3xl font-semibold text-foreground text-center mb-8">
+                  {question.question}
+                </h1>
 
-                <Textarea
-                  label="What's working and what's not?"
-                  hint="Be specific about wins and failures."
-                  placeholder="e.g., Twitter gets engagement but no conversions. SEO is slow..."
-                  required
-                  value={form.workingOrNot}
-                  onChange={(e) => updateField("workingOrNot", e.target.value)}
-                  error={errors.workingOrNot}
-                />
-              </>
+                {/* Input */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15 }}
+                >
+                    {question.type === "url" && (
+                      <UrlInput
+                        value={getValue("websiteUrl") as string}
+                        onChange={(v) => updateField("websiteUrl", v)}
+                        onSubmit={goToNext}
+                      />
+                    )}
+
+                    {question.type === "textarea" && (
+                      <TextareaInput
+                        value={getValue(question.id) as string}
+                        onChange={(v) => updateField(question.id as keyof FormInput, v as never)}
+                        onSubmit={goToNext}
+                        placeholder={
+                          question.id === "productDescription"
+                            ? "We help [who] do [what] by [how]..."
+                            : question.id === "triedTactics"
+                            ? "SEO, social media, ads, content marketing..."
+                            : "What's bringing results? What's not working?"
+                        }
+                      />
+                    )}
+
+                    {question.type === "traction" && (
+                      <TractionInput
+                        value={getValue("currentTraction") as string}
+                        onChange={(v) => updateField("currentTraction", v)}
+                        onSubmit={goToNext}
+                      />
+                    )}
+
+                    {question.type === "focus" && (
+                      <FocusInput
+                        value={form.focusArea}
+                        onChange={(v) => updateField("focusArea", v)}
+                        onSubmit={goToNext}
+                      />
+                    )}
+
+                    {question.type === "competitors" && (
+                      <CompetitorInput
+                        value={form.competitors.filter(Boolean)}
+                        onChange={(v) => {
+                          const padded = [...v, "", "", ""].slice(0, 3);
+                          updateField("competitors", padded);
+                        }}
+                        onSubmit={goToNext}
+                        onSkip={goToNext}
+                      />
+                    )}
+                  </motion.div>
+                )}
+              </motion.div>
             )}
+          </AnimatePresence>
 
-            {step === 4 && (
-              <>
-                <RadioGroup
-                  name="focusArea"
-                  label="What should we focus on?"
-                  options={FOCUS_AREA_OPTIONS}
-                  value={form.focusArea}
-                  onChange={(value) =>
-                    updateField("focusArea", value as FormInput["focusArea"])
-                  }
-                  required
-                />
-
-                {/* Optional fields - collapsed by default */}
-                <details className="group">
-                  <summary className="cursor-pointer text-sm font-medium text-primary hover:text-primary/80 list-none flex items-center gap-2 py-2">
-                    <ChevronRight className="h-4 w-4 transition-transform duration-200 group-open:rotate-90" />
-                    Optional: Add more context
-                  </summary>
-                  <div className="mt-4 space-y-5 pt-4 border-t border-border/40">
-                    <div className="space-y-2">
-                      <label className="block text-sm font-medium text-foreground">
-                        Competitor URLs (up to 3)
-                      </label>
-                      {form.competitors.map((competitor, index) => (
-                        <Input
-                          key={index}
-                          label=""
-                          placeholder={`https://competitor${index + 1}.com`}
-                          type="url"
-                          value={competitor}
-                          onChange={(e) => updateCompetitor(index, e.target.value)}
-                        />
-                      ))}
-                    </div>
-
-                    <Input
-                      label="Your website URL"
-                      placeholder="https://yoursite.com"
-                      type="url"
-                      value={form.websiteUrl}
-                      onChange={(e) => updateField("websiteUrl", e.target.value)}
-                    />
-
-                    <Textarea
-                      label="Analytics summary"
-                      hint="Paste key metrics from Google Analytics, PostHog, etc."
-                      placeholder="e.g., Top traffic sources, bounce rate, conversion funnel..."
-                      value={form.analyticsSummary}
-                      onChange={(e) => updateField("analyticsSummary", e.target.value)}
-                    />
-
-                    <Textarea
-                      label="Constraints"
-                      hint="Budget, time, skills, or other limitations."
-                      placeholder="e.g., $500/month budget, solo founder, limited time..."
-                      value={form.constraints}
-                      onChange={(e) => updateField("constraints", e.target.value)}
-                    />
-
-                    <FileUpload
-                      label="Supporting files"
-                      hint="Screenshots, PDFs, etc. (max 5 files, 10MB each)"
-                      files={form.attachments}
-                      onFilesChange={(files) => updateField("attachments", files)}
-                      maxFiles={5}
-                      maxSizeMB={10}
-                    />
-                  </div>
-                </details>
-
-                {/* Promo code */}
-                <div className="pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowCodeInput(!showCodeInput)}
-                    className="flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-                  >
-                    <Gift className="h-4 w-4" />
-                    <span>Have a promo code?</span>
-                  </button>
-
-                  {showCodeInput && (
-                    <div className="mt-4 p-4 rounded-lg bg-surface/50 border border-border/60">
-                      {hasValidCode ? (
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2 text-green-600">
-                            <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
-                              <Check className="h-3 w-3" />
-                            </div>
-                            <span className="text-sm font-medium">
-                              Code applied: {codeStatus.credits} free{" "}
-                              {codeStatus.credits === 1 ? "strategy" : "strategies"}
-                            </span>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={clearCode}
-                            className="p-1 rounded-md text-muted hover:text-foreground hover:bg-surface transition-colors"
-                          >
-                            <X className="h-4 w-4" />
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="space-y-3">
-                          <div className="flex gap-3">
-                            <input
-                              type="text"
-                              value={promoCode}
-                              onChange={(e) => {
-                                setPromoCode(e.target.value.toUpperCase());
-                                setCodeStatus(null);
-                              }}
-                              placeholder="Enter code"
-                              className="flex-1 rounded-lg border border-border/60 bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted/50 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                            />
-                            <Button
-                              type="button"
-                              variant="secondary"
-                              size="md"
-                              onClick={validateCode}
-                              disabled={!promoCode.trim() || isValidatingCode}
-                            >
-                              {isValidatingCode ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                              ) : (
-                                "Apply"
-                              )}
-                            </Button>
-                          </div>
-
-                          {codeStatus && !codeStatus.valid && (
-                            <p className="text-sm text-red-500 flex items-center gap-1.5">
-                              <X className="h-4 w-4" />
-                              {codeStatus.error || "Invalid code"}
-                            </p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-
-            {/* Navigation */}
-            <div className="mt-8 pt-6 border-t border-border/50">
-              {errors.submit && (
-                <p className="text-sm text-red-500 mb-4">{errors.submit}</p>
-              )}
-
-              <div className="flex items-center justify-between">
-                <div>
-                  {step > 1 && (
-                    <Button variant="ghost" onClick={handleBack}>
-                      <ChevronLeft className="h-4 w-4 mr-1" />
-                      Back
-                    </Button>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-4">
-                  {/* Character count on final step */}
-                  {step === TOTAL_STEPS && (
-                    <span
-                      className={`text-xs ${
-                        charPercentage > 90 ? "text-cta" : "text-muted"
-                      }`}
-                    >
-                      {totalChars.toLocaleString()} / {MAX_TOTAL_CHARS.toLocaleString()}
-                    </span>
-                  )}
-
-                  {step < TOTAL_STEPS ? (
-                    <Button onClick={handleNext} size="lg">
-                      Continue
-                      <ChevronRight className="h-4 w-4 ml-1.5" />
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={handleSubmit}
-                      disabled={isSubmitting}
-                      size="lg"
-                      className={hasValidCode ? "bg-green-600 hover:bg-green-700" : ""}
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                          Processing...
-                        </>
-                      ) : hasValidCode ? (
-                        "Generate Strategy — Free"
-                      ) : (
-                        "Generate Strategy — $15"
-                      )}
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Error message */}
+          {error && (
+            <p className="text-center text-red-500 mt-4">{error}</p>
+          )}
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

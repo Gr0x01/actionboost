@@ -64,14 +64,14 @@ export function StartDoing({ content }: StartDoingProps) {
   // Fallback if parsing fails
   if (items.length === 0) {
     return (
-      <SectionCard icon={PlayCircle} title="Start Doing" accentColor="green">
+      <SectionCard id="start-doing" icon={PlayCircle} title="Start Doing" accentColor="green">
         <div className="text-muted whitespace-pre-wrap">{content}</div>
       </SectionCard>
     );
   }
 
   return (
-    <SectionCard icon={PlayCircle} title="Start Doing" accentColor="green">
+    <SectionCard id="start-doing" icon={PlayCircle} title="Start Doing" accentColor="green">
       <p className="text-muted mb-8 text-sm">
         Ranked by ICE score — Impact, Confidence, and Ease combined.
       </p>

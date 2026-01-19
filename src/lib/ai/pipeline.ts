@@ -1,6 +1,7 @@
 import { createServiceClient } from '@/lib/supabase/server'
 import { runResearch } from './research'
 import { generateStrategy } from './generate'
+import { accumulateUserContext } from '@/lib/context/accumulate'
 import type { RunInput, PipelineResult, ResearchContext } from './types'
 
 // Validate critical env vars at module load
@@ -90,6 +91,13 @@ export async function runPipeline(runId: string): Promise<PipelineResult> {
     if (updateError) {
       console.error('[Pipeline] Failed to save output:', updateError)
       return { success: false, error: `Failed to save output: ${updateError.message}` }
+    }
+
+    // Accumulate user context for multi-run support (fire-and-forget)
+    if (run.user_id) {
+      accumulateUserContext(run.user_id, runId, input, output).catch((err) => {
+        console.error('[Pipeline] Context accumulation failed:', err)
+      })
     }
 
     console.log(`[Pipeline] Run ${runId} completed successfully`)

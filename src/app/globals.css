@@ -33,40 +33,6 @@
   --shadow-glow: 0 0 40px rgba(59, 130, 246, 0.15);
 }
 
-/* ===== Dark Mode ===== */
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Core colors */
-    --navy: #E2E8F0;
-    --primary: #60A5FA;
-    --primary-light: #1E3A5F;
-    --cta: #FF8C00;
-    --cta-hover: #FFA940;
-    --accent: #FCD34D;
-
-    /* Backgrounds */
-    --background: #0A0A0A;
-    --surface: #141414;
-
-    /* Text */
-    --foreground: #F1F5F9;
-    --muted: #9CA3AF;
-
-    /* Borders */
-    --border: #2D2D2D;
-
-    /* Gradients - darker variants */
-    --gradient-hero: linear-gradient(135deg, #0A0A0A 0%, #0F172A 50%, #1E1B4B 100%);
-    --gradient-accent: linear-gradient(135deg, #FF8C00 0%, #FCD34D 100%);
-    --gradient-blue: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
-
-    /* Shadows */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
-    --shadow-glow: 0 0 40px rgba(96, 165, 250, 0.2);
-  }
-}
 
 /* ===== Tailwind Theme ===== */
 @theme inline {
@@ -87,13 +53,11 @@
   --font-sans: var(--font-space-grotesk), system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), monospace;
 
-  /* Border radius */
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-2xl: 24px;
-  --radius-pill: 9999px;
+  /* Border radius - tighter, Stripe-like */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
 
   /* Animations */
   --animate-fade-in: fade-in 0.6s ease-out forwards;
@@ -245,11 +209,6 @@ body {
   -webkit-backdrop-filter: blur(12px);
 }
 
-@media (prefers-color-scheme: dark) {
-  .glass {
-    background: rgba(20, 20, 20, 0.8);
-  }
-}
 
 /* Mesh gradient background */
 .bg-mesh {

@@ -12,14 +12,14 @@ export function StopDoing({ content }: StopDoingProps) {
   // Fallback if parsing fails
   if (items.length === 0) {
     return (
-      <SectionCard icon={XCircle} title="Stop Doing" accentColor="red">
+      <SectionCard id="stop-doing" icon={XCircle} title="Stop Doing" accentColor="red">
         <div className="text-muted whitespace-pre-wrap">{content}</div>
       </SectionCard>
     );
   }
 
   return (
-    <SectionCard icon={XCircle} title="Stop Doing" accentColor="red">
+    <SectionCard id="stop-doing" icon={XCircle} title="Stop Doing" accentColor="red">
       {/* Warning banner */}
       <div className="flex items-center gap-2 mb-6 py-2 px-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
         <AlertTriangle className="h-4 w-4" />

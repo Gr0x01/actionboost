@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useEffect, useState, useCallback, Suspense } from "react";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { ResultsContent, StatusMessage, ExportBar } from "@/components/results";
+import { ResultsContent, StatusMessage, ExportBar, TableOfContents } from "@/components/results";
 import { parseStrategy, type ParsedStrategy } from "@/lib/markdown/parser";
 
 type RunStatus = "pending" | "processing" | "complete" | "failed";
@@ -18,23 +18,41 @@ interface RunData {
   completed_at: string | null;
 }
 
-export default function ResultsPage() {
+function ResultsPageContent() {
   const params = useParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const runId = params.runId as string;
+  const shareSlug = searchParams.get("share");
 
   const [run, setRun] = useState<RunData | null>(null);
   const [strategy, setStrategy] = useState<ParsedStrategy | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Build API URL with share param if available
+  const getApiUrl = useCallback((path: string) => {
+    const url = new URL(path, window.location.origin);
+    if (shareSlug) url.searchParams.set("share", shareSlug);
+    return url.toString();
+  }, [shareSlug]);
+
   useEffect(() => {
     if (!runId) return;
 
     const fetchRun = async () => {
       try {
-        const res = await fetch(`/api/runs/${runId}`);
+        const res = await fetch(getApiUrl(`/api/runs/${runId}`));
+
         if (!res.ok) {
-          if (res.status === 404) {
+          if (res.status === 401) {
+            // Not authenticated, redirect to login
+            router.push(`/login?next=/results/${runId}`);
+            return;
+          }
+          if (res.status === 403) {
+            setError("You don't have access to this strategy");
+          } else if (res.status === 404) {
             setError("Strategy not found");
           } else {
             setError("Failed to load strategy");
@@ -60,7 +78,7 @@ export default function ResultsPage() {
     };
 
     fetchRun();
-  }, [runId]);
+  }, [runId, getApiUrl, router]);
 
   // Poll for status if pending/processing (max 100 polls = ~5 minutes)
   useEffect(() => {
@@ -81,13 +99,13 @@ export default function ResultsPage() {
       }
 
       try {
-        const res = await fetch(`/api/runs/${runId}/status`);
+        const res = await fetch(getApiUrl(`/api/runs/${runId}/status`));
         if (res.ok) {
           const data = await res.json();
 
           if (data.status === "complete") {
             // Refetch full data
-            const fullRes = await fetch(`/api/runs/${runId}`);
+            const fullRes = await fetch(getApiUrl(`/api/runs/${runId}`));
             if (fullRes.ok) {
               const fullData = await fullRes.json();
               setRun(fullData.run);
@@ -107,7 +125,7 @@ export default function ResultsPage() {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [runId, run]);
+  }, [runId, run, getApiUrl]);
 
   // Loading state
   if (loading) {
@@ -164,20 +182,55 @@ export default function ResultsPage() {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-1 py-8">
-        <div className="mx-auto max-w-4xl px-6">
-          <ExportBar
-            markdown={run.output || ""}
-            runId={run.id}
-            shareSlug={run.share_slug}
-            productName={productName}
-          />
+      <main className="flex-1">
+        <div className="mx-auto max-w-7xl px-6">
+          {/* Export bar - full width */}
+          <div className="max-w-4xl mx-auto lg:max-w-none lg:ml-[220px]">
+            <ExportBar
+              markdown={run.output || ""}
+              runId={run.id}
+              shareSlug={run.share_slug}
+              productName={productName}
+            />
+          </div>
 
-          {strategy && <ResultsContent strategy={strategy} />}
+          {/* Mobile TOC - horizontal tabs */}
+          {strategy && <TableOfContents strategy={strategy} />}
+
+          {/* Desktop layout: sidebar + content */}
+          <div className="lg:flex lg:gap-8 py-8">
+            {/* Desktop sidebar - hidden on mobile */}
+            <div className="hidden lg:block lg:w-[200px] lg:flex-shrink-0">
+              {strategy && <TableOfContents strategy={strategy} />}
+            </div>
+
+            {/* Main content */}
+            <div className="flex-1 max-w-4xl">
+              {strategy && <ResultsContent strategy={strategy} />}
+            </div>
+          </div>
         </div>
       </main>
 
       <Footer />
     </div>
+  );
+}
+
+export default function ResultsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex flex-col bg-mesh">
+          <Header />
+          <main className="flex-1 flex items-center justify-center">
+            <div className="animate-pulse text-muted">Loading...</div>
+          </main>
+          <Footer />
+        </div>
+      }
+    >
+      <ResultsPageContent />
+    </Suspense>
   );
 }

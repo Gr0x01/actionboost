@@ -9,7 +9,7 @@ export function ExecutiveSummary({ content }: ExecutiveSummaryProps) {
   const paragraphs = content.split("\n\n").filter(Boolean);
 
   return (
-    <SectionCard icon={Sparkles} title="Executive Summary" accentColor="primary">
+    <SectionCard id="executive-summary" icon={Sparkles} title="Executive Summary" accentColor="primary">
       {/* Large opening quote style */}
       <div className="relative">
         {/* Decorative quote mark */}

@@ -388,13 +388,42 @@ ${input.whatsWorking}
   }
 
   if (research.seoMetrics.length) {
-    message += `\n## SEO/Traffic Data\n`
+    message += `\n## Competitor SEO Intelligence\n`
     for (const m of research.seoMetrics) {
-      if (!m.error) {
-        message += `- **${m.domain}**: ~${m.organicTraffic?.toLocaleString() || 'N/A'} monthly organic visits, ${m.organicKeywords?.toLocaleString() || 'N/A'} keywords\n`
-        if (m.topKeywords?.length) {
-          message += `  Top keywords: ${m.topKeywords.slice(0, 5).join(', ')}\n`
+      if (m.error) continue
+
+      message += `\n### ${m.domain}\n`
+
+      // Basic traffic metrics
+      if (m.organicTraffic || m.organicKeywords) {
+        message += `- **Traffic**: ~${m.organicTraffic?.toLocaleString() || 'N/A'} monthly organic visits\n`
+        message += `- **Keywords**: ${m.organicKeywords?.toLocaleString() || 'N/A'} keywords ranking\n`
+      }
+
+      // Backlink data
+      if (m.backlinks || m.referringDomains) {
+        message += `- **Backlinks**: ${m.backlinks?.toLocaleString() || 'N/A'} total from ${m.referringDomains?.toLocaleString() || 'N/A'} referring domains\n`
+        if (m.domainRank) {
+          message += `- **Domain Rank**: ${m.domainRank}\n`
         }
+      }
+
+      // Top ranked keywords with positions and volumes
+      if (m.topRankedKeywords?.length) {
+        message += `- **Top Keywords**:\n`
+        for (const k of m.topRankedKeywords.slice(0, 5)) {
+          message += `  - "${k.keyword}" - Position #${k.position}, ${k.searchVolume.toLocaleString()} monthly searches\n`
+        }
+      }
+
+      // Top referring domains (link sources)
+      if (m.topReferrers?.length) {
+        message += `- **Top Link Sources**: ${m.topReferrers.slice(0, 5).join(', ')}\n`
+      }
+
+      // Competitor overlap
+      if (m.competitorDomains?.length) {
+        message += `- **Also Competes With**: ${m.competitorDomains.slice(0, 5).join(', ')}\n`
       }
     }
   }

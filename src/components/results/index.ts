@@ -4,6 +4,7 @@ export { StatusMessage } from "./StatusMessage";
 export { ExportBar } from "./ExportBar";
 export { ShareModal } from "./ShareModal";
 export { SectionCard } from "./SectionCard";
+export { TableOfContents } from "./TableOfContents";
 
 // Section components
 export { ExecutiveSummary } from "./sections/ExecutiveSummary";

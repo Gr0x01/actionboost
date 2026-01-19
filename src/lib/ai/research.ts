@@ -211,7 +211,7 @@ async function fetchDomainSEOData(
           metrics.organicTraffic = data.organicTraffic
           metrics.organicKeywords = data.organicKeywords
         })
-        .catch((err) => errors.push(`domain_metrics for ${domain}: ${err.message}`))
+        .catch((err) => { errors.push(`domain_metrics for ${domain}: ${err.message}`) })
     )
   }
 
@@ -221,7 +221,7 @@ async function fetchDomainSEOData(
         .then((data) => {
           metrics.topRankedKeywords = data
         })
-        .catch((err) => errors.push(`ranked_keywords for ${domain}: ${err.message}`))
+        .catch((err) => { errors.push(`ranked_keywords for ${domain}: ${err.message}`) })
     )
   }
 
@@ -231,7 +231,7 @@ async function fetchDomainSEOData(
         .then((data) => {
           metrics.competitorDomains = data
         })
-        .catch((err) => errors.push(`competitors for ${domain}: ${err.message}`))
+        .catch((err) => { errors.push(`competitors for ${domain}: ${err.message}`) })
     )
   }
 
@@ -243,7 +243,7 @@ async function fetchDomainSEOData(
           metrics.referringDomains = data.referringDomains
           metrics.domainRank = data.domainRank
         })
-        .catch((err) => errors.push(`backlinks for ${domain}: ${err.message}`))
+        .catch((err) => { errors.push(`backlinks for ${domain}: ${err.message}`) })
     )
   }
 
@@ -253,7 +253,7 @@ async function fetchDomainSEOData(
         .then((data) => {
           metrics.topReferrers = data
         })
-        .catch((err) => errors.push(`referrers for ${domain}: ${err.message}`))
+        .catch((err) => { errors.push(`referrers for ${domain}: ${err.message}`) })
     )
   }
 

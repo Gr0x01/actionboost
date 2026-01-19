@@ -48,7 +48,7 @@ export function CurrentSituation({ content }: CurrentSituationProps) {
   flushList();
 
   return (
-    <SectionCard icon={User} title="Your Current Situation" accentColor="blue">
+    <SectionCard id="current-situation" icon={User} title="Your Current Situation" accentColor="blue">
       <div className="leading-relaxed">{elements}</div>
     </SectionCard>
   );
