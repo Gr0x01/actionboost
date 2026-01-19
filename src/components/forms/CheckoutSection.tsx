@@ -85,9 +85,9 @@ export function CheckoutSection({
 
       const data = await res.json();
 
-      if (res.ok && data.freeAuditId) {
+      if (res.ok && data.freeAuditId && data.token) {
         posthog?.capture("free_audit_success", { free_audit_id: data.freeAuditId });
-        router.push(`/free-results/${data.freeAuditId}?new=1`);
+        router.push(`/free-results/${data.freeAuditId}?new=1&token=${encodeURIComponent(data.token)}`);
       } else if (res.status === 409) {
         // Already has a free audit
         posthog?.capture("free_audit_duplicate", { error: data.error });

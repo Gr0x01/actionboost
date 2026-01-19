@@ -126,17 +126,39 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   }
 
   // Parse form data from metadata (aligned with RunInput type for AI pipeline)
+  // Safely parse competitor URLs with fallback
+  let competitorUrls: string[] = [];
+  try {
+    const parsed = JSON.parse(metadata.form_competitors || "[]");
+    if (Array.isArray(parsed)) {
+      competitorUrls = parsed.filter((url): url is string => typeof url === "string" && url.length > 0);
+    }
+  } catch {
+    console.warn("Failed to parse competitor URLs from metadata:", metadata.form_competitors);
+  }
+
+  // Validate focusArea - fallback to acquisition if invalid
+  const validFocusAreas = ["acquisition", "activation", "retention", "referral", "monetization", "custom"];
+  const focusArea = validFocusAreas.includes(metadata.form_focus || "")
+    ? metadata.form_focus
+    : "acquisition";
+
   const formInput = {
     productDescription: metadata.form_product || "",
     currentTraction: metadata.form_traction || "",
     whatYouTried: metadata.form_tried || "",
     whatsWorking: metadata.form_working || "",
-    focusArea: metadata.form_focus || "acquisition",
-    competitorUrls: JSON.parse(metadata.form_competitors || "[]").filter(Boolean),
+    focusArea,
+    competitorUrls,
     websiteUrl: metadata.form_website || "",
     analyticsSummary: metadata.form_analytics || "",
     constraints: metadata.form_constraints || "",
   };
+
+  // Log if critical fields are missing (shouldn't happen normally)
+  if (!formInput.productDescription) {
+    console.warn("Webhook: Missing productDescription for session:", session.id);
+  }
 
   // Create the run
   const { data: run, error: runError } = await supabase

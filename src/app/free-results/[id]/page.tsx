@@ -109,6 +109,34 @@ function FreeResultsPageContent() {
   const pageLoadTime = useRef(Date.now());
   const statusRef = useRef<AuditStatus | null>(null);
 
+  // Token handling: prefer sessionStorage, fallback to URL param
+  // This prevents token leakage via referrer headers
+  const [token, setToken] = useState<string | null>(null);
+  const [tokenChecked, setTokenChecked] = useState(false);
+
+  useEffect(() => {
+    if (!freeAuditId) return;
+
+    const storageKey = `audit_token_${freeAuditId}`;
+    const urlToken = searchParams.get("token");
+    const storedToken = sessionStorage.getItem(storageKey);
+
+    if (urlToken) {
+      // Store token and clean URL to prevent referrer leakage
+      sessionStorage.setItem(storageKey, urlToken);
+      setToken(urlToken);
+
+      // Remove token from URL without triggering navigation
+      const url = new URL(window.location.href);
+      url.searchParams.delete("token");
+      window.history.replaceState({}, "", url.toString());
+    } else if (storedToken) {
+      setToken(storedToken);
+    }
+
+    setTokenChecked(true);
+  }, [freeAuditId, searchParams]);
+
   const [freeAudit, setFreeAudit] = useState<FreeAuditData | null>(null);
   const [strategy, setStrategy] = useState<ParsedStrategy | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -134,15 +162,17 @@ function FreeResultsPageContent() {
   }, [posthog, freeAuditId]);
 
   useEffect(() => {
-    if (!freeAuditId) return;
+    if (!freeAuditId || !token) return;
 
     const fetchFreeAudit = async () => {
       try {
-        const res = await fetch(`/api/free-audit/${freeAuditId}`);
+        const res = await fetch(`/api/free-audit/${freeAuditId}?token=${encodeURIComponent(token)}`);
 
         if (!res.ok) {
           if (res.status === 404) {
             setError("Free audit not found");
+          } else if (res.status === 403) {
+            setError("Invalid or expired link");
           } else {
             setError("Failed to load audit");
           }
@@ -173,11 +203,11 @@ function FreeResultsPageContent() {
     };
 
     fetchFreeAudit();
-  }, [freeAuditId, posthog]);
+  }, [freeAuditId, token, posthog]);
 
   // Poll for status if pending/processing
   useEffect(() => {
-    if (!freeAuditId) return;
+    if (!freeAuditId || !token) return;
     if (statusRef.current === "complete" || statusRef.current === "failed") return;
 
     let pollCount = 0;
@@ -188,7 +218,7 @@ function FreeResultsPageContent() {
       pollCount++;
 
       try {
-        const res = await fetch(`/api/free-audit/${freeAuditId}`);
+        const res = await fetch(`/api/free-audit/${freeAuditId}?token=${encodeURIComponent(token)}`);
         if (res.ok) {
           const data = await res.json();
 
@@ -225,7 +255,23 @@ function FreeResultsPageContent() {
     return () => {
       stopped = true;
     };
-  }, [freeAuditId, posthog]);
+  }, [freeAuditId, token, posthog]);
+
+  // Missing token - invalid link (wait for token check to complete first)
+  if (tokenChecked && !token) {
+    return (
+      <div className="min-h-screen flex flex-col bg-mesh">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-muted mb-4">Invalid or expired link</p>
+            <a href="/start" className="text-primary hover:underline">Start a new audit →</a>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   // Loading state
   if (loading) {

@@ -1,16 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
+import { verifyAuditToken } from "@/lib/auth/audit-token";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   context: RouteContext
 ) {
   const { id } = await context.params;
 
   if (!id) {
     return NextResponse.json({ error: "ID required" }, { status: 400 });
+  }
+
+  // Verify access token
+  const token = request.nextUrl.searchParams.get("token");
+  if (!token || !verifyAuditToken(id, token)) {
+    return NextResponse.json({ error: "Invalid or missing access token" }, { status: 403 });
   }
 
   const supabase = createServiceClient();

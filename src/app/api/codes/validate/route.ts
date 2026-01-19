@@ -14,10 +14,10 @@ export async function POST(request: NextRequest) {
 
     const supabase = createServiceClient();
 
-    // Look up the code
+    // Look up the code - only select fields needed for validation
     const { data: codeRecord, error } = await supabase
       .from("codes")
-      .select("*")
+      .select("credits, max_uses, used_count, expires_at")
       .eq("code", code.toUpperCase().trim())
       .single();
 

@@ -6,6 +6,7 @@ import { runFreePipeline } from "@/lib/ai/pipeline";
 import { trackServerEvent } from "@/lib/analytics";
 import { isValidEmail } from "@/lib/validation";
 import { sendMagicLink } from "@/lib/auth/send-magic-link";
+import { signAuditToken } from "@/lib/auth/audit-token";
 
 // Field length limits for server-side validation
 const MAX_FIELD_LENGTHS: Record<string, number> = {
@@ -182,7 +183,10 @@ export async function POST(request: NextRequest) {
       console.error("Magic link failed for free audit:", freeAudit.id, err);
     });
 
-    return NextResponse.json({ freeAuditId: freeAudit.id });
+    // Generate access token for viewing results
+    const token = signAuditToken(freeAudit.id);
+
+    return NextResponse.json({ freeAuditId: freeAudit.id, token });
   } catch (error) {
     console.error("Free audit error:", error);
     return NextResponse.json(

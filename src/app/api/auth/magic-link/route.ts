@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error("Magic link error:", error)
       return NextResponse.json(
-        { error: error.message },
+        { error: "Failed to send magic link. Please try again." },
         { status: 400 }
       )
     }
