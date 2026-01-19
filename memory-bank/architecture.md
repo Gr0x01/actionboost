@@ -79,6 +79,8 @@ auth.users (Supabase Auth)     public.users (our table)
 | `/api/user/context` | PATCH | Apply delta updates | Required | ✅ |
 | `/api/user/context/search` | POST | Semantic search over context | Required | ✅ |
 | `/api/waitlist` | POST | Join waitlist (promo-only mode) | No | ✅ |
+| `/api/free-audit` | POST | Create free mini-audit | No | ✅ |
+| `/api/free-audit/[id]` | GET | Get free audit status/output | No | ✅ |
 
 **Auth pattern**: Check user's `auth_id` links to `public.users`, then verify `user_id` matches, OR valid `share_slug` for public access.
 
@@ -156,6 +158,17 @@ This keeps costs proportional to how useful SEO data is for each problem type.
 - Cost per run: ~$0.30
 - Total time: ~2 minutes
 - Graceful degradation: Research fails → proceed with limited context
+
+### Free Pipeline (Mini-Audit)
+Lighter-weight pipeline for lead generation:
+- Model: Claude Sonnet (`claude-sonnet-4-20250514`) instead of Opus
+- Research: Tavily only (no DataForSEO)
+- Output: 5 sections (2 full + 3 condensed)
+- No RAG/user history
+- Cost: ~$0.04/run
+- Rate limit: 1 per email (normalized for Gmail aliases)
+
+Files: `runFreePipeline()` in pipeline.ts, `generateMiniStrategy()` in generate.ts
 
 ### Test Scripts
 ```bash
@@ -281,6 +294,7 @@ generateStrategy(input, research, userHistory)
 | `codes` | Promo/redemption codes | Service role only |
 | `user_context_chunks` | Vector embeddings for RAG | Owner read only |
 | `waitlist` | Email collection for promo-only mode | Service role only |
+| `free_audits` | Free mini-audit runs (1 per email) | Service role only |
 
 ### Extensions
 | Extension | Purpose |

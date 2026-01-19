@@ -1,6 +1,6 @@
 import { createServiceClient } from '@/lib/supabase/server'
-import { runResearch } from './research'
-import { generateStrategy } from './generate'
+import { runResearch, runTavilyOnlyResearch } from './research'
+import { generateStrategy, generateMiniStrategy } from './generate'
 import { accumulateUserContext } from '@/lib/context/accumulate'
 import { searchUserContext } from './embeddings'
 import type { RunInput, PipelineResult, ResearchContext, UserHistoryContext } from './types'
@@ -175,6 +175,92 @@ export async function runPipeline(runId: string): Promise<PipelineResult> {
     console.error('[Pipeline] Strategy generation failed:', errorMsg)
 
     await supabase.from('runs').update({ status: 'failed' }).eq('id', runId)
+
+    return { success: false, error: `Generation failed: ${errorMsg}` }
+  }
+}
+
+// =============================================================================
+// FREE PIPELINE (Mini audit with Sonnet + Tavily only)
+// =============================================================================
+
+export type FreePipelineResult = {
+  success: boolean
+  output?: string
+  error?: string
+  freeAuditId?: string
+}
+
+/**
+ * Run the free mini-audit pipeline
+ *
+ * Differences from full pipeline:
+ * - Uses Sonnet instead of Opus
+ * - Tavily research only (no DataForSEO)
+ * - No RAG/user history
+ * - Stores in free_audits table (not runs)
+ * - 5 sections instead of 8
+ */
+export async function runFreePipeline(
+  freeAuditId: string,
+  input: RunInput
+): Promise<FreePipelineResult> {
+  validateEnv()
+
+  const supabase = createServiceClient()
+
+  // Update status to processing
+  await supabase.from('free_audits').update({ status: 'processing' }).eq('id', freeAuditId)
+
+  let research: ResearchContext
+
+  // Run Tavily-only research (no DataForSEO)
+  try {
+    console.log(`[FreePipeline] Starting Tavily research for ${freeAuditId}`)
+    research = await runTavilyOnlyResearch(input)
+    console.log(
+      `[FreePipeline] Research completed: ${research.competitorInsights.length} competitor insights, ${research.marketTrends.length} trends`
+    )
+  } catch (err) {
+    console.error('[FreePipeline] Research failed:', err)
+    research = {
+      competitorInsights: [],
+      marketTrends: [],
+      growthTactics: [],
+      seoMetrics: [],
+      researchCompletedAt: new Date().toISOString(),
+      errors: [`Research failed: ${err instanceof Error ? err.message : String(err)}`],
+    }
+  }
+
+  // Generate mini strategy with Sonnet
+  try {
+    console.log(`[FreePipeline] Generating mini strategy with Sonnet`)
+    const output = await generateMiniStrategy(input, research)
+    console.log(`[FreePipeline] Strategy generated: ${output.length} characters`)
+
+    // Save output and mark complete
+    const { error: updateError } = await supabase
+      .from('free_audits')
+      .update({
+        status: 'complete',
+        output,
+        completed_at: new Date().toISOString(),
+      })
+      .eq('id', freeAuditId)
+
+    if (updateError) {
+      console.error('[FreePipeline] Failed to save output:', updateError)
+      return { success: false, error: `Failed to save output: ${updateError.message}` }
+    }
+
+    console.log(`[FreePipeline] Free audit ${freeAuditId} completed successfully`)
+    return { success: true, output, freeAuditId }
+  } catch (err) {
+    const errorMsg = err instanceof Error ? err.message : String(err)
+    console.error('[FreePipeline] Generation failed:', errorMsg)
+
+    await supabase.from('free_audits').update({ status: 'failed' }).eq('id', freeAuditId)
 
     return { success: false, error: `Generation failed: ${errorMsg}` }
   }

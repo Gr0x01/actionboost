@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -96,6 +96,18 @@ const SUGGESTED_UPDATE_QUESTIONS = [
   "What tactics worked?",
 ];
 
+// Map question IDs to funnel step names
+const STEP_NAMES: Record<string, string> = {
+  websiteUrl: "url",
+  productDescription: "product",
+  currentTraction: "traction",
+  triedTactics: "tactics",
+  workingOrNot: "results",
+  attachments: "uploads",
+  focusArea: "focus",
+  competitors: "competitors",
+};
+
 export default function StartPage() {
   const router = useRouter();
   const posthog = usePostHog();
@@ -126,6 +138,11 @@ export default function StartPage() {
 
   const question = QUESTIONS[currentQuestion];
   const isQuestionsComplete = currentQuestion >= QUESTIONS.length;
+
+  // Tracking refs
+  const stepStartTime = useRef<number>(Date.now());
+  const formStartTime = useRef<number>(Date.now());
+  const hasTrackedStart = useRef(false);
 
   // Determine initial view state once context is loaded
   useEffect(() => {
@@ -169,7 +186,7 @@ export default function StartPage() {
     setViewState("welcome_back");
   }, []);
 
-  // Load from localStorage
+  // Load from localStorage and track form start
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -183,8 +200,32 @@ export default function StartPage() {
         // Invalid JSON
       }
     }
-    posthog?.capture("form_started", { version: "rapid-fire" });
+    if (!hasTrackedStart.current) {
+      posthog?.capture("form_started", { version: "rapid-fire" });
+      formStartTime.current = Date.now();
+      stepStartTime.current = Date.now();
+      hasTrackedStart.current = true;
+    }
   }, [posthog]);
+
+  // Form abandonment tracking
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (viewState === "questions" || viewState === "checkout") {
+        const stepName = viewState === "checkout" ? "checkout" : STEP_NAMES[question?.id || ""] || "unknown";
+        const timeSpent = Math.round((Date.now() - formStartTime.current) / 1000);
+        posthog?.capture("form_abandoned", {
+          last_step: currentQuestion + 1,
+          step_name: stepName,
+          view_state: viewState,
+          time_spent_seconds: timeSpent,
+        });
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [viewState, currentQuestion, question?.id, posthog]);
 
   // Save to localStorage
   useEffect(() => {
@@ -200,8 +241,36 @@ export default function StartPage() {
     setForm((prev) => ({ ...prev, [field]: value }));
   }, []);
 
-  const goToNext = useCallback(() => {
-    const ack = QUESTIONS[currentQuestion]?.acknowledgment;
+  const goToNext = useCallback((skipped = false) => {
+    const currentQ = QUESTIONS[currentQuestion];
+    const stepName = STEP_NAMES[currentQ?.id || ""] || "unknown";
+    const stepSeconds = Math.round((Date.now() - stepStartTime.current) / 1000);
+    const ack = currentQ?.acknowledgment;
+
+    // Track step completion with distinct event name
+    posthog?.capture(`form_step_${stepName}`, {
+      step: currentQuestion + 1,
+      step_name: stepName,
+      skipped,
+    });
+
+    // Track time spent on step
+    posthog?.capture("form_step_time", {
+      step: currentQuestion + 1,
+      step_name: stepName,
+      seconds: stepSeconds,
+    });
+
+    // Track skip separately if applicable
+    if (skipped) {
+      posthog?.capture("form_step_skipped", {
+        step: currentQuestion + 1,
+        step_name: stepName,
+      });
+    }
+
+    // Reset step timer for next question
+    stepStartTime.current = Date.now();
 
     if (ack) {
       setShowAcknowledgment(true);
@@ -212,6 +281,7 @@ export default function StartPage() {
         // If we've finished all questions, go to checkout
         if (nextQuestion >= QUESTIONS.length) {
           setViewState("checkout");
+          posthog?.capture("form_step_checkout", { step: 9, step_name: "checkout" });
         }
       }, 600);
     } else {
@@ -220,13 +290,9 @@ export default function StartPage() {
       // If we've finished all questions, go to checkout
       if (nextQuestion >= QUESTIONS.length) {
         setViewState("checkout");
+        posthog?.capture("form_step_checkout", { step: 9, step_name: "checkout" });
       }
     }
-
-    posthog?.capture("question_answered", {
-      question_id: QUESTIONS[currentQuestion]?.id,
-      question_index: currentQuestion,
-    });
   }, [currentQuestion, posthog]);
 
   const goBack = useCallback(() => {
@@ -428,6 +494,7 @@ export default function StartPage() {
                   clearCode={clearCode}
                   email={email}
                   setEmail={setEmail}
+                  formData={form}
                 />
                 <button
                   onClick={() => {
@@ -467,8 +534,8 @@ export default function StartPage() {
                     <UrlInput
                       value={getValue("websiteUrl") as string}
                       onChange={(v) => updateField("websiteUrl", v)}
-                      onSubmit={goToNext}
-                      onSkip={question.optional ? goToNext : undefined}
+                      onSubmit={() => goToNext(false)}
+                      onSkip={question.optional ? () => goToNext(true) : undefined}
                       onBack={currentQuestion > 0 ? goBack : undefined}
                     />
                   )}
@@ -477,7 +544,7 @@ export default function StartPage() {
                     <TextareaInput
                       value={getValue(question.id) as string}
                       onChange={(v) => updateField(question.id as keyof FormInput, v as never)}
-                      onSubmit={goToNext}
+                      onSubmit={() => goToNext(false)}
                       onBack={currentQuestion > 0 ? goBack : undefined}
                       placeholder={
                         question.id === "productDescription"
@@ -495,7 +562,7 @@ export default function StartPage() {
                     <TractionInput
                       value={getValue("currentTraction") as string}
                       onChange={(v) => updateField("currentTraction", v)}
-                      onSubmit={goToNext}
+                      onSubmit={() => goToNext(false)}
                       onBack={currentQuestion > 0 ? goBack : undefined}
                     />
                   )}
@@ -504,7 +571,7 @@ export default function StartPage() {
                     <FocusInput
                       value={form.focusArea}
                       onChange={(v) => updateField("focusArea", v)}
-                      onSubmit={goToNext}
+                      onSubmit={() => goToNext(false)}
                       onBack={currentQuestion > 0 ? goBack : undefined}
                       customChallenge={form.constraints}
                       onCustomChallengeChange={(v) => updateField("constraints", v)}
@@ -515,8 +582,8 @@ export default function StartPage() {
                     <UploadInput
                       value={form.attachments}
                       onChange={(v) => updateField("attachments", v)}
-                      onSubmit={goToNext}
-                      onSkip={goToNext}
+                      onSubmit={() => goToNext(false)}
+                      onSkip={() => goToNext(true)}
                       onBack={currentQuestion > 0 ? goBack : undefined}
                     />
                   )}
@@ -528,8 +595,8 @@ export default function StartPage() {
                         const padded = [...v, "", "", ""].slice(0, 3);
                         updateField("competitors", padded);
                       }}
-                      onSubmit={goToNext}
-                      onSkip={goToNext}
+                      onSubmit={() => goToNext(false)}
+                      onSkip={() => goToNext(true)}
                       onBack={currentQuestion > 0 ? goBack : undefined}
                     />
                   )}

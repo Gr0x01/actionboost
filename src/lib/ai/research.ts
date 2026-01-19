@@ -417,3 +417,34 @@ async function dataForSEORequest(
 
   return Promise.race([fetchPromise, timeoutPromise])
 }
+
+// =============================================================================
+// TAVILY-ONLY RESEARCH (for free tier)
+// =============================================================================
+
+/**
+ * Run Tavily web searches only (no DataForSEO)
+ * Used for free tier mini-audits to keep costs low
+ */
+export async function runTavilyOnlyResearch(input: RunInput): Promise<ResearchContext> {
+  const errors: string[] = []
+  const tvly = tavily({ apiKey: process.env.TAVILY_API! })
+
+  const productCategory = extractCategory(input.productDescription)
+
+  // Run Tavily searches in parallel
+  const [competitorResults, marketResults, tacticsResults] = await Promise.allSettled([
+    searchWithTimeout(tvly, buildCompetitorQuery(input), TAVILY_TIMEOUT),
+    searchWithTimeout(tvly, `${productCategory} market trends 2025`, TAVILY_TIMEOUT),
+    searchWithTimeout(tvly, `growth tactics for ${productCategory} startups`, TAVILY_TIMEOUT),
+  ])
+
+  return {
+    competitorInsights: extractTavilyResults(competitorResults, errors, 'competitor search'),
+    marketTrends: extractTavilyResults(marketResults, errors, 'market trends'),
+    growthTactics: extractTavilyResults(tacticsResults, errors, 'growth tactics'),
+    seoMetrics: [], // No DataForSEO for free tier
+    researchCompletedAt: new Date().toISOString(),
+    errors,
+  }
+}

@@ -1,5 +1,8 @@
 export type FocusArea = "acquisition" | "activation" | "retention" | "referral" | "monetization" | "custom";
 
+// Array of valid focus areas for runtime validation
+export const FOCUS_AREAS: FocusArea[] = ["acquisition", "activation", "retention", "referral", "monetization", "custom"];
+
 export interface FileAttachment {
   id: string;
   name: string;

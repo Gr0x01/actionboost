@@ -506,3 +506,172 @@ function truncate(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text
   return text.slice(0, maxLength) + '...'
 }
+
+// =============================================================================
+// MINI STRATEGY GENERATION (Free tier - uses Sonnet)
+// =============================================================================
+
+const MINI_MODEL = 'claude-sonnet-4-20250514'
+const MINI_MAX_TOKENS = 2000
+
+/**
+ * Generate a mini growth strategy (free tier) using Claude Sonnet
+ * Produces 5 sections: Executive Summary, Situation, Competition, Stop, Start
+ * Omits: Quick Wins, Roadmap, Metrics (upsell hook)
+ */
+export async function generateMiniStrategy(
+  input: RunInput,
+  research: ResearchContext
+): Promise<string> {
+  const client = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY!,
+  })
+
+  const systemPrompt = buildMiniSystemPrompt(input.focusArea)
+  const userMessage = buildMiniUserMessage(input, research)
+
+  const response = await client.messages.create({
+    model: MINI_MODEL,
+    max_tokens: MINI_MAX_TOKENS,
+    system: systemPrompt,
+    messages: [{ role: 'user', content: userMessage }],
+  })
+
+  const textContent = response.content.find((block) => block.type === 'text')
+  if (!textContent || textContent.type !== 'text') {
+    throw new Error('No text content in Claude response')
+  }
+
+  return textContent.text
+}
+
+function buildMiniSystemPrompt(focusArea: FocusArea): string {
+  const focusLabel = focusArea === 'custom' ? 'Custom Challenge' : focusArea.charAt(0).toUpperCase() + focusArea.slice(1)
+
+  return `You are an elite Growth Strategist generating a MINI growth audit.
+This is a free teaser - give real value but leave room for the full paid version.
+
+## Your Approach
+- **Specific** to their product, market, and constraints
+- **Prioritized** using the ICE framework (Impact, Confidence, Ease)
+- **Actionable** with clear insights they can act on
+- **Research-backed** using the competitive intelligence provided
+
+## Core Framework: ICE Prioritization
+For every recommendation, you score:
+- **Impact** (1-10): How much will this move the needle?
+- **Confidence** (1-10): How sure are you this will work?
+- **Ease** (1-10): How quickly can they implement this?
+
+ICE Score = Impact + Confidence + Ease (max 30)
+
+## Focus: ${focusLabel.toUpperCase()}
+Analyze their situation through this lens and prioritize recommendations accordingly.
+
+## Output Format
+
+Structure your response as a markdown document with EXACTLY these sections:
+
+## Executive Summary
+2-3 paragraphs covering:
+- The core insight about their situation
+- The biggest opportunity you see
+- The strategic direction you recommend
+
+## Your Current Situation
+Full analysis:
+- What they're doing right (celebrate wins first)
+- Where the gaps are
+- How their situation compares to successful companies at this stage
+
+## Competitive Landscape
+CONDENSED - 1 paragraph overview:
+- How competitors approach similar challenges
+- Key opportunities competitors are missing
+
+## Stop Doing
+CONDENSED - 2-3 items maximum:
+- Each with brief reasoning
+- Focus on low-ROI activities
+
+## Start Doing (Prioritized by ICE)
+CONDENSED - 3 recommendations maximum, each formatted as:
+
+### [Recommendation Title]
+- **Impact**: X/10 - [brief reason]
+- **Confidence**: X/10 - [brief reason]
+- **Ease**: X/10 - [brief reason]
+- **ICE Score**: XX
+
+[1 paragraph explanation]
+
+Sort by ICE score (highest first).
+
+---
+
+**STOP HERE.** Do NOT include these sections (they are part of the full paid version):
+- Quick Wins
+- 30-Day Roadmap
+- Metrics to Track
+
+End with exactly this text:
+"Want the complete playbook? The full analysis includes your Quick Wins, 30-Day Roadmap, and specific metrics to track."`
+}
+
+function buildMiniUserMessage(input: RunInput, research: ResearchContext): string {
+  const focusLabel = input.focusArea === 'custom' && input.customFocusArea
+    ? `Custom: ${input.customFocusArea}`
+    : input.focusArea.charAt(0).toUpperCase() + input.focusArea.slice(1)
+
+  let message = `# Growth Strategy Request
+
+## Focus Area
+**${focusLabel}**
+
+## About My Product
+${input.productDescription}
+
+## Current Traction
+${input.currentTraction}
+
+## What I've Tried
+${input.whatYouTried}
+
+## What's Working
+${input.whatsWorking}
+`
+
+  if (input.websiteUrl) {
+    message += `\n## My Website\n${input.websiteUrl}\n`
+  }
+
+  if (input.competitorUrls?.length) {
+    message += `\n## Competitors\n${input.competitorUrls.join('\n')}\n`
+  }
+
+  // Add research (condensed for mini version)
+  message += `\n---\n\n# Research Data\n`
+
+  if (research.competitorInsights.length) {
+    message += `\n## Competitor Insights\n`
+    for (const r of research.competitorInsights.slice(0, 3)) {
+      message += `- **${r.title}**: ${truncate(r.content, 200)}\n`
+    }
+  }
+
+  if (research.marketTrends.length) {
+    message += `\n## Market Trends\n`
+    for (const r of research.marketTrends.slice(0, 3)) {
+      message += `- **${r.title}**: ${truncate(r.content, 150)}\n`
+    }
+  }
+
+  if (research.growthTactics.length) {
+    message += `\n## Growth Tactics\n`
+    for (const r of research.growthTactics.slice(0, 3)) {
+      message += `- **${r.title}**: ${truncate(r.content, 150)}\n`
+    }
+  }
+
+  return message
+}

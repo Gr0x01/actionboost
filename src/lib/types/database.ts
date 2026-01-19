@@ -9,6 +9,36 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      free_audits: {
+        Row: {
+          id: string
+          email: string
+          input: Json
+          output: string | null
+          status: string
+          created_at: string
+          completed_at: string | null
+        }
+        Insert: {
+          id?: string
+          email: string
+          input: Json
+          output?: string | null
+          status?: string
+          created_at?: string
+          completed_at?: string | null
+        }
+        Update: {
+          id?: string
+          email?: string
+          input?: Json
+          output?: string | null
+          status?: string
+          created_at?: string
+          completed_at?: string | null
+        }
+        Relationships: []
+      }
       codes: {
         Row: {
           code: string
@@ -244,6 +274,7 @@ export type RunCredit = Tables<"run_credits">
 export type Code = Tables<"codes">
 export type UserContextChunk = Tables<"user_context_chunks">
 export type Waitlist = Tables<"waitlist">
+export type FreeAudit = Tables<"free_audits">
 
 export type RunStatus = "pending" | "processing" | "complete" | "failed"
 export type CreditSource = "stripe" | "code" | "manual"
