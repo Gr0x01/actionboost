@@ -53,7 +53,12 @@ function LoginForm() {
       <Header />
 
       <main className="flex-1 py-10 sm:py-14 flex items-center justify-center">
-        <div className="mx-auto max-w-sm w-full px-4 sm:px-6">
+        <div className="mx-auto max-w-md w-full px-4 sm:px-6">
+          {/* Logo */}
+          <Link href="/" className="block text-center text-2xl font-bold text-foreground hover:text-foreground/80 transition-colors mb-6">
+            Actionboo.st
+          </Link>
+
           <div className="bg-background rounded-xl shadow-lg shadow-foreground/5 border border-border/50 p-6 sm:p-8">
             {status === "sent" ? (
               /* Success state */
@@ -86,7 +91,7 @@ function LoginForm() {
                     <Mail className="h-6 w-6 text-primary" />
                   </div>
                   <h1 className="text-xl font-semibold text-foreground">
-                    Sign in to ActionBoost
+                    Sign in to Actionboo.st
                   </h1>
                   <p className="text-muted text-sm mt-1">
                     View your past strategies and credit balance
@@ -129,7 +134,7 @@ function LoginForm() {
 
                 <div className="mt-6 pt-6 border-t border-border/50 text-center">
                   <p className="text-muted text-sm">
-                    New to ActionBoost?{" "}
+                    New to Actionboo.st?{" "}
                     <Link
                       href="/start"
                       className="text-primary hover:text-primary/80 font-medium"
