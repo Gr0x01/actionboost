@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-import { FormInput } from "@/lib/types/form";
+import { FormInput, validateForm } from "@/lib/types/form";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -21,6 +21,15 @@ export async function POST(request: NextRequest) {
     if (!input || !input.productDescription) {
       return NextResponse.json(
         { error: "Form input is required" },
+        { status: 400 }
+      );
+    }
+
+    // Validate form content (character limits)
+    const formErrors = validateForm(input);
+    if (Object.keys(formErrors).length > 0) {
+      return NextResponse.json(
+        { error: Object.values(formErrors)[0] },
         { status: 400 }
       );
     }

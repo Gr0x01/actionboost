@@ -1,8 +1,17 @@
+"use client";
+
 import Link from "next/link";
+import { usePostHog } from "posthog-js/react";
 import { Button } from "@/components/ui";
 import { config } from "@/lib/config";
 
 export function Hero() {
+  const posthog = usePostHog();
+
+  const trackCTA = (button: string) => {
+    posthog?.capture("cta_clicked", { location: "hero", button });
+  };
+
   return (
     <section className="relative bg-mesh py-16 lg:py-24 overflow-x-clip">
       {/* Decorative blobs */}
@@ -28,13 +37,13 @@ export function Hero() {
 
             {/* CTAs */}
             <div className="mt-10 flex flex-col sm:flex-row items-center xl:items-start justify-center xl:justify-start gap-6 animate-slide-up stagger-2">
-              <Link href="/start">
+              <Link href="/start" onClick={() => trackCTA("get_started")}>
                 <Button size="xl">
                   {config.pricingEnabled ? "Get Started — $7.99" : "Get Started"}
                 </Button>
               </Link>
               {config.pricingEnabled && (
-                <Link href="#pricing">
+                <Link href="#pricing" onClick={() => trackCTA("see_pricing")}>
                   <Button variant="outline" size="xl">
                     See pricing
                   </Button>

@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import { createServiceClient } from "@/lib/supabase/server";
 import { Json } from "@/lib/types/database";
 import { runPipeline } from "@/lib/ai/pipeline";
-import { trackServerEvent } from "@/lib/analytics";
+import { trackServerEvent, identifyUser } from "@/lib/analytics";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -77,7 +77,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     stripe_checkout_session_id: session.id,
   });
 
-  // Track payment completed
+  // Track payment completed and identify user
   const distinctId = metadata.posthog_distinct_id || userId || session.id;
   trackServerEvent(distinctId, "payment_completed", {
     amount: session.amount_total ? session.amount_total / 100 : 0,
@@ -85,6 +85,13 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     credits,
     credits_only: isCreditsOnly,
   });
+
+  if (email) {
+    identifyUser(distinctId, email, {
+      first_payment_at: new Date().toISOString(),
+      credits_purchased: credits,
+    });
+  }
 
   // If credits-only purchase, we're done - user will use credits later via form
   if (isCreditsOnly) {

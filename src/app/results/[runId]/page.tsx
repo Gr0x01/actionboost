@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState, useCallback, Suspense } from "react";
+import { useEffect, useState, useCallback, Suspense, useRef } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
+import { usePostHog } from "posthog-js/react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ResultsContent, StatusMessage, ExportBar, TableOfContents } from "@/components/results";
@@ -22,8 +23,10 @@ function ResultsPageContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const posthog = usePostHog();
   const runId = params.runId as string;
   const shareSlug = searchParams.get("share");
+  const trackedRef = useRef(false);
 
   const [run, setRun] = useState<RunData | null>(null);
   const [strategy, setStrategy] = useState<ParsedStrategy | null>(null);
@@ -68,6 +71,13 @@ function ResultsPageContent() {
         if (data.run.status === "complete" && data.run.output) {
           const parsed = parseStrategy(data.run.output);
           setStrategy(parsed);
+          if (!trackedRef.current) {
+            trackedRef.current = true;
+            posthog?.capture("results_viewed", {
+              run_id: runId,
+              via_share_link: !!shareSlug,
+            });
+          }
         }
 
         setLoading(false);
@@ -111,6 +121,13 @@ function ResultsPageContent() {
               setRun(fullData.run);
               if (fullData.run.output) {
                 setStrategy(parseStrategy(fullData.run.output));
+                if (!trackedRef.current) {
+                  trackedRef.current = true;
+                  posthog?.capture("results_viewed", {
+                    run_id: runId,
+                    via_share_link: !!shareSlug,
+                  });
+                }
               }
             }
             clearInterval(interval);

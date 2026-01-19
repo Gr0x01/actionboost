@@ -77,7 +77,7 @@ export const INITIAL_FORM_STATE: FormInput = {
   attachments: [],
 };
 
-export const MAX_TOTAL_CHARS = 10000;
+export const MAX_TOTAL_CHARS = 25000;
 
 /**
  * Calculate total character count across all text fields

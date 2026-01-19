@@ -21,3 +21,16 @@ export async function trackServerEvent(
     // Don't throw - analytics should never break business logic
   }
 }
+
+export async function identifyUser(
+  distinctId: string,
+  email: string,
+  properties?: Record<string, unknown>
+) {
+  try {
+    posthog?.identify({ distinctId, properties: { email, ...properties } });
+    await posthog?.flush();
+  } catch (err) {
+    console.error("PostHog identify failed:", err);
+  }
+}

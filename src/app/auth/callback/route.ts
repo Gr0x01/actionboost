@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { linkAuthToPublicUser } from "@/lib/auth/session"
+import { trackServerEvent, identifyUser } from "@/lib/analytics"
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
@@ -35,6 +36,14 @@ export async function GET(request: NextRequest) {
   } catch (linkError) {
     console.error("Failed to link user:", linkError)
     // Continue anyway - user is authenticated
+  }
+
+  // Track magic link verification and identify user
+  trackServerEvent(data.user.id, "magic_link_verified", {
+    email: data.user.email,
+  })
+  if (data.user.email) {
+    identifyUser(data.user.id, data.user.email)
   }
 
   // Redirect to destination

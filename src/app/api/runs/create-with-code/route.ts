@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
-import { FormInput } from "@/lib/types/form";
+import { FormInput, validateForm } from "@/lib/types/form";
 import { Json } from "@/lib/types/database";
 import { runPipeline } from "@/lib/ai/pipeline";
 import { setSessionCookie } from "@/lib/auth/session-cookie";
-import { trackServerEvent } from "@/lib/analytics";
+import { trackServerEvent, identifyUser } from "@/lib/analytics";
 import { isValidEmail } from "@/lib/validation";
 
 export async function POST(request: NextRequest) {
@@ -28,6 +28,15 @@ export async function POST(request: NextRequest) {
     if (!input || !input.productDescription) {
       return NextResponse.json(
         { error: "Form input is required" },
+        { status: 400 }
+      );
+    }
+
+    // Validate form content (character limits)
+    const formErrors = validateForm(input);
+    if (Object.keys(formErrors).length > 0) {
+      return NextResponse.json(
+        { error: Object.values(formErrors)[0] },
         { status: 400 }
       );
     }
@@ -158,7 +167,7 @@ export async function POST(request: NextRequest) {
       console.error("Failed to create run_credits for code:", normalizedCode, creditError);
     }
 
-    // Track promo code redemption (use PostHog distinct_id from client for funnel linking)
+    // Track promo code redemption and identify user
     const distinctId = posthogDistinctId || userId || run.id;
     trackServerEvent(distinctId, "promo_code_redeemed", {
       code: normalizedCode,
@@ -166,6 +175,9 @@ export async function POST(request: NextRequest) {
       run_id: run.id,
       credits,
       focus_area: input.focusArea,
+    });
+    identifyUser(distinctId, normalizedEmail, {
+      first_code_redeemed_at: new Date().toISOString(),
     });
 
     // Set session cookie for the user

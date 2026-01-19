@@ -23,6 +23,9 @@ import {
   FormInput,
   FocusArea,
   INITIAL_FORM_STATE,
+  getTotalCharCount,
+  validateForm,
+  MAX_TOTAL_CHARS,
 } from "@/lib/types/form";
 import { useUserContext } from "@/lib/hooks/useUserContext";
 
@@ -259,6 +262,14 @@ export default function StartPage() {
 
   const handleSubmit = async () => {
     if (isSubmitting) return;
+
+    // Validate form before submission
+    const errors = validateForm(form);
+    if (Object.keys(errors).length > 0) {
+      setError(Object.values(errors)[0]);
+      return;
+    }
+
     setIsSubmitting(true);
     setError(null);
 
@@ -475,6 +486,8 @@ export default function StartPage() {
                           ? "SEO, social media, ads, content marketing..."
                           : "What's bringing results? What's not working?"
                       }
+                      currentTotal={getTotalCharCount(form)}
+                      maxTotal={MAX_TOTAL_CHARS}
                     />
                   )}
 
