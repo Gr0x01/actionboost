@@ -109,6 +109,11 @@ export function MarkdownContent({ content, className = "" }: MarkdownContentProp
       continue;
     }
 
+    // Skip "Links to:" cross-references (not functional)
+    if (/^\*?Links to:/i.test(trimmed)) {
+      continue;
+    }
+
     // H3: ### Header - prominent subsection headers
     if (trimmed.startsWith("### ")) {
       flushList();

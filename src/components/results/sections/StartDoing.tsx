@@ -26,51 +26,35 @@ export function StartDoing({ content }: StartDoingProps) {
 
       <div className="space-y-8">
         {items.map((item: ICEItem, index: number) => (
-          <div key={item.title} className="relative">
-            {/* Header row with rank badge and title */}
-            <div className="flex items-start gap-4 mb-3">
-              {/* Rank badge */}
-              <div className="flex-shrink-0 flex h-7 w-7 items-center justify-center rounded-full bg-green-500/90 text-white text-sm font-semibold">
-                {index + 1}
-              </div>
-
-              {/* Title and ICE total */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-baseline justify-between gap-4">
-                  <h3 className="text-lg font-medium text-foreground leading-tight">
-                    {item.title}
-                  </h3>
-                  {item.iceScore > 0 && (
-                    <span className="flex-shrink-0 text-sm text-muted">
-                      ICE: <span className="font-semibold text-green-400">{item.iceScore}</span>
-                    </span>
-                  )}
-                </div>
-
-                {/* ICE breakdown - compact inline display */}
-                {item.impact.score > 0 && (
-                  <div className="mt-2 pt-2 border-t border-border/30">
-                    <div className="flex items-center gap-1 text-sm text-muted">
-                      <span>
-                        Impact: <span className="font-medium text-blue-400">{item.impact.score}</span>
-                      </span>
-                      <span className="text-border/60 mx-2">|</span>
-                      <span>
-                        Confidence: <span className="font-medium text-purple-400">{item.confidence.score}</span>
-                      </span>
-                      <span className="text-border/60 mx-2">|</span>
-                      <span>
-                        Ease: <span className="font-medium text-amber-400">{item.ease.score}</span>
-                      </span>
-                    </div>
+          <div key={item.title}>
+            {/* ICE Callout - floats right, content wraps around */}
+            {item.impact.score > 0 && (
+              <div className="float-right ml-6 mb-4 px-3 py-2 rounded-lg border border-border/40">
+                <div className="flex gap-4">
+                  <div className="text-center cursor-help" title="Impact: How much will this move the needle?">
+                    <div className="text-xl font-semibold text-foreground">{item.impact.score}</div>
+                    <div className="text-[10px] font-sans uppercase tracking-wider text-muted">Impact</div>
                   </div>
-                )}
+                  <div className="text-center cursor-help" title="Confidence: How sure are we this will work?">
+                    <div className="text-xl font-semibold text-foreground">{item.confidence.score}</div>
+                    <div className="text-[10px] font-sans uppercase tracking-wider text-muted">Confidence</div>
+                  </div>
+                  <div className="text-center cursor-help" title="Ease: How easy is this to implement?">
+                    <div className="text-xl font-semibold text-foreground">{item.ease.score}</div>
+                    <div className="text-[10px] font-sans uppercase tracking-wider text-muted">Ease</div>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Description with markdown rendering */}
+            {/* Title */}
+            <h3 className="text-lg font-medium text-foreground leading-tight mb-3">
+              {item.title}
+            </h3>
+
+            {/* Description */}
             {item.description && (
-              <div className="ml-11 mt-4">
+              <div>
                 <MarkdownContent
                   content={cleanDescription(item.description)}
                   className="text-sm [&>p]:text-muted [&>p]:mb-3 [&>p:last-child]:mb-0 [&>ul]:text-muted [&>ol]:text-muted [&_strong]:text-foreground"
