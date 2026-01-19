@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
 
     if (error || !codeRecord) {
       return NextResponse.json(
-        { valid: false, error: "Invalid code" },
+        { valid: false, error: "Invalid code", errorCode: "INVALID_CODE" },
         { status: 200 }
       );
     }
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     // Check if expired
     if (codeRecord.expires_at && new Date(codeRecord.expires_at) < new Date()) {
       return NextResponse.json(
-        { valid: false, error: "Code has expired" },
+        { valid: false, error: "Code has expired", errorCode: "EXPIRED" },
         { status: 200 }
       );
     }
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
       (codeRecord.used_count ?? 0) >= codeRecord.max_uses
     ) {
       return NextResponse.json(
-        { valid: false, error: "Code has reached maximum uses" },
+        { valid: false, error: "Code has reached maximum uses", errorCode: "MAX_USES_REACHED" },
         { status: 200 }
       );
     }

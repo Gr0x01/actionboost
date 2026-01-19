@@ -1,207 +1,135 @@
-# Current: Legal Pages Complete
+# Current: Feature Flag + Waitlist
 
-## Latest Update: Privacy Policy & Terms of Service ✅
+## Latest Update: Pricing Feature Flag + Waitlist ✅
 
-**Completed Jan 2025** - Added legal pages with GDPR/CCPA compliance.
+**Completed Jan 2025** - Feature flag to disable pricing for promo-code-only testing, with waitlist fallback.
+
+### What Was Built
+- **Feature flag**: `NEXT_PUBLIC_PRICING_ENABLED` env var
+  - `true` (default) = normal pricing
+  - `false` = promo-code-only mode
+- **Waitlist table**: `waitlist` (email, source, created_at) with RLS
+- **Waitlist API**: `POST /api/waitlist` with source validation
+- **Landing page**: Hides prices and "See pricing" when flag off
+- **CheckoutSection**: Shows code input by default, waitlist form on code failure
+
+### User Flow (pricing disabled)
+```
+Landing (no prices) → /start form → Checkout (code required)
+                                        ↓
+                        Code valid → email → run executes
+                        Code fails → waitlist signup
+```
+
+### Waitlist UI
+- "We're launching this week! Join the waitlist to get notified."
+- Success: "You're on the list! We'll be in touch soon."
+- "Try another code" option to retry
+
+### Files
+- `src/lib/config.ts` - Feature flag utility
+- `src/app/api/waitlist/route.ts` - Waitlist signup endpoint
+- `src/components/forms/CheckoutSection.tsx` - Promo-only mode + waitlist
+- `src/components/landing/Hero.tsx` - Conditional pricing
+- `src/components/landing/Pricing.tsx` - Hide when disabled
+
+### Export Waitlist
+```sql
+SELECT email, source, created_at FROM waitlist ORDER BY created_at;
+```
+
+---
+
+## Previous: Form Refactor ✅
+
+**Completed Jan 2025** - Extracted form components, added chatbot-like flow for returning users, updated to full AARRR framework.
 
 ### What Was Built
 ```
-src/app/
-├── privacy/page.tsx    # Privacy policy
-└── terms/page.tsx      # Terms of service
+src/components/forms/
+├── index.ts              # Barrel export
+├── WelcomeBack.tsx       # Returning user welcome + ContextUpdateForm
+├── ProgressBar.tsx       # Animated progress indicator
+├── Acknowledgment.tsx    # Brief "Got it" animation between questions
+├── UrlInput.tsx          # URL input with favicon preview
+├── TextareaInput.tsx     # Auto-resize textarea
+├── TractionInput.tsx     # Chip selection + freeform input
+├── FocusInput.tsx        # AARRR grid (6 options with icons/hints)
+├── UploadInput.tsx       # File upload (images, PDFs, spreadsheets)
+├── CompetitorInput.tsx   # Multi-URL collector (up to 3)
+├── CheckoutSection.tsx   # Promo code + submit
+└── utils.ts              # formatDate helper
 ```
 
-### Privacy Policy Covers
-- Data controller (Texas, USA)
-- Legal basis for processing (GDPR Art. 6)
-- All third-party services (Stripe, Supabase, Anthropic, OpenAI, Tavily, DataForSEO, PostHog)
-- International data transfers
-- Data retention periods
-- User rights (access, deletion, export, correction)
-- CCPA "do not sell" disclosure
-- EU right to lodge complaint
+### Form Flow (8 Steps)
+| Step | Question | Skippable |
+|------|----------|-----------|
+| 1 | What's your website? | ✅ |
+| 2 | Tell me about your product... | |
+| 3 | What traction do you have? | |
+| 4 | What growth tactics have you tried? | |
+| 5 | What's working? What's falling flat? | |
+| 6 | Got any screenshots or data to share? | ✅ |
+| 7 | Where should we focus? (AARRR) | |
+| 8 | Any competitors I should study? | ✅ |
 
-### Terms of Service Covers
-- Eligibility (18+)
-- Pricing ($7.99 single, $19.99 3-pack)
-- No refunds policy
-- AI disclaimer (not professional consulting, no guaranteed results)
-- Case studies with consent
-- Prohibited uses
-- Indemnification
-- Dispute resolution (30-day informal first)
-- Governing law (Texas)
+### State Machine
+```
+[loading] → [hasContext?]
+              ├─ no → [questions] → [checkout]
+              └─ yes → [welcome_back]
+                         ├─ "Start fresh" → [questions]
+                         └─ "Continue" → [context_update] → [checkout]
+```
 
-### Design
-- Typography: Tienne (serif) for body, Manrope (sans) for headings
-- Consistent card styling with rest of site
-- Contact: team@actionboo.st
+### AARRR Focus Areas (Updated)
+- `acquisition` - "Get more users"
+- `activation` - "Users don't stick"
+- `retention` - "Users leave"
+- `referral` - "Spread the word"
+- `monetization` - "No revenue yet"
+- `custom` - Free-form challenge input
 
-### Footer Links
-Already wired up in `src/components/layout/Footer.tsx` → `/privacy` and `/terms`
+### Key Changes
+- **page.tsx**: 974 → 520 lines (extracted 12 components)
+- **Font**: Manrope (was Space Grotesk)
+- **Back navigation**: All steps have back button
+- **File uploads**: Screenshots, analytics exports, spreadsheets (5 files, 10MB each)
+- **Returning users**: See "Welcome back" with last run summary, can update context conversationally
+
+---
+
+## Previous: Legal Pages ✅
+
+**Completed Jan 2025** - Privacy policy and terms of service with GDPR/CCPA compliance.
+
+### Files
+- `src/app/privacy/page.tsx` - Privacy policy
+- `src/app/terms/page.tsx` - Terms of service
 
 ---
 
 ## Previous: Results Page Redesign ✅
 
-**Completed Jan 2025** - Results page redesigned from "SaaS dashboard" to "clean document" style for better readability.
-
-### What Changed
-```
-src/
-├── app/
-│   ├── globals.css              # Added Tienne serif font
-│   ├── layout.tsx               # Loaded Tienne from Google Fonts
-│   └── results/
-│       ├── [runId]/page.tsx     # max-w-prose for optimal reading
-│       └── demo/page.tsx        # Same
-└── components/results/
-    ├── MarkdownContent.tsx      # NEW - Lightweight markdown renderer
-    ├── SectionCard.tsx          # Simplified: no cards, just section dividers
-    ├── ResultsContent.tsx       # Adjusted spacing
-    └── sections/
-        ├── ExecutiveSummary.tsx # Uses MarkdownContent, left border quote
-        ├── CurrentSituation.tsx # Simplified to MarkdownContent
-        ├── CompetitiveLandscape.tsx # Simplified to MarkdownContent
-        ├── StopDoing.tsx        # Simplified to MarkdownContent
-        ├── StartDoing.tsx       # Clean ICE layout, markdown descriptions
-        ├── QuickWins.tsx        # Simple numbered list
-        ├── Roadmap.tsx          # Kept expand/collapse, simpler styling
-        └── MetricsToTrack.tsx   # Simplified to MarkdownContent
-```
-
-### Design Decisions
-- **Typography**: Tienne serif (18px, 1.7 line-height) for body text legibility
-- **Measure**: `max-w-prose` (65ch) for optimal reading line length
-- **Hierarchy**: h2 (section titles), h3 (subsections), bold (inline emphasis)
-- **Sections**: Simple divider lines between sections, no cards/glows
-- **ICE Scores**: Clean inline format `Impact: 10 | Confidence: 9 | Ease: 7`
-
-### MarkdownContent Component
-New lightweight renderer handles:
-- Headers (`###`, `####`)
-- Bold (`**text**`) and italic (`*text*`)
-- Bullet and numbered lists
-- Horizontal rules (`---`)
-- Paragraphs with proper spacing
+**Completed Jan 2025** - Clean document style with Tienne serif font, max-w-prose for readability.
 
 ---
 
 ## Previous: RAG Integration ✅
 
-**Completed Jan 2025** - Claude now remembers returning users and builds on past advice.
-
-### What Was Built
-```
-src/lib/ai/
-├── pipeline.ts       # Added retrieveUserHistory() - fetches context before generation
-├── generate.ts       # Added userHistory param, RETURNING_USER_PROMPT, history in user message
-├── types.ts          # Added UserHistoryContext type
-└── embeddings.ts     # Fixed chunkTypes filtering in searchUserContext()
-```
-
-### How RAG Works
-1. When a run starts, `retrieveUserHistory()` is called (if user exists)
-2. Fetches user's accumulated context from `users.context` JSONB
-3. Searches `user_context_chunks` via pgvector for relevant past recommendations/insights
-4. Passes `UserHistoryContext` to `generateStrategy()`
-5. Claude receives:
-   - Traction timeline (last 5 snapshots)
-   - Tactics they've tried (up to 10)
-   - Past recommendations (via vector search, top 5)
-   - Past insights (via vector search, top 3)
-6. System prompt includes `RETURNING_USER_PROMPT` with guidance to build on history
-
-### Database Already Set Up
-- `user_context_chunks` table with pgvector embeddings
-- `match_user_context_chunks` RPC function for similarity search
-- `users.context` JSONB for accumulated context
-- Context accumulation called after each run completes
-
-### Context Flow
-```
-Run completes → accumulateUserContext() → users.context updated
-            → extractAndEmbedRunContext() → chunks embedded (fire-and-forget)
-
-Next run → retrieveUserHistory() → vector search for relevant chunks
-        → generateStrategy(input, research, userHistory)
-        → Claude references past context
-```
+**Completed Jan 2025** - Claude remembers returning users via pgvector search.
 
 ---
 
 ## Previous: Magic Link Auth ✅
 
-**Completed Jan 2025** - Users can now log in to view past runs.
-
-### What Was Built
-```
-src/
-├── app/
-│   ├── login/page.tsx              # Magic link login form
-│   ├── dashboard/page.tsx          # User's runs + credits
-│   ├── auth/callback/route.ts      # Exchange code for session
-│   └── api/
-│       ├── auth/magic-link/route.ts  # Send magic link
-│       └── user/runs/route.ts        # Get user's runs
-├── components/layout/Header.tsx    # Auth-aware (shows Dashboard/Login)
-└── lib/auth/session.ts             # Auth helpers (DAL pattern)
-```
-
-### Auth Flow
-1. User enters email on `/login`
-2. `POST /api/auth/magic-link` → Supabase sends email
-3. User clicks link → `/auth/callback?code=xxx`
-4. Callback exchanges code, links `auth.users` to `public.users` by email
-5. Redirects to `/dashboard`
-
-### Database Changes
-- Added `auth_id` column to `public.users` table
-- Links Supabase Auth users to our users table
-
-### Protected Routes
-- `/results/[runId]` - Requires login OR valid share slug (`?share=xxx`)
-- `/dashboard` - Requires login
-
-### Header Auth State
-- Shows "Dashboard" + "New Strategy" when logged in
-- Shows "Login" + "Get Started" when logged out
-
----
-
-## Previous Phases
-
-### Phase 5: Results Display ✅
-- Results page with markdown parsing
-- Export to PDF, share links
-- Status polling during generation
-
-### Phase 4: Landing + Input Form ✅
-- Landing page with hero and CTA
-- Multi-step form on `/start`
-- localStorage persistence
-- File upload support
-
-### Phase 3: Stripe Payments ✅
-- Checkout flow ($7.99 single, $19.99 3-pack)
-- Webhook handling
-- Credit system
-
-### Phase 2: AI Pipeline ✅
-- Claude Opus 4.5 strategy generation
-- Tavily + DataForSEO research
-- AARRR-based focus areas
-
-### Phase 1: Database Setup ✅
-- Supabase tables (users, runs, run_credits, codes)
-- RLS policies
-- Storage bucket
+**Completed Jan 2025** - Email magic links, dashboard, protected routes.
 
 ---
 
 ## What's Next
 
-- Wire up WelcomeBack component on `/start` for returning users
-- Weekly automated runs (cron job to trigger runs for subscribed users)
+- Weekly automated runs (cron job for subscribed users)
 - Share page route `/share/[slug]` (public view without auth)
 - Configure Supabase email templates (optional)
+- Google OAuth (optional)

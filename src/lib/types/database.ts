@@ -192,6 +192,27 @@ export type Database = {
         }
         Relationships: []
       }
+      waitlist: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          source: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          source?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          source?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -222,6 +243,7 @@ export type Run = Tables<"runs">
 export type RunCredit = Tables<"run_credits">
 export type Code = Tables<"codes">
 export type UserContextChunk = Tables<"user_context_chunks">
+export type Waitlist = Tables<"waitlist">
 
 export type RunStatus = "pending" | "processing" | "complete" | "failed"
 export type CreditSource = "stripe" | "code" | "manual"

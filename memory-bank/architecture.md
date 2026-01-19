@@ -75,6 +75,10 @@ auth.users (Supabase Auth)     public.users (our table)
 | `/api/upload` | POST | Upload attachments | No | ✅ |
 | `/api/auth/magic-link` | POST | Send magic link email | No | ✅ |
 | `/api/user/runs` | GET | Get user's runs | Required | ✅ |
+| `/api/user/context` | GET | Get user's accumulated context | Required | ✅ |
+| `/api/user/context` | PATCH | Apply delta updates | Required | ✅ |
+| `/api/user/context/search` | POST | Semantic search over context | Required | ✅ |
+| `/api/waitlist` | POST | Join waitlist (promo-only mode) | No | ✅ |
 
 **Auth pattern**: Check user's `auth_id` links to `public.users`, then verify `user_id` matches, OR valid `share_slug` for public access.
 
@@ -84,15 +88,19 @@ auth.users (Supabase Auth)     public.users (our table)
 
 ## AI Pipeline
 
-**Status**: ✅ Complete (Phase 2)
+**Status**: ✅ Complete (Phase 2 + RAG)
 
 ### Files
 ```
 src/lib/ai/
-├── types.ts      # RunInput, ResearchContext, FocusArea types
+├── types.ts      # RunInput, ResearchContext, FocusArea, UserHistoryContext
 ├── research.ts   # Tavily + DataForSEO with Promise.race timeouts
-├── generate.ts   # Claude Opus 4.5 with inlined prompts
-└── pipeline.ts   # Orchestrator with env validation
+├── generate.ts   # Claude Opus 4.5 with inlined prompts + history support
+├── pipeline.ts   # Orchestrator: research → history → generate → accumulate
+└── embeddings.ts # OpenAI embeddings + pgvector search
+
+src/lib/context/
+└── accumulate.ts # Merge run data into users.context JSONB
 ```
 
 ### Pipeline Flow
@@ -102,14 +110,22 @@ src/lib/ai/
    - DataForSEO endpoints selected by focus area
    - Promise.race for proper timeout handling
 
-2. Generate (Claude Opus 4.5) - ~100-120s
+2. Retrieve User History (RAG) - ~1-2s [NEW]
+   - Fetch users.context JSONB
+   - Vector search user_context_chunks for relevant past recommendations/insights
+   - Build UserHistoryContext with traction timeline, tactics, past advice
+
+3. Generate (Claude Opus 4.5) - ~100-120s
    - Inlined prompts in generate.ts (no external files)
    - Focus-area-specific guidance (AARRR-based)
+   - For returning users: RETURNING_USER_PROMPT + history section in message
    - ~20k char output, 400+ lines
 
-3. Save
+4. Save & Accumulate
    - Markdown to runs.output
    - Status = "complete"
+   - accumulateUserContext() → merge input into users.context
+   - extractAndEmbedRunContext() → create embeddings (fire-and-forget)
 ```
 
 ### AARRR Focus Areas
@@ -149,6 +165,108 @@ npx tsx scripts/test-inkdex.ts     # Real project test
 
 ---
 
+## User Context & RAG System
+
+**Status**: ✅ Complete
+
+Multi-run memory system that lets Claude remember returning users and build on past advice.
+
+### Architecture
+```
+Run Completes
+    ↓
+accumulateUserContext()
+    ├── Merge input → users.context (JSONB)
+    │   - product: Replace with latest
+    │   - traction.history: Append (max 10 snapshots)
+    │   - tactics.tried: Accumulate (max 50)
+    │   - tactics.working/notWorking: Accumulate (max 50)
+    └── extractAndEmbedRunContext() [fire-and-forget]
+        - Extract chunks from input (product, traction, tactics)
+        - Extract chunks from output (recommendations, insights)
+        - Create OpenAI embeddings (text-embedding-3-small)
+        - Store in user_context_chunks with pgvector
+
+Next Run Starts
+    ↓
+retrieveUserHistory()
+    ├── Fetch users.context JSONB
+    ├── Vector search for relevant recommendations (top 5)
+    ├── Vector search for relevant insights (top 3)
+    └── Return UserHistoryContext
+            ↓
+generateStrategy(input, research, userHistory)
+    ├── RETURNING_USER_PROMPT added to system prompt
+    └── History section added to user message:
+        - Traction timeline (last 5)
+        - Tactics tried (up to 10)
+        - Past recommendations
+        - Past insights
+```
+
+### Data Model
+
+**users.context** (JSONB column):
+```typescript
+{
+  product: {
+    description: string      // Latest product description
+    websiteUrl?: string
+    competitors?: string[]   // Max 10, deduplicated by domain
+  }
+  traction: {
+    latest: string           // Most recent
+    history: Array<{         // Max 10 snapshots
+      date: string           // YYYY-MM-DD
+      summary: string
+    }>
+  }
+  tactics: {
+    tried: string[]          // Max 50
+    working?: string[]       // Max 50
+    notWorking?: string[]    // Max 50
+  }
+  constraints?: string
+  lastRunId?: string
+  totalRuns?: number
+}
+```
+
+**user_context_chunks** (pgvector table):
+| Column | Type | Purpose |
+|--------|------|---------|
+| user_id | UUID | FK to users |
+| content | TEXT | The chunk text |
+| chunk_type | ENUM | product, traction, tactic, insight, recommendation |
+| source_type | ENUM | run_input, run_output, delta_update |
+| source_id | UUID | Run ID (nullable) |
+| embedding | vector(1536) | OpenAI embedding |
+| metadata | JSONB | Additional context |
+
+### Chunk Types
+| Type | Source | Example |
+|------|--------|---------|
+| `product` | run_input | "Product: AI growth strategist for solo founders" |
+| `traction` | run_input | "Traction (2025-01-19): 500 users, $2k MRR" |
+| `tactic` | run_input | "Tactics tried: Twitter threads, cold email" |
+| `insight` | run_output | "Advice to stop: Generic content marketing" |
+| `recommendation` | run_output | "Recommendations: Focus on warm referrals" |
+
+### Vector Search
+- Model: `text-embedding-3-small` (1536 dimensions)
+- Cost: ~$0.00002 per run (negligible)
+- RPC function: `match_user_context_chunks(embedding, user_id, threshold, limit)`
+- Fallback: Text search via `ilike` if OpenAI unavailable
+
+### API Routes
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `/api/user/context` | GET | Fetch user's accumulated context |
+| `/api/user/context` | PATCH | Apply delta updates (conversational) |
+| `/api/user/context/search` | POST | Semantic search over context |
+
+---
+
 ## Supabase Setup
 
 **Project ID**: `qomiwimfekvfjbjjhzkz`
@@ -157,10 +275,23 @@ npx tsx scripts/test-inkdex.ts     # Real project test
 ### Tables (all RLS enabled)
 | Table | Purpose | RLS |
 |-------|---------|-----|
-| `users` | Email-based accounts | Owner read only |
+| `users` | Email-based accounts + context JSONB | Owner read only |
 | `runs` | Strategy generation runs | Owner read, public via share_slug |
 | `run_credits` | Credit tracking (sum for balance) | Owner read only |
 | `codes` | Promo/redemption codes | Service role only |
+| `user_context_chunks` | Vector embeddings for RAG | Owner read only |
+| `waitlist` | Email collection for promo-only mode | Service role only |
+
+### Extensions
+| Extension | Purpose |
+|-----------|---------|
+| `pgvector` | Vector similarity search for RAG |
+| `pgcrypto` | UUID generation |
+
+### Functions (RPC)
+| Function | Purpose |
+|----------|---------|
+| `match_user_context_chunks` | pgvector similarity search with user filtering |
 
 ### Storage
 | Bucket | Purpose | Limits |
@@ -227,6 +358,12 @@ src/
 - Free tier: 1,000 searches/month
 - Use `search_depth: 'advanced'` for better results
 
+### OpenAI (Embeddings)
+- Model: `text-embedding-3-small` (1536 dimensions)
+- Pricing: $0.02 per 1M tokens (~$0.00002 per run)
+- Used for: RAG vector search over user context
+- Graceful degradation: Falls back to text search if unavailable
+
 ### Stripe
 
 **Status**: ✅ Complete
@@ -257,3 +394,17 @@ STRIPE_WEBHOOK_SECRET
 STRIPE_PRICE_SINGLE
 STRIPE_PRICE_3PACK
 ```
+
+---
+
+## Feature Flags
+
+| Flag | Purpose | Default |
+|------|---------|---------|
+| `NEXT_PUBLIC_PRICING_ENABLED` | Show/hide pricing, enable promo-only mode | `true` |
+
+When `false`:
+- Hero shows "Get Started" (no price)
+- Pricing section hidden
+- Checkout requires promo code
+- Invalid/maxed codes show waitlist signup

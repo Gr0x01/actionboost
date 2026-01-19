@@ -34,10 +34,10 @@ export function CheckoutSection({
   setEmail,
 }: CheckoutSectionProps) {
   const [showCode, setShowCode] = useState(!config.pricingEnabled);
-  const [showWaitlist, setShowWaitlist] = useState(false);
   const [waitlistEmail, setWaitlistEmail] = useState("");
   const [waitlistSubmitting, setWaitlistSubmitting] = useState(false);
   const [waitlistSuccess, setWaitlistSuccess] = useState(false);
+  const [waitlistError, setWaitlistError] = useState<string | null>(null);
 
   const emailValid = isValidEmail(email);
   const canSubmitWithCode = hasValidCode && emailValid;
@@ -50,6 +50,7 @@ export function CheckoutSection({
     if (!waitlistEmailValid) return;
 
     setWaitlistSubmitting(true);
+    setWaitlistError(null);
     try {
       const res = await fetch("/api/waitlist", {
         method: "POST",
@@ -59,9 +60,12 @@ export function CheckoutSection({
 
       if (res.ok) {
         setWaitlistSuccess(true);
+      } else {
+        setWaitlistError("Something went wrong. Please try again.");
       }
     } catch (error) {
       console.error("Waitlist error:", error);
+      setWaitlistError("Connection failed. Please try again.");
     } finally {
       setWaitlistSubmitting(false);
     }
@@ -223,6 +227,9 @@ export function CheckoutSection({
                   )}
                 </button>
               </div>
+              {waitlistError && (
+                <p className="text-sm text-red-500 mt-2">{waitlistError}</p>
+              )}
               <button
                 onClick={() => {
                   clearCode();
