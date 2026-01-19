@@ -251,7 +251,7 @@ export function CheckoutSection({
             ) : config.pricingEnabled ? (
               <>
                 Generate Action Plan
-                <span className="font-normal opacity-90">— $9.99</span>
+                <span className="font-normal opacity-90">— {config.singlePrice}</span>
               </>
             ) : (
               "Enter code to continue"

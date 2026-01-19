@@ -327,7 +327,7 @@ This is the single number that matters. Everything else supports it.
 |--------|---------|--------|
 | CAC (organic) | Unknown | <$10 |
 | CAC (paid) | Unknown | <$20 |
-| LTV (single) | $7.99 | $12+ (with repeat) |
+| LTV (single) | $9.99 | $12+ (with repeat) |
 | LTV (3-pack) | $19.99 | $25+ (with repeat) |
 | Cost per run | ~$0.50 | Keep under $1 |
 | Conversion (visitor -> paid) | Unknown | 3-5% |
@@ -358,7 +358,7 @@ This is the single number that matters. Everything else supports it.
               [User Discovers Actionboo.st]
                          |
                          v
-         [Completes form, pays $7.99, gets value]
+         [Completes form, pays $9.99, gets value]
                          |
                          v
               [Shares results, tells friends]
@@ -380,7 +380,7 @@ This is the single number that matters. Everything else supports it.
               [More discovery, cycle repeats]
 ```
 
-**The v2 subscription (~$30/mo) is the real business.** One-shot runs are the acquisition channel. Every $7.99 customer is a potential $360/year subscriber.
+**The v2 subscription (~$30/mo) is the real business.** One-shot runs are the acquisition channel. Every $9.99 customer is a potential $360/year subscriber.
 
 **What's v2?** Your strategy becomes a *Growth Board* — a living kanban where you track what you tried, report outcomes, and the AI adapts over time. Not just advice. An accountability partner.
 

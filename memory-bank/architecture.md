@@ -20,7 +20,7 @@ Simple serverless architecture. No queues, no workers - just API routes.
 
 ### New Run (happy path)
 1. User fills form on `/start`, stored in localStorage
-2. User clicks "Generate - $7.99"
+2. User clicks "Generate - $9.99"
 3. `POST /api/checkout/create-session` → creates Stripe session with form in metadata
 4. Redirect to Stripe Checkout
 5. Payment success → `checkout.session.completed` webhook fires
@@ -387,7 +387,7 @@ src/
 **Status**: ✅ Complete
 
 **Pricing**:
-- Single: $7.99 (1 credit)
+- Single: $9.99 (1 credit)
 
 **Routes**:
 | Route | Purpose |

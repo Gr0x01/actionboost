@@ -28,7 +28,7 @@ Key architectural and product decisions. Reference this when you need to underst
 
 **Decision**: Use `claude-opus-4-5-20251101` for strategy generation.
 
-**Why**: Best reasoning capabilities for complex strategic analysis. Cost ~$0.12-0.15 per run, well within margin at $7.99 pricing.
+**Why**: Best reasoning capabilities for complex strategic analysis. Cost ~$0.12-0.15 per run, well within margin at $9.99 pricing.
 
 **Constraint**: Do NOT change the model name without explicit user approval. This is documented in CLAUDE.md as a critical rule.
 
@@ -211,11 +211,11 @@ Can add more account features later if needed.
 FREE MINI → SINGLE RUN ($X) → SUBSCRIPTION (~$30/mo)
 ```
 
-**v1 (current)**: $7.99 single run only. 3-pack removed.
+**v1 (current)**: $9.99 single run only. 3-pack removed.
 
 **v2 (planned)**:
 - **Free mini** - Teaser audit, no competitor research. Captures email, shows value.
-- **Single run** - Full experience at ~$7.99. Proves quality.
+- **Single run** - Full experience at ~$9.99. Proves quality.
 - **Subscription** - ~$30/mo for Growth Board, integrations, periodic analysis, weekly digest.
 - **Credit window** - Subscribe within X days of single run, get credited toward first month.
 

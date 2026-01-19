@@ -34,7 +34,7 @@ type ModelName = keyof typeof MODELS
 const TEST_INPUT: RunInput = {
   websiteUrl: 'https://actionboo.st',
   productDescription: `AI growth strategist for startups and entrepreneurs. Users fill out a detailed form about their product
-(description, traction, what they've tried, what's working), pay $7.99, and get a personalized growth strategy
+(description, traction, what they've tried, what's working), pay $9.99, and get a personalized growth strategy
 powered by Claude Opus + live competitive research (Tavily web search + DataForSEO metrics).
 
 The output is a comprehensive markdown document with: executive summary, current situation analysis,
@@ -48,7 +48,7 @@ Landing page live at actionboo.st. Product is complete and functional.`,
 Indie Hackers (INDIEHACKERS), and Product Hunt (PRODUCTHUNT).
 Haven't done any marketing yet - waiting for the right launch moment.`,
 
-  whatsWorking: `Product is complete and works well. Unit economics are strong (~94% margin at $7.99).
+  whatsWorking: `Product is complete and works well. Unit economics are strong (~94% margin at $9.99).
 The concept resonates when I explain it - "AI that does real research on YOUR competitors, not generic advice."
 RAG system remembers returning users for personalized follow-up strategies.`,
 

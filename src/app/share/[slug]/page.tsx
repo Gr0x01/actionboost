@@ -7,6 +7,7 @@ import { Footer } from "@/components/layout/Footer";
 import { ResultsContent, TableOfContents } from "@/components/results";
 import { Button } from "@/components/ui/Button";
 import { SocialShareButtons } from "@/components/ui/SocialShareButtons";
+import { config } from "@/lib/config";
 import Link from "next/link";
 
 interface PageProps {
@@ -134,7 +135,7 @@ export default async function SharePage({ params }: PageProps) {
                 Actionboo.st uses live competitive research and AI to create actionable strategies for startups and entrepreneurs.
               </p>
               <Link href="/start">
-                <Button size="lg">Get Started - $9.99</Button>
+                <Button size="lg">Get Started - {config.singlePrice}</Button>
               </Link>
             </div>
           </div>

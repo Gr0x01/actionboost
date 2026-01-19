@@ -7,6 +7,7 @@ import { MarkdownContent } from "@/components/results/MarkdownContent";
 import { BlogTableOfContents } from "@/components/blog/BlogTableOfContents";
 import { Button } from "@/components/ui/Button";
 import { SocialShareButtons } from "@/components/ui/SocialShareButtons";
+import { config } from "@/lib/config";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -97,7 +98,7 @@ export default async function GrowthPlanPage() {
                     <p className="text-sm text-muted">Get AI-powered growth recommendations with live competitive research.</p>
                   </div>
                   <Link href="/start">
-                    <Button>Get Your Action Plan - $9.99</Button>
+                    <Button>Get Your Action Plan - {config.singlePrice}</Button>
                   </Link>
                 </div>
               </div>
@@ -117,7 +118,7 @@ export default async function GrowthPlanPage() {
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                   <Link href="/start">
-                    <Button size="lg">Get Started - $9.99</Button>
+                    <Button size="lg">Get Started - {config.singlePrice}</Button>
                   </Link>
                   <Link href="/">
                     <Button variant="ghost" size="lg">Learn More</Button>

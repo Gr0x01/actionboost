@@ -82,7 +82,7 @@ Supabase schema, RLS policies, client utilities.
 Tavily research → Claude Opus 4.5 → markdown output. The core value.
 
 ### 3. Payments
-Stripe checkout ($7.99 single run), webhooks trigger pipeline. 3-pack removed — subscription is the upsell path.
+Stripe checkout ($9.99 single run), webhooks trigger pipeline. 3-pack removed — subscription is the upsell path.
 
 ### 4. Landing + Input
 Marketing page, form with all fields, localStorage persistence.

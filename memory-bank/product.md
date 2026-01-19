@@ -58,7 +58,7 @@ Display these to prove there's real methodology:
 3. Get your custom growth playbook
 
 ### Pricing
-- $7.99 for one strategy
+- $9.99 for one strategy
 
 ### Social Proof
 - Sample output snippet (show quality)
@@ -136,7 +136,7 @@ Display these to prove there's real methodology:
 
 | Product | Price | Credits |
 |---------|-------|---------|
-| Single | $7.99 | 1 |
+| Single | $9.99 | 1 |
 
 **Per-run cost**: ~$0.50 (Opus + research APIs)
 **Margin**: ~90%
@@ -145,7 +145,7 @@ Display these to prove there's real methodology:
 
 ## Output Format
 
-### Full Strategy (8 sections - $7.99)
+### Full Strategy (8 sections - $9.99)
 - Executive Summary
 - Your Current Situation
 - Competitive Landscape

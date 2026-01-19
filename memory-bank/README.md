@@ -6,11 +6,11 @@
 
 Not another ChatGPT wrapper. Not generic "have you tried content marketing?" advice.
 
-**v1 (now)**: One-shot runs. Pay $7.99, paste your situation, get a real strategy built on live competitive research + Claude Opus 4.5 reasoning.
+**v1 (now)**: One-shot runs. Pay $9.99, paste your situation, get a real strategy built on live competitive research + Claude Opus 4.5 reasoning.
 
 **v2 (future)**: Connected growth advisor. Link PostHog/Mixpanel/GA → weekly analysis email → reply to ask questions → $29-49/mo. The real product.
 
-**The flywheel**: User does $7.99 one-shot, loves it → "Want this every week, automatically?" → $29/mo subscription.
+**The flywheel**: User does $9.99 one-shot, loves it → "Want this every week, automatically?" → $29/mo subscription.
 
 **Output format**: Executive Summary → Your Situation → Competitive Landscape → Stop Doing → Start Doing → Quick Wins → 30-Day Roadmap.
 
@@ -29,7 +29,7 @@ Not another ChatGPT wrapper. Not generic "have you tried content marketing?" adv
 | **Claude Opus 4.5** | Strategy generation | Best reasoning model |
 | **Tavily** | Web search | Real-time competitive intel, recent content, trends |
 | **DataForSEO** | SEO/traffic data | Competitor traffic estimates, keyword gaps |
-| **Stripe** | Payments | $7.99 single run |
+| **Stripe** | Payments | $9.99 single run |
 | **Supabase** | DB + Auth | Magic links, run storage, credits |
 
 **Model ID**: `claude-opus-4-5-20251101` - DO NOT CHANGE without approval.
@@ -38,7 +38,7 @@ Not another ChatGPT wrapper. Not generic "have you tried content marketing?" adv
 
 | Product | Price | Cost |
 |---------|-------|------|
-| One-shot | $7.99 | ~$0.50 |
+| One-shot | $9.99 | ~$0.50 |
 | Free mini-audit | $0 | ~$0.04 |
 | Subscription (v2) | $29/mo | TBD |
 

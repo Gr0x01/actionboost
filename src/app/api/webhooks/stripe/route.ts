@@ -6,6 +6,7 @@ import { runPipeline } from "@/lib/ai/pipeline";
 import { sendMagicLink } from "@/lib/auth/send-magic-link";
 import { sendReceiptEmail } from "@/lib/email/resend";
 import { trackServerEvent, identifyUser } from "@/lib/analytics";
+import { config } from "@/lib/config";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -101,7 +102,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     if (email) {
       const amount = session.amount_total
         ? `$${(session.amount_total / 100).toFixed(2)}`
-        : "$9.99";
+        : config.singlePrice;
       const date = new Date().toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
@@ -170,7 +171,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   if (email) {
     const amount = session.amount_total
       ? `$${(session.amount_total / 100).toFixed(2)}`
-      : "$7.99";
+      : config.singlePrice;
     const date = new Date().toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
