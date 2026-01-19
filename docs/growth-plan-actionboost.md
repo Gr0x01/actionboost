@@ -31,7 +31,7 @@ Actionboo.st sits at the intersection of two powerful trends: the solo founder r
 |-----|------------|------------|
 | No social proof on landing page | High | Publish this plan as first case study |
 | No share/export virality | Medium | Share link exists (`/share/[slug]`) but not promoted |
-| Single purchase, no recurring | Low (planned v2) | Flywheel design already accounts for this |
+| Single purchase, no recurring | Low | v2 Growth Board subscription in the works |
 | No SEO content | High | Zero organic traffic pipeline |
 
 ### Market Context
@@ -380,7 +380,9 @@ This is the single number that matters. Everything else supports it.
               [More discovery, cycle repeats]
 ```
 
-**The v2 subscription ($29-49/mo) is the real business.** One-shot runs are the acquisition channel for subscriptions. Every $7.99 customer is a $300+/year subscription lead.
+**The v2 subscription (~$30/mo) is the real business.** One-shot runs are the acquisition channel. Every $7.99 customer is a potential $360/year subscriber.
+
+**What's v2?** Your strategy becomes a *Growth Board* — a living kanban where you track what you tried, report outcomes, and the AI adapts over time. Not just advice. An accountability partner.
 
 ---
 

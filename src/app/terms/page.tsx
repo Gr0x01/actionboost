@@ -24,7 +24,7 @@ export default function TermsPage() {
                   Service Description
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
-                  Actionboo.st provides AI-powered growth strategy recommendations for founders and
+                  Actionboo.st provides AI-powered action plan recommendations for founders and
                   businesses. You submit information about your product, and we generate personalized
                   strategic advice using artificial intelligence and competitive research.
                 </p>
@@ -48,7 +48,7 @@ export default function TermsPage() {
                     <strong className="text-foreground">Free mini audit</strong> — $0 (limited analysis)
                   </li>
                   <li>
-                    <strong className="text-foreground">Full strategy</strong> — $7.99 USD
+                    <strong className="text-foreground">Full action plan</strong> — $9.99 USD
                   </li>
                 </ul>
                 <p className="text-sm text-muted leading-relaxed mt-3">
@@ -63,7 +63,7 @@ export default function TermsPage() {
                 <p className="text-sm text-muted leading-relaxed">
                   All sales are final. As a digital product delivered immediately upon purchase,
                   refunds are not available. If you experience a technical issue that prevents
-                  delivery of your strategy, contact us and we&apos;ll make it right.
+                  delivery of your action plan, contact us and we&apos;ll make it right.
                 </p>
               </section>
 
@@ -90,7 +90,7 @@ export default function TermsPage() {
                   Case Studies
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
-                  With your consent, we may use anonymized excerpts from your strategy as case
+                  With your consent, we may use anonymized excerpts from your action plan as case
                   studies or examples. We will never share your personal information, company name,
                   or identifiable details without explicit permission.
                 </p>
@@ -115,7 +115,7 @@ export default function TermsPage() {
                   Intellectual Property
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
-                  You own the strategy we generate for you and may use it for any lawful purpose.
+                  You own the action plan we generate for you and may use it for any lawful purpose.
                   The Actionboo.st name, logo, and service remain our property.
                 </p>
               </section>

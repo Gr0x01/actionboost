@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 import { Header, Footer } from "@/components/layout";
 import { Loader2, Sparkles, CheckCircle, AlertCircle } from "lucide-react";
@@ -14,8 +14,8 @@ interface RunData {
 
 const STATUS_MESSAGES: Record<RunStatus, string> = {
   pending: "Preparing your analysis...",
-  processing: "Generating your growth strategy...",
-  complete: "Strategy ready!",
+  processing: "Generating your action plan...",
+  complete: "Action plan ready!",
   failed: "Something went wrong",
 };
 
@@ -29,8 +29,10 @@ const STATUS_SUBMESSAGES: Record<RunStatus, string> = {
 export default function ProcessingPage() {
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const posthog = usePostHog();
   const paramId = params.runId as string;
+  const isNewCheckout = searchParams.get("new") === "1";
 
   // If paramId is a Stripe session, we need to resolve it to actual runId
   const isStripeSession = paramId?.startsWith("cs_");
@@ -65,7 +67,8 @@ export default function ProcessingPage() {
         if (res.ok) {
           const data = await res.json();
           // Redirect to the actual run ID URL for cleaner history
-          router.replace(`/processing/${data.runId}`);
+          const newParam = isNewCheckout ? "?new=1" : "";
+          router.replace(`/processing/${data.runId}${newParam}`);
         } else {
           // 404 = webhook hasn't processed yet, will retry
           sessionRetryCount.current++;
@@ -136,7 +139,8 @@ export default function ProcessingPage() {
         if (data.status === "complete") {
           // Short delay before redirect for UX
           setTimeout(() => {
-            router.push(`/results/${runId}`);
+            const newParam = isNewCheckout ? "?new=1" : "";
+            router.push(`/results/${runId}${newParam}`);
           }, 1500);
         } else if (data.status === "failed") {
           setError("Processing failed. Please try again.");
@@ -232,7 +236,7 @@ export default function ProcessingPage() {
                   complete={false}
                 />
                 <StepIndicator
-                  label="Strategy"
+                  label="Action Plan"
                   active={false}
                   complete={false}
                 />

@@ -30,25 +30,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const run = await getSharedRun(slug);
 
   if (!run || run.status !== "complete") {
-    return { title: "Strategy Not Found | Actionboo.st" };
+    return { title: "Action Plan Not Found | Actionboo.st" };
   }
 
   // Extract product description for meta
   const input = run.input as { productDescription?: string } | null;
-  const productDesc = input?.productDescription?.slice(0, 100) || "Growth Strategy";
+  const productDesc = input?.productDescription?.slice(0, 100) || "Action Plan";
 
   return {
     title: `${productDesc} | Actionboo.st`,
-    description: "AI-powered growth strategy for startups and entrepreneurs. Real competitive research, actionable tactics, 30-day roadmap.",
+    description: "AI-powered action plan for startups and entrepreneurs. Real competitive research, actionable tactics, 30-day roadmap.",
     openGraph: {
-      title: `Growth Strategy: ${productDesc}`,
-      description: "AI-powered growth strategy built with live competitive research.",
+      title: `Action Plan: ${productDesc}`,
+      description: "AI-powered action plan built with live competitive research.",
       type: "article",
     },
     twitter: {
       card: "summary_large_image",
-      title: `Growth Strategy: ${productDesc}`,
-      description: "AI-powered growth strategy built with live competitive research.",
+      title: `Action Plan: ${productDesc}`,
+      description: "AI-powered action plan built with live competitive research.",
     },
   };
 }
@@ -67,7 +67,7 @@ export default async function SharePage({ params }: PageProps) {
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center space-y-4">
-            <p className="text-muted">This strategy is still being generated.</p>
+            <p className="text-muted">This action plan is still being generated.</p>
             <p className="text-sm text-muted">Check back in a few minutes.</p>
           </div>
         </main>
@@ -89,19 +89,19 @@ export default async function SharePage({ params }: PageProps) {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-lg bg-surface border border-border">
               <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                 <p className="text-sm text-muted">
-                  This strategy was created with Actionboo.st
+                  This action plan was created with Actionboo.st
                 </p>
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-muted hidden sm:inline">|</span>
                   <SocialShareButtons
                     url={`https://actionboo.st/share/${slug}`}
-                    text="Interesting growth strategy I found on Actionboo.st"
+                    text="Interesting action plan I found on Actionboo.st"
                     source="share_page"
                   />
                 </div>
               </div>
               <Link href="/start">
-                <Button size="sm">Get Your Own Strategy</Button>
+                <Button size="sm">Get Your Own Action Plan</Button>
               </Link>
             </div>
           </div>
@@ -128,13 +128,13 @@ export default async function SharePage({ params }: PageProps) {
           <div className="lg:ml-[220px] pb-12">
             <div className="p-8 rounded-xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 text-center space-y-4">
               <h2 className="text-xl font-semibold text-foreground">
-                Want a growth strategy for your product?
+                Want an action plan for your product?
               </h2>
               <p className="text-muted max-w-md mx-auto">
                 Actionboo.st uses live competitive research and AI to create actionable strategies for startups and entrepreneurs.
               </p>
               <Link href="/start">
-                <Button size="lg">Get Started - $7.99</Button>
+                <Button size="lg">Get Started - $9.99</Button>
               </Link>
             </div>
           </div>

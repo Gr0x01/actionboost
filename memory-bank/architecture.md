@@ -9,7 +9,7 @@ API Routes (Next.js /api)
     ↓
 Services (business logic)
     ↓
-External: Supabase | Stripe | Claude | Tavily
+External: Supabase | Stripe | Claude | Tavily | Resend
 ```
 
 Simple serverless architecture. No queues, no workers - just API routes.
@@ -411,6 +411,28 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 STRIPE_WEBHOOK_SECRET
 STRIPE_PRICE_SINGLE
 ```
+
+### Resend
+
+**Status**: ✅ Complete
+
+Transactional email service for receipts and magic links.
+
+**Email types**:
+| Email | Trigger | How |
+|-------|---------|-----|
+| Receipt | After Stripe payment | Resend API |
+| Magic link | Auth requests | Supabase SMTP → Resend |
+
+**Files**:
+- `src/lib/email/resend.ts` - Client, receipt email, magic link template
+
+**Env vars**:
+```
+RESEND_API_KEY
+```
+
+**Sender**: `hello@actionboo.st`
 
 ---
 

@@ -101,7 +101,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     if (email) {
       const amount = session.amount_total
         ? `$${(session.amount_total / 100).toFixed(2)}`
-        : "$7.99";
+        : "$9.99";
       const date = new Date().toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
@@ -110,7 +110,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
       sendReceiptEmail({
         to: email,
-        productName: credits > 1 ? `${credits} Growth Strategy Credits` : "Growth Strategy Credit",
+        productName: credits > 1 ? `${credits} Action Plan Credits` : "Action Plan Credit",
         amount,
         date,
       }).catch((err) => {
@@ -179,7 +179,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
     sendReceiptEmail({
       to: email,
-      productName: "Growth Strategy Run",
+      productName: "Action Plan",
       amount,
       date,
     }).catch((err) => {

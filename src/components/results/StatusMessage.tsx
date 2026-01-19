@@ -26,7 +26,7 @@ export function StatusMessage({ status }: StatusMessageProps) {
           Something went wrong
         </h1>
         <p className="text-muted mb-8">
-          We encountered an error while generating your strategy.
+          We encountered an error while generating your action plan.
           <br />
           Please try again or contact support.
         </p>
@@ -79,8 +79,8 @@ export function StatusMessage({ status }: StatusMessageProps) {
 
       <h1 className="text-2xl font-light text-foreground mb-2">
         {status === "pending"
-          ? "Preparing your strategy..."
-          : "Generating your growth strategy..."}
+          ? "Preparing your action plan..."
+          : "Generating your action plan..."}
       </h1>
 
       <p className="text-muted mb-8">
@@ -115,7 +115,7 @@ export function StatusMessage({ status }: StatusMessageProps) {
         <div className="h-px w-8 bg-border" />
         <div className="flex flex-col items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-border" />
-          <span className="text-muted">Strategy</span>
+          <span className="text-muted">Action Plan</span>
         </div>
       </div>
 

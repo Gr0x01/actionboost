@@ -110,13 +110,13 @@ export function Pricing() {
               <h3 className="text-2xl font-bold text-foreground mb-1">
                 {config.singlePrice}
               </h3>
-              <p className="text-sm text-muted mb-4">Full strategy</p>
+              <p className="text-sm text-muted mb-4">Full action plan</p>
               <button
                 onClick={handleBuyCredits}
                 disabled={loading}
                 className="w-full py-2.5 px-4 rounded-lg text-sm font-semibold bg-cta text-white hover:bg-cta-hover transition-colors disabled:opacity-70"
               >
-                {loading ? "..." : "Get My Strategy"}
+                {loading ? "..." : "Get My Action Plan"}
               </button>
             </div>
           </div>
@@ -141,13 +141,13 @@ export function Pricing() {
                 <h3 className="text-lg font-bold text-foreground">
                   {config.singlePrice}
                 </h3>
-                <p className="text-xs text-muted mb-3">Full strategy</p>
+                <p className="text-xs text-muted mb-3">Full action plan</p>
                 <button
                   onClick={handleBuyCredits}
                   disabled={loading}
                   className="w-full py-2 px-3 rounded-lg text-xs font-semibold bg-cta text-white hover:bg-cta-hover transition-colors disabled:opacity-70"
                 >
-                  {loading ? "..." : "Get Strategy"}
+                  {loading ? "..." : "Get Action Plan"}
                 </button>
               </div>
             </div>
@@ -186,7 +186,7 @@ export function Pricing() {
 
         {/* Trust note */}
         <p className="text-center text-sm text-muted mt-10 animate-slide-up stagger-2">
-          No subscription required. One payment, one strategy.
+          No subscription required. One payment, one action plan.
         </p>
       </div>
     </section>

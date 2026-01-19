@@ -33,7 +33,7 @@ export function WelcomeBack({
             Welcome back!
           </h2>
           <p className="text-muted text-sm mt-1">
-            You&apos;ve run {totalRuns} {totalRuns === 1 ? 'strategy' : 'strategies'} so far
+            You&apos;ve run {totalRuns} {totalRuns === 1 ? 'action plan' : 'action plans'} so far
           </p>
         </div>
       </div>
@@ -54,7 +54,7 @@ export function WelcomeBack({
 
         {lastRunDate && (
           <p className="text-xs text-muted">
-            Last strategy: {formatDate(lastRunDate)}
+            Last action plan: {formatDate(lastRunDate)}
           </p>
         )}
       </div>
@@ -107,7 +107,7 @@ export function ContextUpdateForm({
           What&apos;s changed?
         </h2>
         <p className="text-muted text-sm">
-          Tell us what&apos;s new since your last strategy. We&apos;ll build on what we know.
+          Tell us what&apos;s new since your last action plan. We&apos;ll build on what we know.
         </p>
       </div>
 
@@ -188,7 +188,7 @@ export function ContextUpdateForm({
             Back
           </Button>
           <Button type="submit" size="lg" className="flex-1">
-            Generate Updated Strategy
+            Generate Updated Action Plan
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
         </div>

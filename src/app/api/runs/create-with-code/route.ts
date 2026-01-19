@@ -4,6 +4,7 @@ import { FormInput, validateForm } from "@/lib/types/form";
 import { Json } from "@/lib/types/database";
 import { runPipeline } from "@/lib/ai/pipeline";
 import { setSessionCookie } from "@/lib/auth/session-cookie";
+import { sendMagicLink } from "@/lib/auth/send-magic-link";
 import { trackServerEvent, identifyUser } from "@/lib/analytics";
 import { isValidEmail } from "@/lib/validation";
 
@@ -188,6 +189,11 @@ export async function POST(request: NextRequest) {
     // Trigger AI pipeline (fire and forget)
     runPipeline(run.id).catch((err) => {
       console.error("Pipeline failed for run:", run.id, err);
+    });
+
+    // Send magic link for dashboard access (fire and forget)
+    sendMagicLink(normalizedEmail, "/dashboard").catch((err) => {
+      console.error("Magic link failed for run:", run.id, err);
     });
 
     return NextResponse.json({ runId: run.id });

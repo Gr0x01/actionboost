@@ -66,12 +66,12 @@ export function ShareModal({ runId, shareSlug, onClose }: ShareModalProps) {
             <LinkIcon className="h-5 w-5 text-primary" />
           </div>
           <h2 className="text-lg font-semibold text-foreground">
-            Share Your Strategy
+            Share Your Action Plan
           </h2>
         </div>
 
         <p className="text-sm text-muted mb-6">
-          Anyone with this link can view your growth strategy (read-only).
+          Anyone with this link can view your action plan (read-only).
         </p>
 
         {error && (
@@ -103,7 +103,7 @@ export function ShareModal({ runId, shareSlug, onClose }: ShareModalProps) {
               <span className="text-sm text-muted">Share on:</span>
               <SocialShareButtons
                 url={shareUrl}
-                text="Check out this AI-generated growth strategy from Actionboo.st"
+                text="Check out this AI-generated action plan from Actionboo.st"
                 source="share_modal"
               />
             </div>

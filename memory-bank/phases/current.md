@@ -1,6 +1,32 @@
-# Current: Feature Flag + Waitlist
+# Current: Resend Email Integration
 
-## Latest Update: Pricing Feature Flag + Waitlist ✅
+## Latest Update: Resend Email Integration ✅
+
+**Completed Jan 2025** - Branded transactional emails via Resend.
+
+### What Was Built
+- **Receipt emails**: Sent after every Stripe payment (credits-only and full runs)
+- **Branded magic link template**: Configured in Supabase SMTP
+- **Design**: Orange accent bar, bold typography, Source Sans 3 font
+
+### Email Types
+| Email | Trigger | Service |
+|-------|---------|---------|
+| Receipt | After Stripe payment | Resend API |
+| Magic link | Auth requests | Supabase SMTP → Resend |
+
+### Files
+- `src/lib/email/resend.ts` - Resend client, receipt email, magic link template generator
+- `src/app/api/webhooks/stripe/route.ts` - Sends receipt after payment
+
+### Configuration
+- Supabase SMTP configured with Resend credentials
+- Sender: `hello@actionboo.st`
+- Magic link template pasted in Supabase Auth dashboard
+
+---
+
+## Previous: Feature Flag + Waitlist ✅
 
 **Completed Jan 2025** - Feature flag to disable pricing for promo-code-only testing, with waitlist fallback.
 
@@ -131,5 +157,4 @@ src/components/forms/
 
 - Weekly automated runs (cron job for subscribed users)
 - Share page route `/share/[slug]` (public view without auth)
-- Configure Supabase email templates (optional)
 - Google OAuth (optional)

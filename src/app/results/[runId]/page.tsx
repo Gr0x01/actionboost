@@ -5,7 +5,7 @@ import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { ResultsContent, StatusMessage, ExportBar, TableOfContents } from "@/components/results";
+import { ResultsContent, StatusMessage, ExportBar, TableOfContents, MagicLinkBanner } from "@/components/results";
 import { parseStrategy, type ParsedStrategy } from "@/lib/markdown/parser";
 
 type RunStatus = "pending" | "processing" | "complete" | "failed";
@@ -26,6 +26,7 @@ function ResultsPageContent() {
   const posthog = usePostHog();
   const runId = params.runId as string;
   const shareSlug = searchParams.get("share");
+  const isNewCheckout = searchParams.get("new") === "1";
   const trackedRef = useRef(false);
   const pageLoadTime = useRef(Date.now());
 
@@ -71,11 +72,11 @@ function ResultsPageContent() {
             return;
           }
           if (res.status === 403) {
-            setError("You don't have access to this strategy");
+            setError("You don't have access to this action plan");
           } else if (res.status === 404) {
-            setError("Strategy not found");
+            setError("Action plan not found");
           } else {
-            setError("Failed to load strategy");
+            setError("Failed to load action plan");
           }
           setLoading(false);
           return;
@@ -99,7 +100,7 @@ function ResultsPageContent() {
 
         setLoading(false);
       } catch {
-        setError("Failed to load strategy");
+        setError("Failed to load action plan");
         setLoading(false);
       }
     };
@@ -121,7 +122,7 @@ function ResultsPageContent() {
       // Stop polling after max attempts
       if (pollCount >= MAX_POLLS) {
         clearInterval(interval);
-        setError("Strategy generation is taking longer than expected. Please refresh the page.");
+        setError("Action plan generation is taking longer than expected. Please refresh the page.");
         return;
       }
 
@@ -218,6 +219,13 @@ function ResultsPageContent() {
 
       <main className="flex-1">
         <div className="mx-auto max-w-7xl px-6">
+          {/* Magic link banner for new checkouts */}
+          {isNewCheckout && (
+            <div className="lg:ml-[220px] mt-6">
+              <MagicLinkBanner />
+            </div>
+          )}
+
           {/* Export bar */}
           <div className="lg:ml-[220px]">
             <ExportBar

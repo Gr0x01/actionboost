@@ -4,7 +4,7 @@ import Stripe from "stripe";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 // Price ID from Stripe Dashboard
-const PRICE_SINGLE = process.env.STRIPE_PRICE_SINGLE!; // $7.99 for 1 credit
+const PRICE_SINGLE = process.env.STRIPE_PRICE_SINGLE!; // $9.99 for 1 credit
 
 export async function POST() {
   try {

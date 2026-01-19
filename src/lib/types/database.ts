@@ -13,6 +13,7 @@ export type Database = {
         Row: {
           id: string
           email: string
+          user_id: string | null
           input: Json
           output: string | null
           status: string
@@ -22,6 +23,7 @@ export type Database = {
         Insert: {
           id?: string
           email: string
+          user_id?: string | null
           input: Json
           output?: string | null
           status?: string
@@ -31,13 +33,22 @@ export type Database = {
         Update: {
           id?: string
           email?: string
+          user_id?: string | null
           input?: Json
           output?: string | null
           status?: string
           created_at?: string
           completed_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "free_audits_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       codes: {
         Row: {

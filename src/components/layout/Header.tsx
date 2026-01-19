@@ -53,7 +53,7 @@ export function Header() {
                   </Button>
                 </Link>
                 <Link href="/start">
-                  <Button size="sm">New Strategy</Button>
+                  <Button size="sm">New Action Plan</Button>
                 </Link>
               </>
             ) : !loading ? (

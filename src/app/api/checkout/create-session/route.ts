@@ -5,7 +5,7 @@ import { FormInput, validateForm } from "@/lib/types/form";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 // Price ID from Stripe Dashboard
-const PRICE_SINGLE = process.env.STRIPE_PRICE_SINGLE!; // $7.99 for 1 credit
+const PRICE_SINGLE = process.env.STRIPE_PRICE_SINGLE!; // $9.99 for 1 credit
 
 export async function POST(request: NextRequest) {
   try {
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
         },
       ],
       metadata,
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/processing/{CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/processing/{CHECKOUT_SESSION_ID}?new=1`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/start`,
     });
 

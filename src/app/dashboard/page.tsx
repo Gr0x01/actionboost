@@ -1,9 +1,6 @@
-import { redirect } from "next/navigation"
-import Link from "next/link"
 import { requireAuth } from "@/lib/auth/session"
 import { createServiceClient } from "@/lib/supabase/server"
 import { Header, Footer } from "@/components/layout"
-import { Button } from "@/components/ui"
 import {
   ArrowRight,
   Clock,
@@ -14,6 +11,8 @@ import {
   FileText,
 } from "lucide-react"
 import { SignOutButton } from "./SignOutButton"
+import { DashboardTracker } from "./DashboardTracker"
+import { TrackedStrategyLink, TrackedFreeAuditLink, TrackedCTAButton } from "./TrackedComponents"
 
 type RunStatus = "pending" | "processing" | "complete" | "failed"
 
@@ -36,6 +35,14 @@ function StatusBadge({ status }: { status: string | null }) {
   )
 }
 
+function FreeBadge() {
+  return (
+    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
+      Free Preview
+    </span>
+  )
+}
+
 function formatDate(dateString: string | null) {
   if (!dateString) return "—"
   return new Date(dateString).toLocaleDateString("en-US", {
@@ -47,7 +54,7 @@ function formatDate(dateString: string | null) {
 
 function getProductName(input: Record<string, unknown>): string {
   const desc = input?.productDescription as string | undefined
-  if (!desc) return "Strategy"
+  if (!desc) return "Action Plan"
   // Get first 50 chars or first sentence
   const firstLine = desc.split(/[.\n]/)[0]
   return firstLine.length > 50 ? firstLine.slice(0, 50) + "..." : firstLine
@@ -65,38 +72,53 @@ export default async function DashboardPage() {
     .eq("auth_id", authUser.id)
     .single()
 
-  let runs: Array<{
+  type StrategyItem = {
     id: string
     status: string | null
     input: Record<string, unknown>
     created_at: string | null
-    completed_at: string | null
-    share_slug: string | null
-  }> = []
+    type: "run" | "free_audit"
+  }
+
+  let strategies: StrategyItem[] = []
   let remainingCredits = 0
 
   if (publicUser) {
     // Get runs
     const { data: runsData } = await supabase
       .from("runs")
-      .select("id, status, input, created_at, completed_at, share_slug")
+      .select("id, status, input, created_at")
       .eq("user_id", publicUser.id)
-      .order("created_at", { ascending: false })
 
-    runs = (runsData ?? []) as typeof runs
+    // Get free audits
+    const { data: freeAuditsData } = await supabase
+      .from("free_audits")
+      .select("id, status, input, created_at")
+      .eq("user_id", publicUser.id)
 
-    // Get credits
+    // Combine and sort by created_at (newest first)
+    const runs = (runsData ?? []).map(r => ({ ...r, type: "run" as const }))
+    const freeAudits = (freeAuditsData ?? []).map(a => ({ ...a, type: "free_audit" as const }))
+    strategies = [...runs, ...freeAudits].sort((a, b) => {
+      const dateA = a.created_at ? new Date(a.created_at).getTime() : 0
+      const dateB = b.created_at ? new Date(b.created_at).getTime() : 0
+      return dateB - dateA
+    }) as StrategyItem[]
+
+    // Get credits (only count runs, not free audits)
     const { data: credits } = await supabase
       .from("run_credits")
       .select("credits")
       .eq("user_id", publicUser.id)
 
     const totalCredits = credits?.reduce((sum, c) => sum + c.credits, 0) ?? 0
-    remainingCredits = Math.max(0, totalCredits - runs.length)
+    const paidRuns = runs.length
+    remainingCredits = Math.max(0, totalCredits - paidRuns)
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-surface/30">
+      <DashboardTracker stats={{ runs: strategies.length, credits: remainingCredits }} />
       <Header />
 
       <main className="flex-1 py-10 sm:py-14">
@@ -122,9 +144,9 @@ export default async function DashboardPage() {
                   <FileText className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-2xl font-semibold text-foreground">{runs.length}</p>
+                  <p className="text-2xl font-semibold text-foreground">{strategies.length}</p>
                   <p className="text-sm text-muted">
-                    {runs.length === 1 ? "Strategy" : "Strategies"}
+                    {strategies.length === 1 ? "Action Plan" : "Action Plans"}
                   </p>
                 </div>
               </div>
@@ -145,60 +167,66 @@ export default async function DashboardPage() {
             </div>
           </div>
 
-          {/* Runs list */}
+          {/* Strategies list */}
           <div className="bg-background rounded-xl shadow-lg shadow-foreground/5 border border-border/50 overflow-hidden">
             <div className="px-6 py-4 border-b border-border/50">
-              <h2 className="font-semibold text-foreground">Your Strategies</h2>
+              <h2 className="font-semibold text-foreground">Your Action Plans</h2>
             </div>
 
-            {runs.length === 0 ? (
+            {strategies.length === 0 ? (
               <div className="p-8 text-center">
                 <div className="w-12 h-12 rounded-full bg-surface flex items-center justify-center mx-auto mb-4">
                   <FileText className="h-6 w-6 text-muted" />
                 </div>
-                <p className="text-muted mb-4">No strategies yet</p>
-                <Link href="/start">
-                  <Button size="lg">
-                    Get your first strategy
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </Button>
-                </Link>
+                <p className="text-muted mb-4">No action plans yet</p>
+                <TrackedCTAButton button="get_first_strategy" />
               </div>
             ) : (
               <div className="divide-y divide-border/50">
-                {runs.map((run) => (
-                  <Link
-                    key={run.id}
-                    href={`/results/${run.id}`}
-                    className="flex items-center justify-between px-6 py-4 hover:bg-surface/50 transition-colors"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-foreground truncate">
-                        {getProductName(run.input)}
-                      </p>
-                      <p className="text-sm text-muted mt-0.5">
-                        {formatDate(run.created_at)}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-4 ml-4">
-                      <StatusBadge status={run.status} />
-                      <ArrowRight className="h-4 w-4 text-muted" />
-                    </div>
-                  </Link>
-                ))}
+                {strategies.map((item) =>
+                  item.type === "free_audit" ? (
+                    <TrackedFreeAuditLink key={item.id} auditId={item.id} status={item.status}>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium text-foreground truncate">
+                            {getProductName(item.input)}
+                          </p>
+                          <FreeBadge />
+                        </div>
+                        <p className="text-sm text-muted mt-0.5">
+                          {formatDate(item.created_at)}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-4 ml-4">
+                        <StatusBadge status={item.status} />
+                        <ArrowRight className="h-4 w-4 text-muted" />
+                      </div>
+                    </TrackedFreeAuditLink>
+                  ) : (
+                    <TrackedStrategyLink key={item.id} runId={item.id} status={item.status}>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-foreground truncate">
+                          {getProductName(item.input)}
+                        </p>
+                        <p className="text-sm text-muted mt-0.5">
+                          {formatDate(item.created_at)}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-4 ml-4">
+                        <StatusBadge status={item.status} />
+                        <ArrowRight className="h-4 w-4 text-muted" />
+                      </div>
+                    </TrackedStrategyLink>
+                  )
+                )}
               </div>
             )}
           </div>
 
           {/* CTA */}
-          {runs.length > 0 && (
+          {strategies.length > 0 && (
             <div className="mt-6 text-center">
-              <Link href="/start">
-                <Button variant="secondary" size="lg">
-                  Generate another strategy
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Button>
-              </Link>
+              <TrackedCTAButton button="generate_another" variant="secondary" />
             </div>
           )}
         </div>

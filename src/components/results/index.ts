@@ -5,6 +5,7 @@ export { ExportBar } from "./ExportBar";
 export { ShareModal } from "./ShareModal";
 export { SectionCard } from "./SectionCard";
 export { TableOfContents } from "./TableOfContents";
+export { MagicLinkBanner } from "./MagicLinkBanner";
 
 // Section components
 export { ExecutiveSummary } from "./sections/ExecutiveSummary";

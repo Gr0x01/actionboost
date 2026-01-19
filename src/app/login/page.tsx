@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, Suspense } from "react"
+import { useState, useEffect, useRef, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
+import { usePostHog } from "posthog-js/react"
 import { Header, Footer } from "@/components/layout"
 import { Button, Input } from "@/components/ui"
 import { Loader2, Mail, ArrowRight, CheckCircle } from "lucide-react"
@@ -9,11 +10,21 @@ import Link from "next/link"
 
 function LoginForm() {
   const searchParams = useSearchParams()
+  const posthog = usePostHog()
   const next = searchParams.get("next") || "/dashboard"
+  const hasTrackedView = useRef(false)
 
   const [email, setEmail] = useState("")
   const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error">("idle")
   const [error, setError] = useState("")
+
+  // Track login page viewed
+  useEffect(() => {
+    if (!hasTrackedView.current) {
+      posthog?.capture("login_page_viewed", { redirect_to: next })
+      hasTrackedView.current = true
+    }
+  }, [posthog, next])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -23,6 +34,7 @@ function LoginForm() {
       return
     }
 
+    posthog?.capture("login_submitted")
     setStatus("loading")
     setError("")
 
@@ -36,13 +48,16 @@ function LoginForm() {
       const data = await res.json()
 
       if (!res.ok) {
+        posthog?.capture("login_error", { error: data.error || "api_error" })
         setError(data.error || "Failed to send magic link")
         setStatus("error")
         return
       }
 
+      posthog?.capture("login_magic_link_sent")
       setStatus("sent")
     } catch {
+      posthog?.capture("login_error", { error: "network_error" })
       setError("Something went wrong. Please try again.")
       setStatus("error")
     }
@@ -94,7 +109,7 @@ function LoginForm() {
                     Sign in to Actionboo.st
                   </h1>
                   <p className="text-muted text-sm mt-1">
-                    View your past strategies and credit balance
+                    View your past action plans and credit balance
                   </p>
                 </div>
 
@@ -139,7 +154,7 @@ function LoginForm() {
                       href="/start"
                       className="text-primary hover:text-primary/80 font-medium"
                     >
-                      Get your first strategy
+                      Get your first action plan
                     </Link>
                   </p>
                 </div>

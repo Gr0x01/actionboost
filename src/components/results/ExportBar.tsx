@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePostHog } from "posthog-js/react";
 import { Button } from "@/components/ui/Button";
 import { Copy, Download, Share2, Check } from "lucide-react";
 import { ShareModal } from "./ShareModal";
@@ -31,20 +32,23 @@ export function ExportBar({
   shareSlug,
   productName,
 }: ExportBarProps) {
+  const posthog = usePostHog();
   const [copied, setCopied] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
 
   const handleCopy = async () => {
+    posthog?.capture("export_copy_clicked", { run_id: runId });
     await navigator.clipboard.writeText(markdown);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   const handlePDF = () => {
+    posthog?.capture("export_pdf_clicked", { run_id: runId });
     const printWindow = window.open("", "_blank");
     if (printWindow) {
       const safeProductName = productName ? escapeHTML(productName) : null;
-      const title = safeProductName ? `Growth Strategy - ${safeProductName}` : "Growth Strategy";
+      const title = safeProductName ? `Action Plan - ${safeProductName}` : "Action Plan";
       // markdownToHTML already outputs safe HTML since it only transforms markdown syntax
       // The AI-generated content is plain text that gets wrapped in HTML tags
       const safeContent = markdownToHTML(markdown);
@@ -93,7 +97,7 @@ export function ExportBar({
     <>
       <div className="sticky top-16 z-40 -mx-6 px-6 py-3 bg-background/80 backdrop-blur-sm border-b border-border mb-8">
         <div className="flex items-center justify-between max-w-4xl mx-auto">
-          <span className="text-sm text-muted font-medium">Your Growth Strategy</span>
+          <span className="text-sm text-muted font-medium">Your Action Plan</span>
 
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" onClick={handleCopy} className="gap-2">

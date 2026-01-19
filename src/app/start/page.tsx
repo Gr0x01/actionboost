@@ -359,7 +359,7 @@ export default function StartPage() {
           return;
         }
         localStorage.removeItem(STORAGE_KEY);
-        router.push(`/processing/${data.runId}`);
+        router.push(`/processing/${data.runId}?new=1`);
       } else {
         const res = await fetch("/api/checkout/create-session", {
           method: "POST",

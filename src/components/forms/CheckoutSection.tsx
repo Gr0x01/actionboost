@@ -87,7 +87,7 @@ export function CheckoutSection({
 
       if (res.ok && data.freeAuditId) {
         posthog?.capture("free_audit_success", { free_audit_id: data.freeAuditId });
-        router.push(`/free-results/${data.freeAuditId}`);
+        router.push(`/free-results/${data.freeAuditId}?new=1`);
       } else if (res.status === 409) {
         // Already has a free audit
         posthog?.capture("free_audit_duplicate", { error: data.error });
@@ -179,7 +179,7 @@ export function CheckoutSection({
       {/* Header with editorial flair */}
       <div className="space-y-3">
         <h2 className="text-3xl sm:text-4xl font-serif font-bold text-foreground tracking-tight">
-          Ready to generate your strategy
+          Ready to generate your action plan
         </h2>
         <p className="text-muted text-lg max-w-md mx-auto">
           Our AI will analyze your inputs and create a custom growth playbook
@@ -247,11 +247,11 @@ export function CheckoutSection({
                 Processing...
               </>
             ) : hasValidCode ? (
-              "Generate Strategy — Free"
+              "Generate Action Plan — Free"
             ) : config.pricingEnabled ? (
               <>
-                Generate Strategy
-                <span className="font-normal opacity-90">— $7.99</span>
+                Generate Action Plan
+                <span className="font-normal opacity-90">— $9.99</span>
               </>
             ) : (
               "Enter code to continue"
@@ -386,7 +386,7 @@ export function CheckoutSection({
           >
             <Check className="w-4 h-4" />
             <span className="text-sm font-medium">
-              {codeStatus?.credits} free {codeStatus?.credits === 1 ? "strategy" : "strategies"}
+              {codeStatus?.credits} free {codeStatus?.credits === 1 ? "action plan" : "action plans"}
             </span>
             <button onClick={clearCode} className="text-green-500 hover:text-green-700 ml-1 text-lg leading-none">
               ×

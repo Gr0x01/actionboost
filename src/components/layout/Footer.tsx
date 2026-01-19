@@ -11,7 +11,7 @@ export function Footer() {
               Actionboo.st
             </span>
             <p className="mt-1 text-sm text-white/60">
-              AI-powered growth strategy for founders
+              AI-powered action plans for founders
             </p>
           </div>
 

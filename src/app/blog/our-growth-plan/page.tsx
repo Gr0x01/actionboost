@@ -11,10 +11,10 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Our Growth Plan | Actionboo.st",
-  description: "We ran Actionboo.st on itself. Here's the AI-generated growth strategy for our own product - real competitive research, actionable tactics, and a 30-day roadmap.",
+  description: "We ran Actionboo.st on itself. Here's the AI-generated action plan for our own product - real competitive research, actionable tactics, and a 30-day roadmap.",
   openGraph: {
     title: "We Ran Actionboo.st on Itself - Our Growth Plan",
-    description: "See what happens when an AI growth strategist analyzes its own product. Real strategy, real research, real results.",
+    description: "See what happens when an AI growth strategist analyzes its own product. Real action plan, real research, real results.",
     type: "article",
   },
   twitter: {
@@ -59,7 +59,7 @@ export default async function GrowthPlanPage() {
           </h1>
           <p className="text-lg text-muted max-w-xl mx-auto">
             What happens when an AI growth strategist analyzes its own product?
-            Here&apos;s the real strategy we&apos;re following to grow Actionboo.st.
+            Here&apos;s the real action plan we&apos;re following to grow Actionboo.st.
           </p>
           <p className="text-sm text-muted mt-4">
             January 2026 · 15 min read
@@ -93,11 +93,11 @@ export default async function GrowthPlanPage() {
               <div className="mb-10 p-6 rounded-xl bg-gradient-to-r from-primary/10 to-transparent border border-primary/20">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div>
-                    <p className="font-medium text-foreground">Want a strategy like this for your product?</p>
+                    <p className="font-medium text-foreground">Want an action plan like this for your product?</p>
                     <p className="text-sm text-muted">Get AI-powered growth recommendations with live competitive research.</p>
                   </div>
                   <Link href="/start">
-                    <Button>Get Your Strategy - $7.99</Button>
+                    <Button>Get Your Action Plan - $9.99</Button>
                   </Link>
                 </div>
               </div>
@@ -109,7 +109,7 @@ export default async function GrowthPlanPage() {
               {/* Bottom CTA */}
               <div className="mt-16 p-8 rounded-xl bg-surface border border-border text-center space-y-4">
                 <h2 className="text-xl font-semibold text-foreground">
-                  Ready to get your own growth strategy?
+                  Ready to get your own action plan?
                 </h2>
                 <p className="text-muted max-w-md mx-auto">
                   Actionboo.st uses live competitive research and Claude Opus to create
@@ -117,7 +117,7 @@ export default async function GrowthPlanPage() {
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                   <Link href="/start">
-                    <Button size="lg">Get Started - $7.99</Button>
+                    <Button size="lg">Get Started - $9.99</Button>
                   </Link>
                   <Link href="/">
                     <Button variant="ghost" size="lg">Learn More</Button>

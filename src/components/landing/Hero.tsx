@@ -39,7 +39,7 @@ export function Hero() {
             <div className="mt-10 flex flex-col sm:flex-row items-center xl:items-start justify-center xl:justify-start gap-6 animate-slide-up stagger-2">
               <Link href="/start" onClick={() => trackCTA("get_started")}>
                 <Button size="xl">
-                  {config.pricingEnabled ? "Get Started — $7.99" : "Get Started"}
+                  {config.pricingEnabled ? "Get Started — $9.99" : "Get Started"}
                 </Button>
               </Link>
               {config.pricingEnabled && (

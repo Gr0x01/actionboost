@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { config } from "@/lib/config";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { ResultsContent, StatusMessage, TableOfContents } from "@/components/results";
+import { ResultsContent, StatusMessage, TableOfContents, MagicLinkBanner } from "@/components/results";
 import { parseStrategy, type ParsedStrategy } from "@/lib/markdown/parser";
 
 type AuditStatus = "pending" | "processing" | "complete" | "failed";
@@ -49,7 +49,7 @@ function UpsellBanner() {
           }}
           className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-xl font-medium transition-colors whitespace-nowrap"
         >
-          Get Full Strategy — {config.singlePrice}
+          Get Full Action Plan — {config.singlePrice}
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>
@@ -77,7 +77,7 @@ function UpgradeCTA() {
       className="mt-12 pt-8 border-t border-border text-center"
     >
       <p className="text-muted text-sm mb-2">
-        The full strategy also includes:
+        The full action plan also includes:
       </p>
       <p className="text-foreground font-medium mb-6">
         {lockedSections.join(" · ")}
@@ -101,8 +101,10 @@ const LOCKED_SECTION_IDS = ["stop-doing", "start-doing", "quick-wins", "roadmap"
 
 function FreeResultsPageContent() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const posthog = usePostHog();
   const freeAuditId = params.id as string;
+  const isNewCheckout = searchParams.get("new") === "1";
   const trackedRef = useRef(false);
   const pageLoadTime = useRef(Date.now());
   const statusRef = useRef<AuditStatus | null>(null);
@@ -300,6 +302,9 @@ function FreeResultsPageContent() {
 
             {/* Main content */}
             <div className="flex-1 max-w-3xl">
+              {/* Magic link banner for new checkouts */}
+              {isNewCheckout && <MagicLinkBanner />}
+
               {/* Upsell banner */}
               <UpsellBanner />
 

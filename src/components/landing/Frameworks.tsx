@@ -15,7 +15,7 @@ export function Frameworks() {
             Built on frameworks that <span className="text-gradient">actually work</span>
           </h2>
           <p className="mt-4 text-lg text-muted max-w-2xl mx-auto leading-relaxed">
-            Not random AI advice. Strategy grounded in the same frameworks used by
+            Not random AI advice. Your action plan is grounded in the same frameworks used by
             growth teams at top&nbsp;startups.
           </p>
         </div>

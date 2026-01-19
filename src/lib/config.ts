@@ -4,5 +4,5 @@ export const config = {
   pricingEnabled: process.env.NEXT_PUBLIC_PRICING_ENABLED !== "false",
 
   // Pricing display (for consistency across UI)
-  singlePrice: "$7.99",
+  singlePrice: "$9.99",
 };

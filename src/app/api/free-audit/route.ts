@@ -5,6 +5,7 @@ import { Json } from "@/lib/types/database";
 import { runFreePipeline } from "@/lib/ai/pipeline";
 import { trackServerEvent } from "@/lib/analytics";
 import { isValidEmail } from "@/lib/validation";
+import { sendMagicLink } from "@/lib/auth/send-magic-link";
 
 // Field length limits for server-side validation
 const MAX_FIELD_LENGTHS: Record<string, number> = {
@@ -96,6 +97,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get or create user by email (for dashboard access)
+    let userId: string | null = null;
+    const { data: existingUser } = await supabase
+      .from("users")
+      .select("id")
+      .eq("email", displayEmail)
+      .single();
+
+    if (existingUser) {
+      userId = existingUser.id;
+    } else {
+      const { data: newUser, error: userError } = await supabase
+        .from("users")
+        .insert({ email: displayEmail })
+        .select("id")
+        .single();
+
+      if (!userError && newUser) {
+        userId = newUser.id;
+      }
+      // If user creation fails, continue without linking - audit still works
+    }
+
     // Transform FormInput to RunInput format for AI pipeline
     const runInput = {
       productDescription: input.productDescription,
@@ -114,6 +138,7 @@ export async function POST(request: NextRequest) {
       .from("free_audits")
       .insert({
         email: normalizedEmail,
+        user_id: userId,
         input: runInput as unknown as Json,
         status: "pending",
       })
@@ -150,6 +175,11 @@ export async function POST(request: NextRequest) {
         free_audit_id: freeAudit.id,
         error: err instanceof Error ? err.message : String(err),
       });
+    });
+
+    // Send magic link for dashboard access (fire and forget)
+    sendMagicLink(displayEmail, "/dashboard").catch((err) => {
+      console.error("Magic link failed for free audit:", freeAudit.id, err);
     });
 
     return NextResponse.json({ freeAuditId: freeAudit.id });

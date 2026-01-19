@@ -45,7 +45,7 @@ export default function PrivacyPage() {
                 <ul className="text-sm text-muted space-y-2 list-disc list-inside">
                   <li>
                     <strong className="text-foreground">Email address</strong> — for magic link authentication and
-                    delivering your strategy
+                    delivering your action plan
                   </li>
                   <li>
                     <strong className="text-foreground">Form inputs</strong> — your product description, current
@@ -68,7 +68,7 @@ export default function PrivacyPage() {
                 </h2>
                 <ul className="text-sm text-muted space-y-2 list-disc list-inside">
                   <li>
-                    <strong className="text-foreground">Generate your strategy</strong> — your inputs are sent to our
+                    <strong className="text-foreground">Generate your action plan</strong> — your inputs are sent to our
                     AI to create personalized recommendations (legal basis: contract performance)
                   </li>
                   <li>
@@ -101,7 +101,7 @@ export default function PrivacyPage() {
                     <strong className="text-foreground">Supabase</strong> — database, authentication, and file storage
                   </li>
                   <li>
-                    <strong className="text-foreground">Anthropic (Claude)</strong> — AI strategy generation
+                    <strong className="text-foreground">Anthropic (Claude)</strong> — AI action plan generation
                   </li>
                   <li>
                     <strong className="text-foreground">OpenAI</strong> — text embeddings for improved recommendations
@@ -150,7 +150,7 @@ export default function PrivacyPage() {
                 </h2>
                 <ul className="text-sm text-muted space-y-2 list-disc list-inside">
                   <li>
-                    <strong className="text-foreground">Access</strong> — view all your past strategies in your
+                    <strong className="text-foreground">Access</strong> — view all your past action plans in your
                     dashboard
                   </li>
                   <li>
@@ -158,7 +158,7 @@ export default function PrivacyPage() {
                     associated data
                   </li>
                   <li>
-                    <strong className="text-foreground">Export</strong> — download your strategies as PDF
+                    <strong className="text-foreground">Export</strong> — download your action plans as PDF
                   </li>
                   <li>
                     <strong className="text-foreground">Correction</strong> — request correction of inaccurate data
