@@ -1,21 +1,21 @@
 ---
-Last-Updated: YYYY-MM-DD
+Last-Updated: 2026-01-19
 Maintainer: RB
 Status: Setup
 ---
 
-# Quickstart: [PROJECT_NAME] Directory
+# Quickstart: Actionboo.st
 
 ## Current State
 
-- **Status**: Setup
-- **Goal**: [DESCRIBE THE DIRECTORY'S PURPOSE]
+- **Status**: Setup - Initial project scaffolding complete
+- **Goal**: One-off growth hacker mini app
 
 ---
 
 ## What's Happening
 
-[BRIEF DESCRIPTION OF CURRENT PHASE]
+Initial project setup complete. Next.js 16 with React 19, TypeScript, Tailwind CSS 4, and Supabase integration ready.
 
 ---
 
@@ -30,17 +30,18 @@ npm run type-check       # TypeScript verification
 # Testing
 npm run test:e2e         # Playwright tests
 npm run test:e2e:ui      # Interactive mode
+npm run test:e2e:debug   # Debug mode
 ```
 
 ---
 
 ## Phase Checklist
 
-- [ ] Project setup (Next.js, Supabase, etc.)
+- [x] Project setup (Next.js, Supabase, etc.)
+- [ ] Define app features and data schema
 - [ ] Database schema design
 - [ ] Core pages implementation
-- [ ] Data pipeline setup
-- [ ] Initial data seeding
+- [ ] Data pipeline setup (if needed)
 - [ ] Launch MVP
 
 ---
@@ -54,8 +55,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 SUPABASE_SERVICE_ROLE_KEY=...
 
 # External APIs (as needed)
-# OPENAI_API_KEY=...
-# TAVILY_API_KEY=...
+OPENAI_API_KEY=...
 
 # Analytics (optional)
 NEXT_PUBLIC_POSTHOG_KEY=...
@@ -71,3 +71,9 @@ NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
 | `development/activeContext.md` | Current focus + next steps |
 | `development/progress.md` | Work log |
 | `architecture/techStack.md` | Technology decisions |
+
+---
+
+## Repository
+
+GitHub: https://github.com/Gr0x01/actionboost
