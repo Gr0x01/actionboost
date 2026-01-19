@@ -42,13 +42,13 @@ export function WhatYouGet() {
       <div className="relative mx-auto max-w-6xl px-6">
         {/* Section header */}
         <div className="text-center mb-16">
-          <span className="inline-block text-sm font-semibold tracking-wider text-primary uppercase mb-4">
+          <span className="inline-block text-sm font-medium tracking-wide text-accent mb-3">
             Your Deliverables
           </span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
+          <h2 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
             Everything you need to <span className="text-gradient">move forward</span>
           </h2>
-          <p className="mt-4 text-lg text-muted max-w-2xl mx-auto">
+          <p className="mt-4 text-lg text-muted max-w-2xl mx-auto leading-relaxed">
             A complete growth playbook tailored to your specific situation.
           </p>
         </div>

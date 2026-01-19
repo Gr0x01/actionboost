@@ -464,8 +464,8 @@ export default function DemoResultsPage() {
               <TableOfContents strategy={strategy} variant="desktop" />
             </div>
 
-            {/* Main content - max-w-prose for optimal reading (65ch) */}
-            <div className="flex-1 max-w-prose">
+            {/* Main content */}
+            <div className="flex-1 max-w-3xl">
               <ResultsContent strategy={strategy} />
             </div>
           </div>

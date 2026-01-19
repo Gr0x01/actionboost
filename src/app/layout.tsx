@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope, JetBrains_Mono, Tienne } from "next/font/google";
+import { Source_Sans_3, JetBrains_Mono, Tienne } from "next/font/google";
 import { headers } from "next/headers";
 import "./globals.css";
 import { PHProvider } from "./providers";
@@ -11,10 +11,10 @@ const GDPR_COUNTRIES = new Set([
   "SI", "ES", "SE", "IS", "LI", "NO", "GB", "CH", // CH = Switzerland (similar laws)
 ]);
 
-const manrope = Manrope({
-  variable: "--font-manrope",
+const sourceSans = Source_Sans_3({
+  variable: "--font-source-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -47,7 +47,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${manrope.variable} ${jetbrainsMono.variable} ${tienne.variable} font-sans antialiased`}
+        className={`${sourceSans.variable} ${jetbrainsMono.variable} ${tienne.variable} font-sans antialiased`}
       >
         <PHProvider cookieless={isGdprCountry}>{children}</PHProvider>
       </body>

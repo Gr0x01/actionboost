@@ -27,11 +27,28 @@ function ResultsPageContent() {
   const runId = params.runId as string;
   const shareSlug = searchParams.get("share");
   const trackedRef = useRef(false);
+  const pageLoadTime = useRef(Date.now());
 
   const [run, setRun] = useState<RunData | null>(null);
   const [strategy, setStrategy] = useState<ParsedStrategy | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Track time spent on results page
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (trackedRef.current) {
+        const timeSpent = Math.round((Date.now() - pageLoadTime.current) / 1000);
+        posthog?.capture("results_time_spent", {
+          run_id: runId,
+          seconds: timeSpent,
+        });
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [posthog, runId]);
 
   // Build API URL with share param if available
   const getApiUrl = useCallback((path: string) => {
@@ -223,8 +240,8 @@ function ResultsPageContent() {
               {strategy && <TableOfContents strategy={strategy} variant="desktop" />}
             </div>
 
-            {/* Main content - max-w-prose for optimal reading (65ch) */}
-            <div className="flex-1 max-w-prose">
+            {/* Main content */}
+            <div className="flex-1 max-w-3xl">
               {strategy && <ResultsContent strategy={strategy} />}
             </div>
           </div>

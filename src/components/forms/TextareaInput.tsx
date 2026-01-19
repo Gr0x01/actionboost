@@ -69,7 +69,7 @@ export function TextareaInput({
           onKeyDown={handleKeyDown}
           placeholder={placeholder || "Type your answer..."}
           rows={2}
-          className="w-full bg-transparent text-lg text-foreground placeholder:text-muted/50 outline-none resize-none min-h-[60px]"
+          className="w-full bg-transparent font-serif text-lg text-foreground placeholder:font-sans placeholder:text-muted/50 outline-none resize-none min-h-[60px]"
         />
       </div>
 

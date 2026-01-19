@@ -44,11 +44,11 @@ export function Pricing() {
       <div className="absolute left-0 bottom-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl translate-x-1/2" />
 
       <div className="relative mx-auto max-w-4xl px-6">
-        {/* Section header - editorial style */}
+        {/* Section header */}
         <div className="text-center mb-16 animate-fade-in">
-          <p className="text-sm font-mono tracking-widest text-cta uppercase mb-3">
+          <span className="inline-block text-sm font-medium tracking-wide text-accent mb-3">
             One payment. No subscription.
-          </p>
+          </span>
           <h2 className="text-4xl sm:text-5xl font-bold text-foreground tracking-tight">
             Get your growth strategy
           </h2>
@@ -57,7 +57,7 @@ export function Pricing() {
         {/* Single product showcase */}
         <div className="animate-slide-up stagger-1">
           {/* Features in a horizontal flow */}
-          <div className="flex flex-wrap justify-center items-center gap-y-3 mb-12 text-sm font-medium text-muted">
+          <div className="flex flex-wrap justify-center items-center gap-y-3 mb-12 text-sm text-muted">
             {features.map((feature, i) => (
               <span key={feature} className="flex items-center">
                 {feature}
