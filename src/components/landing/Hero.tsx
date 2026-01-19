@@ -29,10 +29,10 @@ export function Hero() {
               <span className="text-gradient">Get your next moves.</span>
             </h1>
 
-            {/* Subhead */}
-            <p className="mt-6 text-lg text-muted sm:text-xl max-w-xl mx-auto xl:mx-0 animate-slide-up stagger-1">
+            {/* Subhead - sans for UI text */}
+            <p className="mt-6 text-lg text-muted sm:text-xl max-w-xl mx-auto xl:mx-0 animate-slide-up stagger-1 leading-relaxed">
               Real competitive research. Prioritized recommendations.
-              A 30-day roadmap built for <em>your</em> business.
+              A 30-day roadmap built for <em className="text-foreground font-medium not-italic">your</em> business.
             </p>
 
             {/* CTAs */}
@@ -50,14 +50,35 @@ export function Hero() {
                 </Link>
               )}
             </div>
+
+            {/* Trust cluster: founder + positioning */}
+            <div className="mt-8 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 animate-slide-up stagger-3">
+              <a
+                href="https://x.com/rbaten"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <img
+                  src="/rbaten.jpg"
+                  alt="@rbaten"
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+                Built by @rbaten
+              </a>
+              <span className="hidden sm:block text-border">|</span>
+              <span className="text-xs sm:text-sm text-muted-foreground">
+                Cheaper than a consultant. Smarter than a chatbot. Faster than DIY.
+              </span>
+            </div>
           </div>
 
           {/* Right - Example strategy preview */}
           <div className="hidden xl:block relative xl:-mr-24 xl:-mt-48 xl:mb-[-200px] animate-fade-in">
             {/* Preview card - extends beyond container top and bottom */}
-            <div className="relative bg-white rounded-xl shadow-2xl border border-border/50">
+            <div className="relative bg-background rounded-xl shadow-2xl border border-border/60">
               {/* Top fade overlay - content fades in from top */}
-              <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-white via-white to-transparent z-10 rounded-t-xl" />
+              <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-background via-background to-transparent z-10 rounded-t-xl" />
 
               {/* Content */}
               <div className="px-8 py-6 space-y-6 font-serif text-[15px]">
@@ -70,32 +91,31 @@ export function Hero() {
 
                 {/* Main example strategy item */}
                 <div className="border-b border-border/30 pb-6">
-                  <div className="flex items-start justify-between gap-4">
-                    <h3 className="text-lg font-bold text-navy">
-                      1. Launch Aggressive Artist Outreach
-                    </h3>
-                    {/* ICE Score Box */}
-                    <div className="shrink-0 flex gap-4 px-4 py-2 rounded-lg border border-border/50 bg-surface/50">
-                      <div className="text-center">
-                        <div className="text-xl font-bold text-navy">10</div>
-                        <div className="text-[9px] text-muted uppercase tracking-wider">Impact</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-xl font-bold text-navy">9</div>
-                        <div className="text-[9px] text-muted uppercase tracking-wider">Confidence</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-xl font-bold text-navy">7</div>
-                        <div className="text-[9px] text-muted uppercase tracking-wider">Ease</div>
-                      </div>
+                  {/* ICE Score Box - floated right */}
+                  <div className="float-right ml-4 mb-2 flex gap-4 px-4 py-2 rounded-lg border border-border/50 bg-surface/50">
+                    <div className="text-center">
+                      <div className="text-xl font-bold text-navy">10</div>
+                      <div className="text-[9px] text-muted uppercase tracking-wider">Impact</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xl font-bold text-navy">9</div>
+                      <div className="text-[9px] text-muted uppercase tracking-wider">Confidence</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xl font-bold text-navy">7</div>
+                      <div className="text-[9px] text-muted uppercase tracking-wider">Ease</div>
                     </div>
                   </div>
+
+                  <h3 className="text-lg font-bold text-navy">
+                    1. Launch Aggressive Artist Outreach
+                  </h3>
 
                   <p className="mt-3 text-muted leading-relaxed">
                     Without claimed profiles, you have no marketplace, no social proof, and no revenue path. This should consume <strong className="text-foreground">50% of your time</strong> for the next 30 days.
                   </p>
 
-                  <div className="mt-4">
+                  <div className="mt-4 clear-right">
                     <p className="font-semibold text-navy mb-2">Implementation:</p>
                     <ol className="space-y-1.5 text-muted list-decimal list-inside ml-1">
                       <li>Write a compelling DM script for artist outreach</li>
@@ -107,32 +127,31 @@ export function Hero() {
 
                 {/* Second item preview (partial - fades out) */}
                 <div className="pb-10">
-                  <div className="flex items-start justify-between gap-4">
-                    <h3 className="text-lg font-bold text-navy">
-                      2. Optimize Pages for Long-Tail SEO
-                    </h3>
-                    {/* ICE Score Box */}
-                    <div className="shrink-0 flex gap-4 px-4 py-2 rounded-lg border border-border/50 bg-surface/50">
-                      <div className="text-center">
-                        <div className="text-xl font-bold text-navy">9</div>
-                        <div className="text-[9px] text-muted uppercase tracking-wider">Impact</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-xl font-bold text-navy">8</div>
-                        <div className="text-[9px] text-muted uppercase tracking-wider">Confidence</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-xl font-bold text-navy">8</div>
-                        <div className="text-[9px] text-muted uppercase tracking-wider">Ease</div>
-                      </div>
+                  {/* ICE Score Box - floated right */}
+                  <div className="float-right ml-4 mb-2 flex gap-4 px-4 py-2 rounded-lg border border-border/50 bg-surface/50">
+                    <div className="text-center">
+                      <div className="text-xl font-bold text-navy">9</div>
+                      <div className="text-[9px] text-muted uppercase tracking-wider">Impact</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xl font-bold text-navy">8</div>
+                      <div className="text-[9px] text-muted uppercase tracking-wider">Confidence</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xl font-bold text-navy">8</div>
+                      <div className="text-[9px] text-muted uppercase tracking-wider">Ease</div>
                     </div>
                   </div>
+
+                  <h3 className="text-lg font-bold text-navy">
+                    2. Optimize Pages for Long-Tail SEO
+                  </h3>
 
                   <p className="mt-3 text-muted leading-relaxed">
                     You already have 4,000 pages—optimization can unlock massive organic traffic. Your static city/style pages are assets waiting to be activated.
                   </p>
 
-                  <div className="mt-4">
+                  <div className="mt-4 clear-right">
                     <p className="font-semibold text-navy mb-2">Implementation:</p>
                     <ol className="space-y-1.5 text-muted list-decimal list-inside ml-1">
                       <li>Use GSC to identify pages in position 10-30 (striking distance)</li>
