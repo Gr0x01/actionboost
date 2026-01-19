@@ -155,13 +155,11 @@ Display these to prove there's real methodology:
 - 30-Day Roadmap
 - Metrics to Track
 
-### Mini-Audit (5 sections - Free)
+### Mini-Audit (3 sections - Free)
 - Executive Summary (full)
 - Your Current Situation (full)
 - Competitive Landscape (condensed)
-- Stop Doing (condensed, 2-3 items)
-- Start Doing (condensed, 3 items max)
-- ❌ Quick Wins, Roadmap, Metrics (upsell hooks)
+- ❌ Stop Doing, Start Doing, Quick Wins, Roadmap, Metrics (upsell hooks)
 
 ---
 

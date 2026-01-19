@@ -589,33 +589,17 @@ CONDENSED - 1 paragraph overview:
 - How competitors approach similar challenges
 - Key opportunities competitors are missing
 
-## Stop Doing
-CONDENSED - 2-3 items maximum:
-- Each with brief reasoning
-- Focus on low-ROI activities
-
-## Start Doing (Prioritized by ICE)
-CONDENSED - 3 recommendations maximum, each formatted as:
-
-### [Recommendation Title]
-- **Impact**: X/10 - [brief reason]
-- **Confidence**: X/10 - [brief reason]
-- **Ease**: X/10 - [brief reason]
-- **ICE Score**: XX
-
-[1 paragraph explanation]
-
-Sort by ICE score (highest first).
-
 ---
 
 **STOP HERE.** Do NOT include these sections (they are part of the full paid version):
+- Stop Doing
+- Start Doing
 - Quick Wins
 - 30-Day Roadmap
 - Metrics to Track
 
 End with exactly this text:
-"Want the complete playbook? The full analysis includes your Quick Wins, 30-Day Roadmap, and specific metrics to track."`
+"Want the complete playbook? The full analysis includes what to Stop Doing, what to Start Doing with ICE scores, Quick Wins, your 30-Day Roadmap, and specific metrics to track."`
 }
 
 function buildMiniUserMessage(input: RunInput, research: ResearchContext): string {

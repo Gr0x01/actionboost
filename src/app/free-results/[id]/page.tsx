@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 import { motion } from "framer-motion";
-import { ArrowRight, Lock, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { config } from "@/lib/config";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -57,14 +57,16 @@ function UpsellBanner() {
   );
 }
 
-function LockedSectionsTeaser() {
+function UpgradeCTA() {
   const router = useRouter();
   const posthog = usePostHog();
 
   const lockedSections = [
-    { title: "Quick Wins", description: "Actionable tactics you can implement this week" },
-    { title: "30-Day Roadmap", description: "Day-by-day plan for your first month" },
-    { title: "Metrics to Track", description: "KPIs to measure your growth progress" },
+    "Stop Doing",
+    "Start Doing",
+    "Quick Wins",
+    "30-Day Roadmap",
+    "Metrics to Track",
   ];
 
   return (
@@ -72,43 +74,30 @@ function LockedSectionsTeaser() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.7 }}
-      className="border border-border/60 rounded-2xl overflow-hidden mt-8"
+      className="mt-12 pt-8 border-t border-border text-center"
     >
-      <div className="bg-surface/50 px-6 py-4 border-b border-border/60">
-        <div className="flex items-center gap-2 text-muted">
-          <Lock className="w-4 h-4" />
-          <span className="text-sm font-medium">Included in the full version</span>
-        </div>
-      </div>
-      <div className="p-6 space-y-4">
-        {lockedSections.map((section, index) => (
-          <div
-            key={section.title}
-            className="flex items-start gap-3 opacity-60"
-          >
-            <div className="w-6 h-6 rounded-full bg-muted/20 flex items-center justify-center text-xs text-muted flex-shrink-0 mt-0.5">
-              {index + 6}
-            </div>
-            <div>
-              <h4 className="font-medium text-foreground">{section.title}</h4>
-              <p className="text-sm text-muted">{section.description}</p>
-            </div>
-          </div>
-        ))}
-        <button
-          onClick={() => {
-            posthog?.capture("free_audit_locked_section_clicked");
-            router.push("/start");
-          }}
-          className="w-full mt-4 flex items-center justify-center gap-2 px-4 py-3 bg-surface border border-border hover:bg-surface/80 rounded-xl font-medium transition-colors"
-        >
-          <Sparkles className="w-4 h-4 text-primary" />
-          Unlock All Sections
-        </button>
-      </div>
+      <p className="text-muted text-sm mb-2">
+        The full strategy also includes:
+      </p>
+      <p className="text-foreground font-medium mb-6">
+        {lockedSections.join(" · ")}
+      </p>
+      <button
+        onClick={() => {
+          posthog?.capture("free_audit_upgrade_clicked");
+          router.push("/start");
+        }}
+        className="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-xl font-semibold transition-all shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/25"
+      >
+        Get the Full Playbook — {config.singlePrice}
+        <ArrowRight className="w-4 h-4" />
+      </button>
     </motion.div>
   );
 }
+
+// Locked section IDs for the free version
+const LOCKED_SECTION_IDS = ["stop-doing", "start-doing", "quick-wins", "roadmap", "metrics"];
 
 function FreeResultsPageContent() {
   const params = useParams();
@@ -184,25 +173,17 @@ function FreeResultsPageContent() {
     fetchFreeAudit();
   }, [freeAuditId, posthog]);
 
-  // Poll for status if pending/processing (use ref to avoid interval recreation)
+  // Poll for status if pending/processing
   useEffect(() => {
     if (!freeAuditId) return;
-    // Check ref instead of state to avoid dependency on freeAudit
-    if (statusRef.current !== "pending" && statusRef.current !== "processing") return;
+    if (statusRef.current === "complete" || statusRef.current === "failed") return;
 
-    const MAX_POLLS = 100;
     let pollCount = 0;
     let stopped = false;
 
-    const interval = setInterval(async () => {
+    const poll = async () => {
       if (stopped) return;
       pollCount++;
-
-      if (pollCount >= MAX_POLLS) {
-        clearInterval(interval);
-        setError("Generation is taking longer than expected. Please refresh the page.");
-        return;
-      }
 
       try {
         const res = await fetch(`/api/free-audit/${freeAuditId}`);
@@ -210,6 +191,7 @@ function FreeResultsPageContent() {
           const data = await res.json();
 
           if (data.freeAudit.status === "complete") {
+            stopped = true;
             setFreeAudit(data.freeAudit);
             if (data.freeAudit.output) {
               setStrategy(parseStrategy(data.freeAudit.output));
@@ -220,22 +202,28 @@ function FreeResultsPageContent() {
                 });
               }
             }
-            clearInterval(interval);
+            return;
           } else if (data.freeAudit.status === "failed") {
+            stopped = true;
             setFreeAudit((prev) => (prev ? { ...prev, status: "failed" } : null));
-            clearInterval(interval);
+            return;
           }
         }
       } catch {
-        // Silently continue polling on network errors
+        // Continue polling on network errors
       }
-    }, 3000);
+
+      if (!stopped && pollCount < 100) {
+        setTimeout(poll, 2000);
+      }
+    };
+
+    poll();
 
     return () => {
       stopped = true;
-      clearInterval(interval);
     };
-  }, [freeAuditId, posthog]); // Removed freeAudit from deps - use statusRef instead
+  }, [freeAuditId, posthog]);
 
   // Loading state
   if (loading) {
@@ -278,6 +266,13 @@ function FreeResultsPageContent() {
     );
   }
 
+  // Filter out premium sections (Stop/Start Doing) for free version
+  const freeStrategy: ParsedStrategy | null = strategy ? {
+    ...strategy,
+    stopDoing: null,
+    startDoing: null,
+  } : null;
+
   // Success state - render free results with upsell
   return (
     <div className="min-h-screen flex flex-col">
@@ -285,37 +280,40 @@ function FreeResultsPageContent() {
 
       <main className="flex-1">
         <div className="mx-auto max-w-7xl px-6">
-          {/* Mini audit badge */}
-          <div className="lg:ml-[220px] pt-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-              <Sparkles className="w-3.5 h-3.5" />
-              Free Mini-Audit
-            </div>
-          </div>
-
-          {/* Upsell banner */}
-          <div className="lg:ml-[220px]">
-            <UpsellBanner />
-          </div>
-
           {/* Mobile TOC - full width horizontal tabs */}
           <div className="lg:hidden">
-            {strategy && <TableOfContents strategy={strategy} variant="mobile" />}
+            {freeStrategy && <TableOfContents strategy={freeStrategy} variant="mobile" />}
           </div>
 
           {/* Desktop layout: sidebar + content */}
           <div className="lg:flex lg:gap-8 py-8">
             {/* Desktop sidebar */}
             <div className="hidden lg:block lg:w-[200px] lg:flex-shrink-0">
-              {strategy && <TableOfContents strategy={strategy} variant="desktop" />}
+              {freeStrategy && (
+                <TableOfContents
+                  strategy={freeStrategy}
+                  variant="desktop"
+                  lockedSectionIds={LOCKED_SECTION_IDS}
+                />
+              )}
             </div>
 
             {/* Main content */}
             <div className="flex-1 max-w-3xl">
-              {strategy && <ResultsContent strategy={strategy} />}
+              {/* Mini audit badge */}
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+                <Sparkles className="w-3.5 h-3.5" />
+                Free Mini-Audit
+              </div>
+
+              {/* Upsell banner */}
+              <UpsellBanner />
+
+              {/* Strategy content */}
+              {freeStrategy && <ResultsContent strategy={freeStrategy} />}
 
               {/* Locked sections teaser */}
-              <LockedSectionsTeaser />
+              <UpgradeCTA />
             </div>
           </div>
         </div>

@@ -65,22 +65,14 @@ export function CheckoutSection({
 
   // Handler for free audit submission
   async function handleFreeAuditSubmit() {
-    console.log("[FreeAudit] Handler called", { freeEmailValid, hasFormData: !!formData });
-
-    // Prevent double-click
-    if (freeSubmitRef.current || !freeEmailValid || !formData) {
-      console.log("[FreeAudit] Early return", { ref: freeSubmitRef.current, freeEmailValid, hasFormData: !!formData });
-      return;
-    }
+    if (freeSubmitRef.current || !freeEmailValid || !formData) return;
     freeSubmitRef.current = true;
 
-    // Don't log full email for privacy - only domain
     posthog?.capture("free_audit_submitted", { email_domain: freeEmail.split("@")[1] });
     setFreeSubmitting(true);
     setFreeError(null);
 
     try {
-      console.log("[FreeAudit] Calling API...");
       const res = await fetch("/api/free-audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -92,11 +84,9 @@ export function CheckoutSection({
       });
 
       const data = await res.json();
-      console.log("[FreeAudit] API response", { status: res.status, data });
 
       if (res.ok && data.freeAuditId) {
         posthog?.capture("free_audit_success", { free_audit_id: data.freeAuditId });
-        console.log("[FreeAudit] Redirecting to", `/free-results/${data.freeAuditId}`);
         router.push(`/free-results/${data.freeAuditId}`);
       } else if (res.status === 409) {
         // Already has a free audit
@@ -233,7 +223,6 @@ export function CheckoutSection({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => {
-            console.log("[MainCTA] Handler called", { hasValidCode, showFreeOption });
             posthog?.capture("checkout_initiated", {
               method: hasValidCode ? "code" : "stripe",
             });

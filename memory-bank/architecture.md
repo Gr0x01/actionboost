@@ -163,12 +163,16 @@ This keeps costs proportional to how useful SEO data is for each problem type.
 Lighter-weight pipeline for lead generation:
 - Model: Claude Sonnet (`claude-sonnet-4-20250514`) instead of Opus
 - Research: Tavily only (no DataForSEO)
-- Output: 5 sections (2 full + 3 condensed)
+- Output: 3 sections (Executive Summary, Your Situation, Competitive Landscape)
+- Locked sections shown as upsell: Stop Doing, Start Doing, Quick Wins, Roadmap, Metrics
 - No RAG/user history
 - Cost: ~$0.04/run
 - Rate limit: 1 per email (normalized for Gmail aliases)
+- Polling: Recursive setTimeout every 2s until complete
 
 Files: `runFreePipeline()` in pipeline.ts, `generateMiniStrategy()` in generate.ts
+Routes: `POST /api/free-audit`, `GET /api/free-audit/[id]`
+Page: `/free-results/[id]` with auto-polling and upsell UI
 
 ### Test Scripts
 ```bash
