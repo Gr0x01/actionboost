@@ -17,6 +17,8 @@ export function Hero() {
       {/* Decorative blobs */}
       <div className="absolute top-20 -left-32 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" />
       <div className="absolute bottom-20 right-0 w-80 h-80 bg-accent/15 rounded-full blur-3xl animate-float stagger-2" />
+      {/* Bottom fade to blend into Frameworks section */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-surface to-transparent" />
 
       <div className="relative mx-auto max-w-7xl px-6">
         <div className="grid xl:grid-cols-2 gap-12 xl:gap-8 items-center">
