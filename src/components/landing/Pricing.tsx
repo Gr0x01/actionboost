@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui";
+import { config } from "@/lib/config";
 
 const features = [
   "Full competitive analysis",
@@ -13,6 +14,9 @@ const features = [
 
 export function Pricing() {
   const [loading, setLoading] = useState<number | null>(null);
+
+  // Hide pricing section when feature flag is off
+  if (!config.pricingEnabled) return null;
 
   async function handleBuyCredits(pack: number) {
     setLoading(pack);
@@ -81,7 +85,7 @@ export function Pricing() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-3xl font-bold text-foreground">$15</span>
+                  <span className="text-3xl font-bold text-foreground">$7.99</span>
                 </div>
               </div>
               {loading === 1 && (
@@ -118,10 +122,10 @@ export function Pricing() {
                 </div>
                 <div className="text-right">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-foreground">$30</span>
-                    <span className="text-lg text-muted line-through">$45</span>
+                    <span className="text-3xl font-bold text-foreground">$19.99</span>
+                    <span className="text-lg text-muted line-through">$24</span>
                   </div>
-                  <p className="text-xs text-cta font-semibold">$10 each</p>
+                  <p className="text-xs text-cta font-semibold">$6.66 each</p>
                 </div>
               </div>
 
@@ -141,7 +145,7 @@ export function Pricing() {
               onClick={() => handleBuyCredits(3)}
               disabled={loading !== null}
             >
-              {loading === 3 ? "Loading..." : "Buy 3-Pack — $30"}
+              {loading === 3 ? "Loading..." : "Buy 3-Pack — $19.99"}
             </Button>
             <Link href="/start">
               <Button variant="secondary" size="lg">

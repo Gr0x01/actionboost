@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, Loader2, Mail } from "lucide-react";
 import { isValidEmail } from "@/lib/validation";
+import { config } from "@/lib/config";
 
 interface CheckoutSectionProps {
   onSubmit: () => void;
@@ -11,7 +12,7 @@ interface CheckoutSectionProps {
   hasValidCode: boolean;
   promoCode: string;
   setPromoCode: (v: string) => void;
-  codeStatus: { valid: boolean; credits?: number; error?: string } | null;
+  codeStatus: { valid: boolean; credits?: number; error?: string; errorCode?: string } | null;
   validateCode: () => void;
   isValidatingCode: boolean;
   clearCode: () => void;
@@ -32,10 +33,39 @@ export function CheckoutSection({
   email,
   setEmail,
 }: CheckoutSectionProps) {
-  const [showCode, setShowCode] = useState(false);
+  const [showCode, setShowCode] = useState(!config.pricingEnabled);
+  const [showWaitlist, setShowWaitlist] = useState(false);
+  const [waitlistEmail, setWaitlistEmail] = useState("");
+  const [waitlistSubmitting, setWaitlistSubmitting] = useState(false);
+  const [waitlistSuccess, setWaitlistSuccess] = useState(false);
 
   const emailValid = isValidEmail(email);
   const canSubmitWithCode = hasValidCode && emailValid;
+  const waitlistEmailValid = isValidEmail(waitlistEmail);
+
+  // Show waitlist when code fails and pricing is disabled
+  const shouldShowWaitlist = !config.pricingEnabled && codeStatus && !codeStatus.valid && !hasValidCode;
+
+  async function handleWaitlistSubmit() {
+    if (!waitlistEmailValid) return;
+
+    setWaitlistSubmitting(true);
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: waitlistEmail, source: "checkout" }),
+      });
+
+      if (res.ok) {
+        setWaitlistSuccess(true);
+      }
+    } catch (error) {
+      console.error("Waitlist error:", error);
+    } finally {
+      setWaitlistSubmitting(false);
+    }
+  }
 
   return (
     <motion.div
@@ -73,30 +103,35 @@ export function CheckoutSection({
         </div>
       )}
 
-      <button
-        onClick={onSubmit}
-        disabled={isSubmitting || (hasValidCode && !canSubmitWithCode)}
-        className={`px-8 py-4 rounded-xl text-lg font-semibold transition-all ${
-          hasValidCode
-            ? "bg-green-600 hover:bg-green-700 text-white"
-            : "bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25"
-        } disabled:opacity-50 disabled:cursor-not-allowed`}
-      >
-        {isSubmitting ? (
-          <span className="flex items-center gap-2">
-            <Loader2 className="w-5 h-5 animate-spin" />
-            Processing...
-          </span>
-        ) : hasValidCode ? (
-          "Generate Strategy — Free"
-        ) : (
-          "Generate Strategy — $15"
-        )}
-      </button>
+      {/* Main CTA button - hide when waitlist is showing */}
+      {!shouldShowWaitlist && (
+        <button
+          onClick={onSubmit}
+          disabled={isSubmitting || (hasValidCode && !canSubmitWithCode) || (!config.pricingEnabled && !hasValidCode)}
+          className={`px-8 py-4 rounded-xl text-lg font-semibold transition-all ${
+            hasValidCode
+              ? "bg-green-600 hover:bg-green-700 text-white"
+              : "bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25"
+          } disabled:opacity-50 disabled:cursor-not-allowed`}
+        >
+          {isSubmitting ? (
+            <span className="flex items-center gap-2">
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Processing...
+            </span>
+          ) : hasValidCode ? (
+            "Generate Strategy — Free"
+          ) : config.pricingEnabled ? (
+            "Generate Strategy — $7.99"
+          ) : (
+            "Enter code to continue"
+          )}
+        </button>
+      )}
 
-      {/* Promo code */}
+      {/* Promo code section */}
       <div>
-        {!showCode && !hasValidCode && (
+        {!showCode && !hasValidCode && config.pricingEnabled && (
           <button
             onClick={() => setShowCode(true)}
             className="text-sm text-primary hover:text-primary/80 transition-colors"
@@ -105,8 +140,11 @@ export function CheckoutSection({
           </button>
         )}
 
-        {showCode && !hasValidCode && (
+        {showCode && !hasValidCode && !shouldShowWaitlist && (
           <div className="max-w-xs mx-auto mt-4 space-y-2">
+            {!config.pricingEnabled && (
+              <p className="text-sm text-muted mb-3">Enter your promo code to continue</p>
+            )}
             <div className="flex gap-2">
               <input
                 type="text"
@@ -123,7 +161,7 @@ export function CheckoutSection({
                 {isValidatingCode ? <Loader2 className="w-4 h-4 animate-spin" /> : "Apply"}
               </button>
             </div>
-            {codeStatus && !codeStatus.valid && (
+            {codeStatus && !codeStatus.valid && config.pricingEnabled && (
               <p className="text-sm text-red-500">{codeStatus.error || "Invalid code"}</p>
             )}
           </div>
@@ -141,6 +179,63 @@ export function CheckoutSection({
           </div>
         )}
       </div>
+
+      {/* Waitlist fallback when code fails (promo-only mode) */}
+      {shouldShowWaitlist && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-sm mx-auto p-6 rounded-xl bg-surface/50 border border-border/60"
+        >
+          {waitlistSuccess ? (
+            <div className="text-center">
+              <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-green-100 flex items-center justify-center">
+                <Check className="w-6 h-6 text-green-600" />
+              </div>
+              <p className="text-lg font-semibold text-foreground mb-1">You&apos;re on the list!</p>
+              <p className="text-sm text-muted">We&apos;ll be in touch soon.</p>
+            </div>
+          ) : (
+            <>
+              <p className="text-lg font-semibold text-foreground mb-1">
+                We&apos;re launching this week!
+              </p>
+              <p className="text-sm text-muted mb-4">
+                Join the waitlist to get notified when we go live.
+              </p>
+              <div className="flex gap-2">
+                <input
+                  type="email"
+                  value={waitlistEmail}
+                  onChange={(e) => setWaitlistEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  className="flex-1 px-3 py-2 rounded-lg border border-border/60 bg-background text-sm text-foreground placeholder:text-muted/50 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                />
+                <button
+                  onClick={handleWaitlistSubmit}
+                  disabled={!waitlistEmailValid || waitlistSubmitting}
+                  className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
+                >
+                  {waitlistSubmitting ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    "Join"
+                  )}
+                </button>
+              </div>
+              <button
+                onClick={() => {
+                  clearCode();
+                  setShowCode(true);
+                }}
+                className="mt-3 text-xs text-muted hover:text-foreground transition-colors"
+              >
+                Try another code
+              </button>
+            </>
+          )}
+        </motion.div>
+      )}
     </motion.div>
   );
 }

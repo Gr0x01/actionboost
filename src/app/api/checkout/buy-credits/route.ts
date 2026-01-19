@@ -5,8 +5,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 // Price IDs from Stripe Dashboard
 const PRICES = {
-  single: process.env.STRIPE_PRICE_SINGLE!, // $15 for 1 credit
-  pack3: process.env.STRIPE_PRICE_3PACK!, // $30 for 3 credits
+  single: process.env.STRIPE_PRICE_SINGLE!, // $7.99 for 1 credit
+  pack3: process.env.STRIPE_PRICE_3PACK!, // $19.99 for 3 credits
 };
 
 export async function POST(request: NextRequest) {
