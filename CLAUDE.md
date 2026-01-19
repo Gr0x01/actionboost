@@ -83,11 +83,18 @@ Always adjust the metadata header (`Last-Updated`, `Maintainer`) when you edit a
 ## SUBAGENTS & DELEGATION
 
 ### Available Specialized Subagents
+
+#### Development & Architecture
 - **code-reviewer**: Proactive code quality, security, and maintainability reviews
   - Use after: Writing new features, refactoring, fixing bugs
   - Focus: Git diff analysis, security issues, code quality, testing
   - Tools: Read, Grep, Glob, Bash
   - Output: Prioritized feedback (Critical/Warning/Suggestion)
+
+- **code-architect**: Software architecture and folder structure design
+  - Use for: New feature modules, code organization, project structure
+  - Expertise: SOLID principles, design patterns, scalable architectures
+  - Model: Opus (for complex architectural decisions)
 
 - **backend-architect**: Backend system design and architecture guidance
   - Use for: API design, database architecture, scaling decisions
@@ -106,15 +113,42 @@ Always adjust the metadata header (`Last-Updated`, `Maintainer`) when you edit a
   - Tools: Write, Read, MultiEdit, WebSearch, WebFetch
   - Focus: Component library integration, user experience
 
+#### Growth & Marketing
+- **growth-hacker**: User acquisition, viral loops, and data-driven experimentation
+  - Use for: Growth strategies, A/B testing, conversion optimization, channel development
+  - Expertise: AARRR framework, viral mechanics, product-led growth
+  - Tools: Write, Read, MultiEdit, Bash, Grep, Glob, WebSearch, WebFetch, Playwright
+  - Model: Opus (for strategic growth decisions)
+  - **Highly relevant for Actionboo.st**
+
+- **instagram-curator**: Instagram content strategy and growth
+  - Use for: Reels scripting, content planning, hashtag strategy
+  - Expertise: Algorithm signals (2026), story strategy, viral content
+  - Tools: Read, Write, Grep, Glob, WebSearch, WebFetch
+
+- **visual-storyteller**: Visual narratives and data visualization
+  - Use for: Infographics, presentations, complex concept visualization
+  - Expertise: Data viz, illustration systems, motion design
+  - Tools: Write, Read, MultiEdit, WebSearch, WebFetch
+
+#### Compliance & Legal
+- **legal-compliance-checker**: Regulatory compliance and legal requirements
+  - Use for: Privacy policies, GDPR/CCPA compliance, terms of service
+  - Expertise: Data protection, platform policies, accessibility (WCAG)
+  - Tools: Write, Read, MultiEdit, WebSearch, Grep
+
 ### Delegation Triggers (Use Pragmatically for Solo Dev)
 Subagents are helpful but not mandatory for every tiny change. Use judgment:
 
 1. **code-reviewer**: Use for significant features or refactors (not one-line fixes)
-2. **backend-architect**: Use for major architectural decisions or data model changes (not routine CRUD)
-3. **frontend-developer**: Use for complex UI or performance issues (not simple component edits)
-4. **ui-designer**: Use for new design systems or major UI overhauls (not button color tweaks)
-5. **Complex Research**: Use general-purpose subagent for multi-step investigations
-6. **Reference Generation**: Use subagents to create documentation or architectural diagrams
+2. **code-architect**: Use when designing new feature modules or restructuring code
+3. **backend-architect**: Use for major architectural decisions or data model changes (not routine CRUD)
+4. **frontend-developer**: Use for complex UI or performance issues (not simple component edits)
+5. **ui-designer**: Use for new design systems or major UI overhauls (not button color tweaks)
+6. **growth-hacker**: Use for growth strategy, experiments, and optimization (key for this project)
+7. **legal-compliance-checker**: Use before launch or when handling user data
+8. **Complex Research**: Use general-purpose subagent for multi-step investigations
+9. **Reference Generation**: Use subagents to create documentation or architectural diagrams
 
 ### Integration Workflow (Solo Dev Adapted)
 - **NEW BACKEND FEATURES**:
