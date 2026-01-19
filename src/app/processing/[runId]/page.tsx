@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { usePostHog } from "posthog-js/react";
 import { Header, Footer } from "@/components/layout";
 import { Loader2, Sparkles, CheckCircle, AlertCircle } from "lucide-react";
 
@@ -28,11 +29,36 @@ const STATUS_SUBMESSAGES: Record<RunStatus, string> = {
 export default function ProcessingPage() {
   const router = useRouter();
   const params = useParams();
+  const posthog = usePostHog();
   const runId = params.runId as string;
 
   const [status, setStatus] = useState<RunStatus>("pending");
   const [error, setError] = useState<string | null>(null);
   const [dots, setDots] = useState("");
+  const trackedStart = useRef(false);
+  const trackedStatuses = useRef<Set<string>>(new Set());
+
+  // Track processing started
+  useEffect(() => {
+    if (runId && !trackedStart.current) {
+      posthog?.capture("run_processing_started", { run_id: runId });
+      trackedStart.current = true;
+    }
+  }, [runId, posthog]);
+
+  // Track status changes
+  useEffect(() => {
+    if (!trackedStatuses.current.has(status)) {
+      trackedStatuses.current.add(status);
+      posthog?.capture("run_status_changed", { run_id: runId, status });
+
+      if (status === "complete") {
+        posthog?.capture("run_completed", { run_id: runId });
+      } else if (status === "failed") {
+        posthog?.capture("run_failed", { run_id: runId, error });
+      }
+    }
+  }, [status, runId, error, posthog]);
 
   // Animated dots
   useEffect(() => {

@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import { createServiceClient } from "@/lib/supabase/server";
 import { Json } from "@/lib/types/database";
 import { runPipeline } from "@/lib/ai/pipeline";
+import { trackServerEvent } from "@/lib/analytics";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -105,6 +106,15 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   }
 
   console.log("Created run:", run.id, "for session:", session.id);
+
+  // Track payment completed (use PostHog distinct_id from client for funnel linking)
+  const distinctId = metadata.posthog_distinct_id || userId || session.id;
+  trackServerEvent(distinctId, "payment_completed", {
+    amount: session.amount_total ? session.amount_total / 100 : 0,
+    email: email || undefined,
+    run_id: run.id,
+    credits,
+  });
 
   // Trigger AI pipeline (fire and forget - don't block webhook response)
   runPipeline(run.id).catch((err) => {

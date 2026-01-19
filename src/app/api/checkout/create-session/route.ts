@@ -12,9 +12,10 @@ const PRICES = {
 
 export async function POST(request: NextRequest) {
   try {
-    const { input, pack } = (await request.json()) as {
+    const { input, pack, posthogDistinctId } = (await request.json()) as {
       input: FormInput;
       pack?: number;
+      posthogDistinctId?: string;
     };
 
     if (!input || !input.productDescription) {
@@ -39,6 +40,7 @@ export async function POST(request: NextRequest) {
       form_analytics: (input.analyticsSummary || "").slice(0, 500),
       form_constraints: (input.constraints || "").slice(0, 500),
       credits: isPack ? "3" : "1",
+      posthog_distinct_id: posthogDistinctId || "",
     };
 
     const session = await stripe.checkout.sessions.create({
