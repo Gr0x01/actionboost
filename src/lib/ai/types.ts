@@ -113,3 +113,15 @@ export type PipelineResult = {
   error?: string // Error message if failed
   researchContext?: ResearchContext
 }
+
+/**
+ * User history context for RAG - pulled from past runs via vector search
+ * Enables Claude to build on previous recommendations and track progress
+ */
+export type UserHistoryContext = {
+  totalRuns: number
+  previousTraction: Array<{ date: string; summary: string }>
+  tacticsTried: string[]
+  pastRecommendations: string[]
+  pastInsights: string[]
+}

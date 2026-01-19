@@ -28,18 +28,16 @@ export function Hero() {
 
             {/* CTAs */}
             <div className="mt-10 flex flex-col sm:flex-row items-center xl:items-start justify-center xl:justify-start gap-6 animate-slide-up stagger-2">
-              <Link
-                href="/start"
-                className="px-10 py-4 text-lg font-semibold text-white bg-cta rounded-lg transition-all duration-200 hover:bg-cta-hover hover:shadow-lg hover:shadow-cta/25"
-              >
-                {config.pricingEnabled ? "Get Started — $7.99" : "Get Started"}
+              <Link href="/start">
+                <Button size="xl">
+                  {config.pricingEnabled ? "Get Started — $7.99" : "Get Started"}
+                </Button>
               </Link>
               {config.pricingEnabled && (
-                <Link
-                  href="#pricing"
-                  className="px-10 py-4 text-lg font-semibold text-foreground border-2 border-foreground/20 rounded-lg transition-all duration-200 hover:border-foreground/40 hover:bg-foreground/5"
-                >
-                  See pricing
+                <Link href="#pricing">
+                  <Button variant="outline" size="xl">
+                    See pricing
+                  </Button>
                 </Link>
               )}
             </div>

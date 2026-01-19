@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
-import type { RunInput, ResearchContext, FocusArea } from './types'
+import type { RunInput, ResearchContext, FocusArea, UserHistoryContext } from './types'
 
 // DO NOT CHANGE without explicit approval
 const MODEL = 'claude-opus-4-5-20251101'
@@ -10,17 +10,18 @@ const MAX_TOKENS = 8000
  */
 export async function generateStrategy(
   input: RunInput,
-  research: ResearchContext
+  research: ResearchContext,
+  userHistory?: UserHistoryContext | null
 ): Promise<string> {
   const client = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY!,
   })
 
   // Build system prompt with focus-area-specific guidance
-  const systemPrompt = buildSystemPrompt(input.focusArea, input.customFocusArea)
+  const systemPrompt = buildSystemPrompt(input.focusArea, input.customFocusArea, !!userHistory)
 
   // Build user message with all context
-  const userMessage = buildUserMessage(input, research)
+  const userMessage = buildUserMessage(input, research, userHistory)
 
   const response = await client.messages.create({
     model: MODEL,
@@ -42,9 +43,11 @@ export async function generateStrategy(
 // SYSTEM PROMPT BUILDER
 // =============================================================================
 
-function buildSystemPrompt(focusArea: FocusArea, customFocus?: string): string {
-  return `${BASE_PROMPT}
+function buildSystemPrompt(focusArea: FocusArea, customFocus?: string, isReturningUser?: boolean): string {
+  const returningUserPrompt = isReturningUser ? RETURNING_USER_PROMPT : ''
 
+  return `${BASE_PROMPT}
+${returningUserPrompt}
 ${FOCUS_AREA_PROMPTS[focusArea](customFocus)}
 
 ${OUTPUT_FORMAT_PROMPT}`
@@ -101,6 +104,25 @@ You identify which variable has the most leverage for improvement.
 - You challenge assumptions when you see flawed thinking
 - You celebrate what's working before diving into improvements
 - You think in systems and compounding effects, not one-off tactics`
+
+// =============================================================================
+// RETURNING USER PROMPT - Additional guidance when we have history
+// =============================================================================
+
+const RETURNING_USER_PROMPT = `
+
+## For This Returning User
+
+This user has worked with you before. Their history is included below. Use it wisely:
+
+- **Acknowledge progress**: Reference their traction changes over time
+- **Build on past advice**: Don't repeat the same recommendations - evolve them or introduce new ones
+- **Track what worked**: If they mention trying something you previously recommended, note whether it worked
+- **Connect the dots**: Show how today's strategy builds on previous work
+- **Celebrate wins**: If their metrics improved, call it out explicitly
+- **Address persistent challenges**: If the same issues keep appearing, dig deeper into root causes
+
+Your goal is to feel like a trusted advisor who remembers their journey, not a stranger starting from scratch.`
 
 // =============================================================================
 // FOCUS AREA PROMPTS - Tailored guidance based on selected AARRR stage
@@ -324,7 +346,11 @@ Week-by-week priorities:
 // USER MESSAGE BUILDER
 // =============================================================================
 
-function buildUserMessage(input: RunInput, research: ResearchContext): string {
+function buildUserMessage(
+  input: RunInput,
+  research: ResearchContext,
+  userHistory?: UserHistoryContext | null
+): string {
   const focusLabel = input.focusArea === 'custom' && input.customFocusArea
     ? `Custom: ${input.customFocusArea}`
     : input.focusArea.charAt(0).toUpperCase() + input.focusArea.slice(1)
@@ -346,6 +372,47 @@ ${input.whatYouTried}
 ## What's Working
 ${input.whatsWorking}
 `
+
+  // Add user history section for returning users
+  if (userHistory && userHistory.totalRuns > 0) {
+    message += `\n---\n\n# Your History With This User\n`
+    message += `*This is their strategy #${userHistory.totalRuns + 1}*\n`
+
+    // Previous traction updates (timeline)
+    if (userHistory.previousTraction.length > 0) {
+      message += `\n## Traction Timeline\n`
+      for (const snapshot of userHistory.previousTraction) {
+        message += `- **${snapshot.date}**: ${truncate(snapshot.summary, 200)}\n`
+      }
+    }
+
+    // Tactics they've tried
+    if (userHistory.tacticsTried.length > 0) {
+      message += `\n## Tactics They've Tried Before\n`
+      for (const tactic of userHistory.tacticsTried.slice(0, 10)) {
+        message += `- ${truncate(tactic, 150)}\n`
+      }
+    }
+
+    // Past recommendations (from vector search)
+    if (userHistory.pastRecommendations.length > 0) {
+      message += `\n## Your Previous Recommendations\n`
+      message += `*These are recommendations you gave in past runs - build on them, don't repeat:*\n`
+      for (const rec of userHistory.pastRecommendations) {
+        message += `- ${truncate(rec, 300)}\n`
+      }
+    }
+
+    // Past insights
+    if (userHistory.pastInsights.length > 0) {
+      message += `\n## Insights From Previous Analysis\n`
+      for (const insight of userHistory.pastInsights) {
+        message += `- ${truncate(insight, 300)}\n`
+      }
+    }
+
+    message += `\n---\n`
+  }
 
   if (input.websiteUrl) {
     message += `\n## My Website\n${input.websiteUrl}\n`

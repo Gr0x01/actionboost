@@ -2,7 +2,9 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { runResearch } from './research'
 import { generateStrategy } from './generate'
 import { accumulateUserContext } from '@/lib/context/accumulate'
-import type { RunInput, PipelineResult, ResearchContext } from './types'
+import { searchUserContext } from './embeddings'
+import type { RunInput, PipelineResult, ResearchContext, UserHistoryContext } from './types'
+import type { UserContext } from '@/lib/types/context'
 
 // Validate critical env vars at module load
 const REQUIRED_ENV_VARS = ['ANTHROPIC_API_KEY', 'TAVILY_API'] as const
@@ -12,6 +14,60 @@ function validateEnv(): void {
   if (missing.length > 0) {
     throw new Error(`Missing required environment variables: ${missing.join(', ')}`)
   }
+}
+
+/**
+ * Retrieve user history context for RAG
+ * Combines stored context with vector search for relevant past chunks
+ */
+async function retrieveUserHistory(
+  userId: string,
+  input: RunInput
+): Promise<UserHistoryContext | null> {
+  const supabase = createServiceClient()
+
+  // 1. Fetch existing user context
+  const { data: user, error } = await supabase
+    .from('users')
+    .select('context')
+    .eq('id', userId)
+    .single()
+
+  if (error || !user?.context) {
+    console.log(`[Pipeline] No existing context for user ${userId}`)
+    return null
+  }
+
+  const context = user.context as UserContext
+
+  // Skip if this is user's first run
+  if (!context.totalRuns || context.totalRuns === 0) {
+    return null
+  }
+
+  // 2. Build search query from current input
+  const searchQuery = `${input.focusArea || ''} ${(input.productDescription || '').slice(0, 200)}`
+
+  // 3. Search for relevant past recommendations and insights
+  const [recommendations, insights] = await Promise.all([
+    searchUserContext(userId, searchQuery, { chunkTypes: ['recommendation'], limit: 5 }),
+    searchUserContext(userId, searchQuery, { chunkTypes: ['insight'], limit: 3 }),
+  ])
+
+  // 4. Build structured history context
+  const history: UserHistoryContext = {
+    totalRuns: context.totalRuns,
+    previousTraction: context.traction?.history?.slice(-5) || [],
+    tacticsTried: context.tactics?.tried?.slice(-10) || [],
+    pastRecommendations: recommendations.map(r => r.content),
+    pastInsights: insights.map(i => i.content),
+  }
+
+  console.log(
+    `[Pipeline] Retrieved user history: ${history.totalRuns} runs, ${history.pastRecommendations.length} recommendations, ${history.pastInsights.length} insights`
+  )
+
+  return history
 }
 
 /**
@@ -72,13 +128,24 @@ export async function runPipeline(runId: string): Promise<PipelineResult> {
     }
   }
 
-  // 4. Generate strategy with Claude
+  // 4. Retrieve user history for RAG (if returning user)
+  let userHistory: UserHistoryContext | null = null
+  if (run.user_id) {
+    try {
+      userHistory = await retrieveUserHistory(run.user_id, input)
+    } catch (err) {
+      console.error('[Pipeline] User history retrieval failed:', err)
+      // Continue without history - graceful degradation
+    }
+  }
+
+  // 5. Generate strategy with Claude
   try {
     console.log(`[Pipeline] Starting strategy generation with Claude Opus 4.5`)
-    const output = await generateStrategy(input, research)
+    const output = await generateStrategy(input, research, userHistory)
     console.log(`[Pipeline] Strategy generated: ${output.length} characters`)
 
-    // 5. Save output and mark complete
+    // 6. Save output and mark complete
     const { error: updateError } = await supabase
       .from('runs')
       .update({

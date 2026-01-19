@@ -138,17 +138,16 @@ export function Pricing() {
           </div>
 
           {/* CTA Buttons */}
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up stagger-2">
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-6 animate-slide-up stagger-2">
             <Button
               size="lg"
-              className="glow-cta bg-cta hover:bg-cta-hover text-white px-10"
               onClick={() => handleBuyCredits(3)}
               disabled={loading !== null}
             >
               {loading === 3 ? "Loading..." : "Buy 3-Pack — $19.99"}
             </Button>
             <Link href="/start">
-              <Button variant="secondary" size="lg">
+              <Button variant="outline" size="lg">
                 Get Started
               </Button>
             </Link>

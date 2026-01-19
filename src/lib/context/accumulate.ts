@@ -52,11 +52,11 @@ export async function accumulateUserContext(
   // 2. Merge run input into context
   const updatedContext = mergeRunIntoContext(existingContext, input, runId)
 
-  // 3. Save updated context
+  // 3. Save updated context (cast to Json type for Supabase)
   const { error: updateError } = await supabase
     .from('users')
     .update({
-      context: updatedContext,
+      context: JSON.parse(JSON.stringify(updatedContext)),
       context_updated_at: new Date().toISOString(),
     })
     .eq('id', userId)
@@ -167,17 +167,17 @@ export function mergeContextDelta(
         }
       : existing.traction,
 
-    // Tactics: Merge new tactics
+    // Tactics: Merge new tactics (with limits to prevent unbounded growth)
     tactics: {
       tried: mergeStringArray(
         existing.tactics?.tried,
         delta.newTactics
       ),
       working: delta.workingUpdate
-        ? [...(existing.tactics?.working || []), delta.workingUpdate]
+        ? [...(existing.tactics?.working || []), delta.workingUpdate].slice(-MAX_TACTICS)
         : existing.tactics?.working,
       notWorking: delta.notWorkingUpdate
-        ? [...(existing.tactics?.notWorking || []), delta.notWorkingUpdate]
+        ? [...(existing.tactics?.notWorking || []), delta.notWorkingUpdate].slice(-MAX_TACTICS)
         : existing.tactics?.notWorking,
     },
 

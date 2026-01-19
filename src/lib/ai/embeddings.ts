@@ -14,19 +14,22 @@ import type { RunInput } from './types'
 import type { ChunkType, SourceType } from '@/lib/types/database'
 
 // Only import OpenAI if we have the key (dynamic import for tree-shaking)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let openaiClient: any = null
 
-async function getOpenAIClient() {
+async function getOpenAIClient(): Promise<any | null> {
   if (!process.env.OPENAI_API_KEY) {
     return null
   }
 
   if (!openaiClient) {
     try {
+      // Dynamic import - will fail gracefully if openai package not installed
+      // @ts-expect-error - openai may not be installed
       const { default: OpenAI } = await import('openai')
       openaiClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
     } catch {
-      console.warn('[Embeddings] OpenAI SDK not available')
+      console.warn('[Embeddings] OpenAI SDK not available - install with: npm install openai')
       return null
     }
   }
@@ -223,23 +226,27 @@ export async function searchUserContext(
   }
 
   const supabase = createServiceClient()
-  const limit = options?.limit ?? 5
+  const requestedLimit = options?.limit ?? 5
+  // Request more results if we need to filter by chunk type
+  const fetchLimit = options?.chunkTypes ? requestedLimit * 3 : requestedLimit
 
-  // Use pgvector similarity search
-  // Note: This requires a function in Supabase, or we can do it via raw SQL
-  const { data, error } = await supabase.rpc('match_user_context_chunks', {
+  // Use pgvector similarity search via custom RPC function
+  // Cast needed because TypeScript doesn't know about our custom function
+  const { data, error } = await (supabase.rpc as any)('match_user_context_chunks', {
     query_embedding: embedding,
     match_user_id: userId,
     match_threshold: 0.5,
-    match_count: limit,
+    match_count: fetchLimit,
   })
 
   if (error) {
-    console.error('[Embeddings] Vector search failed, falling back to text:', error)
+    console.error('[Embeddings] Vector search failed:', { error, userId, queryLength: query.length })
     return searchUserContextFallback(userId, query, options)
   }
 
-  return (data || []).map((row: any) => ({
+  // Filter by chunk types if specified, then apply limit
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let results = (data || []).map((row: any) => ({
     content: row.content,
     chunkType: row.chunk_type as ChunkType,
     sourceType: row.source_type as SourceType,
@@ -247,6 +254,19 @@ export async function searchUserContext(
     similarity: row.similarity,
     createdAt: row.created_at,
   }))
+
+  if (options?.chunkTypes && options.chunkTypes.length > 0) {
+    results = results.filter((r: { chunkType: ChunkType }) => options.chunkTypes!.includes(r.chunkType))
+  }
+
+  return results.slice(0, requestedLimit)
+}
+
+/**
+ * Escape special characters in LIKE patterns to prevent SQL injection
+ */
+function escapeLikePattern(pattern: string): string {
+  return pattern.replace(/[%_\\]/g, '\\$&')
 }
 
 /**
@@ -270,11 +290,14 @@ async function searchUserContextFallback(
   const supabase = createServiceClient()
   const limit = options?.limit ?? 5
 
+  // Escape special LIKE characters to prevent injection
+  const escapedQuery = escapeLikePattern(query)
+
   let queryBuilder = supabase
     .from('user_context_chunks')
     .select('*')
     .eq('user_id', userId)
-    .ilike('content', `%${query}%`)
+    .ilike('content', `%${escapedQuery}%`)
     .order('created_at', { ascending: false })
     .limit(limit)
 
