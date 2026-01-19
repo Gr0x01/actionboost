@@ -205,6 +205,34 @@ Subagents are helpful but not mandatory for every tiny change. Use judgment:
 - **Result Type** - Explicit success/failure handling without exceptions
 - **Schema Validation** - Runtime type validation with Zod for external data
 
+### Database Design - Keep It Tight
+**Prefer column changes over new tables. Every table has overhead.**
+
+1. **Before creating a new table, ask:**
+   - Can this be a column on an existing table?
+   - Can this be stored in a JSONB column?
+   - Is this a true entity or just metadata?
+
+2. **When columns beat tables:**
+   - Status tracking → add `status` enum column, not a `statuses` table
+   - Timestamps → add `completed_at`, `failed_at` columns, not an `events` table
+   - Counters → add `used_count` column, not a `usage_logs` table
+   - Metadata → use JSONB column, not a `metadata` table
+
+3. **When new tables ARE needed:**
+   - True many-to-many relationships
+   - Entities with their own lifecycle (users, runs, payments)
+   - Data that needs independent indexing/querying
+   - Audit logs that grow unbounded (separate from main tables)
+
+4. **Red flags for table sprawl:**
+   - Table with only 2-3 columns beyond `id` and `created_at`
+   - Table that's always joined 1:1 with another table
+   - Table created "for future flexibility"
+   - Multiple tables that could be one table with a `type` column
+
+**Current schema:** 4 tables (users, runs, run_credits, codes) - keep it minimal.
+
 ### Quality & Performance
 - Write clean, maintainable code
 - Follow existing code style and conventions
