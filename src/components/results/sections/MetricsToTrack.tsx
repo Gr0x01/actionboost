@@ -8,7 +8,7 @@ interface MetricsToTrackProps {
 export function MetricsToTrack({ content }: MetricsToTrackProps) {
   return (
     <SectionCard id="metrics" title="Metrics to Track">
-      <MarkdownContent content={content} />
+      <MarkdownContent content={content} extended />
     </SectionCard>
   );
 }

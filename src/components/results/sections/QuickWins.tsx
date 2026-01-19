@@ -13,18 +13,18 @@ export function QuickWins({ content }: QuickWinsProps) {
   if (wins.length === 0) {
     return (
       <SectionCard id="quick-wins" title="Quick Wins">
-        <MarkdownContent content={content} />
+        <MarkdownContent content={content} extended />
       </SectionCard>
     );
   }
 
   return (
     <SectionCard id="quick-wins" title="Quick Wins">
-      <p className="mb-6 text-muted">
+      <p className="mb-6 text-foreground/80">
         Do these in the next 7 days:
       </p>
 
-      <ol className="list-decimal list-outside ml-5 space-y-3">
+      <ol className="list-decimal list-outside ml-5 space-y-2">
         {wins.map((win: QuickWin, index: number) => (
           <li key={index} className="text-foreground/80 pl-1">
             <MarkdownContent

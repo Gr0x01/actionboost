@@ -8,7 +8,7 @@ interface StopDoingProps {
 export function StopDoing({ content }: StopDoingProps) {
   return (
     <SectionCard id="stop-doing" title="Stop Doing">
-      <MarkdownContent content={content} />
+      <MarkdownContent content={content} extended />
     </SectionCard>
   );
 }

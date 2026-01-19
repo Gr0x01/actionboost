@@ -1,4 +1,5 @@
 import React from "react";
+import { IceScoreBadge } from "@/components/ui/IceScoreBadge";
 
 interface MarkdownContentProps {
   content: string;
@@ -7,10 +8,45 @@ interface MarkdownContentProps {
   extended?: boolean;
 }
 
+/** Generate a URL-friendly slug from heading text */
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .trim();
+}
+
+/** Parse ICE score from text - supports multiple formats */
+function parseIceScore(text: string): { impact: number; confidence: number; ease: number } | null {
+  // Format 1: "ICE Score: Impact 3, Confidence 9, Ease 8"
+  const longFormat = text.match(/ICE Score:\s*Impact\s*(\d+),?\s*Confidence\s*(\d+),?\s*Ease\s*(\d+)/i);
+  if (longFormat) {
+    return {
+      impact: parseInt(longFormat[1]),
+      confidence: parseInt(longFormat[2]),
+      ease: parseInt(longFormat[3]),
+    };
+  }
+
+  // Format 2: "ICE Score: 10/9/9 = 28" or "ICE Score: 9/8/7 = 24"
+  const shortFormat = text.match(/ICE Score:\s*(\d+)\/(\d+)\/(\d+)/i);
+  if (shortFormat) {
+    return {
+      impact: parseInt(shortFormat[1]),
+      confidence: parseInt(shortFormat[2]),
+      ease: parseInt(shortFormat[3]),
+    };
+  }
+
+  return null;
+}
+
 /**
  * Lightweight markdown renderer for results content.
  * Handles: headers (###), bold (**), italic (*), lists (- or *), numbered lists, paragraphs, horizontal rules
- * Extended mode adds: tables, code blocks
+ * Extended mode adds: tables, code blocks, ICE badges
  */
 export function MarkdownContent({ content, className = "", extended = false }: MarkdownContentProps) {
   const lines = content.split("\n");
@@ -263,12 +299,15 @@ export function MarkdownContent({ content, className = "", extended = false }: M
     if (extended && trimmed.startsWith("## ") && !trimmed.startsWith("### ")) {
       flushList();
       flushTable();
+      const headingText = trimmed.slice(3);
+      const headingId = slugify(headingText);
       elements.push(
         <h2
           key={keyIndex++}
-          className="text-2xl font-bold text-foreground mt-14 mb-6 font-sans tracking-tight border-b border-border/30 pb-3"
+          id={headingId}
+          className="text-2xl font-bold text-foreground mt-14 mb-6 font-sans tracking-tight border-b border-border/30 pb-3 scroll-mt-32"
         >
-          {trimmed.slice(3)}
+          {headingText}
         </h2>
       );
       continue;
@@ -281,7 +320,7 @@ export function MarkdownContent({ content, className = "", extended = false }: M
       elements.push(
         <h3
           key={keyIndex++}
-          className="text-lg font-semibold text-foreground mt-10 mb-4 font-sans tracking-tight"
+          className="text-xl font-semibold text-foreground mt-10 mb-4 font-sans tracking-tight"
         >
           {trimmed.slice(4)}
         </h3>
@@ -295,7 +334,7 @@ export function MarkdownContent({ content, className = "", extended = false }: M
       elements.push(
         <h4
           key={keyIndex++}
-          className="text-base font-medium text-foreground mt-6 mb-3 font-sans"
+          className="text-lg font-semibold text-foreground mt-8 mb-3 font-sans"
         >
           {trimmed.slice(5)}
         </h4>
@@ -333,6 +372,23 @@ export function MarkdownContent({ content, className = "", extended = false }: M
       }
       currentList.items.push(trimmed.replace(/^\d+\.\s*/, ""));
       continue;
+    }
+
+    // ICE Score badge (extended mode)
+    if (extended) {
+      const iceScore = parseIceScore(trimmed);
+      if (iceScore) {
+        flushList();
+        elements.push(
+          <IceScoreBadge
+            key={keyIndex++}
+            impact={iceScore.impact}
+            confidence={iceScore.confidence}
+            ease={iceScore.ease}
+          />
+        );
+        continue;
+      }
     }
 
     // Regular paragraph

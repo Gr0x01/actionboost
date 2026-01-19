@@ -8,7 +8,7 @@ interface CompetitiveLandscapeProps {
 export function CompetitiveLandscape({ content }: CompetitiveLandscapeProps) {
   return (
     <SectionCard id="competitive-landscape" title="Competitive Landscape">
-      <MarkdownContent content={content} />
+      <MarkdownContent content={content} extended />
     </SectionCard>
   );
 }

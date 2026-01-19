@@ -19,6 +19,7 @@ export function ExecutiveSummary({ content }: ExecutiveSummaryProps) {
           <MarkdownContent
             content={firstParagraph}
             className="text-lg text-foreground leading-relaxed [&>p]:mb-0"
+            extended
           />
         </div>
       )}
@@ -27,7 +28,8 @@ export function ExecutiveSummary({ content }: ExecutiveSummaryProps) {
       {remainingContent && (
         <MarkdownContent
           content={remainingContent}
-          className="text-muted leading-relaxed"
+          className="text-foreground/80"
+          extended
         />
       )}
     </SectionCard>
