@@ -1,0 +1,154 @@
+# Product: ActionBoost
+
+## Value Prop
+
+> "Stuck on growth? Get your next moves."
+
+Not generic ChatGPT advice - analyzes YOUR situation with live competitive research.
+
+---
+
+## User Flow
+
+```
+Landing (/) → Input Form (/start) → Checkout → Processing → Results
+                                         ↓
+                              [or redeem coupon code]
+```
+
+**Key insight**: User fills out form BEFORE paying. Invested time = harder to bounce.
+
+---
+
+## Landing Page Content
+
+### Hero
+- Headline: "Stuck on growth? Get your next moves."
+- Subhead: AI-powered growth strategy with real competitive research. Not ChatGPT fluff.
+- CTA: "Get Started" → /start
+
+### Credibility Section (show the frameworks)
+Display these to prove there's real methodology:
+
+**"Built on proven growth frameworks"**
+- **AARRR (Pirate Metrics)** - Acquisition, Activation, Retention, Referral, Revenue
+- **ICE Prioritization** - Every recommendation scored by Impact, Confidence, Ease
+- **Growth Equation** - Systematic approach: (New Users × Activation × Retention × Referral) - Churn
+
+### What You Get
+- Competitive landscape analysis (real research, not generic)
+- What to STOP doing (with reasoning)
+- What to START doing (prioritized by impact)
+- Quick wins for this week
+- 30-day action roadmap
+- Metrics to track success
+
+### How It Works
+1. Tell us about your business (5-10 min form)
+2. We research your competitors and market
+3. Get your custom growth playbook
+
+### Pricing
+- $15 for one strategy
+- $30 for 3 (shown but not primary CTA)
+
+### Social Proof
+- Sample output snippet (show quality)
+- "Built by @handle" footer
+
+---
+
+## Pages
+
+| Route | Purpose | Auth |
+|-------|---------|------|
+| `/` | Landing - hero, value prop, pricing, frameworks | No |
+| `/start` | Input form - collect business context | No |
+| `/checkout` | Order summary, coupon input, Stripe redirect | No |
+| `/processing/[runId]` | Progress indicator while AI works | No |
+| `/results/[runId]` | Strategy display, export options | Owner or share link |
+| `/share/[slug]` | Public read-only view of results | No |
+| `/dashboard` | User's past runs, credits remaining | Yes (magic link) |
+
+---
+
+## Input Form Fields
+
+### Required
+- **Product description** - What does it do? (1-2 sentences)
+- **Current traction** - Users, revenue, traffic, whatever matters
+- **What you've tried** - Channels, tactics, experiments
+- **What's working/not** - Current wins and failures
+
+### Optional
+- Competitor URLs (up to 3)
+- Your website URL
+- Analytics summary (paste from GA/PostHog)
+- Constraints (budget, time, skills)
+
+### Focus Area (radio)
+- Growth & Acquisition (default)
+- Monetization & Conversion
+- Competitive Positioning
+
+**Total character limit**: ~10,000 (keeps API costs predictable)
+
+---
+
+## Data Schema
+
+### users
+- `id`, `email` (unique), `created_at`
+- No passwords - auth via magic link
+
+### runs
+- `id`, `user_id` (nullable), `status` (pending/processing/complete/failed)
+- `input` (JSONB - form data), `output` (TEXT - markdown strategy)
+- `share_slug` (unique, for public sharing)
+- `stripe_payment_intent_id`, `created_at`, `completed_at`
+
+### run_credits
+- `id`, `user_id`, `credits` (integer), `source` (stripe/code/manual)
+- `stripe_checkout_session_id`, `created_at`
+- **Why a table?** Audit trail for purchases. Sum credits to get balance.
+
+### codes
+- `id`, `code` (unique), `credits`, `max_uses`, `used_count`, `expires_at`
+- Launch codes: REDDIT20, INDIEHACKERS, PRODUCTHUNT, LAUNCH, FRIEND
+
+---
+
+## Pricing
+
+| Product | Price | Credits |
+|---------|-------|---------|
+| Single | $15 | 1 |
+| 3-Pack | $30 | 3 |
+
+**Per-run cost**: ~$1.50-3.00 (Opus + research + Stripe fees)
+**Margin**: ~80%
+
+---
+
+## Output Format
+
+The AI generates markdown with these sections:
+- Executive Summary
+- Your Current Situation
+- Competitive Landscape
+- Stop Doing (with reasoning)
+- Start Doing (prioritized, with impact estimates)
+- Quick Wins (This Week)
+- 30-Day Roadmap
+- Metrics to Track
+
+---
+
+## Not Building (MVP)
+
+- User accounts beyond magic link
+- Subscriptions
+- Team features
+- Strategy editing/revision
+- Integrations
+- Mobile app

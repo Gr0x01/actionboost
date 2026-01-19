@@ -6,31 +6,29 @@ I am Claude, an expert software engineer whose memory resets between sessions. T
 
 ### Memory Bank Layout
 ```
-core/           → must-read startup context
-development/    → active engineering focus + operations
-architecture/   → current system map + approved patterns
-archive/        → historical narrative and deprecated guidance
+memory-bank/
+├── README.md           → project context, commands, env vars (START HERE)
+├── product.md          → user flows, data schema, form fields
+├── architecture.md     → system design, API patterns, tech details
+├── decisions.md        → key choices and rationale ("why")
+└── phases/
+    ├── current.md      → what to work on RIGHT NOW
+    └── roadmap.md      → future phases overview
 ```
 
-### Core Files (Read In Order)
-YOU MUST READ THESE FILES BEFORE ANYTHING ELSE.
-1. `/memory-bank/core/quickstart.md` – situational awareness, commands, milestones
-2. `/memory-bank/core/projectbrief.md` – product definition and data schema
-3. `/memory-bank/development/activeContext.md` – current focus + next steps
-4. `/memory-bank/architecture/techStack.md` – stack, deployments, LLM models
-5. `/memory-bank/development/progress.md` – highlights of shipped work
-
-**Read when working with data:**
-- `/memory-bank/architecture/data-pipeline.md` – scripts, enrichment workflow, commands
-- `/memory-bank/development/progress.md` – milestones, data sources, costs
+### Startup Procedure
+1. **Always read first**: `README.md` → `phases/current.md`
+2. **When building features**: Also read `product.md`
+3. **When building backend/infra**: Also read `architecture.md`
+4. **When you need "why"**: Check `decisions.md`
 
 ### Documentation Updates
 Update the memory bank when:
-- You finish a feature or change operational flow.
-- Architecture/tooling shifts (new dependency, command, deployment change).
-- You discover a pattern that should guide future work.
+- You complete a phase → update `phases/current.md` with next phase
+- Architecture changes → update `architecture.md`
+- New decision made → add to `decisions.md`
 
-Always adjust the metadata header (`Last-Updated`, `Maintainer`) when you edit a living doc.
+Keep docs lean. Intent over implementation. Agents can generate code from descriptions.
 
 ## BEHAVIORAL RULES
 
@@ -75,7 +73,7 @@ Always adjust the metadata header (`Last-Updated`, `Maintainer`) when you edit a
 ### LLM Model Usage - CRITICAL
 **NEVER change LLM model names or configurations without explicit authorization.**
 
-- The project has a model reference with correct pricing and model names in `/memory-bank/architecture/techStack.md`
+- The project has a model reference with correct pricing and model names in `/memory-bank/decisions.md` and `/memory-bank/architecture.md`
 - **DO NOT** change model configurations based on assumed errors
 - If you believe there's an error in model naming, ASK FIRST before changing anything
 - The pricing and model names in the memory bank are authoritative - use them as reference

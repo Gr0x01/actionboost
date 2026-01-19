@@ -1,0 +1,178 @@
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
+export type Database = {
+  public: {
+    Tables: {
+      codes: {
+        Row: {
+          code: string
+          created_at: string | null
+          credits: number | null
+          expires_at: string | null
+          id: string
+          max_uses: number | null
+          used_count: number | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          credits?: number | null
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          used_count?: number | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          credits?: number | null
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          used_count?: number | null
+        }
+        Relationships: []
+      }
+      run_credits: {
+        Row: {
+          created_at: string | null
+          credits: number
+          id: string
+          source: string | null
+          stripe_checkout_session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          credits: number
+          id?: string
+          source?: string | null
+          stripe_checkout_session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          credits?: number
+          id?: string
+          source?: string | null
+          stripe_checkout_session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "run_credits_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      runs: {
+        Row: {
+          attachments: Json | null
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          input: Json
+          output: string | null
+          share_slug: string | null
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          attachments?: Json | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          input: Json
+          output?: string | null
+          share_slug?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          attachments?: Json | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          input?: Json
+          output?: string | null
+          share_slug?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "runs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+        }
+        Relationships: []
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+}
+
+// Helper types for easier usage
+export type Tables<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T]["Row"]
+export type TablesInsert<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T]["Insert"]
+export type TablesUpdate<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T]["Update"]
+
+// Convenience aliases
+export type User = Tables<"users">
+export type Run = Tables<"runs">
+export type RunCredit = Tables<"run_credits">
+export type Code = Tables<"codes">
+
+export type RunStatus = "pending" | "processing" | "complete" | "failed"
+export type CreditSource = "stripe" | "code" | "manual"
+
+// File attachment metadata (stored in runs.attachments JSONB)
+export type Attachment = {
+  path: string      // Storage path: user_id/run_id/filename
+  type: string      // MIME type: image/png, application/pdf, etc.
+  name: string      // Original filename
+  size?: number     // File size in bytes
+}
