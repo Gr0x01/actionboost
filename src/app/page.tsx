@@ -1,11 +1,5 @@
 import { Header, Footer } from "@/components/layout";
-import {
-  Hero,
-  Frameworks,
-  WhatYouGet,
-  HowItWorks,
-  Pricing,
-} from "@/components/landing";
+import { Hero, Frameworks, WhatYouGet, Pricing } from "@/components/landing";
 
 export default function Home() {
   return (
@@ -16,7 +10,6 @@ export default function Home() {
         <Hero />
         <Frameworks />
         <WhatYouGet />
-        <HowItWorks />
         <Pricing />
       </main>
 

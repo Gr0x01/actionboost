@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createBrowserClient } from "@supabase/ssr";
 import { Button } from "@/components/ui";
-import { Zap, User, LayoutDashboard } from "lucide-react";
+import { LayoutDashboard } from "lucide-react";
 import type { User as AuthUser } from "@supabase/supabase-js";
 
 export function Header() {
@@ -38,13 +38,8 @@ export function Header() {
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-cta to-accent shadow-sm group-hover:shadow-md transition-shadow">
-              <Zap className="h-4 w-4 text-white" fill="white" />
-            </div>
-            <span className="text-xl font-bold text-foreground">
-              Actionboo.st
-            </span>
+          <Link href="/" className="text-xl font-bold text-foreground hover:text-foreground/80 transition-colors">
+            Actionboo.st
           </Link>
 
           {/* Right side */}
@@ -65,7 +60,6 @@ export function Header() {
               <>
                 <Link href="/login">
                   <Button variant="ghost" size="sm">
-                    <User className="h-4 w-4 mr-2" />
                     Login
                   </Button>
                 </Link>

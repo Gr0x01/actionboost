@@ -29,14 +29,6 @@ export function Footer() {
             >
               Privacy
             </Link>
-            <a
-              href="https://twitter.com/yourhandle"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white/60 hover:text-white transition-colors"
-            >
-              @yourhandle
-            </a>
           </div>
         </div>
 

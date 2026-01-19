@@ -1,68 +1,146 @@
 import Link from "next/link";
 import { Button } from "@/components/ui";
-import { Sparkles } from "lucide-react";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden bg-mesh py-24 lg:py-32">
+    <section className="relative bg-mesh py-16 lg:py-24 overflow-x-clip">
       {/* Decorative blobs */}
       <div className="absolute top-20 -left-32 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" />
-      <div className="absolute bottom-20 -right-32 w-80 h-80 bg-accent/15 rounded-full blur-3xl animate-float stagger-2" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cta/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-20 right-0 w-80 h-80 bg-accent/15 rounded-full blur-3xl animate-float stagger-2" />
 
-      {/* Content */}
-      <div className="relative mx-auto max-w-5xl px-6 text-center">
-        {/* Badge */}
-        <div className="animate-slide-up">
-          <span className="inline-flex items-center gap-2 rounded-full bg-surface border border-border px-4 py-2 text-sm font-medium text-muted shadow-sm">
-            <Sparkles className="h-4 w-4 text-accent" />
-            AI-powered growth strategy
-          </span>
-        </div>
+      <div className="relative mx-auto max-w-7xl px-6">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+          {/* Left - Hero content */}
+          <div className="text-center lg:text-left">
+            {/* Headline */}
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl animate-slide-up">
+              <span className="text-foreground">Stuck on growth?</span>
+              <br />
+              <span className="text-gradient">Get your next moves.</span>
+            </h1>
 
-        {/* Headline */}
-        <h1 className="mt-8 text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl animate-slide-up stagger-1">
-          <span className="text-foreground">Stuck on growth?</span>
-          <br />
-          <span className="text-gradient">Get your next moves.</span>
-        </h1>
+            {/* Subhead */}
+            <p className="mt-6 text-lg text-muted sm:text-xl max-w-xl animate-slide-up stagger-2">
+              Real competitive research. Prioritized recommendations.
+              A 30-day roadmap built for <em>your</em> business.
+            </p>
 
-        {/* Subhead */}
-        <p className="mt-6 text-lg text-muted sm:text-xl max-w-2xl mx-auto animate-slide-up stagger-2">
-          Real competitive research. Prioritized recommendations.
-          <br className="hidden sm:block" />
-          A 30-day roadmap built for <em>your</em> business.
-        </p>
+            {/* CTAs */}
+            <div className="mt-10 flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 animate-slide-up stagger-3">
+              <Link href="/start">
+                <Button size="lg" className="glow-cta text-lg px-8 py-4">
+                  Get Started &mdash; $15
+                </Button>
+              </Link>
+              <Link href="#pricing">
+                <Button variant="secondary" size="lg" className="text-lg">
+                  See pricing
+                </Button>
+              </Link>
+            </div>
+          </div>
 
-        {/* CTAs */}
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up stagger-3">
-          <Link href="/start">
-            <Button size="lg" className="glow-cta text-lg px-8 py-4">
-              Get Started &mdash; $15
-            </Button>
-          </Link>
-          <Link href="#how-it-works">
-            <Button variant="secondary" size="lg" className="text-lg">
-              See how it works
-            </Button>
-          </Link>
-        </div>
+          {/* Right - Example strategy preview */}
+          <div className="hidden lg:block relative lg:-mr-24 lg:-mt-48 lg:mb-[-200px] animate-fade-in">
+            {/* Preview card - extends beyond container top and bottom */}
+            <div className="relative bg-white rounded-xl shadow-2xl border border-border/50">
+              {/* Top fade overlay - content fades in from top */}
+              <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-white via-white to-transparent z-10 rounded-t-xl" />
 
-        {/* Trust signals */}
-        <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-muted animate-fade-in stagger-4">
-          <span className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-green-500" />
-            No account required
-          </span>
-          <span className="hidden sm:block text-border">|</span>
-          <span>Takes 5-10 minutes</span>
-          <span className="hidden sm:block text-border">|</span>
-          <span>Powered by Claude Opus 4.5</span>
+              {/* Content */}
+              <div className="px-10 py-8 space-y-8 font-serif">
+                {/* Previous item (partially visible at top) */}
+                <div className="border-b border-border/30 pb-6">
+                  <ol className="list-decimal list-inside text-muted" start={4}>
+                    <li>Track email-to-profile-view conversion as your key retention metric.</li>
+                  </ol>
+                </div>
+
+                {/* Main example strategy item */}
+                <div className="border-b border-border/30 pb-8">
+                  <div className="flex items-start justify-between gap-6">
+                    <div>
+                      <h3 className="text-xl font-bold text-navy">
+                        5. Partner with Tattoo-Adjacent Communities
+                      </h3>
+                      <p className="mt-2 text-muted leading-relaxed">
+                        Go where your users already congregate but aren&apos;t being marketed to.
+                      </p>
+                    </div>
+                    {/* ICE Score Box */}
+                    <div className="shrink-0 flex gap-6 px-5 py-3 rounded-lg border border-border/50 bg-surface/50">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-navy">6</div>
+                        <div className="text-[10px] text-muted uppercase tracking-wider">Impact</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-navy">7</div>
+                        <div className="text-[10px] text-muted uppercase tracking-wider">Confidence</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-navy">6</div>
+                        <div className="text-[10px] text-muted uppercase tracking-wider">Ease</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-5">
+                    <p className="font-semibold text-navy mb-3">Implementation:</p>
+                    <ol className="space-y-2 text-muted list-decimal list-inside ml-1">
+                      <li>Identify tattoo-adjacent communities:</li>
+                    </ol>
+                    <ul className="mt-2 ml-6 space-y-1.5 text-muted list-disc list-inside">
+                      <li>Aftercare product brands (Mad Rabbit, Hustle Butter)</li>
+                      <li>Tattoo-themed clothing/jewelry brands</li>
+                      <li>Tattoo convention organizers</li>
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Second item preview (partial - fades out) */}
+                <div className="pb-12">
+                  <div className="flex items-start justify-between gap-6">
+                    <div>
+                      <h3 className="text-xl font-bold text-navy">
+                        6. Launch Pinterest Strategy
+                      </h3>
+                      <p className="mt-2 text-muted leading-relaxed">
+                        Pinterest is where people <em>plan</em> tattoos. Reddit is where people <em>browse</em>. Huge difference.
+                      </p>
+                    </div>
+                    {/* ICE Score Box */}
+                    <div className="shrink-0 flex gap-6 px-5 py-3 rounded-lg border border-border/50 bg-surface/50">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-navy">8</div>
+                        <div className="text-[10px] text-muted uppercase tracking-wider">Impact</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-navy">7</div>
+                        <div className="text-[10px] text-muted uppercase tracking-wider">Confidence</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-navy">7</div>
+                        <div className="text-[10px] text-muted uppercase tracking-wider">Ease</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-5">
+                    <p className="font-semibold text-navy mb-3">Implementation:</p>
+                    <ol className="space-y-2 text-muted list-decimal list-inside ml-1">
+                      <li>Create a Pinterest Business account for Inkdex.</li>
+                      <li>Create boards for each style: &quot;Blackwork Ideas,&quot; &quot;Japanese Inspiration&quot;</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom fade - blends into next section */}
+              <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-surface via-surface to-transparent rounded-b-xl" />
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* Bottom gradient fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent" />
     </section>
   );
 }

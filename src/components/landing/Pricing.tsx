@@ -1,136 +1,155 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui";
-import { Check, Sparkles } from "lucide-react";
 
 const features = [
   "Full competitive analysis",
   "Prioritized recommendations",
   "30-day action roadmap",
   "Quick wins for this week",
-  "Metrics to track",
 ];
 
 export function Pricing() {
-  return (
-    <section className="relative py-24 overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute left-1/4 top-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cta/5 rounded-full blur-3xl" />
+  const [loading, setLoading] = useState<number | null>(null);
 
-      <div className="relative mx-auto max-w-6xl px-6">
-        {/* Section header */}
-        <div className="text-center mb-16">
-          <span className="inline-block text-sm font-semibold tracking-wider text-primary uppercase mb-4">
-            Pricing
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
-            Simple, <span className="text-gradient">transparent</span> pricing
-          </h2>
-          <p className="mt-4 text-lg text-muted max-w-2xl mx-auto">
-            One payment. No subscription. No account required.
+  async function handleBuyCredits(pack: number) {
+    setLoading(pack);
+    try {
+      const res = await fetch("/api/checkout/buy-credits", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pack }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error("Checkout error:", error);
+      setLoading(null);
+    }
+  }
+
+  return (
+    <section id="pricing" className="relative py-24 overflow-hidden">
+      {/* Subtle background elements */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface/30 to-transparent" />
+      <div className="absolute right-0 top-1/4 w-96 h-96 bg-cta/5 rounded-full blur-3xl -translate-x-1/2" />
+      <div className="absolute left-0 bottom-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl translate-x-1/2" />
+
+      <div className="relative mx-auto max-w-4xl px-6">
+        {/* Section header - editorial style */}
+        <div className="text-center mb-16 animate-fade-in">
+          <p className="text-sm font-mono tracking-widest text-cta uppercase mb-3">
+            One payment. No subscription.
           </p>
+          <h2 className="text-4xl sm:text-5xl font-bold text-foreground tracking-tight">
+            Get your growth strategy
+          </h2>
         </div>
 
-        {/* Pricing cards */}
-        <div className="grid gap-8 md:grid-cols-2 max-w-3xl mx-auto">
-          {/* Single */}
-          <div className="relative group animate-slide-up stagger-1">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="relative rounded-2xl border border-border bg-background p-8 hover-lift">
-              <div className="text-center">
-                <h3 className="text-xl font-semibold text-foreground">
-                  Single Strategy
-                </h3>
-                <div className="mt-6 flex items-baseline justify-center gap-1">
-                  <span className="text-5xl font-bold text-foreground">$15</span>
-                </div>
-                <p className="mt-2 text-sm text-muted">One-time payment</p>
-              </div>
-
-              <ul className="mt-8 space-y-4">
-                {features.map((feature) => (
-                  <li key={feature} className="flex items-center gap-3">
-                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10">
-                      <Check className="h-3 w-3 text-primary" strokeWidth={3} />
-                    </div>
-                    <span className="text-muted">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-8">
-                <Link href="/start" className="block">
-                  <Button className="w-full" size="lg">
-                    Get Started
-                  </Button>
-                </Link>
-              </div>
-            </div>
+        {/* Single product showcase */}
+        <div className="animate-slide-up stagger-1">
+          {/* Features in a horizontal flow */}
+          <div className="flex flex-wrap justify-center items-center gap-y-3 mb-12 text-sm font-medium text-muted">
+            {features.map((feature, i) => (
+              <span key={feature} className="flex items-center">
+                {feature}
+                {i < features.length - 1 && <span className="mx-3 text-border">•</span>}
+              </span>
+            ))}
           </div>
 
-          {/* 3-Pack - Featured */}
-          <div className="relative group animate-slide-up stagger-2">
-            {/* Glow effect */}
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-cta to-accent rounded-2xl blur opacity-30 group-hover:opacity-50 transition-opacity" />
+          {/* Pricing options - stacked, not compared */}
+          <div className="max-w-xl mx-auto space-y-4">
+            {/* Single Strategy */}
+            <button
+              onClick={() => handleBuyCredits(1)}
+              disabled={loading !== null}
+              className="group block relative w-full rounded-xl border border-border bg-background p-6 transition-all duration-300 hover:border-primary/30 hover:shadow-md text-left disabled:opacity-70 disabled:cursor-wait"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-surface font-mono text-lg font-bold text-foreground">
+                    1x
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground">Single Strategy</h3>
+                    <p className="text-sm text-muted">One complete analysis</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-3xl font-bold text-foreground">$15</span>
+                </div>
+              </div>
+              {loading === 1 && (
+                <div className="absolute right-6 top-1/2 -translate-y-1/2">
+                  <div className="h-5 w-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                </div>
+              )}
+            </button>
 
-            <div className="relative rounded-2xl border-2 border-cta bg-background p-8">
-              {/* Badge */}
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-cta to-accent px-4 py-1.5 text-sm font-semibold text-white shadow-lg">
-                  <Sparkles className="h-4 w-4" />
-                  Best Value
+            {/* 3-Pack - Recommended */}
+            <button
+              onClick={() => handleBuyCredits(3)}
+              disabled={loading !== null}
+              className="group block relative w-full rounded-xl border-2 border-cta/50 bg-gradient-to-r from-cta/5 to-accent/5 p-6 transition-all duration-300 hover:border-cta hover:shadow-lg hover:shadow-cta/10 text-left disabled:opacity-70 disabled:cursor-wait"
+            >
+              {/* Best value indicator */}
+              <div className="absolute -top-3 left-6">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-cta to-cta-hover px-3 py-1 text-xs font-bold text-white uppercase tracking-wide shadow-md">
+                  Save 33%
                 </span>
               </div>
 
-              <div className="text-center pt-2">
-                <h3 className="text-xl font-semibold text-foreground">
-                  3-Pack
-                </h3>
-                <div className="mt-6 flex items-baseline justify-center gap-2">
-                  <span className="text-5xl font-bold text-foreground">$30</span>
-                  <span className="text-xl text-muted line-through">$45</span>
-                </div>
-                <p className="mt-2 text-sm text-muted">
-                  $10 per strategy &mdash; <span className="text-cta font-medium">Save $15</span>
-                </p>
-              </div>
-
-              <ul className="mt-8 space-y-4">
-                {features.map((feature) => (
-                  <li key={feature} className="flex items-center gap-3">
-                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10">
-                      <Check className="h-3 w-3 text-primary" strokeWidth={3} />
-                    </div>
-                    <span className="text-muted">{feature}</span>
-                  </li>
-                ))}
-                <li className="flex items-center gap-3">
-                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-cta/20">
-                    <Check className="h-3 w-3 text-cta" strokeWidth={3} />
+              <div className="flex items-center justify-between pt-1">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-cta/10 font-mono text-lg font-bold text-cta">
+                    3x
                   </div>
-                  <span className="font-medium text-foreground">
-                    3 strategy credits
-                  </span>
-                </li>
-              </ul>
-
-              <div className="mt-8">
-                <Link href="/start?pack=3" className="block">
-                  <Button className="w-full glow-cta" size="lg">
-                    Get 3-Pack
-                  </Button>
-                </Link>
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground">Strategy 3-Pack</h3>
+                    <p className="text-sm text-muted">
+                      Three credits to use anytime
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-3xl font-bold text-foreground">$30</span>
+                    <span className="text-lg text-muted line-through">$45</span>
+                  </div>
+                  <p className="text-xs text-cta font-semibold">$10 each</p>
+                </div>
               </div>
-            </div>
+
+              {loading === 3 && (
+                <div className="absolute right-6 top-1/2 -translate-y-1/2">
+                  <div className="h-5 w-5 border-2 border-cta border-t-transparent rounded-full animate-spin" />
+                </div>
+              )}
+            </button>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up stagger-2">
+            <Button
+              size="lg"
+              className="glow-cta bg-cta hover:bg-cta-hover text-white px-10"
+              onClick={() => handleBuyCredits(3)}
+              disabled={loading !== null}
+            >
+              {loading === 3 ? "Loading..." : "Buy 3-Pack — $30"}
+            </Button>
+            <Link href="/start">
+              <Button variant="secondary" size="lg">
+                Get Started
+              </Button>
+            </Link>
           </div>
         </div>
-
-        {/* Trust */}
-        <p className="mt-12 text-center text-sm text-muted">
-          <span className="inline-flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-            Powered by Claude Opus 4.5 + live competitive research
-          </span>
-        </p>
       </div>
     </section>
   );

@@ -1,33 +1,9 @@
-import { Target, BarChart3, TrendingUp } from "lucide-react";
-import { FeatureCard } from "@/components/ui";
-
-const frameworks = [
-  {
-    icon: Target,
-    title: "AARRR (Pirate Metrics)",
-    description:
-      "Acquisition, Activation, Retention, Referral, Revenue. We analyze where you're leaking growth.",
-  },
-  {
-    icon: BarChart3,
-    title: "ICE Prioritization",
-    description:
-      "Every recommendation scored by Impact, Confidence, and Ease. Know exactly where to focus.",
-  },
-  {
-    icon: TrendingUp,
-    title: "Growth Equation",
-    description:
-      "(New Users x Activation x Retention x Referral) - Churn. We find your biggest multiplier.",
-  },
-];
-
 export function Frameworks() {
   return (
-    <section className="relative py-24 overflow-hidden">
+    <section className="relative pt-32 pb-24 overflow-hidden">
       {/* Subtle background */}
       <div className="absolute inset-0 bg-surface" />
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background opacity-60" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background opacity-60" />
 
       <div className="relative mx-auto max-w-6xl px-6">
         {/* Section header */}
@@ -40,24 +16,53 @@ export function Frameworks() {
           </h2>
           <p className="mt-4 text-lg text-muted max-w-2xl mx-auto">
             Not random AI advice. Strategy grounded in the same frameworks used by
-            growth teams at top startups.
+            growth teams at top&nbsp;startups.
           </p>
         </div>
 
-        {/* Framework cards */}
-        <div className="grid gap-6 md:grid-cols-3">
-          {frameworks.map((framework, index) => (
-            <div
-              key={framework.title}
-              className={`animate-slide-up stagger-${index + 1}`}
-            >
-              <FeatureCard
-                icon={framework.icon}
-                title={framework.title}
-                description={framework.description}
-              />
-            </div>
-          ))}
+        {/* Framework cards - 3 columns */}
+        <div className="grid gap-8 md:grid-cols-3">
+          {/* AARRR */}
+          <div className="animate-slide-up stagger-1">
+            <h3 className="text-xl font-bold text-navy mb-3">
+              <span className="font-mono text-primary">AARRR</span>
+              <span className="text-muted font-normal text-base ml-1">(Pirate Metrics)</span>
+            </h3>
+            <p className="text-muted leading-relaxed">
+              <span className="font-medium text-foreground">Acquisition, Activation, Retention, Referral, Revenue.</span>
+              {" "}We analyze where you&apos;re leaking&nbsp;growth.
+            </p>
+          </div>
+
+          {/* ICE */}
+          <div className="animate-slide-up stagger-2">
+            <h3 className="text-xl font-bold text-navy mb-3">
+              <span className="font-mono text-primary">ICE</span>
+              <span className="text-muted font-normal text-base ml-1">Prioritization</span>
+            </h3>
+            <p className="text-muted leading-relaxed">
+              Every recommendation scored by{" "}
+              <span className="font-medium text-foreground">Impact</span>,{" "}
+              <span className="font-medium text-foreground">Confidence</span>, and{" "}
+              <span className="font-medium text-foreground">Ease</span>.
+              {" "}Know exactly where to&nbsp;focus.
+            </p>
+          </div>
+
+          {/* Growth Equation */}
+          <div className="animate-slide-up stagger-3">
+            <h3 className="text-xl font-bold text-navy mb-3">
+              <span className="font-mono text-primary">Growth</span>
+              <span className="text-muted font-normal text-base ml-1">Equation</span>
+            </h3>
+            <p className="text-muted leading-relaxed">
+              <code className="font-mono text-sm text-navy/70">
+                (Users × Activation × Retention × Referral)&nbsp;−&nbsp;Churn
+              </code>
+              <br />
+              We find your biggest&nbsp;multiplier.
+            </p>
+          </div>
         </div>
       </div>
     </section>
