@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { config } from "@/lib/config";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -300,12 +300,6 @@ function FreeResultsPageContent() {
 
             {/* Main content */}
             <div className="flex-1 max-w-3xl">
-              {/* Mini audit badge */}
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-                <Sparkles className="w-3.5 h-3.5" />
-                Free Mini-Audit
-              </div>
-
               {/* Upsell banner */}
               <UpsellBanner />
 

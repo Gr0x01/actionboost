@@ -23,9 +23,10 @@ const SECTIONS: Section[] = [
 interface TableOfContentsProps {
   strategy: ParsedStrategy;
   variant?: "mobile" | "desktop";
+  lockedSectionIds?: string[];
 }
 
-export function TableOfContents({ strategy, variant }: TableOfContentsProps) {
+export function TableOfContents({ strategy, variant, lockedSectionIds = [] }: TableOfContentsProps) {
   const [activeSection, setActiveSection] = useState<string>("executive-summary");
   const [mobileNavVisible, setMobileNavVisible] = useState(true);
   const [underlineStyle, setUnderlineStyle] = useState({ left: 0, width: 0 });
@@ -213,6 +214,9 @@ export function TableOfContents({ strategy, variant }: TableOfContentsProps) {
     </div>
   );
 
+  // Get locked sections from IDs
+  const lockedSections = SECTIONS.filter((s) => lockedSectionIds.includes(s.id));
+
   // Desktop sidebar
   const desktopNav = (
     <nav className="sticky top-32 h-fit">
@@ -237,6 +241,18 @@ export function TableOfContents({ strategy, variant }: TableOfContentsProps) {
             </button>
           );
         })}
+        {lockedSections.length > 0 && (
+          <>
+            {lockedSections.map((section) => (
+              <div
+                key={section.id}
+                className="w-full px-3 py-2 text-sm text-muted/50 cursor-default"
+              >
+                {section.label}
+              </div>
+            ))}
+          </>
+        )}
       </div>
     </nav>
   );
