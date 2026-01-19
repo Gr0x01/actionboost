@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import { getAuthenticatedUserId } from "@/lib/auth/session";
+import { getSessionUserId } from "@/lib/auth/session-cookie";
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -33,7 +34,9 @@ export async function GET(
   const isShareAccess = shareSlug && run.share_slug === shareSlug;
 
   if (!isShareAccess) {
-    const userId = await getAuthenticatedUserId();
+    // Accept Supabase Auth session OR custom session cookie
+    const userId =
+      (await getAuthenticatedUserId()) ?? (await getSessionUserId());
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

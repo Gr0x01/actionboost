@@ -30,13 +30,59 @@ export default function ProcessingPage() {
   const router = useRouter();
   const params = useParams();
   const posthog = usePostHog();
-  const runId = params.runId as string;
+  const paramId = params.runId as string;
+
+  // If paramId is a Stripe session, we need to resolve it to actual runId
+  const isStripeSession = paramId?.startsWith("cs_");
+  const [resolvedRunId, setResolvedRunId] = useState<string | null>(
+    isStripeSession ? null : paramId
+  );
+  const runId = resolvedRunId;
 
   const [status, setStatus] = useState<RunStatus>("pending");
   const [error, setError] = useState<string | null>(null);
   const [dots, setDots] = useState("");
   const trackedStart = useRef(false);
   const trackedStatuses = useRef<Set<string>>(new Set());
+  const sessionRetryCount = useRef(0);
+
+  // Resolve Stripe session to actual run ID
+  useEffect(() => {
+    if (!isStripeSession || resolvedRunId) return;
+
+    const MAX_RETRIES = 30; // 60 seconds total (2s intervals)
+
+    const resolveSession = async () => {
+      // Check if we've exceeded max retries
+      if (sessionRetryCount.current >= MAX_RETRIES) {
+        setError("Payment processing is taking longer than expected. Please refresh or contact support.");
+        setStatus("failed");
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/runs/by-checkout/${paramId}`);
+        if (res.ok) {
+          const data = await res.json();
+          // Redirect to the actual run ID URL for cleaner history
+          router.replace(`/processing/${data.runId}`);
+        } else {
+          // 404 = webhook hasn't processed yet, will retry
+          sessionRetryCount.current++;
+        }
+      } catch {
+        // Network error, will retry
+        sessionRetryCount.current++;
+      }
+    };
+
+    // Try immediately
+    resolveSession();
+
+    // Retry every 2 seconds until resolved
+    const interval = setInterval(resolveSession, 2000);
+    return () => clearInterval(interval);
+  }, [isStripeSession, paramId, resolvedRunId, router]);
 
   // Track processing started
   useEffect(() => {

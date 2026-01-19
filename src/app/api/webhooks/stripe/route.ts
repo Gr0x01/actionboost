@@ -38,21 +38,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const supabase = createServiceClient();
   const metadata = session.metadata || {};
 
-  // Parse form data from metadata (aligned with RunInput type for AI pipeline)
-  const formInput = {
-    productDescription: metadata.form_product || "",
-    currentTraction: metadata.form_traction || "",
-    whatYouTried: metadata.form_tried || "",
-    whatsWorking: metadata.form_working || "",
-    focusArea: metadata.form_focus || "acquisition",
-    competitorUrls: JSON.parse(metadata.form_competitors || "[]").filter(Boolean),
-    websiteUrl: metadata.form_website || "",
-    analyticsSummary: metadata.form_analytics || "",
-    constraints: metadata.form_constraints || "",
-  };
-
   const credits = parseInt(metadata.credits || "1", 10);
   const email = session.customer_details?.email;
+  const isCreditsOnly = metadata.credits_only === "true";
 
   // Get or create user if email provided
   let userId: string | null = null;
@@ -89,6 +77,34 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     stripe_checkout_session_id: session.id,
   });
 
+  // Track payment completed
+  const distinctId = metadata.posthog_distinct_id || userId || session.id;
+  trackServerEvent(distinctId, "payment_completed", {
+    amount: session.amount_total ? session.amount_total / 100 : 0,
+    email: email || undefined,
+    credits,
+    credits_only: isCreditsOnly,
+  });
+
+  // If credits-only purchase, we're done - user will use credits later via form
+  if (isCreditsOnly) {
+    console.log("Credits-only purchase:", credits, "credits for session:", session.id);
+    return;
+  }
+
+  // Parse form data from metadata (aligned with RunInput type for AI pipeline)
+  const formInput = {
+    productDescription: metadata.form_product || "",
+    currentTraction: metadata.form_traction || "",
+    whatYouTried: metadata.form_tried || "",
+    whatsWorking: metadata.form_working || "",
+    focusArea: metadata.form_focus || "acquisition",
+    competitorUrls: JSON.parse(metadata.form_competitors || "[]").filter(Boolean),
+    websiteUrl: metadata.form_website || "",
+    analyticsSummary: metadata.form_analytics || "",
+    constraints: metadata.form_constraints || "",
+  };
+
   // Create the run
   const { data: run, error: runError } = await supabase
     .from("runs")
@@ -96,6 +112,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       user_id: userId,
       input: formInput as unknown as Json,
       status: "pending",
+      stripe_session_id: session.id,
     })
     .select("id")
     .single();
@@ -107,13 +124,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
   console.log("Created run:", run.id, "for session:", session.id);
 
-  // Track payment completed (use PostHog distinct_id from client for funnel linking)
-  const distinctId = metadata.posthog_distinct_id || userId || session.id;
-  trackServerEvent(distinctId, "payment_completed", {
-    amount: session.amount_total ? session.amount_total / 100 : 0,
-    email: email || undefined,
+  // Track run created
+  trackServerEvent(distinctId, "run_created", {
     run_id: run.id,
-    credits,
   });
 
   // Trigger AI pipeline (fire and forget - don't block webhook response)

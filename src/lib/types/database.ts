@@ -84,6 +84,7 @@ export type Database = {
           output: string | null
           share_slug: string | null
           status: string | null
+          stripe_session_id: string | null
           user_id: string | null
         }
         Insert: {
@@ -95,6 +96,7 @@ export type Database = {
           output?: string | null
           share_slug?: string | null
           status?: string | null
+          stripe_session_id?: string | null
           user_id?: string | null
         }
         Update: {
@@ -106,6 +108,7 @@ export type Database = {
           output?: string | null
           share_slug?: string | null
           status?: string | null
+          stripe_session_id?: string | null
           user_id?: string | null
         }
         Relationships: [
