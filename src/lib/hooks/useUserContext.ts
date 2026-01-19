@@ -68,7 +68,7 @@ export function useUserContext(): UseUserContextResult {
         ...(context.tactics?.working || []),
         ...(context.tactics?.notWorking?.map((t) => `Not working: ${t}`) || []),
       ].join('. ') || '',
-      focusArea: 'growth', // User picks fresh each time
+      focusArea: 'acquisition', // User picks fresh each time
       competitors: [
         ...(context.product?.competitors || []),
         '', '', '',

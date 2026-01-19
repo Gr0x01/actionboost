@@ -1,4 +1,4 @@
-export type FocusArea = "growth" | "monetization" | "positioning";
+export type FocusArea = "acquisition" | "activation" | "retention" | "referral" | "monetization" | "custom";
 
 export interface FileAttachment {
   id: string;
@@ -33,19 +33,34 @@ export const FOCUS_AREA_OPTIONS: {
   description: string;
 }[] = [
   {
-    value: "growth",
-    label: "Growth & Acquisition",
-    description: "Focus on getting more users and expanding reach",
+    value: "acquisition",
+    label: "Acquisition",
+    description: "How do I get more users?",
+  },
+  {
+    value: "activation",
+    label: "Activation",
+    description: "Users sign up but don't stick",
+  },
+  {
+    value: "retention",
+    label: "Retention",
+    description: "Users leave after a few weeks",
+  },
+  {
+    value: "referral",
+    label: "Referral",
+    description: "How do I get users to spread the word?",
   },
   {
     value: "monetization",
-    label: "Monetization & Conversion",
-    description: "Focus on converting users and increasing revenue",
+    label: "Monetization",
+    description: "I have users but no revenue",
   },
   {
-    value: "positioning",
-    label: "Competitive Positioning",
-    description: "Focus on differentiation and market position",
+    value: "custom",
+    label: "Other",
+    description: "I have a specific challenge",
   },
 ];
 
@@ -54,7 +69,7 @@ export const INITIAL_FORM_STATE: FormInput = {
   currentTraction: "",
   triedTactics: "",
   workingOrNot: "",
-  focusArea: "growth",
+  focusArea: "acquisition",
   competitors: ["", "", ""],
   websiteUrl: "",
   analyticsSummary: "",

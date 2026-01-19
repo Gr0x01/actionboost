@@ -1,0 +1,92 @@
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import { Globe, ArrowRight, ChevronLeft } from "lucide-react";
+
+interface UrlInputProps {
+  value: string;
+  onChange: (v: string) => void;
+  onSubmit: () => void;
+  onSkip?: () => void;
+  onBack?: () => void;
+}
+
+export function UrlInput({ value, onChange, onSubmit, onSkip, onBack }: UrlInputProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [favicon, setFavicon] = useState<string | null>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    if (value && value.includes(".")) {
+      try {
+        const url = value.startsWith("http") ? value : `https://${value}`;
+        const domain = new URL(url).hostname;
+        setFavicon(`https://www.google.com/s2/favicons?domain=${domain}&sz=32`);
+      } catch {
+        setFavicon(null);
+      }
+    } else {
+      setFavicon(null);
+    }
+  }, [value]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && value.trim()) {
+      onSubmit();
+    }
+  };
+
+  return (
+    <div className="relative">
+      <div className="flex items-center gap-3 bg-surface/50 border border-border/60 rounded-xl px-4 py-4 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+        {favicon ? (
+          <img src={favicon} alt="" className="w-5 h-5 rounded" />
+        ) : (
+          <Globe className="w-5 h-5 text-muted" />
+        )}
+        <input
+          ref={inputRef}
+          type="url"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="https://yourproduct.com"
+          className="flex-1 bg-transparent text-lg text-foreground placeholder:text-muted/50 outline-none"
+        />
+      </div>
+      <div className="flex items-center justify-between mt-3">
+        {onBack ? (
+          <button
+            onClick={onBack}
+            className="flex items-center gap-1 text-sm text-muted hover:text-foreground transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            Back
+          </button>
+        ) : (
+          <div />
+        )}
+        <div className="flex items-center gap-2">
+          {onSkip && !value.trim() && (
+            <button
+              onClick={onSkip}
+              className="px-4 py-2 rounded-lg border border-border/60 text-sm font-medium text-muted hover:text-foreground hover:border-border transition-colors"
+            >
+              Skip
+            </button>
+          )}
+          <button
+            onClick={value.trim() ? onSubmit : onSkip}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors"
+          >
+            Continue
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
