@@ -1,5 +1,14 @@
 export type FocusArea = "growth" | "monetization" | "positioning";
 
+export interface FileAttachment {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  url: string;
+  path: string;
+}
+
 export interface FormInput {
   // Required fields
   productDescription: string;
@@ -15,6 +24,7 @@ export interface FormInput {
   websiteUrl: string;
   analyticsSummary: string;
   constraints: string;
+  attachments: FileAttachment[];
 }
 
 export const FOCUS_AREA_OPTIONS: {
@@ -49,6 +59,7 @@ export const INITIAL_FORM_STATE: FormInput = {
   websiteUrl: "",
   analyticsSummary: "",
   constraints: "",
+  attachments: [],
 };
 
 export const MAX_TOTAL_CHARS = 10000;

@@ -101,3 +101,46 @@ Can add more account features later if needed.
 **Decision**: Share links use random UUIDs, not sequential IDs or predictable patterns.
 
 **Why**: Security. Can't enumerate or guess other users' strategies.
+
+---
+
+## AI Prompts: Inlined in Code
+
+**Decision**: Growth hacker prompts are inlined in `src/lib/ai/generate.ts`, not loaded from external files.
+
+**Why**:
+- No file system dependencies at runtime
+- Prompts are code, should be versioned with code
+- Focus-area-specific sections live alongside the logic
+- Easier to test and modify
+
+**Previous approach**: Loading from `.claude/agents/growth-hacker.md`. Removed.
+
+---
+
+## AARRR Focus Areas
+
+**Decision**: User selects one of 6 focus areas before generation.
+
+**Options**:
+- `acquisition` - "How do I get more users?"
+- `activation` - "Users sign up but don't stick"
+- `retention` - "Users leave after a few weeks"
+- `referral` - "How do I get users to spread the word?"
+- `monetization` - "I have users but no revenue"
+- `custom` - Free-form challenge input
+
+**Why**:
+- Multi-run value: User can come back for different challenges
+- Focused output: 20k chars on their specific problem, not generic advice
+- AARRR is a known framework, builds credibility
+
+---
+
+## Research Timeouts: Promise.race
+
+**Decision**: Use `Promise.race` for Tavily timeouts, not AbortController.
+
+**Why**: Tavily SDK doesn't support AbortSignal. Promise.race ensures we don't hang forever if API is slow.
+
+**Implementation**: 15s timeout per Tavily search, 20s for DataForSEO.

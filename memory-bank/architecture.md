@@ -62,43 +62,63 @@ Simple serverless architecture. No queues, no workers - just API routes.
 
 ## AI Pipeline
 
-**Core persona**: `.claude/agents/growth-hacker.md` - this defines the expert the AI embodies.
+**Status**: ✅ Complete (Phase 2)
 
-### Pipeline Steps
+### Files
 ```
-1. Research (Tavily + DataForSEO)
-   - Competitor analysis searches
-   - Market/industry trends
-   - SEO metrics if competitors provided
+src/lib/ai/
+├── types.ts      # RunInput, ResearchContext, FocusArea types
+├── research.ts   # Tavily + DataForSEO with Promise.race timeouts
+├── generate.ts   # Claude Opus 4.5 with inlined prompts
+└── pipeline.ts   # Orchestrator with env validation
+```
 
-2. Generate (Claude Opus 4.5)
-   - Growth hacker persona from agent file
-   - User input + research context
-   - Structured output format
+### Pipeline Flow
+```
+1. Research (Tavily + DataForSEO) - ~6-20s
+   - Parallel Tavily searches (competitor, trends, tactics)
+   - Sequential DataForSEO for competitor domains
+   - Promise.race for proper timeout handling
+
+2. Generate (Claude Opus 4.5) - ~100-120s
+   - Inlined prompts in generate.ts (no external files)
+   - Focus-area-specific guidance (AARRR-based)
+   - ~20k char output, 400+ lines
 
 3. Save
    - Markdown to runs.output
    - Status = "complete"
 ```
 
-### Key Frameworks (from growth-hacker agent)
-- **AARRR** - Acquisition, Activation, Retention, Referral, Revenue
-- **ICE Prioritization** - Impact, Confidence, Ease for each recommendation
-- **Growth Equation** - systematic approach to growth levers
+### AARRR Focus Areas
+Users select their biggest challenge - each gets tailored guidance:
+- `acquisition` - "How do I get more users?"
+- `activation` - "Users sign up but don't stick"
+- `retention` - "Users leave after a few weeks"
+- `referral` - "How do I get users to spread the word?"
+- `monetization` - "I have users but no revenue"
+- `custom` - Free-form challenge input
 
-### Output Structure
-- Executive Summary
-- Current Situation Analysis
-- Competitive Landscape (from research)
-- Stop Doing (with reasoning)
-- Start Doing (prioritized by ICE)
-- Quick Wins (this week)
-- 30-Day Roadmap
-- Metrics to Track
+### Output Structure (8 sections)
+1. Executive Summary
+2. Your Current Situation
+3. Competitive Landscape
+4. Stop Doing (with reasoning)
+5. Start Doing (prioritized by ICE)
+6. Quick Wins (this week)
+7. 30-Day Roadmap
+8. Metrics to Track
 
-**Timeouts**: Vercel functions 60s hobby, 300s pro.
+### Cost & Performance
+- Cost per run: ~$0.12-0.15
+- Total time: ~2 minutes
+- Graceful degradation: Research fails → proceed with limited context
 
-**Errors**: Research fails → proceed with limited context. Claude fails → mark "failed".
+### Test Scripts
+```bash
+npx tsx scripts/test-pipeline.ts   # ActionBoost example
+npx tsx scripts/test-inkdex.ts     # Real project test
+```
 
 ---
 

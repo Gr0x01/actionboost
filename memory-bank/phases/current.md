@@ -1,125 +1,119 @@
-# Current: Phase 2 - AI Pipeline
+# Current: Phase 3 - Landing + Input Form
 
 ## Goal
-Build the core value: Tavily research → Claude Opus 4.5 → markdown strategy output.
-
-Test with hardcoded input before UI exists.
+Build the user-facing form to collect context for strategy generation.
 
 ---
 
-## Components
+## Previous Phase: AI Pipeline ✅
 
-### 1. Research Service (Tavily + DataForSEO)
-```typescript
-// src/lib/ai/research.ts
-async function runResearch(input: RunInput): Promise<ResearchContext>
+**Completed Jan 2025** - Core pipeline working with real data.
+
+### What Was Built
+```
+src/lib/ai/
+├── types.ts      # RunInput, ResearchContext, FocusArea types
+├── research.ts   # Tavily web search + DataForSEO competitor metrics
+├── generate.ts   # Claude Opus 4.5 with inlined prompts
+└── pipeline.ts   # Orchestrator with DB integration
 ```
 
-**Tavily searches**:
-- Competitor analysis (if URLs provided)
-- Market/industry trends for the product category
-- Growth tactics for similar products
+### Key Decisions
+- **Inlined prompts** - No external file dependency, prompts live in `generate.ts`
+- **AARRR focus areas** - Users pick their biggest challenge:
+  - `acquisition` - "How do I get more users?"
+  - `activation` - "Users sign up but don't stick"
+  - `retention` - "Users leave after a few weeks"
+  - `referral` - "How do I get users to spread the word?"
+  - `monetization` - "I have users but no revenue"
+  - `custom` - Free-form input
+- **Graceful degradation** - Research fails → proceed with limited context
+- **Promise.race timeouts** - Proper abort handling for Tavily
 
-**DataForSEO** (if competitor URLs provided):
-- Traffic estimates
-- Top keywords
-- Backlink overview
+### Performance
+- Research: ~6-20s (parallel Tavily + DataForSEO)
+- Generation: ~100-120s
+- Total: ~2 minutes
+- Cost: ~$0.12-0.15 per run
+- Output: ~20k chars, 400+ lines, 8 structured sections
 
-### 2. Strategy Generation (Claude Opus 4.5)
-```typescript
-// src/lib/ai/generate.ts
-async function generateStrategy(input: RunInput, research: ResearchContext): Promise<string>
+### Test Scripts
+```bash
+npx tsx scripts/test-pipeline.ts   # ActionBoost example
+npx tsx scripts/test-inkdex.ts     # Real project test
 ```
-
-**Model**: `claude-opus-4-5-20251101` (DO NOT CHANGE)
-
-**System prompt**: Load from `.claude/agents/growth-hacker.md`
-
-**Output format**: Markdown with sections:
-- Executive Summary
-- Your Current Situation
-- Competitive Landscape
-- Stop Doing (with reasoning)
-- Start Doing (prioritized by ICE)
-- Quick Wins (This Week)
-- 30-Day Roadmap
-- Metrics to Track
-
-### 3. Pipeline Orchestrator
-```typescript
-// src/lib/ai/pipeline.ts
-async function runPipeline(runId: string): Promise<void>
-```
-
-1. Fetch run from DB
-2. Update status → "processing"
-3. Run research (with timeout/fallback)
-4. Generate strategy
-5. Save output, update status → "complete"
-6. On error: status → "failed", log error
 
 ---
 
-## Input Schema
-```typescript
-type RunInput = {
-  // Required
-  productDescription: string
-  currentTraction: string
-  whatYouTried: string
-  whatsWorking: string
+## Phase 3 Scope
 
-  // Optional
-  competitorUrls?: string[]
-  websiteUrl?: string
-  analyticsSummary?: string
-  constraints?: string
-  focusArea: 'growth' | 'monetization' | 'positioning'
+### Pages to Build
 
-  // Attachments (from storage)
-  attachments?: Attachment[]
-}
+**`/` - Landing Page**
+- Hero: "One-shot AI growth strategist for stuck founders"
+- Value prop: Live research + Claude Opus 4.5 → personalized strategy
+- Social proof (when available)
+- CTA → `/start`
+
+**`/start` - Input Form**
+- Multi-step or single-page form
+- Fields from RunInput type:
+  - Product description (required)
+  - Current traction (required)
+  - What you've tried (required)
+  - What's working (required)
+  - Focus area (AARRR selector, required)
+  - Competitor URLs (optional, multi-input)
+  - Your website URL (optional)
+  - Constraints (optional)
+- localStorage persistence (user can leave and return)
+- Preview/confirm before checkout
+- CTA → checkout flow (Phase 5)
+
+### Components Needed
 ```
+src/components/
+├── forms/
+│   ├── StrategyForm.tsx      # Main form wrapper
+│   ├── FocusAreaPicker.tsx   # AARRR radio/cards
+│   └── CompetitorInput.tsx   # Multi-URL input
+└── ui/
+    └── (use shadcn/ui components)
+```
+
+### Form Field Details
+
+| Field | Type | Required | Placeholder/Help |
+|-------|------|----------|------------------|
+| productDescription | textarea | Yes | "What does your product do? Who is it for?" |
+| currentTraction | textarea | Yes | "Users, revenue, traffic - whatever you've got" |
+| whatYouTried | textarea | Yes | "What marketing/growth tactics have you attempted?" |
+| whatsWorking | textarea | Yes | "What's showing promise, even small wins" |
+| focusArea | select | Yes | AARRR options |
+| customFocusArea | text | If custom | "What's your biggest challenge?" |
+| competitorUrls | multi-text | No | "tattoodo.com, inkstinct.co" |
+| websiteUrl | url | No | "https://yourproduct.com" |
+| constraints | textarea | No | "Budget, time, team size, technical limits" |
 
 ---
 
 ## Tasks
 
-- [ ] Create `src/lib/ai/research.ts` - Tavily + DataForSEO integration
-- [ ] Create `src/lib/ai/generate.ts` - Claude Opus 4.5 strategy generation
-- [ ] Create `src/lib/ai/pipeline.ts` - Orchestrate research → generate → save
-- [ ] Create test script to run pipeline with hardcoded input
-- [ ] Verify output quality matches expected format
-- [ ] Handle errors gracefully (research fails → proceed, Claude fails → mark failed)
-
----
-
-## Files to Create
-
-```
-src/lib/ai/
-├── research.ts     # Tavily + DataForSEO
-├── generate.ts     # Claude Opus 4.5
-├── pipeline.ts     # Orchestrator
-└── types.ts        # RunInput, ResearchContext types
-```
-
----
-
-## Env Vars Needed
-
-```
-ANTHROPIC_API_KEY=sk-ant-...     # ✅ Already set
-TAVILY_API_KEY=tvly-...          # ⚠️ Need to add (typo in .env.local: TAAVILY_API)
-DATAFORSEO_LOGIN=...             # ✅ Already set
-DATAFORSEO_PASSWORD=...          # ✅ Already set
-```
+- [ ] Set up shadcn/ui components (Button, Input, Textarea, Card, etc.)
+- [ ] Create landing page with hero and CTA
+- [ ] Build FocusAreaPicker component with AARRR options
+- [ ] Build main StrategyForm with all fields
+- [ ] Add localStorage persistence for form state
+- [ ] Add form validation (Zod schema)
+- [ ] Create /start page with form
+- [ ] Mobile-responsive layout
 
 ---
 
 ## Done When
 
-- [ ] Can run pipeline with test input and get quality markdown output
-- [ ] Research includes real competitor data (when URLs provided)
-- [ ] Output follows the growth-hacker agent format
-- [ ] Errors are handled without crashing
+- [ ] User can fill out complete form on `/start`
+- [ ] Form persists to localStorage on change
+- [ ] Focus area selection works with custom option
+- [ ] Form validates before allowing submit
+- [ ] Mobile experience is solid

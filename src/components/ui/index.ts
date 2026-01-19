@@ -3,3 +3,5 @@ export { Card, CardHeader, CardTitle, CardDescription, CardContent, FeatureCard 
 export { Input } from "./Input";
 export { Textarea } from "./Textarea";
 export { RadioGroup } from "./RadioGroup";
+export { FileUpload } from "./FileUpload";
+export type { UploadedFile } from "./FileUpload";
