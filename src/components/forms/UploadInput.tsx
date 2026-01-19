@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Upload, X, FileText, Image, Loader2, ArrowRight, ChevronLeft } from "lucide-react";
 import type { FileAttachment } from "@/lib/types/form";
 
@@ -26,11 +26,11 @@ const ALLOWED_TYPES = [
 
 export function UploadInput({ value, onChange, onSubmit, onSkip, onBack }: UploadInputProps) {
   const [isUploading, setIsUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
+  const processFiles = useCallback(async (files: File[]) => {
     if (files.length === 0) return;
 
     if (value.length + files.length > MAX_FILES) {
@@ -87,7 +87,41 @@ export function UploadInput({ value, onChange, onSubmit, onSkip, onBack }: Uploa
       setIsUploading(false);
       if (inputRef.current) inputRef.current.value = "";
     }
+  }, [value, onChange]);
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    await processFiles(files);
   };
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Only set isDragging to false if we're actually leaving the container
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      setIsDragging(false);
+    }
+  }, []);
+
+  const handleDrop = useCallback(async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const files = Array.from(e.dataTransfer.files);
+    await processFiles(files);
+  }, [processFiles]);
 
   const removeFile = (id: string) => {
     onChange(value.filter((f) => f.id !== id));
@@ -130,8 +164,18 @@ export function UploadInput({ value, onChange, onSubmit, onSkip, onBack }: Uploa
       )}
 
       {value.length < MAX_FILES && (
-        <label className="block cursor-pointer">
-          <div className="border-2 border-dashed border-border/60 rounded-xl p-8 text-center hover:border-primary/50 hover:bg-surface/30 transition-all">
+        <label
+          className="block cursor-pointer"
+          onDragOver={handleDragOver}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
+          <div className={`border-2 border-dashed rounded-xl p-8 text-center transition-all ${
+            isDragging
+              ? "border-primary bg-primary/5"
+              : "border-border/60 hover:border-primary/50 hover:bg-surface/30"
+          }`}>
             {isUploading ? (
               <div className="flex flex-col items-center gap-2">
                 <Loader2 className="w-8 h-8 text-primary animate-spin" />

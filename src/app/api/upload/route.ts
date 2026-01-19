@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
 
     // Upload to Supabase Storage
     const { error: uploadError } = await supabase.storage
-      .from("attachments")
+      .from("uploads")
       .upload(filename, buffer, {
         contentType: file.type,
         upsert: false,
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
 
     // Get public URL
     const { data: urlData } = supabase.storage
-      .from("attachments")
+      .from("uploads")
       .getPublicUrl(filename);
 
     return NextResponse.json({
