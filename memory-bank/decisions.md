@@ -4,6 +4,26 @@ Key architectural and product decisions. Reference this when you need to underst
 
 ---
 
+## Results Page: Document Style
+
+**Decision**: Clean document layout over SaaS dashboard aesthetic.
+
+**Why**:
+- Users are reading long-form strategy content (thousands of words)
+- Serif font (Tienne) + optimal line width (65ch) improves reading comfort
+- Cards, glows, and decorative elements distract from content
+- Strategy output should feel like a professional report, not a dashboard
+
+**Implementation**:
+- Typography: Tienne serif at 18px with 1.7 line-height
+- Measure: `max-w-prose` (65ch ≈ 680px)
+- Sections: Simple divider lines, no cards
+- MarkdownContent: Lightweight renderer instead of react-markdown dependency
+
+**Component**: `src/components/results/MarkdownContent.tsx` handles `###`, `**bold**`, `*italic*`, lists, `---`
+
+---
+
 ## LLM Model: Claude Opus 4.5
 
 **Decision**: Use `claude-opus-4-5-20251101` for strategy generation.
@@ -193,3 +213,117 @@ Can add more account features later if needed.
 - Cost per run ~$0.30 (Claude + DataForSEO), healthy margin
 
 **v2 consideration**: Subscription model for "Connected Growth Advisor" after validating output quality.
+
+---
+
+## RAG: User Context in JSONB + Vector Chunks
+
+**Decision**: Store accumulated user context in two places:
+1. `users.context` JSONB - Structured data for form pre-fill and quick access
+2. `user_context_chunks` - Vector embeddings for semantic search
+
+**Why**:
+- JSONB for structured access: Pre-fill forms, show "Welcome back" summary
+- Vector chunks for semantic retrieval: Find *relevant* past advice, not just recent
+- Best of both worlds without over-normalizing
+
+**Alternative rejected**: Separate tables for each context type (tactics, traction, etc.). Would add 4+ tables for minimal benefit.
+
+---
+
+## Embeddings: OpenAI text-embedding-3-small
+
+**Decision**: Use OpenAI for embeddings, not Claude or local models.
+
+**Why**:
+- 1536 dimensions, good quality-to-cost ratio
+- $0.02/1M tokens = ~$0.00002 per run (negligible)
+- Well-supported by pgvector
+- Graceful degradation: If OPENAI_API_KEY missing, falls back to text search
+
+**Alternative rejected**: Claude embeddings (no native offering), local models (deployment complexity).
+
+---
+
+## Context Accumulation: Fire-and-Forget
+
+**Decision**: After run completes, context accumulation and embedding extraction run as fire-and-forget async calls.
+
+**Why**:
+- User sees results immediately, doesn't wait for embeddings
+- If embedding fails, run still succeeds
+- Context still accumulated synchronously (critical path)
+- Embeddings are enhancement, not requirement
+
+**Risk**: Embedding creation could fail silently. Acceptable - text search fallback exists.
+
+---
+
+## RAG Retrieval: Hybrid Approach
+
+**Decision**: Retrieve user history using both structured context and vector search.
+
+**What Claude receives for returning users**:
+1. Traction timeline (last 5 snapshots from JSONB)
+2. Tactics tried (up to 10 from JSONB)
+3. Past recommendations (top 5 via vector search)
+4. Past insights (top 3 via vector search)
+
+**Why**:
+- Structured data gives consistent context (traction over time)
+- Vector search finds *relevant* past advice (not just recent)
+- Avoids repeating the same recommendations
+
+**Prompt enhancement**: `RETURNING_USER_PROMPT` tells Claude to build on past advice, track progress, celebrate wins.
+
+---
+
+## Vector Search: pgvector in Supabase
+
+**Decision**: Use pgvector extension directly in Supabase, not external vector DB.
+
+**Why**:
+- Already using Supabase - no new service to manage
+- pgvector is mature and well-supported
+- RLS policies work with vector tables
+- Can join with other tables if needed
+- Free with Supabase (no Pinecone/Weaviate costs)
+
+**Implementation**:
+- `user_context_chunks` table with `embedding vector(1536)` column
+- `match_user_context_chunks` RPC function for similarity search
+- Cosine similarity with 0.5 threshold
+
+---
+
+## Chunk Types: 5 Categories
+
+**Decision**: Categorize context chunks into 5 types for filtered retrieval.
+
+| Type | Source | Search Use Case |
+|------|--------|-----------------|
+| `product` | run_input | Understanding their product |
+| `traction` | run_input | Progress over time |
+| `tactic` | run_input | What they've tried |
+| `insight` | run_output | Past analysis |
+| `recommendation` | run_output | Past advice (avoid repeating) |
+
+**Why**: Enables filtered searches. When generating, we specifically search for past `recommendation` chunks to avoid repetition.
+
+---
+
+## Context Limits: Bounded Arrays
+
+**Decision**: Apply max limits to all accumulated arrays.
+
+| Array | Limit | Rationale |
+|-------|-------|-----------|
+| traction.history | 10 | ~6 months of snapshots |
+| tactics.tried | 50 | Comprehensive history |
+| tactics.working | 50 | Same |
+| tactics.notWorking | 50 | Same |
+| competitors | 10 | More than enough |
+
+**Why**: Prevents unbounded growth. JSONB columns with huge arrays hurt performance.
+
+**Implementation**: `.slice(-MAX)` on all array operations in `accumulate.ts`.
