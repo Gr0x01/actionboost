@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { usePostHog } from "posthog-js/react";
 import { Button } from "@/components/ui/Button";
+import { SocialShareButtons } from "@/components/ui/SocialShareButtons";
 import { X, Copy, Check, Link as LinkIcon } from "lucide-react";
 
 interface ShareModalProps {
@@ -11,6 +13,7 @@ interface ShareModalProps {
 }
 
 export function ShareModal({ runId, shareSlug, onClose }: ShareModalProps) {
+  const posthog = usePostHog();
   const [copied, setCopied] = useState(false);
   const [slug, setSlug] = useState(shareSlug);
   const [generating, setGenerating] = useState(false);
@@ -28,6 +31,7 @@ export function ShareModal({ runId, shareSlug, onClose }: ShareModalProps) {
       if (res.ok) {
         const data = await res.json();
         setSlug(data.share_slug);
+        posthog?.capture("share_link_generated", { run_id: runId });
       } else {
         setError("Failed to generate link. Please try again.");
       }
@@ -40,6 +44,7 @@ export function ShareModal({ runId, shareSlug, onClose }: ShareModalProps) {
 
   const handleCopy = async () => {
     if (shareUrl) {
+      posthog?.capture("share_link_copied", { run_id: runId });
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -93,6 +98,15 @@ export function ShareModal({ runId, shareSlug, onClose }: ShareModalProps) {
             <p className="text-xs text-muted">
               This link never expires. You can regenerate it if needed.
             </p>
+
+            <div className="flex items-center gap-3 pt-4 border-t border-border">
+              <span className="text-sm text-muted">Share on:</span>
+              <SocialShareButtons
+                url={shareUrl}
+                text="Check out this AI-generated growth strategy from ActionBoost"
+                source="share_modal"
+              />
+            </div>
           </div>
         ) : (
           <Button
