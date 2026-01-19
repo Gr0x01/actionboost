@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Check, Loader2 } from "lucide-react";
+import { Check, Loader2, Mail } from "lucide-react";
+import { isValidEmail } from "@/lib/validation";
 
 interface CheckoutSectionProps {
   onSubmit: () => void;
@@ -14,6 +15,8 @@ interface CheckoutSectionProps {
   validateCode: () => void;
   isValidatingCode: boolean;
   clearCode: () => void;
+  email: string;
+  setEmail: (v: string) => void;
 }
 
 export function CheckoutSection({
@@ -26,8 +29,13 @@ export function CheckoutSection({
   validateCode,
   isValidatingCode,
   clearCode,
+  email,
+  setEmail,
 }: CheckoutSectionProps) {
   const [showCode, setShowCode] = useState(false);
+
+  const emailValid = isValidEmail(email);
+  const canSubmitWithCode = hasValidCode && emailValid;
 
   return (
     <motion.div
@@ -40,9 +48,34 @@ export function CheckoutSection({
         <p className="text-muted">Our AI will analyze your inputs and create a custom growth playbook</p>
       </div>
 
+      {/* Email input for promo code users */}
+      {hasValidCode && (
+        <div className="max-w-sm mx-auto mb-6 space-y-2">
+          <div className="flex items-center gap-3 bg-surface/50 border border-border/60 rounded-xl px-4 py-3 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+            <Mail className="w-5 h-5 text-muted" />
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="your@email.com"
+              className="flex-1 bg-transparent text-lg text-foreground placeholder:text-muted/50 outline-none"
+            />
+          </div>
+          {email.trim() && !emailValid ? (
+            <p className="text-xs text-red-500 text-center">
+              Please enter a valid email address
+            </p>
+          ) : (
+            <p className="text-xs text-muted text-center">
+              Your results will be sent via magic link — use a real email
+            </p>
+          )}
+        </div>
+      )}
+
       <button
         onClick={onSubmit}
-        disabled={isSubmitting}
+        disabled={isSubmitting || (hasValidCode && !canSubmitWithCode)}
         className={`px-8 py-4 rounded-xl text-lg font-semibold transition-all ${
           hasValidCode
             ? "bg-green-600 hover:bg-green-700 text-white"

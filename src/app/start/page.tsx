@@ -119,6 +119,7 @@ export default function StartPage() {
     error?: string;
   } | null>(null);
   const [isValidatingCode, setIsValidatingCode] = useState(false);
+  const [email, setEmail] = useState("");
 
   const question = QUESTIONS[currentQuestion];
   const isQuestionsComplete = currentQuestion >= QUESTIONS.length;
@@ -268,8 +269,10 @@ export default function StartPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             code: promoCode,
+            email,
             input: form,
             contextDelta: contextDelta || undefined,
+            posthogDistinctId: posthog?.get_distinct_id(),
           }),
         });
         const data = await res.json();
@@ -412,6 +415,8 @@ export default function StartPage() {
                   validateCode={validateCode}
                   isValidatingCode={isValidatingCode}
                   clearCode={clearCode}
+                  email={email}
+                  setEmail={setEmail}
                 />
                 <button
                   onClick={() => {

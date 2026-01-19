@@ -3,16 +3,26 @@ import { createServiceClient } from "@/lib/supabase/server";
 import { FormInput } from "@/lib/types/form";
 import { Json } from "@/lib/types/database";
 import { runPipeline } from "@/lib/ai/pipeline";
+import { setSessionCookie } from "@/lib/auth/session-cookie";
+import { trackServerEvent } from "@/lib/analytics";
+import { isValidEmail } from "@/lib/validation";
 
 export async function POST(request: NextRequest) {
   try {
-    const { code, input } = (await request.json()) as {
+    const { code, email, input, contextDelta, posthogDistinctId } = (await request.json()) as {
       code: string;
+      email: string;
       input: FormInput;
+      contextDelta?: string;
+      posthogDistinctId?: string;
     };
 
     if (!code || typeof code !== "string") {
       return NextResponse.json({ error: "Code is required" }, { status: 400 });
+    }
+
+    if (!email || typeof email !== "string" || !isValidEmail(email)) {
+      return NextResponse.json({ error: "Valid email is required" }, { status: 400 });
     }
 
     if (!input || !input.productDescription) {
@@ -52,12 +62,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Increment used_count atomically
-    const { error: updateError } = await supabase
+    // Increment used_count atomically with optimistic locking
+    const { data: updateResult, error: updateError } = await supabase
       .from("codes")
       .update({ used_count: (codeRecord.used_count ?? 0) + 1 })
       .eq("id", codeRecord.id)
-      .eq("used_count", codeRecord.used_count ?? 0); // Optimistic locking
+      .eq("used_count", codeRecord.used_count ?? 0) // Optimistic locking
+      .select("id");
 
     if (updateError) {
       console.error("Failed to update code usage:", updateError);
@@ -67,13 +78,61 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create the run
+    // Check if optimistic lock failed (another request got there first)
+    if (!updateResult || updateResult.length === 0) {
+      return NextResponse.json(
+        { error: "Code was already redeemed. Please try again." },
+        { status: 409 }
+      );
+    }
+
+    // Get or create user by email (handle race condition with upsert-like pattern)
+    let userId: string | null = null;
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Try to insert first, handle unique constraint if user already exists
+    const { data: newUser, error: insertError } = await supabase
+      .from("users")
+      .insert({ email: normalizedEmail })
+      .select("id")
+      .single();
+
+    if (insertError) {
+      // If unique constraint violation (23505), fetch existing user
+      if (insertError.code === "23505") {
+        const { data: existingUser } = await supabase
+          .from("users")
+          .select("id")
+          .eq("email", normalizedEmail)
+          .single();
+        userId = existingUser?.id ?? null;
+      } else {
+        console.error("Failed to create user:", insertError);
+        return NextResponse.json(
+          { error: "Failed to create user account" },
+          { status: 500 }
+        );
+      }
+    } else if (newUser) {
+      userId = newUser.id;
+    }
+
+    // Fail if we couldn't resolve a user ID
+    if (!userId) {
+      console.error("Failed to resolve user ID for email:", normalizedEmail);
+      return NextResponse.json(
+        { error: "Failed to create user account" },
+        { status: 500 }
+      );
+    }
+
+    // Create the run linked to the user
     const { data: run, error: runError } = await supabase
       .from("runs")
       .insert({
         input: input as unknown as Json,
         status: "pending",
-        // user_id will be null for now (anonymous run)
+        user_id: userId,
       })
       .select("id")
       .single();
@@ -84,6 +143,34 @@ export async function POST(request: NextRequest) {
         { error: "Failed to create run" },
         { status: 500 }
       );
+    }
+
+    // Create run_credits record for tracking
+    const credits = codeRecord.credits ?? 1;
+    const { error: creditError } = await supabase.from("run_credits").insert({
+      user_id: userId,
+      credits,
+      source: "code",
+    });
+
+    if (creditError) {
+      // Log but don't fail - run was created, don't break user experience
+      console.error("Failed to create run_credits for code:", normalizedCode, creditError);
+    }
+
+    // Track promo code redemption (use PostHog distinct_id from client for funnel linking)
+    const distinctId = posthogDistinctId || userId || run.id;
+    trackServerEvent(distinctId, "promo_code_redeemed", {
+      code: normalizedCode,
+      email: normalizedEmail,
+      run_id: run.id,
+      credits,
+      focus_area: input.focusArea,
+    });
+
+    // Set session cookie for the user
+    if (userId) {
+      await setSessionCookie(userId, normalizedEmail);
     }
 
     // Trigger AI pipeline (fire and forget)
