@@ -144,15 +144,17 @@ Users select their biggest challenge - each gets tailored guidance AND different
 
 This keeps costs proportional to how useful SEO data is for each problem type.
 
-### Output Structure (8 sections)
-1. Executive Summary
-2. Your Current Situation
-3. Competitive Landscape
-4. Stop Doing (with reasoning)
-5. Start Doing (prioritized by ICE)
-6. Quick Wins (this week)
-7. 30-Day Roadmap
-8. Metrics to Track
+### Output Structure (10 sections)
+1. Executive Summary (with Growth Flywheel diagram)
+2. Your Situation (AARRR stage analysis)
+3. Competitive Landscape (table format)
+4. Channel Strategy (prioritized table with effort/time/priority)
+5. Stop Doing (3-5 items with reasoning)
+6. Start Doing (5-8 items prioritized by ICE scores)
+7. This Week (day-by-day quick wins table)
+8. 30-Day Roadmap (week-by-week with themes and checkboxes)
+9. Metrics Dashboard (AARRR table with targets)
+10. Content Templates (2-3 ready-to-use templates in code blocks)
 
 ### Cost & Performance
 - Cost per run: ~$0.30
@@ -163,8 +165,8 @@ This keeps costs proportional to how useful SEO data is for each problem type.
 Lighter-weight pipeline for lead generation:
 - Model: Claude Sonnet (`claude-sonnet-4-20250514`) instead of Opus
 - Research: Tavily only (no DataForSEO)
-- Output: 3 sections (Executive Summary, Your Situation, Competitive Landscape)
-- Locked sections shown as upsell: Stop Doing, Start Doing, Quick Wins, Roadmap, Metrics
+- Output: 3 sections (Executive Summary with Flywheel, Your Situation, Competitive Landscape)
+- Locked sections shown as upsell: Channel Strategy, Stop Doing, Start Doing, This Week, 30-Day Roadmap, Metrics Dashboard, Content Templates
 - No RAG/user history
 - Cost: ~$0.04/run
 - Rate limit: 1 per email (normalized for Gmail aliases)

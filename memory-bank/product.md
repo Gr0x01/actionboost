@@ -96,10 +96,13 @@ Subtle "Just want a taste?" option at checkout → 5-section condensed audit →
 
 ### What You Get
 - Your competitors' actual traffic sources
+- Channel strategy ranked by effort and impact
 - What to STOP wasting time on
-- What to START doing (prioritized)
-- Quick wins for this week
+- What to START doing (prioritized by ICE)
+- This week's quick wins (day-by-day)
 - 30-day roadmap built for your stage
+- Metrics dashboard with AARRR targets
+- Ready-to-use content templates
 
 ### How It Works
 1. Tell us about your startup (10 min)
@@ -195,21 +198,23 @@ Subtle "Just want a taste?" option at checkout → 5-section condensed audit →
 
 ## Output Format
 
-### Full Strategy (8 sections - $9.99)
-- Executive Summary
-- Your Current Situation
-- Competitive Landscape
-- Stop Doing (with reasoning)
-- Start Doing (prioritized by ICE)
-- Quick Wins (This Week)
-- 30-Day Roadmap
-- Metrics to Track
+### Full Strategy (10 sections - $9.99)
+1. **Executive Summary** - Core insight + Growth Flywheel (ASCII diagram)
+2. **Your Situation** - AARRR stage analysis, gaps, what's working
+3. **Competitive Landscape** - Tables with competitor data
+4. **Channel Strategy** - Prioritized channel table (effort/week, time to results, priority)
+5. **Stop Doing** - 3-5 items with reasoning
+6. **Start Doing** - 5-8 recommendations with ICE scores
+7. **This Week** - Day-by-day quick wins table
+8. **30-Day Roadmap** - Week-by-week with themes and checkboxes
+9. **Metrics Dashboard** - AARRR table with targets
+10. **Content Templates** - 2-3 ready-to-use templates (code blocks)
 
 ### Mini-Audit (3 sections - Free)
-- Executive Summary (full)
-- Your Current Situation (full)
+- Executive Summary with Flywheel (full)
+- Your Situation (full)
 - Competitive Landscape (condensed)
-- ❌ Stop Doing, Start Doing, Quick Wins, Roadmap, Metrics (upsell hooks)
+- ❌ Channel Strategy, Stop Doing, Start Doing, This Week, Roadmap, Metrics Dashboard, Content Templates (upsell hooks)
 
 ---
 
