@@ -121,17 +121,16 @@ export function ContextUpdateForm({
         </div>
       )}
 
-      {/* Suggested questions as prompts */}
+      {/* Suggested prompts - visual hints, not interactive */}
       {suggestedQuestions.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {suggestedQuestions.map((q, i) => (
-            <button
+            <span
               key={i}
-              type="button"
-              className="text-xs px-3 py-1.5 border-2 border-cta/30 text-cta font-bold hover:border-cta hover:bg-cta/5 transition-colors"
+              className="text-xs px-3 py-1.5 bg-cta/10 text-cta/70 font-medium"
             >
               {q}
-            </button>
+            </span>
           ))}
         </div>
       )}
