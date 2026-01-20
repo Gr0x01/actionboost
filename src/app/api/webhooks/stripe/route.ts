@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import Stripe from "stripe";
 import { createServiceClient } from "@/lib/supabase/server";
 import { Json } from "@/lib/types/database";
@@ -184,9 +184,13 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     run_id: run.id,
   });
 
-  // Trigger AI pipeline (fire and forget - don't block webhook response)
-  runPipeline(run.id).catch((err) => {
-    console.error("Pipeline failed for run:", run.id, err);
+  // Trigger AI pipeline in background (after() keeps function alive until complete)
+  after(async () => {
+    try {
+      await runPipeline(run.id);
+    } catch (err) {
+      console.error("Pipeline failed for run:", run.id, err);
+    }
   });
 
   // Send receipt + magic link for dashboard access (fire and forget)

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { FormInput, validateForm } from "@/lib/types/form";
 import { Json } from "@/lib/types/database";
@@ -106,9 +106,13 @@ export async function POST(request: NextRequest) {
       focus_area: input.focusArea,
     });
 
-    // Trigger AI pipeline (fire and forget)
-    runPipeline(run.id).catch((err) => {
-      console.error("Pipeline failed for run:", run.id, err);
+    // Trigger AI pipeline in background (after() keeps function alive until complete)
+    after(async () => {
+      try {
+        await runPipeline(run.id);
+      } catch (err) {
+        console.error("Pipeline failed for run:", run.id, err);
+      }
     });
 
     return NextResponse.json({ runId: run.id });
