@@ -11,11 +11,11 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-cta text-white hover:bg-cta-hover shadow-md shadow-cta/20 hover:shadow-lg hover:shadow-cta/25",
+    "bg-cta text-white border-[3px] border-foreground shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[5px_5px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1",
   secondary:
-    "bg-surface text-foreground border border-border hover:bg-surface/80 hover:border-border/80",
+    "bg-surface text-foreground border-[3px] border-foreground shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[5px_5px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1",
   outline:
-    "bg-transparent text-foreground border-2 border-foreground/20 hover:border-foreground/40 hover:bg-foreground/5",
+    "bg-transparent text-foreground border-2 border-foreground hover:bg-foreground/5",
   ghost:
     "text-muted hover:text-foreground hover:bg-surface/50 active:bg-surface",
 };
@@ -30,7 +30,7 @@ const sizeStyles: Record<ButtonSize, string> = {
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ variant = "primary", size = "md", className = "", children, disabled, ...props }, ref) => {
     const baseStyles =
-      "inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none";
+      "inline-flex items-center justify-center font-semibold transition-all duration-100 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none";
 
     return (
       <button

@@ -103,7 +103,8 @@ You identify which variable has the most leverage for improvement.
 - No fluff or filler - every sentence adds value
 - You challenge assumptions when you see flawed thinking
 - You celebrate what's working before diving into improvements
-- You think in systems and compounding effects, not one-off tactics`
+- You think in systems and compounding effects, not one-off tactics
+- **NEVER use emojis** - not in headers, not in lists, not anywhere. This is non-negotiable.`
 
 // =============================================================================
 // RETURNING USER PROMPT - Additional guidance when we have history
@@ -613,6 +614,7 @@ This is a free teaser - give real value but leave room for the full paid version
 - **Prioritized** using the ICE framework (Impact, Confidence, Ease)
 - **Actionable** with clear insights they can act on
 - **Research-backed** using the competitive intelligence provided
+- **NEVER use emojis** - not in headers, not in lists, not anywhere. This is non-negotiable.
 
 ## Core Framework: ICE Prioritization
 For every recommendation, you score:

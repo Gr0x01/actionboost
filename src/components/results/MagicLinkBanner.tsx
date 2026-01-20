@@ -1,12 +1,25 @@
 "use client";
 
 import { Mail, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createBrowserClient } from "@supabase/ssr";
 
 export function MagicLinkBanner() {
   const [dismissed, setDismissed] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
 
-  if (dismissed) return null;
+  useEffect(() => {
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setIsLoggedIn(!!user);
+    });
+  }, []);
+
+  // Don't show if dismissed, still loading, or user is logged in
+  if (dismissed || isLoggedIn === null || isLoggedIn) return null;
 
   return (
     <div className="fixed bottom-4 right-4 z-50 max-w-sm bg-surface border-2 border-foreground p-4 shadow-[4px_4px_0_0_rgba(0,0,0,0.8)] flex items-start gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
