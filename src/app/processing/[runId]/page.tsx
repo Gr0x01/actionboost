@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 import { Header, Footer } from "@/components/layout";
-import { Loader2, Sparkles, CheckCircle, AlertCircle } from "lucide-react";
+import { Check, X } from "lucide-react";
 
 type RunStatus = "pending" | "processing" | "complete" | "failed";
 
@@ -13,15 +13,15 @@ interface RunData {
 }
 
 const STATUS_MESSAGES: Record<RunStatus, string> = {
-  pending: "Preparing your analysis...",
-  processing: "Generating your action plan...",
+  pending: "Preparing your analysis",
+  processing: "Generating your action plan",
   complete: "Action plan ready!",
   failed: "Something went wrong",
 };
 
 const STATUS_SUBMESSAGES: Record<RunStatus, string> = {
   pending: "Setting up our AI agents",
-  processing: "Analyzing your business, researching competitors, crafting tactics",
+  processing: "Analyzing your business, researching competitors, crafting personalized tactics.",
   complete: "Redirecting you to your results",
   failed: "Please try again or contact support",
 };
@@ -165,104 +165,74 @@ export default function ProcessingPage() {
   }, [runId, status, router]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-mesh">
+    <div className="min-h-screen flex flex-col bg-background">
       <Header />
 
       <main className="flex-1 flex items-center justify-center py-16">
         <div className="mx-auto max-w-lg px-6 text-center">
-          {/* Animated visual */}
-          <div className="relative mb-10">
-            {/* Outer glow ring */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div
-                className={`w-32 h-32 rounded-full ${
-                  status === "failed"
-                    ? "bg-red-500/10"
-                    : status === "complete"
-                    ? "bg-green-500/20"
-                    : "bg-primary/10"
-                } animate-pulse`}
-              />
-            </div>
-
-            {/* Spinning ring */}
-            {(status === "pending" || status === "processing") && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-28 h-28 rounded-full border-2 border-transparent border-t-primary border-r-accent animate-spin" />
-              </div>
-            )}
-
-            {/* Center icon */}
-            <div className="relative flex items-center justify-center h-32">
+          {/* Icon - only show for complete/failed states */}
+          {(status === "complete" || status === "failed") && (
+            <div className="mb-8">
               {status === "complete" ? (
-                <CheckCircle className="w-16 h-16 text-green-500 animate-scale-in" />
-              ) : status === "failed" ? (
-                <AlertCircle className="w-16 h-16 text-red-500 animate-scale-in" />
+                <div className="w-20 h-20 mx-auto border-[3px] border-green-600 bg-green-600 flex items-center justify-center shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
+                  <Check className="w-10 h-10 text-white" />
+                </div>
               ) : (
-                <div className="relative">
-                  <Sparkles className="w-14 h-14 text-primary animate-pulse" />
-                  <Loader2 className="absolute -bottom-1 -right-1 w-6 h-6 text-cta animate-spin" />
+                <div className="w-20 h-20 mx-auto border-[3px] border-red-500 bg-red-500 flex items-center justify-center shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
+                  <X className="w-10 h-10 text-white" />
                 </div>
               )}
             </div>
-          </div>
+          )}
 
           {/* Status text */}
-          <h1 className="text-2xl font-bold text-foreground mb-2 animate-fade-in">
+          <h1 className="text-2xl sm:text-3xl font-black text-foreground mb-3">
             {STATUS_MESSAGES[status]}
             {(status === "pending" || status === "processing") && dots}
           </h1>
-          <p className="text-muted animate-fade-in stagger-1">
+          <p className="text-foreground/60 max-w-md mx-auto">
             {error || STATUS_SUBMESSAGES[status]}
           </p>
 
           {/* Progress indicators */}
           {(status === "pending" || status === "processing") && (
-            <div className="mt-10 animate-fade-in stagger-2">
-              <div className="flex items-center justify-center gap-2 text-sm text-muted mb-4">
-                <span>This usually takes 2-3 minutes</span>
-              </div>
-
+            <div className="mt-10">
               {/* Step indicators */}
-              <div className="flex justify-center gap-3">
+              <div className="flex justify-center items-center gap-4">
                 <StepIndicator
                   label="Research"
                   active={status === "pending" || status === "processing"}
                   complete={status === "processing"}
                 />
+                <div className="w-8 h-0.5 bg-foreground/20" />
                 <StepIndicator
                   label="Analysis"
                   active={status === "processing"}
                   complete={false}
                 />
+                <div className="w-8 h-0.5 bg-foreground/20" />
                 <StepIndicator
                   label="Action Plan"
                   active={false}
                   complete={false}
                 />
               </div>
+
+              <p className="text-sm text-foreground/40 font-mono mt-6">
+                This typically takes 2-3 minutes
+              </p>
             </div>
           )}
 
           {/* Error actions */}
           {status === "failed" && (
-            <div className="mt-8 animate-fade-in stagger-2">
+            <div className="mt-8">
               <button
                 onClick={() => router.push("/start")}
-                className="px-6 py-3 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition-colors"
+                className="px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100"
               >
                 Try Again
               </button>
-            </div>
-          )}
-
-          {/* Fun facts while waiting */}
-          {(status === "pending" || status === "processing") && (
-            <div className="mt-12 p-6 rounded-xl bg-surface/50 border border-border animate-fade-in stagger-3">
-              <p className="text-sm text-muted italic">
-                "The best growth strategies come from understanding what makes your
-                business unique, not copying what worked for others."
-              </p>
             </div>
           )}
         </div>
@@ -285,17 +255,17 @@ function StepIndicator({
   return (
     <div className="flex flex-col items-center gap-2">
       <div
-        className={`w-3 h-3 rounded-full transition-all duration-500 ${
+        className={`w-3 h-3 transition-colors ${
           complete
-            ? "bg-green-500"
+            ? "bg-green-600"
             : active
-            ? "bg-primary animate-pulse"
-            : "bg-border"
+            ? "bg-cta"
+            : "bg-foreground/20"
         }`}
       />
       <span
-        className={`text-xs ${
-          active || complete ? "text-foreground" : "text-muted"
+        className={`text-xs font-bold ${
+          active || complete ? "text-foreground" : "text-foreground/40"
         }`}
       >
         {label}

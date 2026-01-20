@@ -613,16 +613,6 @@ export default function StartPage() {
                   setEmail={setEmail}
                   formData={form}
                 />
-                <button
-                  onClick={() => {
-                    setCurrentQuestion(QUESTIONS.length - 1);
-                    setViewState("questions");
-                  }}
-                  className="flex items-center gap-1 text-sm font-medium text-foreground/50 hover:text-foreground transition-colors mt-8"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                  Back
-                </button>
               </motion.div>
             )}
 

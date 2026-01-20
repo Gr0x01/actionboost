@@ -172,7 +172,7 @@ export function CheckoutSection({
         <h2 className="text-3xl sm:text-4xl font-light text-foreground tracking-tight">
           Ready to <span className="font-black">generate your plan</span>
         </h2>
-        <p className="text-foreground/60 text-lg max-w-md mx-auto">
+        <p className="text-foreground/60 text-lg max-w-lg mx-auto">
           Our AI will analyze your inputs and create a custom growth playbook
         </p>
       </div>
@@ -252,11 +252,21 @@ export function CheckoutSection({
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="max-w-md mx-auto p-6 border-2 border-foreground/20 bg-background space-y-4"
+              className="max-w-lg mx-auto p-6 border-2 border-foreground/20 bg-background space-y-4"
             >
-              <div className="flex items-center gap-2 justify-center text-cta">
-                <Sparkles className="w-4 h-4" />
-                <span className="text-sm font-bold">Free Mini-Audit</span>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-cta">
+                  <Sparkles className="w-4 h-4" />
+                  <span className="text-sm font-bold">Free Mini-Audit</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowFreeOption(false)}
+                  className="text-foreground/40 hover:text-foreground transition-colors text-xl leading-none font-bold"
+                  aria-label="Close"
+                >
+                  ×
+                </button>
               </div>
               <p className="text-sm text-foreground/60">
                 Get a condensed 5-section audit to preview our analysis style
@@ -288,13 +298,6 @@ export function CheckoutSection({
                 </button>
               </div>
               {freeError && <p className="text-sm text-red-500 font-bold">{freeError}</p>}
-              <button
-                type="button"
-                onClick={() => setShowFreeOption(false)}
-                className="text-xs text-foreground/50 hover:text-foreground transition-colors"
-              >
-                ← Back to full version
-              </button>
             </motion.div>
           )}
         </div>
