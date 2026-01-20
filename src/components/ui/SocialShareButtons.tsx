@@ -26,7 +26,7 @@ export function SocialShareButtons({ url, text, source }: SocialShareButtonsProp
   };
 
   const buttonClass =
-    "inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-colors text-muted hover:text-foreground hover:bg-surface/50";
+    "inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm font-bold border-2 border-foreground bg-background text-foreground hover:bg-foreground hover:text-background active:translate-y-0.5 transition-all duration-100";
 
   return (
     <div className="flex items-center gap-2">

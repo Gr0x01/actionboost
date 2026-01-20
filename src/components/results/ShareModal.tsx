@@ -4,7 +4,7 @@ import { useState } from "react";
 import { usePostHog } from "posthog-js/react";
 import { Button } from "@/components/ui/Button";
 import { SocialShareButtons } from "@/components/ui/SocialShareButtons";
-import { X, Copy, Check, Link as LinkIcon } from "lucide-react";
+import { X, Copy, Check } from "lucide-react";
 
 interface ShareModalProps {
   runId: string;
@@ -52,30 +52,26 @@ export function ShareModal({ runId, shareSlug, onClose }: ShareModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="relative w-full max-w-md mx-4 p-6 rounded-xl bg-background border border-border shadow-lg animate-scale-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+      <div className="relative w-full max-w-md mx-4 p-6 bg-background border-[3px] border-foreground shadow-[6px_6px_0_0_rgba(44,62,80,1)] animate-scale-in">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-muted hover:text-foreground transition-colors"
+          className="absolute top-4 right-4 p-1 text-muted hover:text-foreground transition-colors duration-100"
+          aria-label="Close"
         >
           <X className="h-5 w-5" />
         </button>
 
-        <div className="flex items-center gap-3 mb-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-            <LinkIcon className="h-5 w-5 text-primary" />
-          </div>
-          <h2 className="text-lg font-semibold text-foreground">
-            Share Your Action Plan
-          </h2>
-        </div>
+        <h2 className="text-lg font-bold text-foreground mb-4">
+          Share Your Action Plan
+        </h2>
 
         <p className="text-sm text-muted mb-6">
           Anyone with this link can view your action plan (read-only).
         </p>
 
         {error && (
-          <p className="text-sm text-red-500 mb-4">{error}</p>
+          <p className="text-sm text-red-600 font-medium mb-4">{error}</p>
         )}
 
         {shareUrl ? (
@@ -85,22 +81,25 @@ export function ShareModal({ runId, shareSlug, onClose }: ShareModalProps) {
                 type="text"
                 value={shareUrl}
                 readOnly
-                className="flex-1 px-3 py-2 rounded-md border border-border bg-surface text-sm text-foreground"
+                className="flex-1 px-3 py-2 border-2 border-foreground bg-surface text-sm text-foreground font-mono"
               />
-              <Button size="sm" onClick={handleCopy}>
+              <button
+                onClick={handleCopy}
+                className="p-2 border-[3px] border-foreground bg-primary text-white shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[5px_5px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100"
+              >
                 {copied ? (
-                  <Check className="h-4 w-4" />
+                  <Check className="h-5 w-5" />
                 ) : (
-                  <Copy className="h-4 w-4" />
+                  <Copy className="h-5 w-5" />
                 )}
-              </Button>
+              </button>
             </div>
             <p className="text-xs text-muted">
               This link never expires. You can regenerate it if needed.
             </p>
 
-            <div className="flex items-center gap-3 pt-4 border-t border-border">
-              <span className="text-sm text-muted">Share on:</span>
+            <div className="flex items-center gap-3 pt-4 border-t-2 border-foreground/20">
+              <span className="text-sm font-medium text-foreground">Share on:</span>
               <SocialShareButtons
                 url={shareUrl}
                 text="Check out this AI-generated action plan from Actionboo.st"
