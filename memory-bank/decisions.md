@@ -407,6 +407,43 @@ FREE MINI → SINGLE RUN ($X) → SUBSCRIPTION (~$30/mo)
 
 ---
 
+## Serverless Pipeline: Use after() Not Fire-and-Forget (Jan 21 2026)
+
+**Bug**: Runs stuck at "pending" status, pipeline never executed.
+
+**Root cause**: Fire-and-forget pattern doesn't work in Vercel serverless:
+```typescript
+// BROKEN - Vercel kills function after response sent
+runPipeline(run.id).catch(console.error);
+return NextResponse.json({ runId });
+```
+
+**Why it failed**: Vercel terminates serverless functions immediately after HTTP response is sent. The unawaited `runPipeline()` promise never gets a chance to execute.
+
+**Fix**: Use Next.js 15+ `after()` API to keep function alive:
+```typescript
+import { after } from "next/server";
+
+after(async () => {
+  await runPipeline(run.id).catch(console.error);
+});
+return NextResponse.json({ runId });
+```
+
+**Files changed**:
+- `src/app/api/runs/create-with-code/route.ts`
+- `src/app/api/runs/create-with-credits/route.ts`
+- `src/app/api/webhooks/stripe/route.ts`
+
+**Manual retry script**: `scripts/retry-run.ts` for recovering stuck runs:
+```bash
+npx tsx scripts/retry-run.ts <runId>
+```
+
+**Lesson**: Never use fire-and-forget in serverless. Always use `after()` for background work that must complete.
+
+---
+
 ## Context Limits: Bounded Arrays
 
 **Decision**: Apply max limits to all accumulated arrays.

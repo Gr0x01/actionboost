@@ -1,6 +1,35 @@
-# Current: Landing Page Visual Refresh
+# Current: Form Flow Fixes
 
-## Latest Update: Brutalist + Tactile Redesign ✅
+## Latest Update: Hero Flow + Checkout Fix ✅
+
+**Completed Jan 21, 2025** - Fixed broken form flow and removed stale feature flag.
+
+### Issues Fixed
+
+1. **Hero skipped website URL** - Hero prefill set `currentQuestion(2)`, skipping Q1 (website) entirely. Users from hero never got asked for their URL.
+   - Fix: Changed to `currentQuestion(0)` so form starts at website question
+
+2. **Checkout broken on production** - `NEXT_PUBLIC_PRICING_ENABLED=false` was set on Vercel, triggering "promo-code-only" mode. This:
+   - Hid the $9.99 payment button
+   - Hid the free mini-audit option
+   - Showed a confusing disabled "Enter code" button
+   - **Lesson learned**: Feature flags left in production after testing will bite you
+
+### What Was Removed
+- `pricingEnabled` flag from `src/lib/config.ts`
+- All `config.pricingEnabled` conditionals from CheckoutSection
+- Entire waitlist fallback UI (was only for promo-code-only mode)
+- Feature Flags section from `architecture.md`
+
+### Files Changed
+- `src/app/start/page.tsx` - Hero prefill starts at Q1, added `checkoutSource` for back navigation
+- `src/components/forms/CheckoutSection.tsx` - Removed feature flag logic, simplified checkout
+- `src/lib/config.ts` - Removed `pricingEnabled`
+- `src/components/landing/Pricing.tsx` - Removed conditional hide
+
+---
+
+## Previous: Brutalist + Tactile Redesign ✅
 
 **Completed Jan 2025** - New visual direction for landing page.
 
@@ -54,46 +83,6 @@ transition-all duration-100
 - Supabase SMTP configured with Resend credentials
 - Sender: `hello@actionboo.st`
 - Magic link template pasted in Supabase Auth dashboard
-
----
-
-## Previous: Feature Flag + Waitlist ✅
-
-**Completed Jan 2025** - Feature flag to disable pricing for promo-code-only testing, with waitlist fallback.
-
-### What Was Built
-- **Feature flag**: `NEXT_PUBLIC_PRICING_ENABLED` env var
-  - `true` (default) = normal pricing
-  - `false` = promo-code-only mode
-- **Waitlist table**: `waitlist` (email, source, created_at) with RLS
-- **Waitlist API**: `POST /api/waitlist` with source validation
-- **Landing page**: Hides prices and "See pricing" when flag off
-- **CheckoutSection**: Shows code input by default, waitlist form on code failure
-
-### User Flow (pricing disabled)
-```
-Landing (no prices) → /start form → Checkout (code required)
-                                        ↓
-                        Code valid → email → run executes
-                        Code fails → waitlist signup
-```
-
-### Waitlist UI
-- "We're launching this week! Join the waitlist to get notified."
-- Success: "You're on the list! We'll be in touch soon."
-- "Try another code" option to retry
-
-### Files
-- `src/lib/config.ts` - Feature flag utility
-- `src/app/api/waitlist/route.ts` - Waitlist signup endpoint
-- `src/components/forms/CheckoutSection.tsx` - Promo-only mode + waitlist
-- `src/components/landing/Hero.tsx` - Conditional pricing
-- `src/components/landing/Pricing.tsx` - Hide when disabled
-
-### Export Waitlist
-```sql
-SELECT email, source, created_at FROM waitlist ORDER BY created_at;
-```
 
 ---
 

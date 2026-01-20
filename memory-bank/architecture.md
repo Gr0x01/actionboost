@@ -437,15 +437,3 @@ RESEND_API_KEY
 **Sender**: `hello@actionboo.st`
 
 ---
-
-## Feature Flags
-
-| Flag | Purpose | Default |
-|------|---------|---------|
-| `NEXT_PUBLIC_PRICING_ENABLED` | Show/hide pricing, enable promo-only mode | `true` |
-
-When `false`:
-- Hero shows "Get Started" (no price)
-- Pricing section hidden
-- Checkout requires promo code
-- Invalid/maxed codes show waitlist signup

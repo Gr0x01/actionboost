@@ -42,8 +42,6 @@ export function Pricing() {
   const [loading, setLoading] = useState(false);
   const posthog = usePostHog();
 
-  if (!config.pricingEnabled) return null;
-
   async function handleBuyCredits() {
     posthog?.capture("pricing_cta_clicked", { tier: "paid", location: "pricing" });
     setLoading(true);
