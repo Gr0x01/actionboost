@@ -35,7 +35,7 @@ const benefits = [
 
 export function WhatYouGet() {
   return (
-    <section className="relative py-24">
+    <section id="features" className="relative py-24">
       {/* Background decoration */}
       <div className="absolute right-0 top-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
 

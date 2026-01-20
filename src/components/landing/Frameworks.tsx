@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 
 export function Frameworks() {
   return (
-    <section className="relative pt-16 pb-24 overflow-hidden">
+    <section id="how-it-works" className="relative pt-16 pb-24 overflow-hidden">
       {/* Subtle background */}
       <div className="absolute inset-0 bg-surface" />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background opacity-60" />

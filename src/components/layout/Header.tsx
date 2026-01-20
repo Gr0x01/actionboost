@@ -33,6 +33,12 @@ export function Header() {
     return () => subscription.unsubscribe();
   }, []);
 
+  const navLinks = [
+    { href: "#how-it-works", label: "How it works" },
+    { href: "#features", label: "Features" },
+    { href: "#pricing", label: "Pricing" },
+  ];
+
   return (
     <header className="sticky top-0 z-50 w-full glass border-b border-border/50">
       <div className="mx-auto max-w-6xl px-6">
@@ -41,6 +47,20 @@ export function Header() {
           <Link href="/" className="text-xl font-bold text-foreground hover:text-foreground/80 transition-colors">
             Actionboo.st
           </Link>
+
+          {/* Nav links - hidden on mobile */}
+          <nav className="hidden md:flex items-center gap-8">
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="group relative text-[13px] font-semibold uppercase tracking-wide text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {link.label}
+                <span className="absolute -bottom-1 left-0 right-0 h-[3px] bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+              </a>
+            ))}
+          </nav>
 
           {/* Right side */}
           <div className="flex items-center gap-3">
