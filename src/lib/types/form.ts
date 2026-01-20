@@ -100,8 +100,10 @@ export function getTotalCharCount(form: FormInput): number {
 
 /**
  * Validate the form and return errors
+ * @param form - The form data to validate
+ * @param isReturningUser - If true, relaxes validation for fields the user has already provided in previous runs
  */
-export function validateForm(form: FormInput): Record<string, string> {
+export function validateForm(form: FormInput, isReturningUser = false): Record<string, string> {
   const errors: Record<string, string> = {};
 
   if (!form.productDescription.trim()) {
@@ -110,10 +112,11 @@ export function validateForm(form: FormInput): Record<string, string> {
   if (!form.currentTraction.trim()) {
     errors.currentTraction = "Current traction is required";
   }
-  if (!form.triedTactics.trim()) {
+  // For returning users, triedTactics and workingOrNot are optional since they've already provided this info
+  if (!isReturningUser && !form.triedTactics.trim()) {
     errors.triedTactics = "What you've tried is required";
   }
-  if (!form.workingOrNot.trim()) {
+  if (!isReturningUser && !form.workingOrNot.trim()) {
     errors.workingOrNot = "What's working/not is required";
   }
 

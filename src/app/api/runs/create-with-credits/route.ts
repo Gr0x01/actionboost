@@ -21,7 +21,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate form content (character limits)
-    const formErrors = validateForm(input);
+    // contextDelta present means this is a returning user update, relax validation
+    const isReturningUser = !!contextDelta;
+    const formErrors = validateForm(input, isReturningUser);
     if (Object.keys(formErrors).length > 0) {
       return NextResponse.json(
         { error: Object.values(formErrors)[0] },

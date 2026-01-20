@@ -459,7 +459,9 @@ export default function StartPage() {
     if (isSubmitting) return;
 
     // Validate form before submission
-    const errors = validateForm(form);
+    // Returning users (via context_update flow) have relaxed validation since they've provided info before
+    const isReturningUser = checkoutSource === "context_update";
+    const errors = validateForm(form, isReturningUser);
     if (Object.keys(errors).length > 0) {
       posthog?.capture("form_validation_error", {
         fields: Object.keys(errors),
