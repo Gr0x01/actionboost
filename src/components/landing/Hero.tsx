@@ -27,7 +27,6 @@ export function Hero() {
       char_count: description.length,
     });
 
-    // Store prefill data
     const prefillData = {
       productDescription: description.trim(),
       timestamp: Date.now(),
@@ -38,7 +37,6 @@ export function Hero() {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    // Submit on Cmd/Ctrl + Enter
     if (e.key === "Enter" && (e.metaKey || e.ctrlKey) && description.trim()) {
       e.preventDefault();
       handleSubmit();
@@ -46,59 +44,64 @@ export function Hero() {
   };
 
   return (
-    <section className="relative bg-mesh py-16 lg:py-24 overflow-x-clip">
-      {/* Decorative blobs */}
-      <div className="absolute top-20 -left-32 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" />
-      <div className="absolute bottom-20 right-0 w-80 h-80 bg-accent/15 rounded-full blur-3xl animate-float stagger-2" />
-      {/* Bottom fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-surface to-transparent" />
+    <section className="relative py-16 lg:py-24">
+      <div className="mx-auto max-w-7xl px-6">
+        {/* Main grid: 4/3 split - vertically centered for balance */}
+        <div className="grid lg:grid-cols-7 gap-12 lg:gap-12 items-center">
+          {/* Left column - 4/7 width */}
+          <div className="lg:col-span-4">
+            {/* Tagline */}
+            <p className="font-mono text-xs tracking-[0.2em] text-muted uppercase mb-6">
+              Growth strategy / $9.99 / No BS
+            </p>
 
-      <div className="relative mx-auto max-w-7xl px-6">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Left - Hero content */}
-          <div className="text-center lg:text-left animate-slide-up">
             {/* Headline */}
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl xl:text-6xl">
-              <span className="text-foreground">Growth hacking for people</span>
-              <br />
-              <span className="text-gradient">who hate growth hacks.</span>
+            <h1>
+              <span className="block text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extralight tracking-tight text-foreground leading-[0.95]">
+                Growth hacking
+              </span>
+              <span className="block text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extralight tracking-tight text-foreground leading-[0.95]">
+                for people who
+              </span>
+              <span className="block text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tight text-foreground leading-[0.95] mt-1">
+                hate growth hacks.
+              </span>
             </h1>
 
             {/* Subhead */}
-            <p className="mt-6 text-lg text-muted sm:text-xl max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              We pull your competitors&apos; traffic data, score every tactic by
-              impact, and hand you a 30-day plan. Not vibes. Actual moves,
-              ranked.
+            <p className="mt-6 text-base sm:text-lg text-muted max-w-lg leading-relaxed">
+              We pull your competitors&apos; traffic data, score every tactic by impact, and hand you a 30-day plan.{" "}
+              <span className="text-foreground font-medium">Not vibes. Actual moves.</span>
             </p>
 
-            {/* Trust cluster */}
-            <div className="mt-8 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 justify-center lg:justify-start">
+            {/* Trust row - horizontal */}
+            <div className="mt-8 flex flex-wrap items-center gap-6 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-muted line-through">$200/hr</span>
+                <span className="font-bold text-foreground">$9.99</span>
+              </div>
+              <span className="text-border">|</span>
               <a
                 href="https://x.com/rbaten"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="flex items-center gap-2 text-muted hover:text-foreground transition-colors"
               >
-                <img
-                  src="/rbaten.jpg"
-                  alt="@rbaten"
-                  className="w-8 h-8 rounded-full object-cover"
-                />
-                Built by @rbaten
+                <img src="/rbaten.jpg" alt="" className="w-5 h-5 rounded-full grayscale" />
+                @rbaten
               </a>
-              <span className="hidden sm:block text-border">|</span>
-              <span className="text-xs sm:text-sm text-muted-foreground">
-                One payment. No subscription. $9.99.
-              </span>
+              <span className="text-border">|</span>
+              <span className="text-muted">Money-back guarantee</span>
             </div>
           </div>
 
-          {/* Right - Form input */}
-          <div className="animate-slide-up stagger-1">
-            <div className="bg-background rounded-2xl border border-border/60 p-6 shadow-lg">
+          {/* Right column - 3/7 width - Form + Proof stacked */}
+          <div className="lg:col-span-3 space-y-4">
+            {/* Form */}
+            <div className="border-2 border-foreground bg-background p-6 lg:p-8">
               <label
                 htmlFor="hero-description"
-                className="block text-sm font-medium text-foreground mb-2"
+                className="block text-base font-bold text-foreground mb-3"
               >
                 Tell me about your product
               </label>
@@ -107,22 +110,16 @@ export function Hero() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="We're building a marketplace for tattoo artists. Launched 2 months ago, ~500 signups but only 3% convert to booking. Tried Instagram ads, didn't work..."
+                placeholder="We're a marketplace for tattoo artists. 500 signups, 3% convert. Instagram ads didn't work..."
                 disabled={isSubmitting}
-                rows={5}
-                className="w-full bg-surface/50 border border-border/60 rounded-xl px-4 py-3 text-foreground placeholder:text-muted/50 font-serif text-base leading-relaxed resize-none focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all disabled:opacity-50"
+                rows={3}
+                className="w-full bg-surface border-2 border-foreground/20 px-4 py-3 text-foreground placeholder:text-muted/50 text-base leading-relaxed resize-none focus:outline-none focus:border-foreground transition-colors disabled:opacity-50"
               />
 
-              {/* Character hint */}
-              <p className="mt-2 text-xs text-muted">
-                The more context you give, the better your plan will be.
-              </p>
-
-              {/* Submit button */}
               <button
                 onClick={handleSubmit}
                 disabled={!description.trim() || isSubmitting}
-                className="mt-4 w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-cta text-white font-semibold hover:bg-cta-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="mt-4 w-full flex items-center justify-center gap-2 px-6 py-4 bg-cta text-white font-bold text-lg hover:bg-cta-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isSubmitting ? (
                   <>
@@ -137,40 +134,36 @@ export function Hero() {
                 )}
               </button>
 
-              {/* Skip link */}
               <p className="mt-3 text-sm text-muted text-center">
                 <Link
                   href="/start"
                   onClick={() => trackCTA("skip_description")}
-                  className="text-primary hover:underline"
+                  className="hover:text-foreground underline"
                 >
-                  Skip to full questionnaire
+                  or answer detailed questions
                 </Link>
               </p>
             </div>
-          </div>
-        </div>
 
-        {/* Dogfooding callout - below hero */}
-        <div className="mt-12 lg:mt-16 animate-slide-up stagger-2">
-          <Link
-            href="/blog/our-growth-plan"
-            className="group flex items-center justify-between gap-4 py-2.5 px-5 rounded-lg bg-surface border border-border hover:border-primary/30 transition-all duration-200 max-w-xl mx-auto"
-          >
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono font-medium text-primary tracking-wide">
-                DOGFOODING
-              </span>
-              <span className="hidden sm:block w-px h-4 bg-border" />
-              <span className="text-sm text-muted">
-                We ran Actionboo.st on itself
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5 text-primary text-sm font-medium shrink-0">
-              <span className="hidden sm:inline">Read our plan</span>
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-            </div>
-          </Link>
+            {/* Proof - stacked under form */}
+            <Link
+              href="/blog/our-growth-plan"
+              onClick={() => trackCTA("dogfooding_proof")}
+              className="group block"
+            >
+              <div className="flex items-center justify-between gap-4 border-2 border-foreground bg-background p-5 transition-all group-hover:bg-surface">
+                <div>
+                  <span className="font-mono text-[10px] tracking-[0.15em] text-cta uppercase">
+                    Proof it works
+                  </span>
+                  <h2 className="text-lg font-bold text-foreground mt-1">
+                    We ran Actionboo.st on itself.
+                  </h2>
+                </div>
+                <ArrowRight className="w-5 h-5 text-cta shrink-0 transition-transform group-hover:translate-x-1" />
+              </div>
+            </Link>
+          </div>
         </div>
       </div>
     </section>
