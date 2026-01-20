@@ -31,7 +31,7 @@ function UpsellBanner() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5 }}
-      className="border-[3px] border-foreground bg-surface p-6 shadow-[6px_6px_0_0_rgba(44,62,80,1)] mb-8"
+      className="border-[3px] border-foreground bg-surface p-6 shadow-[6px_6px_0_0_rgba(44,62,80,1)] mt-8 mb-8"
     >
       <div className="flex flex-col md:flex-row md:items-center gap-4">
         <div className="flex-1">
@@ -79,7 +79,7 @@ function UpgradeCTA() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.7 }}
-      className="mt-12 pt-8 border-t-[3px] border-foreground text-center"
+      className="mt-12 pt-8 pb-8 border-t-[3px] border-foreground text-center"
     >
       <p className="font-mono text-xs tracking-[0.1em] text-foreground/60 uppercase mb-3">
         The full action plan also includes

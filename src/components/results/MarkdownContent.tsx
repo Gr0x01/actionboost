@@ -155,34 +155,34 @@ export function MarkdownContent({ content, className = "", extended = false }: M
         const bottomRow = steps.slice(midpoint).reverse(); // Reverse for counter-flow
 
         elements.push(
-          <div key={keyIndex++} className="mb-6 py-6 overflow-x-auto">
+          <div key={keyIndex++} className="mb-6 py-6">
             {/* Top row: left to right */}
-            <div className="flex justify-center items-center gap-2 sm:gap-3 text-xs sm:text-sm mb-6">
+            <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 text-xs sm:text-sm mb-6">
               {topRow.map((step, i) => (
                 <React.Fragment key={i}>
-                  <span className="bg-surface border border-foreground/20 text-foreground px-2 sm:px-4 py-1.5 sm:py-2 font-medium text-center whitespace-nowrap">
+                  <span className="bg-surface border border-foreground/20 text-foreground px-3 sm:px-4 py-2 font-medium text-center min-w-[80px] max-w-[200px]">
                     {step}
                   </span>
                   {i < topRow.length - 1 && (
-                    <span className="text-cta text-sm sm:text-base">→</span>
+                    <span className="text-cta text-sm sm:text-base flex-shrink-0">→</span>
                   )}
                 </React.Fragment>
               ))}
               {/* Down arrow to bottom row */}
-              <span className="text-cta text-sm sm:text-base">↓</span>
+              <span className="text-cta text-sm sm:text-base flex-shrink-0">↓</span>
             </div>
 
             {/* Bottom row: right to left (reversed order, left arrows) */}
-            <div className="flex justify-center items-center gap-2 sm:gap-3 text-xs sm:text-sm">
+            <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 text-xs sm:text-sm">
               {/* Up arrow from bottom row back to top */}
-              <span className="text-cta text-sm sm:text-base">↑</span>
+              <span className="text-cta text-sm sm:text-base flex-shrink-0">↑</span>
               {bottomRow.map((step, i) => (
                 <React.Fragment key={i}>
-                  <span className="bg-surface border border-foreground/20 text-foreground px-2 sm:px-4 py-1.5 sm:py-2 font-medium text-center whitespace-nowrap">
+                  <span className="bg-surface border border-foreground/20 text-foreground px-3 sm:px-4 py-2 font-medium text-center min-w-[80px] max-w-[200px]">
                     {step}
                   </span>
                   {i < bottomRow.length - 1 && (
-                    <span className="text-cta text-sm sm:text-base">←</span>
+                    <span className="text-cta text-sm sm:text-base flex-shrink-0">←</span>
                   )}
                 </React.Fragment>
               ))}
