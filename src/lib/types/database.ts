@@ -120,6 +120,7 @@ export type Database = {
           attachments: Json | null
           completed_at: string | null
           created_at: string | null
+          feedback_email_sent: string | null
           id: string
           input: Json
           output: string | null
@@ -132,6 +133,7 @@ export type Database = {
           attachments?: Json | null
           completed_at?: string | null
           created_at?: string | null
+          feedback_email_sent?: string | null
           id?: string
           input: Json
           output?: string | null
@@ -144,6 +146,7 @@ export type Database = {
           attachments?: Json | null
           completed_at?: string | null
           created_at?: string | null
+          feedback_email_sent?: string | null
           id?: string
           input?: Json
           output?: string | null

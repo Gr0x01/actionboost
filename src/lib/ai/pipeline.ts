@@ -3,6 +3,11 @@ import { runResearch, runTavilyOnlyResearch } from './research'
 import { generateStrategy, generateMiniStrategy } from './generate'
 import { accumulateUserContext } from '@/lib/context/accumulate'
 import { searchUserContext } from './embeddings'
+import {
+  sendRunReadyEmail,
+  sendRunFailedEmail,
+  sendFreeAuditUpsellEmail,
+} from '@/lib/email/resend'
 import type { RunInput, PipelineResult, ResearchContext, UserHistoryContext } from './types'
 import type { UserContext } from '@/lib/types/context'
 
@@ -14,6 +19,15 @@ function validateEnv(): void {
   if (missing.length > 0) {
     throw new Error(`Missing required environment variables: ${missing.join(', ')}`)
   }
+}
+
+/**
+ * Get user email from user_id for sending transactional emails
+ */
+async function getEmailForUser(userId: string): Promise<string | null> {
+  const supabase = createServiceClient()
+  const { data } = await supabase.from('users').select('email').eq('id', userId).single()
+  return data?.email || null
 }
 
 /**
@@ -165,6 +179,13 @@ export async function runPipeline(runId: string): Promise<PipelineResult> {
       accumulateUserContext(run.user_id, runId, input, output).catch((err) => {
         console.error('[Pipeline] Context accumulation failed:', err)
       })
+
+      // Send "run ready" email (fire-and-forget)
+      getEmailForUser(run.user_id)
+        .then((email) => {
+          if (email) sendRunReadyEmail({ to: email, runId })
+        })
+        .catch((err) => console.error('[Pipeline] Run ready email failed:', err))
     }
 
     console.log(`[Pipeline] Run ${runId} completed successfully`)
@@ -175,6 +196,15 @@ export async function runPipeline(runId: string): Promise<PipelineResult> {
     console.error('[Pipeline] Strategy generation failed:', errorMsg)
 
     await supabase.from('runs').update({ status: 'failed' }).eq('id', runId)
+
+    // Send "run failed" email (fire-and-forget)
+    if (run.user_id) {
+      getEmailForUser(run.user_id)
+        .then((email) => {
+          if (email) sendRunFailedEmail({ to: email, runId })
+        })
+        .catch((emailErr) => console.error('[Pipeline] Run failed email failed:', emailErr))
+    }
 
     return { success: false, error: `Generation failed: ${errorMsg}` }
   }
@@ -253,6 +283,23 @@ export async function runFreePipeline(
       console.error('[FreePipeline] Failed to save output:', updateError)
       return { success: false, error: `Failed to save output: ${updateError.message}` }
     }
+
+    // Send upsell email (fire-and-forget)
+    // Email is stored directly on free_audits table
+    ;(async () => {
+      try {
+        const { data: audit } = await supabase
+          .from('free_audits')
+          .select('email')
+          .eq('id', freeAuditId)
+          .single()
+        if (audit?.email) {
+          await sendFreeAuditUpsellEmail({ to: audit.email, freeAuditId })
+        }
+      } catch (err) {
+        console.error('[FreePipeline] Upsell email failed:', err)
+      }
+    })()
 
     console.log(`[FreePipeline] Free audit ${freeAuditId} completed successfully`)
     return { success: true, output, freeAuditId }
