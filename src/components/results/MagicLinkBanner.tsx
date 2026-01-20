@@ -9,7 +9,7 @@ export function MagicLinkBanner() {
   if (dismissed) return null;
 
   return (
-    <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 mb-6 flex items-start gap-3">
+    <div className="fixed bottom-4 right-4 z-50 max-w-sm bg-background border border-border rounded-xl p-4 shadow-lg flex items-start gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
       <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
         <Mail className="h-4 w-4 text-primary" />
       </div>

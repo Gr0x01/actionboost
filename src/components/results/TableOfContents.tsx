@@ -219,7 +219,7 @@ export function TableOfContents({ strategy, variant, lockedSectionIds = [] }: Ta
 
   // Desktop sidebar
   const desktopNav = (
-    <nav className="sticky top-32 h-fit">
+    <nav className="sticky top-36 h-fit">
       <div className="space-y-1">
         {availableSections.map((section) => {
           const isActive = activeSection === section.id;

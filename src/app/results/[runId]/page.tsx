@@ -233,39 +233,36 @@ function ResultsPageContent() {
       <Header />
 
       <main className="flex-1">
-        <div className="mx-auto max-w-7xl px-6">
+        <div className="mx-auto px-6">
           {/* Magic link banner for new checkouts */}
-          {isNewCheckout && (
-            <div className="lg:ml-[220px] mt-6">
-              <MagicLinkBanner />
-            </div>
-          )}
-
-          {/* Export bar */}
-          <div className="lg:ml-[220px]">
-            <ExportBar
-              markdown={run.output || ""}
-              runId={run.id}
-              shareSlug={run.share_slug}
-              productName={productName}
-            />
-          </div>
+          {isNewCheckout && <MagicLinkBanner />}
 
           {/* Mobile TOC - full width horizontal tabs */}
           <div className="lg:hidden">
             {strategy && <TableOfContents strategy={strategy} variant="mobile" />}
           </div>
 
-          {/* Desktop layout: sidebar + content */}
-          <div className="lg:flex lg:gap-8 py-8">
-            {/* Desktop sidebar */}
-            <div className="hidden lg:block lg:w-[200px] lg:flex-shrink-0">
-              {strategy && <TableOfContents strategy={strategy} variant="desktop" />}
-            </div>
+          {/* Desktop layout wrapper - centers sidebar + content as a unit */}
+          <div className="lg:w-fit lg:mx-auto">
+            {/* Export bar - spans full width of the wrapper */}
+            <ExportBar
+              markdown={run.output || ""}
+              runId={run.id}
+              shareSlug={run.share_slug}
+              productName={productName}
+            />
 
-            {/* Main content */}
-            <div className="flex-1 max-w-3xl">
-              {strategy && <ResultsContent strategy={strategy} />}
+            {/* Sidebar + content flex */}
+            <div className="lg:flex lg:gap-8 py-8">
+              {/* Desktop sidebar */}
+              <div className="hidden lg:block lg:w-[200px] lg:flex-shrink-0">
+                {strategy && <TableOfContents strategy={strategy} variant="desktop" />}
+              </div>
+
+              {/* Main content */}
+              <div className="max-w-3xl">
+                {strategy && <ResultsContent strategy={strategy} />}
+              </div>
             </div>
           </div>
         </div>
