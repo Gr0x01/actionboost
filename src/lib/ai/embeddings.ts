@@ -24,8 +24,6 @@ async function getOpenAIClient(): Promise<any | null> {
 
   if (!openaiClient) {
     try {
-      // Dynamic import - will fail gracefully if openai package not installed
-      // @ts-expect-error - openai may not be installed
       const { default: OpenAI } = await import('openai')
       openaiClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
     } catch {
