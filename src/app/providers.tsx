@@ -3,6 +3,7 @@
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 import { useEffect } from "react";
+import { captureSource, getSourceProperties } from "@/lib/source";
 
 interface PHProviderProps {
   children: React.ReactNode;
@@ -20,6 +21,14 @@ export function PHProvider({ children, cookieless = false }: PHProviderProps) {
         // GDPR: cookieless mode for EU users, cookies for everyone else
         ...(cookieless && { persistence: "memory" }),
       });
+
+      // Capture UTM/ref params and register as super properties
+      // All future events will automatically include source attribution
+      captureSource();
+      const sourceProps = getSourceProperties();
+      if (Object.keys(sourceProps).length > 0) {
+        posthog.register(sourceProps);
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // cookieless is server-determined, won't change during session

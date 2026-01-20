@@ -332,6 +332,10 @@ export default function StartPage() {
     // Validate form before submission
     const errors = validateForm(form);
     if (Object.keys(errors).length > 0) {
+      posthog?.capture("form_validation_error", {
+        fields: Object.keys(errors),
+        first_error: Object.values(errors)[0],
+      });
       setError(Object.values(errors)[0]);
       return;
     }
@@ -354,6 +358,10 @@ export default function StartPage() {
         });
         const data = await res.json();
         if (!res.ok) {
+          posthog?.capture("form_api_error", {
+            type: "create_run_with_code",
+            error: data.error || "Failed to create run",
+          });
           setError(data.error || "Failed to create run");
           setIsSubmitting(false);
           return;
@@ -372,6 +380,10 @@ export default function StartPage() {
         });
         const data = await res.json();
         if (!res.ok) {
+          posthog?.capture("form_api_error", {
+            type: "create_checkout_session",
+            error: data.error || "Failed to create checkout",
+          });
           setError(data.error || "Failed to create checkout");
           setIsSubmitting(false);
           return;
@@ -379,6 +391,10 @@ export default function StartPage() {
         window.location.href = data.url;
       }
     } catch {
+      posthog?.capture("form_api_error", {
+        type: "network_error",
+        error: "Something went wrong",
+      });
       setError("Something went wrong");
       setIsSubmitting(false);
     }

@@ -28,7 +28,25 @@ Key architectural and product decisions. Reference this when you need to underst
 
 **Decision**: Use `claude-opus-4-5-20251101` for strategy generation.
 
-**Why**: Best reasoning capabilities for complex strategic analysis. Cost ~$0.12-0.15 per run, well within margin at $9.99 pricing.
+**Why**: Best reasoning capabilities for complex strategic analysis. The nuance in competitive analysis and unexpected/creative recommendations is the key differentiator.
+
+**Sonnet vs Opus Comparison** (tested Jan 2025):
+
+| Aspect | Sonnet 4 | Opus 4.5 |
+|--------|----------|----------|
+| Cost/run | ~$0.05 | ~$0.25-0.50 |
+| Format adherence | Excellent | Excellent |
+| ICE scoring | Good | Good |
+| Competitive analysis | Solid but surface-level | Deeper, more nuanced |
+| Recommendations | "By the book" | More creative/unexpected |
+| Speed | Faster | Slower |
+
+**Conclusion**: Sonnet is 5x cheaper but Opus's nuanced analysis justifies the cost at $9.99 pricing. The depth of insight is the product's core value - can't commoditize that.
+
+**Potential future use for Sonnet**:
+- Free mini-audit tier (already using)
+- Quick re-analysis or follow-up questions
+- High-volume/lower-margin tiers if introduced
 
 **Constraint**: Do NOT change the model name without explicit user approval. This is documented in CLAUDE.md as a critical rule.
 

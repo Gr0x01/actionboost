@@ -68,9 +68,20 @@ function ResultsPageContent() {
         if (!res.ok) {
           if (res.status === 401) {
             // Not authenticated, redirect to login
+            posthog?.capture("results_error", {
+              run_id: runId,
+              error_type: "unauthorized",
+              status_code: 401,
+            });
             router.push(`/login?next=/results/${runId}`);
             return;
           }
+          const errorType = res.status === 403 ? "forbidden" : res.status === 404 ? "not_found" : "fetch_failed";
+          posthog?.capture("results_error", {
+            run_id: runId,
+            error_type: errorType,
+            status_code: res.status,
+          });
           if (res.status === 403) {
             setError("You don't have access to this action plan");
           } else if (res.status === 404) {
@@ -100,13 +111,17 @@ function ResultsPageContent() {
 
         setLoading(false);
       } catch {
+        posthog?.capture("results_error", {
+          run_id: runId,
+          error_type: "network_error",
+        });
         setError("Failed to load action plan");
         setLoading(false);
       }
     };
 
     fetchRun();
-  }, [runId, getApiUrl, router]);
+  }, [runId, getApiUrl, router, posthog]);
 
   // Poll for status if pending/processing (max 100 polls = ~5 minutes)
   useEffect(() => {

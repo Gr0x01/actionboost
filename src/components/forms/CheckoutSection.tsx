@@ -98,6 +98,10 @@ export function CheckoutSection({
       }
     } catch (error) {
       console.error("Free audit error:", error);
+      posthog?.capture("checkout_api_error", {
+        type: "free_audit",
+        error: "network_error",
+      });
       posthog?.capture("free_audit_error", { error: "network_error" });
       setFreeError("Connection failed. Please try again.");
     } finally {
@@ -163,6 +167,10 @@ export function CheckoutSection({
       }
     } catch (error) {
       console.error("Waitlist error:", error);
+      posthog?.capture("checkout_api_error", {
+        type: "waitlist",
+        error: "network_error",
+      });
       posthog?.capture("waitlist_error", { error: "network_error" });
       setWaitlistError("Connection failed. Please try again.");
     } finally {
