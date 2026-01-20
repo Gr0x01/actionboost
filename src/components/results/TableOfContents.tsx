@@ -13,11 +13,13 @@ const SECTIONS: Section[] = [
   { id: "executive-summary", label: "Executive Summary", shortLabel: "Summary" },
   { id: "current-situation", label: "Your Situation", shortLabel: "Situation" },
   { id: "competitive-landscape", label: "Competition", shortLabel: "Competition" },
+  { id: "channel-strategy", label: "Channel Strategy", shortLabel: "Channels" },
   { id: "stop-doing", label: "Stop Doing", shortLabel: "Stop" },
   { id: "start-doing", label: "Start Doing", shortLabel: "Start" },
-  { id: "quick-wins", label: "Quick Wins", shortLabel: "Quick Wins" },
+  { id: "this-week", label: "This Week", shortLabel: "This Week" },
   { id: "roadmap", label: "30-Day Roadmap", shortLabel: "Roadmap" },
-  { id: "metrics", label: "Metrics", shortLabel: "Metrics" },
+  { id: "metrics-dashboard", label: "Metrics Dashboard", shortLabel: "Metrics" },
+  { id: "content-templates", label: "Content Templates", shortLabel: "Templates" },
 ];
 
 interface TableOfContentsProps {
@@ -29,7 +31,6 @@ interface TableOfContentsProps {
 export function TableOfContents({ strategy, variant, lockedSectionIds = [] }: TableOfContentsProps) {
   const [activeSection, setActiveSection] = useState<string>("executive-summary");
   const [mobileNavVisible, setMobileNavVisible] = useState(true);
-  const [underlineStyle, setUnderlineStyle] = useState({ left: 0, width: 0 });
   const mobileNavRef = useRef<HTMLDivElement>(null);
   const lastScrollY = useRef(0);
   const keepVisibleUntilScroll = useRef(false);
@@ -40,11 +41,13 @@ export function TableOfContents({ strategy, variant, lockedSectionIds = [] }: Ta
       case "executive-summary": return !!strategy.executiveSummary;
       case "current-situation": return !!strategy.currentSituation;
       case "competitive-landscape": return !!strategy.competitiveLandscape;
+      case "channel-strategy": return !!strategy.channelStrategy;
       case "stop-doing": return !!strategy.stopDoing;
       case "start-doing": return !!strategy.startDoing;
-      case "quick-wins": return !!strategy.quickWins;
+      case "this-week": return !!strategy.thisWeek;
       case "roadmap": return !!strategy.roadmap;
-      case "metrics": return !!strategy.metricsToTrack;
+      case "metrics-dashboard": return !!strategy.metricsDashboard;
+      case "content-templates": return !!strategy.contentTemplates;
       default: return false;
     }
   });
@@ -79,20 +82,13 @@ export function TableOfContents({ strategy, variant, lockedSectionIds = [] }: Ta
     };
   }, [availableSections]);
 
-  // Update underline position when active section changes
+  // Auto-scroll mobile nav to keep active button centered
   useEffect(() => {
     if (!mobileNavRef.current) return;
 
     const container = mobileNavRef.current;
     const activeButton = container.querySelector(`[data-section="${activeSection}"]`) as HTMLElement;
     if (activeButton) {
-      // Update underline position
-      setUnderlineStyle({
-        left: activeButton.offsetLeft,
-        width: activeButton.offsetWidth,
-      });
-
-      // Auto-scroll to keep active button centered
       const containerWidth = container.offsetWidth;
       const scrollLeft = activeButton.offsetLeft - (containerWidth / 2) + (activeButton.offsetWidth / 2);
       container.scrollTo({
@@ -101,27 +97,6 @@ export function TableOfContents({ strategy, variant, lockedSectionIds = [] }: Ta
       });
     }
   }, [activeSection]);
-
-  // Initialize underline position on mount
-  useEffect(() => {
-    if (!mobileNavRef.current) return;
-
-    // Small delay to ensure buttons are rendered
-    const timer = setTimeout(() => {
-      const container = mobileNavRef.current;
-      if (!container) return;
-
-      const activeButton = container.querySelector(`[data-section="${activeSection}"]`) as HTMLElement;
-      if (activeButton) {
-        setUnderlineStyle({
-          left: activeButton.offsetLeft,
-          width: activeButton.offsetWidth,
-        });
-      }
-    }, 50);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   // Hide mobile nav on scroll down, show on scroll up
   useEffect(() => {
@@ -172,16 +147,16 @@ export function TableOfContents({ strategy, variant, lockedSectionIds = [] }: Ta
     }
   };
 
-  // Mobile horizontal tabs
+  // Mobile horizontal tabs - brutalist solid style
   const mobileNav = (
     <div
-      className={`fixed top-16 left-0 right-0 z-40 px-4 bg-background/95 backdrop-blur-sm border-b border-border transition-opacity duration-200 ${
+      className={`fixed top-14 left-0 right-0 z-40 bg-white border-b-[3px] border-foreground transition-opacity duration-200 ${
         mobileNavVisible ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
     >
       <div
         ref={mobileNavRef}
-        className="relative flex gap-1 overflow-x-auto scrollbar-hide"
+        className="relative flex overflow-x-auto scrollbar-hide"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {availableSections.map((section) => {
@@ -193,23 +168,19 @@ export function TableOfContents({ strategy, variant, lockedSectionIds = [] }: Ta
               data-section={section.id}
               onClick={() => scrollToSection(section.id)}
               className={`
-                px-3 py-3 text-sm font-medium
-                whitespace-nowrap transition-colors shrink-0
-                ${isActive ? "text-primary" : "text-muted hover:text-foreground"}
+                px-4 py-3 text-sm font-medium
+                whitespace-nowrap transition-all duration-100 shrink-0
+                border-b-4 -mb-[3px]
+                ${isActive
+                  ? "text-foreground border-cta bg-surface"
+                  : "text-foreground/50 border-transparent hover:text-foreground hover:bg-surface/50"
+                }
               `}
             >
               {section.shortLabel}
             </button>
           );
         })}
-        {/* Sliding underline */}
-        <div
-          className="absolute bottom-0 h-0.5 bg-primary transition-all duration-300 ease-out"
-          style={{
-            left: underlineStyle.left,
-            width: underlineStyle.width,
-          }}
-        />
       </div>
     </div>
   );
@@ -217,10 +188,10 @@ export function TableOfContents({ strategy, variant, lockedSectionIds = [] }: Ta
   // Get locked sections from IDs
   const lockedSections = SECTIONS.filter((s) => lockedSectionIds.includes(s.id));
 
-  // Desktop sidebar
+  // Desktop sidebar - brutalist left-border indicator
   const desktopNav = (
     <nav className="sticky top-36 h-fit">
-      <div className="space-y-1">
+      <div className="space-y-2">
         {availableSections.map((section) => {
           const isActive = activeSection === section.id;
 
@@ -229,15 +200,16 @@ export function TableOfContents({ strategy, variant, lockedSectionIds = [] }: Ta
               key={section.id}
               onClick={() => scrollToSection(section.id)}
               className={`
-                w-full px-3 py-2 rounded-lg text-sm
-                transition-all text-left
+                w-full text-left pl-4 py-2 border-l-4 transition-all duration-150
                 ${isActive
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "text-muted hover:text-foreground hover:bg-surface"
+                  ? "border-cta opacity-100"
+                  : "border-transparent opacity-50 hover:opacity-80 hover:border-foreground/20"
                 }
               `}
             >
-              {section.label}
+              <span className="text-sm font-medium text-foreground">
+                {section.label}
+              </span>
             </button>
           );
         })}
@@ -246,7 +218,7 @@ export function TableOfContents({ strategy, variant, lockedSectionIds = [] }: Ta
             {lockedSections.map((section) => (
               <div
                 key={section.id}
-                className="w-full px-3 py-2 text-sm text-muted/50 cursor-default"
+                className="w-full pl-4 py-2 border-l-4 border-transparent text-sm text-foreground/30 cursor-default"
               >
                 {section.label}
               </div>

@@ -13,6 +13,4 @@ export { CurrentSituation } from "./sections/CurrentSituation";
 export { CompetitiveLandscape } from "./sections/CompetitiveLandscape";
 export { StopDoing } from "./sections/StopDoing";
 export { StartDoing } from "./sections/StartDoing";
-export { QuickWins } from "./sections/QuickWins";
 export { Roadmap } from "./sections/Roadmap";
-export { MetricsToTrack } from "./sections/MetricsToTrack";

@@ -14,11 +14,16 @@ You've built something genuinely valuable—a visual search engine that solves a
 
 Your data tells a clear story: organic traffic converts 10-20x better than paid because organic users have *intent*. Someone searching "blackwork tattoo artist Seattle" is ready to book. Someone scrolling Reddit is collecting inspiration they'll never act on. Your biggest opportunity isn't spending more money—it's capturing the massive long-tail search demand from people actively looking for tattoo artists right now.
 
-The strategic direction is clear: **double down on SEO as your primary acquisition engine, build viral loops into the artist discovery experience, and ignore paid channels until you've exhausted free/organic opportunities.** With 4,000+ pages and 154 cities, you're sitting on an SEO goldmine that's barely been tapped. The next 90 days should focus ruthlessly on capturing search intent and converting it into artist profile views.
+The strategic direction is clear: **double down on SEO as your primary acquisition engine, build viral loops into the artist discovery experience, and ignore paid channels until you've exhausted free/organic opportunities.** With 4,000+ pages and 154 cities, you're sitting on an SEO goldmine that's barely been tapped.
+
+**The Flywheel:**
+\`\`\`
+SEO pages rank → User searches style+city → Views artist profiles → Saves/shares → Artist claims profile → More content → SEO pages rank
+\`\`\`
 
 ---
 
-## Your Current Situation
+## Your Situation
 
 ### What You're Doing Right
 
@@ -95,6 +100,25 @@ Their weakness: discovery. You have to already know what you want.
 3. **Instagram-native discovery**: Your IG URL detection is unique. Imagine: paste any tattoo IG post, find similar artists near you.
 
 4. **Comparison shopping**: No platform makes it easy to compare 3-5 artists side-by-side for a specific style in a specific city.
+
+---
+
+## Channel Strategy
+
+| Channel | Effort/Week | Time to Results | Priority |
+|---------|-------------|-----------------|----------|
+| SEO (Long-tail) | 5 hrs | 4-8 weeks | **HIGH** |
+| Pinterest | 3 hrs | 2-4 weeks | **HIGH** |
+| Artist Outreach | 5 hrs | 1-2 weeks | **HIGH** |
+| Email Capture | 2 hrs | 2-4 weeks | **MEDIUM** |
+| Reddit | 2 hrs | 4-8 weeks | **LOW** |
+| Paid Ads | 0 hrs | N/A | **STOP** |
+
+**Top Channel: SEO (Long-tail)**
+Your 4,000+ pages are an untapped goldmine. Every [style] + [city] combination is a potential ranking opportunity. With 154 cities, you can capture the entire long-tail of "tattoo artist near me" searches. Focus on optimizing existing pages before creating new ones.
+
+**Second Priority: Pinterest**
+Pinterest users are in planning mode—they're actively collecting tattoo ideas. This is high-intent traffic that converts. Your 100K images are perfect for programmatic pinning.
 
 ---
 
@@ -311,27 +335,17 @@ Go where your users already congregate but aren't being marketed to.
 
 ---
 
-## Quick Wins
+## This Week
 
-### 1. DM 50 Artists Today and Tomorrow (4 hours total)
-Pick your best 50 artist profiles (highest image quality, active IG accounts). Send personalized DMs using the script in recommendation #1. Track responses in a simple spreadsheet.
-*Links to: Artist Outreach Campaign*
-
-### 2. Optimize Title Tags on Top 20 City Pages (2 hours)
-Go to Google Search Console → Performance. Find your city pages with impressions but low CTR. Rewrite title tags to include "[Style] Tattoo Artists in [City]" format.
-*Links to: Long-Tail SEO Optimization*
-
-### 3. Add Exit-Intent Email Capture (3 hours)
-Use a tool like Sumo, OptinMonster, or build a simple modal. Trigger on exit intent (desktop) or scroll up (mobile). Offer the "10 Questions to Ask" guide. Connect to Mailchimp/ConvertKit.
-*Links to: Email Capture Loop*
-
-### 4. Pin 50 Images to Pinterest (2 hours)
-Create account, create 11 style boards, pin your 5 best images from each style with keyword-rich descriptions and links back to Inkdex.
-*Links to: Pinterest Strategy*
-
-### 5. Add "Similar Artists" to 3 Profile Pages (3 hours)
-Prototype the similar artists feature on 3 high-traffic profiles. Use your CLIP embeddings to find 5 nearest neighbors. Deploy and measure engagement.
-*Links to: Similar Artists Feature*
+| Day | Action | Time | Success Metric |
+|-----|--------|------|----------------|
+| 1 | DM 25 artists using outreach script | 2 hrs | 25 DMs sent, responses tracked |
+| 2 | DM 25 more artists, optimize 10 title tags | 3 hrs | 50 total DMs, 10 pages updated |
+| 3 | Set up Pinterest business account, create 11 style boards | 2 hrs | Account live, boards created |
+| 4 | Pin 50 best images with keywords and UTMs | 2 hrs | 50 pins live, tracking working |
+| 5 | Add exit-intent email capture modal | 3 hrs | Modal live, first subscribers |
+| 6 | Follow up on Day 1-2 DMs, optimize 10 more title tags | 2 hrs | Response rate measured |
+| 7 | Prototype "Similar Artists" on 3 profiles | 3 hrs | Feature live on 3 pages |
 
 ---
 
@@ -367,59 +381,61 @@ Prototype the similar artists feature on 3 high-traffic profiles. Use your CLIP 
 
 ---
 
-## Metrics to Track
+## Metrics Dashboard
 
-### 1. Claimed Artist Profiles
-- **Target**: 50 by end of Month 1
-- **How to measure**: Count of artists who completed IG OAuth
-- **Why it matters**: Zero claimed profiles = no marketplace, no revenue. This is your #1 priority metric.
+| Stage | Metric | Target | How to Measure |
+|-------|--------|--------|----------------|
+| Acquisition | Organic search traffic | 200/week | Google Search Console |
+| Acquisition | Pinterest referrals | 50/week | UTM tracking |
+| Activation | Profile view rate | 50% of sessions | PostHog funnel |
+| Activation | Pages indexed | 4,000+ | GSC Coverage |
+| Retention | Email subscribers | 200 | Mailchimp count |
+| Retention | Session duration | 3+ minutes | PostHog analytics |
+| Revenue | Claimed profiles | 50 | IG OAuth count |
 
-### 2. Organic Search Traffic
-- **Target**: 200 users/week by end of Month 1 (up from ~50-100/week)
-- **How to measure**: Google Search Console + PostHog
-- **Why it matters**: Your only scalable, sustainable acquisition channel at your budget.
-
-### 3. Profile View Rate
-- **Target**: 50% of sessions include at least one profile view
-- **How to measure**: PostHog funnel: session start → profile view
-- **Why it matters**: Users who don't view profiles aren't getting value. This is your activation metric.
-
-### 4. Email Subscribers
-- **Target**: 200 by end of Month 1
-- **How to measure**: Mailchimp/ConvertKit subscriber count
-- **Why it matters**: Your only owned channel for retention and reactivation.
-
-### 5. Pinterest Referral Traffic
-- **Target**: 50 users/week from Pinterest by end of Month 1
-- **How to measure**: UTM tracking on pin links
-- **Why it matters**: Validates Pinterest as a high-intent channel worth investing in.
-
-### 6. Pages Indexed
-- **Target**: 4,000+ pages indexed in Google
-- **How to measure**: GSC → Coverage report
-- **Why it matters**: Pages that aren't indexed can't rank. Your sitemap bug may have caused de-indexing.
-
-### 7. Artist Outreach Response Rate
-- **Target**: 20% response rate, 10% claim rate
-- **How to measure**: Spreadsheet tracking: DMs sent → responses → claims
-- **Why it matters**: Understanding this funnel tells you if you need better messaging or better targeting.
-
-### 8. Session Duration / Pages per Session
-- **Target**: 3+ minutes, 4+ pages per session
-- **How to measure**: PostHog session analytics
-- **Why it matters**: Longer sessions = users finding value = higher likelihood of conversion.
+**Additional Metrics:**
+- **Artist outreach response rate**: Target 20% response, 10% claim rate. Track in spreadsheet.
+- **Pages per session**: Target 4+. Measures discovery loop engagement.
 
 ---
 
-## Final Thoughts
+## Content Templates
 
-You're not failing—you're learning. The data from your paid ad experiment is worth far more than the $100 it cost. You now know definitively: **intent-based organic traffic is your unlock.**
+\`\`\`
+[ARTIST OUTREACH DM TEMPLATE]
+Hey [Name]! I found your work through [IG/source] and added your portfolio to Inkdex—a visual search engine that helps people find tattoo artists by style.
 
-The next 30 days should feel uncomfortable because you'll be doing things that don't scale: manually DMing artists, manually optimizing pages, manually building Pinterest presence. But these activities will teach you what messages resonate, what content ranks, and what converts.
+Your [style] work is getting discovered by people searching in [city]. Claim your profile (takes 2 min) to control how you appear and connect directly with potential clients:
 
-Once you have 50 claimed profiles and 500 organic users/week, you'll have the foundation to experiment with viral features, referral programs, and eventually paid acquisition. But not before.
+[claim link]
 
-Stop spreading thin. Go deep. Own one channel first.
+Let me know if you have any questions!
+\`\`\`
+
+\`\`\`
+[PINTEREST PIN DESCRIPTION TEMPLATE]
+[Style] tattoo by [Artist Name] in [City]. Bold [describe key elements: lines, colors, shading].
+
+Find more [style] tattoo artists near you on Inkdex → [UTM link]
+
+#[style]tattoo #tattooartist #[city]tattoo #tattooinspo #inkdex
+\`\`\`
+
+\`\`\`
+[EMAIL CAPTURE OFFER]
+Subject: 10 Questions to Ask Your Tattoo Artist (Before You Book)
+
+Planning your next tattoo? Don't book until you know what to ask.
+
+Get our free guide: "10 Questions to Ask Your Tattoo Artist Before Booking"
+
+→ How to verify their portfolio is real
+→ What to ask about pricing and deposits
+→ Red flags to watch for
+→ Questions about aftercare
+
+[Download the free guide]
+\`\`\`
 `;
 
 const strategy = parseStrategy(DEMO_STRATEGY);
@@ -433,40 +449,41 @@ export default function DemoResultsPage() {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      {/* Demo banner */}
-      <div className="bg-amber-500/10 border-b border-amber-500/20 px-6 py-2">
-        <p className="text-center text-sm text-amber-600">
-          Demo preview — This is sample output for Inkdex
+      {/* Demo banner - brutalist style */}
+      <div className="bg-amber-100 border-b-[3px] border-amber-600 px-6 py-3">
+        <p className="text-center font-mono text-xs tracking-[0.1em] text-amber-800 uppercase font-semibold">
+          Demo preview — Sample output for Inkdex
         </p>
       </div>
 
       <main className="flex-1">
-        <div className="mx-auto max-w-7xl px-6">
-          {/* Export bar */}
-          <div className="lg:ml-[220px]">
+        <div className="mx-auto px-6">
+          {/* Mobile TOC - full width horizontal tabs */}
+          <div className="lg:hidden">
+            <TableOfContents strategy={strategy} variant="mobile" />
+          </div>
+
+          {/* Desktop layout wrapper - centers sidebar + content as a unit */}
+          <div className="lg:w-fit lg:mx-auto">
+            {/* Export bar */}
             <ExportBar
               markdown={DEMO_STRATEGY}
               runId="demo"
               shareSlug={null}
               productName={mockInput.productDescription?.slice(0, 50)}
             />
-          </div>
 
-          {/* Mobile TOC - full width horizontal tabs */}
-          <div className="lg:hidden">
-            <TableOfContents strategy={strategy} variant="mobile" />
-          </div>
+            {/* Sidebar + content flex */}
+            <div className="lg:flex lg:gap-8 py-8">
+              {/* Desktop sidebar */}
+              <div className="hidden lg:block lg:w-[200px] lg:flex-shrink-0">
+                <TableOfContents strategy={strategy} variant="desktop" />
+              </div>
 
-          {/* Desktop layout: sidebar + content */}
-          <div className="lg:flex lg:gap-8 py-8">
-            {/* Desktop sidebar */}
-            <div className="hidden lg:block lg:w-[200px] lg:flex-shrink-0">
-              <TableOfContents strategy={strategy} variant="desktop" />
-            </div>
-
-            {/* Main content */}
-            <div className="flex-1 max-w-3xl">
-              <ResultsContent strategy={strategy} />
+              {/* Main content */}
+              <div className="max-w-3xl">
+                <ResultsContent strategy={strategy} />
+              </div>
             </div>
           </div>
         </div>

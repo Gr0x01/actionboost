@@ -14,23 +14,27 @@ export type ParsedStrategy = {
   executiveSummary: StrategySection | null;
   currentSituation: StrategySection | null;
   competitiveLandscape: StrategySection | null;
+  channelStrategy: StrategySection | null;
   stopDoing: StrategySection | null;
   startDoing: StrategySection | null;
-  quickWins: StrategySection | null;
+  thisWeek: StrategySection | null;
   roadmap: StrategySection | null;
-  metricsToTrack: StrategySection | null;
+  metricsDashboard: StrategySection | null;
+  contentTemplates: StrategySection | null;
   raw: string;
 };
 
 const SECTION_PATTERNS: Array<{ id: keyof Omit<ParsedStrategy, "raw">; pattern: RegExp }> = [
   { id: "executiveSummary", pattern: /^## Executive Summary/im },
-  { id: "currentSituation", pattern: /^## Your Current Situation/im },
+  { id: "currentSituation", pattern: /^## Your Situation/im },
   { id: "competitiveLandscape", pattern: /^## Competitive Landscape/im },
+  { id: "channelStrategy", pattern: /^## Channel Strategy/im },
   { id: "stopDoing", pattern: /^## Stop Doing/im },
   { id: "startDoing", pattern: /^## Start Doing/im },
-  { id: "quickWins", pattern: /^## Quick Wins/im },
+  { id: "thisWeek", pattern: /^## This Week/im },
   { id: "roadmap", pattern: /^## 30-Day Roadmap/im },
-  { id: "metricsToTrack", pattern: /^## Metrics to Track/im },
+  { id: "metricsDashboard", pattern: /^## Metrics Dashboard/im },
+  { id: "contentTemplates", pattern: /^## Content Templates/im },
 ];
 
 export function parseStrategy(markdown: string): ParsedStrategy {
@@ -38,11 +42,13 @@ export function parseStrategy(markdown: string): ParsedStrategy {
     executiveSummary: null,
     currentSituation: null,
     competitiveLandscape: null,
+    channelStrategy: null,
     stopDoing: null,
     startDoing: null,
-    quickWins: null,
+    thisWeek: null,
     roadmap: null,
-    metricsToTrack: null,
+    metricsDashboard: null,
+    contentTemplates: null,
     raw: markdown,
   };
 

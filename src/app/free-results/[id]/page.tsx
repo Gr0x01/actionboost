@@ -31,15 +31,18 @@ function UpsellBanner() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5 }}
-      className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 rounded-2xl p-6 mb-8"
+      className="border-[3px] border-foreground bg-surface p-6 shadow-[6px_6px_0_0_rgba(44,62,80,1)] mb-8"
     >
       <div className="flex flex-col md:flex-row md:items-center gap-4">
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-foreground mb-1">
+          <p className="font-mono text-[10px] tracking-[0.15em] text-cta uppercase font-semibold mb-1">
+            Unlock the full playbook
+          </p>
+          <h3 className="text-lg font-bold text-foreground mb-1">
             Ready for the complete playbook?
           </h3>
-          <p className="text-muted text-sm">
-            The full analysis includes your Quick Wins, 30-Day Roadmap, and specific metrics to track.
+          <p className="text-foreground/70 text-sm">
+            The full analysis includes Channel Strategy, This Week actions, 30-Day Roadmap, Metrics Dashboard, and Content Templates.
           </p>
         </div>
         <button
@@ -47,7 +50,7 @@ function UpsellBanner() {
             posthog?.capture("free_audit_upsell_clicked");
             router.push("/start");
           }}
-          className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-xl font-medium transition-colors whitespace-nowrap"
+          className="flex items-center gap-2 px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100 whitespace-nowrap"
         >
           Get Full Action Plan — {config.singlePrice}
           <ArrowRight className="w-4 h-4" />
@@ -62,11 +65,13 @@ function UpgradeCTA() {
   const posthog = usePostHog();
 
   const lockedSections = [
+    "Channel Strategy",
     "Stop Doing",
     "Start Doing",
-    "Quick Wins",
+    "This Week",
     "30-Day Roadmap",
-    "Metrics to Track",
+    "Metrics Dashboard",
+    "Content Templates",
   ];
 
   return (
@@ -74,10 +79,10 @@ function UpgradeCTA() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.7 }}
-      className="mt-12 pt-8 border-t border-border text-center"
+      className="mt-12 pt-8 border-t-[3px] border-foreground text-center"
     >
-      <p className="text-muted text-sm mb-2">
-        The full action plan also includes:
+      <p className="font-mono text-xs tracking-[0.1em] text-foreground/60 uppercase mb-3">
+        The full action plan also includes
       </p>
       <p className="text-foreground font-medium mb-6">
         {lockedSections.join(" · ")}
@@ -87,17 +92,25 @@ function UpgradeCTA() {
           posthog?.capture("free_audit_upgrade_clicked");
           router.push("/start");
         }}
-        className="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-xl font-semibold transition-all shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/25"
+        className="inline-flex items-center gap-2 px-6 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100"
       >
         Get the Full Playbook — {config.singlePrice}
-        <ArrowRight className="w-4 h-4" />
+        <ArrowRight className="w-5 h-5" />
       </button>
     </motion.div>
   );
 }
 
-// Locked section IDs for the free version
-const LOCKED_SECTION_IDS = ["stop-doing", "start-doing", "quick-wins", "roadmap", "metrics"];
+// Locked section IDs for the free version (sections not included in mini audit)
+const LOCKED_SECTION_IDS = [
+  "channel-strategy",
+  "stop-doing",
+  "start-doing",
+  "this-week",
+  "roadmap",
+  "metrics-dashboard",
+  "content-templates",
+];
 
 function FreeResultsPageContent() {
   const params = useParams();

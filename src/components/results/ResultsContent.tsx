@@ -4,9 +4,9 @@ import { CurrentSituation } from "./sections/CurrentSituation";
 import { CompetitiveLandscape } from "./sections/CompetitiveLandscape";
 import { StopDoing } from "./sections/StopDoing";
 import { StartDoing } from "./sections/StartDoing";
-import { QuickWins } from "./sections/QuickWins";
 import { Roadmap } from "./sections/Roadmap";
-import { MetricsToTrack } from "./sections/MetricsToTrack";
+import { SectionCard } from "./SectionCard";
+import { MarkdownContent } from "./MarkdownContent";
 
 interface ResultsContentProps {
   strategy: ParsedStrategy;
@@ -14,45 +14,53 @@ interface ResultsContentProps {
 
 export function ResultsContent({ strategy }: ResultsContentProps) {
   return (
-    <div className="space-y-0">
-      {/* Executive Summary - most important, always first */}
+    <div className="space-y-8">
       {strategy.executiveSummary && (
         <ExecutiveSummary content={strategy.executiveSummary.content} />
       )}
 
-      {/* Current Situation */}
       {strategy.currentSituation && (
         <CurrentSituation content={strategy.currentSituation.content} />
       )}
 
-      {/* Competitive Landscape */}
       {strategy.competitiveLandscape && (
         <CompetitiveLandscape content={strategy.competitiveLandscape.content} />
       )}
 
-      {/* Stop Doing - before Start Doing for contrast */}
+      {strategy.channelStrategy && (
+        <SectionCard id="channel-strategy" title="Channel Strategy">
+          <MarkdownContent content={strategy.channelStrategy.content} extended />
+        </SectionCard>
+      )}
+
       {strategy.stopDoing && (
         <StopDoing content={strategy.stopDoing.content} />
       )}
 
-      {/* Start Doing - the meat of the strategy */}
       {strategy.startDoing && (
         <StartDoing content={strategy.startDoing.content} />
       )}
 
-      {/* Quick Wins - actionable this week */}
-      {strategy.quickWins && (
-        <QuickWins content={strategy.quickWins.content} />
+      {strategy.thisWeek && (
+        <SectionCard id="this-week" title="This Week" variant="boxed">
+          <MarkdownContent content={strategy.thisWeek.content} extended />
+        </SectionCard>
       )}
 
-      {/* 30-Day Roadmap */}
       {strategy.roadmap && (
         <Roadmap content={strategy.roadmap.content} />
       )}
 
-      {/* Metrics to Track */}
-      {strategy.metricsToTrack && (
-        <MetricsToTrack content={strategy.metricsToTrack.content} />
+      {strategy.metricsDashboard && (
+        <SectionCard id="metrics-dashboard" title="Metrics Dashboard">
+          <MarkdownContent content={strategy.metricsDashboard.content} extended />
+        </SectionCard>
+      )}
+
+      {strategy.contentTemplates && (
+        <SectionCard id="content-templates" title="Content Templates">
+          <MarkdownContent content={strategy.contentTemplates.content} extended />
+        </SectionCard>
       )}
     </div>
   );

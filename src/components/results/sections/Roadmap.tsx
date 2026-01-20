@@ -17,14 +17,14 @@ export function Roadmap({ content }: RoadmapProps) {
   // Fallback if parsing fails - use MarkdownContent for consistent rendering
   if (weeks.length === 0) {
     return (
-      <SectionCard id="roadmap" title="30-Day Roadmap">
+      <SectionCard id="roadmap" title="30-Day Roadmap" variant="boxed">
         <MarkdownContent content={content} extended />
       </SectionCard>
     );
   }
 
   return (
-    <SectionCard id="roadmap" title="30-Day Roadmap">
+    <SectionCard id="roadmap" title="30-Day Roadmap" variant="boxed">
       <p className="text-foreground/80 mb-6">
         Your week-by-week execution plan. Focus on one week at a time.
       </p>

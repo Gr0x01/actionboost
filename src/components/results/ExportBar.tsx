@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { usePostHog } from "posthog-js/react";
-import { Button } from "@/components/ui/Button";
 import { Copy, Download, Share2, Check } from "lucide-react";
 import { ShareModal } from "./ShareModal";
 import { markdownToHTML } from "@/lib/markdown/parser";
@@ -95,15 +94,21 @@ export function ExportBar({
 
   return (
     <>
-      <div className="lg:sticky lg:top-16 z-40 py-3 bg-background/80 backdrop-blur-sm border-b border-border">
+      <div className="lg:sticky lg:top-14 z-40 py-4 bg-white border-b-[3px] border-foreground">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-muted font-medium">Your Action Plan</span>
+          <span className="font-mono text-xs tracking-[0.1em] text-foreground/60 uppercase">
+            Your Action Plan
+          </span>
 
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={handleCopy} className="gap-2">
+            {/* Tactile ghost buttons */}
+            <button
+              onClick={handleCopy}
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-foreground/70 hover:text-foreground border-2 border-transparent hover:border-foreground/20 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-100"
+            >
               {copied ? (
                 <>
-                  <Check className="h-4 w-4 text-green-500" />
+                  <Check className="h-4 w-4 text-green-600" />
                   <span className="hidden sm:inline">Copied!</span>
                 </>
               ) : (
@@ -112,22 +117,24 @@ export function ExportBar({
                   <span className="hidden sm:inline">Copy</span>
                 </>
               )}
-            </Button>
+            </button>
 
-            <Button variant="ghost" size="sm" onClick={handlePDF} className="gap-2">
+            <button
+              onClick={handlePDF}
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-foreground/70 hover:text-foreground border-2 border-transparent hover:border-foreground/20 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-100"
+            >
               <Download className="h-4 w-4" />
               <span className="hidden sm:inline">PDF</span>
-            </Button>
+            </button>
 
-            <Button
-              variant="secondary"
-              size="sm"
+            {/* Primary action - brutalist button */}
+            <button
               onClick={() => setShowShareModal(true)}
-              className="gap-2"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-foreground bg-surface border-2 border-foreground shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-100"
             >
               <Share2 className="h-4 w-4" />
               <span className="hidden sm:inline">Share</span>
-            </Button>
+            </button>
           </div>
         </div>
       </div>

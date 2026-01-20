@@ -161,10 +161,10 @@ export async function extractAndEmbedRunContext(
     })
   }
 
-  const quickWinsSection = extractSection(output, 'Quick Wins')
-  if (quickWinsSection) {
+  const thisWeekSection = extractSection(output, 'This Week')
+  if (thisWeekSection) {
     chunks.push({
-      content: `Quick wins: ${quickWinsSection}`,
+      content: `This week actions: ${thisWeekSection}`,
       chunkType: 'recommendation',
       sourceType: 'run_output',
       sourceId: runId,

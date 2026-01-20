@@ -79,11 +79,11 @@ export function MarkdownContent({ content, className = "", extended = false }: M
     if (currentTable && extended) {
       elements.push(
         <div key={keyIndex++} className="mb-6 overflow-x-auto">
-          <table className="min-w-full text-sm border-collapse">
+          <table className="min-w-full text-sm border-2 border-foreground">
             <thead>
-              <tr className="border-b border-border">
+              <tr className="border-b-2 border-foreground bg-surface">
                 {currentTable.headers.map((header, i) => (
-                  <th key={i} className="px-4 py-2 text-left font-semibold text-foreground bg-surface/50">
+                  <th key={i} className="px-4 py-3 text-left font-bold text-foreground">
                     {renderInline(header)}
                   </th>
                 ))}
@@ -91,7 +91,7 @@ export function MarkdownContent({ content, className = "", extended = false }: M
             </thead>
             <tbody>
               {currentTable.rows.map((row, rowIndex) => (
-                <tr key={rowIndex} className="border-b border-border/50">
+                <tr key={rowIndex} className="border-b border-foreground/30">
                   {row.map((cell, cellIndex) => (
                     <td key={cellIndex} className="px-4 py-2 text-foreground/80">
                       {renderInline(cell)}
@@ -109,10 +109,19 @@ export function MarkdownContent({ content, className = "", extended = false }: M
 
   const flushCodeBlock = () => {
     if (currentCodeBlock && extended) {
+      // Check if this is an ASCII diagram (contains arrows)
+      const content = currentCodeBlock.lines.join("\n");
+      const isAsciiDiagram = content.includes("→") || content.includes("↓") || content.includes("↑");
+
       elements.push(
-        <pre key={keyIndex++} className="mb-6 p-4 rounded-lg bg-surface border border-border overflow-x-auto">
+        <pre
+          key={keyIndex++}
+          className={`mb-6 p-4 bg-surface border-2 border-foreground shadow-[4px_4px_0_0_rgba(0,0,0,0.8)] overflow-x-auto ${
+            isAsciiDiagram ? "text-center" : ""
+          }`}
+        >
           <code className="text-sm font-mono text-foreground/90 whitespace-pre">
-            {currentCodeBlock.lines.join("\n")}
+            {content}
           </code>
         </pre>
       );

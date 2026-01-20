@@ -277,42 +277,73 @@ Structure your response as a markdown document with these exact sections:
 - The biggest opportunity you see
 - The strategic direction you recommend
 
-## Your Current Situation
-Analyze what they told you:
+Then include "The Flywheel" - a simple ASCII diagram showing how their growth compounds:
+\`\`\`
+[Action A] → [Result B] → [Action C] → loops back to A
+\`\`\`
+
+## Your Situation
+Analyze through the AARRR lens:
+- Which stage is their bottleneck? (Acquisition/Activation/Retention/Referral/Revenue)
 - What they're doing right (celebrate wins first)
 - Where the gaps are
-- How their situation compares to successful companies at this stage
+- If useful, include a simple comparison table:
+
+| Metric | Their Current | Typical Benchmark |
+|--------|---------------|-------------------|
+| ...    | ...           | ...               |
 
 ## Competitive Landscape
-Based on the research data provided:
-- How competitors are approaching similar challenges
-- Market trends that affect their strategy
-- Opportunities competitors are missing
+Based on research data, present as a table:
+
+| Competitor | Their Approach | Your Advantage |
+|------------|----------------|----------------|
+| ...        | ...            | ...            |
+
+Include 2-3 sentences on market trends or opportunities competitors are missing.
+
+## Channel Strategy
+Prioritize 4-6 acquisition/growth channels for their specific situation:
+
+| Channel | Effort/Week | Time to Results | Priority |
+|---------|-------------|-----------------|----------|
+| ...     | X hrs       | Y weeks         | HIGH/MEDIUM/LOW |
+
+Brief explanation (2-3 sentences each) for their top 2 recommended channels.
 
 ## Stop Doing
-List 3-5 things they should stop:
-- Each with clear reasoning
-- Focus on low-ROI activities draining their energy
-- Be direct but constructive
+3-5 things to stop, each with one-line reasoning:
+- **[Thing to stop]**: [Why it's draining ROI]
+
+Be direct but constructive.
 
 ## Start Doing (Prioritized by ICE)
-List 5-8 recommendations, each formatted as:
+5-8 recommendations, each formatted as:
 
 ### [Recommendation Title]
-- **Impact**: X/10 - [one line explaining why]
-- **Confidence**: X/10 - [one line explaining why]
-- **Ease**: X/10 - [one line explaining why]
+- **Impact**: X/10 - [one line why]
+- **Confidence**: X/10 - [one line why]
+- **Ease**: X/10 - [one line why]
 - **ICE Score**: XX
 
-[2-3 paragraph explanation of the tactic, why it fits their situation, and specific implementation guidance]
+[2-3 paragraph implementation guidance specific to their situation]
 
 Sort by ICE score (highest first).
 
-## Quick Wins (This Week)
-3-5 specific actions for the next 7 days:
-- Be extremely specific (not "improve onboarding" but "add a welcome email that triggers 1 hour after signup")
-- Include estimated time to implement
-- Link each to one of your Start Doing recommendations
+## This Week
+Day-by-day quick wins for the next 7 days:
+
+| Day | Action | Time | Success Metric |
+|-----|--------|------|----------------|
+| 1   | [Specific action] | X hr | [How to know it worked] |
+| 2   | ... | ... | ... |
+| 3   | ... | ... | ... |
+| 4   | ... | ... | ... |
+| 5   | ... | ... | ... |
+| 6   | ... | ... | ... |
+| 7   | ... | ... | ... |
+
+Be extremely specific (not "improve onboarding" but "add welcome email that triggers 1 hour after signup").
 
 ## 30-Day Roadmap
 Week-by-week priorities:
@@ -335,12 +366,38 @@ Week-by-week priorities:
 - [ ] Task 1
 - [ ] Task 2
 
-## Metrics to Track
-5-8 KPIs relevant to their focus area:
-- Specific metric name
-- Target range or benchmark
-- How to measure it
-- Why this metric matters for their stage`
+## Metrics Dashboard
+Track progress with AARRR-aligned metrics:
+
+| Stage | Metric | Target | How to Measure |
+|-------|--------|--------|----------------|
+| Acquisition | [Specific metric] | [Target number] | [Tool/method] |
+| Activation | ... | ... | ... |
+| Retention | ... | ... | ... |
+| Referral | ... | ... | ... |
+| Revenue | ... | ... | ... |
+
+Add 2-3 additional metrics specific to their focus area.
+
+## Content Templates
+2-3 ready-to-use templates for their top recommended channel:
+
+\`\`\`
+[TEMPLATE NAME - e.g., "REDDIT POST TEMPLATE"]
+[Ready-to-copy content that they can customize and use immediately]
+\`\`\`
+
+Make templates specific to their product and situation, not generic.
+
+---
+
+## Content Formatting Rules
+
+- **Tables**: Use for comparative data (channels, metrics, competitors). Keep to 4-5 columns max.
+- **ASCII diagrams**: Only for the Flywheel in Executive Summary. Keep simple with → arrows.
+- **Code blocks**: ONLY for Content Templates section. Never for explanatory text.
+- **Checkboxes**: Only for 30-Day Roadmap tasks (- [ ] format).
+- **Bold**: Use **bold** for emphasis on key terms and table headers.`
 
 // =============================================================================
 // USER MESSAGE BUILDER
@@ -516,8 +573,8 @@ const MINI_MAX_TOKENS = 2000
 
 /**
  * Generate a mini growth strategy (free tier) using Claude Sonnet
- * Produces 5 sections: Executive Summary, Situation, Competition, Stop, Start
- * Omits: Quick Wins, Roadmap, Metrics (upsell hook)
+ * Produces 3 sections: Executive Summary, Your Situation, Competitive Landscape
+ * Omits: Channel Strategy, Stop/Start Doing, This Week, Roadmap, Metrics, Templates (upsell hook)
  */
 export async function generateMiniStrategy(
   input: RunInput,
@@ -578,7 +635,12 @@ Structure your response as a markdown document with EXACTLY these sections:
 - The biggest opportunity you see
 - The strategic direction you recommend
 
-## Your Current Situation
+Then include "The Flywheel" - a simple ASCII diagram showing how their growth could compound:
+\`\`\`
+[Action A] → [Result B] → [Action C] → loops back to A
+\`\`\`
+
+## Your Situation
 Full analysis:
 - What they're doing right (celebrate wins first)
 - Where the gaps are
@@ -592,14 +654,16 @@ CONDENSED - 1 paragraph overview:
 ---
 
 **STOP HERE.** Do NOT include these sections (they are part of the full paid version):
+- Channel Strategy
 - Stop Doing
 - Start Doing
-- Quick Wins
+- This Week
 - 30-Day Roadmap
-- Metrics to Track
+- Metrics Dashboard
+- Content Templates
 
 End with exactly this text:
-"Want the complete playbook? The full analysis includes what to Stop Doing, what to Start Doing with ICE scores, Quick Wins, your 30-Day Roadmap, and specific metrics to track."`
+"Want the complete playbook? The full analysis includes Channel Strategy, Stop Doing, Start Doing with ICE scores, This Week actions, your 30-Day Roadmap, Metrics Dashboard, and ready-to-use Content Templates."`
 }
 
 function buildMiniUserMessage(input: RunInput, research: ResearchContext): string {

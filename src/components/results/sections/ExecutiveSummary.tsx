@@ -13,9 +13,9 @@ export function ExecutiveSummary({ content }: ExecutiveSummaryProps) {
 
   return (
     <SectionCard id="executive-summary" title="Executive Summary" isFirst>
-      {/* First paragraph - larger, with left border accent */}
+      {/* First paragraph - larger, with left border accent (brutalist) */}
       {firstParagraph && (
-        <div className="pl-6 border-l-2 border-primary/30 mb-6">
+        <div className="pl-6 border-l-4 border-cta mb-6">
           <MarkdownContent
             content={firstParagraph}
             className="text-lg text-foreground leading-relaxed [&>p]:mb-0"

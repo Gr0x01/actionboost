@@ -13,14 +13,14 @@ export function StartDoing({ content }: StartDoingProps) {
   // Fallback if parsing fails
   if (items.length === 0) {
     return (
-      <SectionCard id="start-doing" title="Start Doing">
+      <SectionCard id="start-doing" title="Start Doing" variant="boxed">
         <MarkdownContent content={content} extended />
       </SectionCard>
     );
   }
 
   return (
-    <SectionCard id="start-doing" title="Start Doing">
+    <SectionCard id="start-doing" title="Start Doing" variant="boxed">
       <p className="text-foreground/80 mb-6">
         Ranked by ICE score — Impact, Confidence, and Ease combined.
       </p>
