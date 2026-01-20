@@ -29,7 +29,7 @@ const benefits = [
   {
     icon: LineChart,
     text: "Metrics to track success",
-    detail: "Know what's working",
+    detail: "See what's moving",
   },
 ];
 
@@ -43,13 +43,13 @@ export function WhatYouGet() {
         {/* Section header */}
         <div className="text-center mb-16">
           <span className="inline-block text-sm font-medium tracking-wide text-accent mb-3">
-            Your Deliverables
+            What you get
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
-            Everything you need to <span className="text-gradient">move forward</span>
+            What&apos;s in your <span className="text-gradient">action plan</span>
           </h2>
           <p className="mt-4 text-lg text-muted max-w-2xl mx-auto leading-relaxed">
-            A complete growth playbook tailored to your specific situation.
+            Research, priorities, and a plan. Built for your business, not a template.
           </p>
         </div>
 

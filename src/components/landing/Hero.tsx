@@ -70,7 +70,7 @@ export function Hero() {
               </a>
               <span className="hidden sm:block text-border">|</span>
               <span className="text-xs sm:text-sm text-muted-foreground">
-                Cheaper than a consultant. Smarter than a chatbot. Faster than DIY.
+                Specific tactics. Ranked by impact. Ready this week.
               </span>
             </div>
           </div>

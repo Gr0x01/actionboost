@@ -2,9 +2,61 @@
 
 ## Value Prop
 
-> "Stuck on growth? Get your next moves."
+> "Your competitors' growth playbook, reverse-engineered. $9.99."
 
-Not generic ChatGPT advice - analyzes YOUR situation with live competitive research.
+Tell us about your startup. We research your competitors' actual traffic, analyze your traction, and hand you a 30-day playbook. What to stop. What to start. What to try this week.
+
+---
+
+## Brand Voice
+
+### The Personality
+
+**Actionboo.st = the founder friend who's three steps ahead.** Takes your call, gives you brutal truth, wants you to win.
+
+**5 traits:**
+1. **Blunt Optimist** — believes you can grow, won't pretend your current approach is working
+2. **Impatient for Results** — hates busywork, wants you shipping by Tuesday
+3. **Research Nerd** — actually pulls data, explains it simply
+4. **Allergic to Guru Culture** — no podcast, no course, just a tool that costs $10
+5. **Quietly Confident** — doesn't need to yell, lets output speak
+
+### The Enemy
+
+**The Growth Advice Industrial Complex:**
+- 47-page strategy decks that never get implemented
+- "Build in public" gurus who've never built anything
+- $5K consultants who say "focus on SEO"
+- AI chatbots giving the same advice to everyone
+
+### Voice Guidelines
+
+| We sound like | We don't sound like |
+|---------------|---------------------|
+| Founder friend 3 steps ahead | Marketing agency |
+| Someone who's done this | LinkedIn influencer |
+| Cuts to the chase | Enterprise SaaS |
+
+**Words we use:** stop, start, actually, specific, tactics, real, this week, execute, plan
+
+**Words we avoid:** leverage, optimize, scale, transform, journey, solution, cutting-edge, empower, unlock
+
+### Copy Rules
+
+1. **Be specific over vague** — "See where competitors get 40% of their traffic" not "understand your competitive landscape"
+2. **Use active voice** — "We pull your competitors' traffic data" not "Traffic data is analyzed"
+3. **Short sentences** — Punchy. Direct. Easy to scan.
+4. **Acknowledge skepticism** — "You've probably tried 'just post more.' This is different."
+5. **Name the pain** — "Stuck at 100 users" not "looking to scale"
+6. **Use numbers** — "30-day plan" "5 competitors" "$9.99"
+7. **Sound human** — "Look—" "Here's the thing—" "Honestly,"
+
+### What NOT to do
+
+- Don't mention what AI model powers it (technical flex for wrong audience)
+- Don't define by what we're NOT ("Not like ChatGPT...") — defensive
+- Don't use exclamation points — tryhard energy
+- Don't hedge ("might" "could" "potentially") — commit to what we deliver
 
 ---
 
@@ -32,36 +84,33 @@ Subtle "Just want a taste?" option at checkout → 5-section condensed audit →
 ## Landing Page Content
 
 ### Hero
-- Headline: "Stuck on growth? Get your next moves."
-- Subhead: AI-powered growth strategy with real competitive research. Not ChatGPT fluff.
-- CTA: "Get Started" → /start
+- Headline: "Your competitors' growth playbook, reverse-engineered."
+- Subhead: Tell us about your startup. We dig into your competitors' traffic, analyze your traction, and hand you a 30-day playbook.
+- CTA: "Get My Growth Plan — $9.99" → /start
 
-### Credibility Section (show the frameworks)
-Display these to prove there's real methodology:
-
-**"Built on proven growth frameworks"**
-- **AARRR (Pirate Metrics)** - Acquisition, Activation, Retention, Referral, Revenue
-- **ICE Prioritization** - Every recommendation scored by Impact, Confidence, Ease
-- **Growth Equation** - Systematic approach: (New Users × Activation × Retention × Referral) - Churn
+### Pain → Solution Flow
+1. **Acknowledge the pain**: "You've read the blogs. You've tried 'just post consistently.' You're still stuck."
+2. **Show the difference**: "We actually research your competitors. Real traffic data. Real tactics."
+3. **Deliver the outcome**: "What to stop. What to start. What to try this week."
 
 ### What You Get
-- Competitive landscape analysis (real research, not generic)
-- What to STOP doing (with reasoning)
-- What to START doing (prioritized by impact)
+- Your competitors' actual traffic sources
+- What to STOP wasting time on
+- What to START doing (prioritized)
 - Quick wins for this week
-- 30-day action roadmap
-- Metrics to track success
+- 30-day roadmap built for your stage
 
 ### How It Works
-1. Tell us about your business (5-10 min form)
-2. We research your competitors and market
-3. Get your custom growth playbook
+1. Tell us about your startup (10 min)
+2. We research your competitors
+3. Get your playbook. Start executing tomorrow.
 
 ### Pricing
-- $9.99 for one strategy
+- $9.99. Once. No subscription. No account needed.
+- Free mini-audit to start (see the gaps before you pay)
 
 ### Social Proof
-- Sample output snippet (show quality)
+- Sample output snippet (let quality speak)
 - "Built by @handle" footer
 
 ---
@@ -123,7 +172,7 @@ Display these to prove there's real methodology:
 
 ### codes
 - `id`, `code` (unique), `credits`, `max_uses`, `used_count`, `expires_at`
-- Launch codes: REDDIT20, INDIEHACKERS, PRODUCTHUNT, LAUNCH, FRIEND
+- Launch codes: REDDIT, PRODUCTHUNT, LAUNCH, FRIEND
 
 ### free_audits
 - `id`, `email` (unique - enforces 1 per email), `input` (JSONB), `output` (TEXT)

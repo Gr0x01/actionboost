@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePostHog } from "posthog-js/react";
 import { config } from "@/lib/config";
 
 const features = [
   {
     name: "Competitive analysis",
-    description: "See what's working for others in your\u00A0space",
+    description: "See what's working for your\u00A0competitors",
     free: "Basic",
     paid: "Full",
   },
@@ -19,7 +20,7 @@ const features = [
   },
   {
     name: "Market overview",
-    description: "Understand your landscape before making\u00A0moves",
+    description: "Know the market before you\u00A0move",
     free: true,
     paid: true,
   },
@@ -31,7 +32,7 @@ const features = [
   },
   {
     name: "Quick wins for this week",
-    description: "Low-effort tactics you can ship\u00A0today",
+    description: "Quick tactics you can execute\u00A0today",
     free: false,
     paid: true,
   },
@@ -45,10 +46,12 @@ const features = [
 
 export function Pricing() {
   const [loading, setLoading] = useState(false);
+  const posthog = usePostHog();
 
   if (!config.pricingEnabled) return null;
 
   async function handleBuyCredits() {
+    posthog?.capture("pricing_cta_clicked", { tier: "paid", location: "pricing" });
     setLoading(true);
     try {
       const res = await fetch("/api/checkout/buy-credits", {
@@ -66,6 +69,10 @@ export function Pricing() {
     }
   }
 
+  function handleFreeTierClick() {
+    posthog?.capture("pricing_cta_clicked", { tier: "free", location: "pricing" });
+  }
+
   return (
     <section id="pricing" className="relative py-24 overflow-hidden">
       {/* Background elements */}
@@ -75,10 +82,10 @@ export function Pricing() {
         {/* Section header */}
         <div className="text-center mb-16 animate-fade-in">
           <span className="inline-block text-sm font-medium tracking-wide text-accent mb-3">
-            Simple pricing
+            Pricing
           </span>
           <h2 className="text-4xl sm:text-5xl font-bold text-foreground tracking-tight">
-            Choose your path
+            Two options. Pick one.
           </h2>
         </div>
 
@@ -99,6 +106,7 @@ export function Pricing() {
               <p className="text-sm text-muted mb-4">Mini audit</p>
               <Link
                 href="/start?tier=free"
+                onClick={handleFreeTierClick}
                 className="inline-block w-full py-2.5 px-4 rounded-lg text-sm font-semibold border-2 border-border text-foreground hover:border-primary hover:text-primary transition-colors"
               >
                 Try Free
@@ -130,6 +138,7 @@ export function Pricing() {
                 <p className="text-xs text-muted mb-3">Mini audit</p>
                 <Link
                   href="/start?tier=free"
+                  onClick={handleFreeTierClick}
                   className="inline-block w-full py-2 px-3 rounded-lg text-xs font-semibold border-2 border-border text-foreground hover:border-primary hover:text-primary transition-colors"
                 >
                   Try Free

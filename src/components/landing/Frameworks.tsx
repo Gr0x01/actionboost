@@ -28,14 +28,14 @@ export function Frameworks() {
         {/* Section header */}
         <div className="text-center mb-16">
           <span className="inline-block text-sm font-medium tracking-wide text-accent mb-3">
-            Proven Methodology
+            How it works
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
             Built on frameworks that <span className="text-gradient">actually work</span>
           </h2>
           <p className="mt-4 text-lg text-muted max-w-2xl mx-auto leading-relaxed">
-            Not random AI advice. Your action plan is grounded in the same frameworks used by
-            growth teams at top&nbsp;startups.
+            Not random AI advice. These are the frameworks growth teams actually use.
+            Now applied to your&nbsp;business.
           </p>
         </div>
 
@@ -79,7 +79,7 @@ export function Frameworks() {
                 (Users × Activation × Retention × Referral)&nbsp;−&nbsp;Churn
               </code>
               <br />
-              We find your biggest&nbsp;multiplier.
+              We find where to&nbsp;focus.
             </p>
           </div>
         </div>
