@@ -31,7 +31,9 @@ import { useUserContext } from "@/lib/hooks/useUserContext";
 
 const STORAGE_KEY = "actionboost-form-v3";
 const PREFILL_KEY = "actionboost-prefill";
+const HERO_PREFILL_KEY = "actionboost-hero-prefill";
 const PREFILL_TTL = 5 * 60 * 1000; // 5 minutes
+const HERO_PREFILL_TTL = 10 * 60 * 1000; // 10 minutes
 
 // View states for the form flow
 type ViewState = "loading" | "welcome_back" | "context_update" | "questions" | "checkout";
@@ -162,11 +164,44 @@ export default function StartPage() {
     }
   }, [isLoadingContext, hasContext, viewState]);
 
-  // Handle prefill from homepage URL input
+  // Handle prefill from homepage (hero textarea or URL input)
   useEffect(() => {
     if (prefillApplied.current) return;
     if (viewState !== "questions") return;
 
+    // Check for hero description prefill first (new landing page)
+    const heroPrefillRaw = localStorage.getItem(HERO_PREFILL_KEY);
+    if (heroPrefillRaw) {
+      try {
+        const heroPrefill = JSON.parse(heroPrefillRaw);
+
+        // Check TTL
+        if (Date.now() - heroPrefill.timestamp > HERO_PREFILL_TTL) {
+          localStorage.removeItem(HERO_PREFILL_KEY);
+        } else {
+          // Clear prefill to prevent re-application
+          localStorage.removeItem(HERO_PREFILL_KEY);
+          prefillApplied.current = true;
+
+          // Update form with product description and skip to question 3 (traction)
+          setForm((prev) => ({
+            ...prev,
+            productDescription: heroPrefill.productDescription || "",
+          }));
+          setCurrentQuestion(2); // Skip URL and product description, go to traction
+
+          posthog?.capture("form_prefilled_from_hero", {
+            type: "product_description",
+            char_count: heroPrefill.productDescription?.length || 0,
+          });
+          return;
+        }
+      } catch {
+        localStorage.removeItem(HERO_PREFILL_KEY);
+      }
+    }
+
+    // Check for URL prefill (footer CTA or legacy)
     const prefillRaw = localStorage.getItem(PREFILL_KEY);
     if (!prefillRaw) return;
 
@@ -207,6 +242,7 @@ export default function StartPage() {
       setCurrentQuestion(1); // Skip URL step, go to product description
 
       posthog?.capture("form_prefilled_from_hero", {
+        type: "url_metadata",
         has_title: !!prefill.metadata?.title,
         has_description: !!prefill.metadata?.description,
         url_domain: prefill.websiteUrl ? new URL(prefill.websiteUrl).hostname : null,

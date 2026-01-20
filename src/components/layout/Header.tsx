@@ -34,8 +34,7 @@ export function Header() {
   }, []);
 
   const navLinks = [
-    { href: "#how-it-works", label: "How it works" },
-    { href: "#features", label: "Features" },
+    { href: "/blog/our-growth-plan", label: "Our Plan" },
     { href: "#pricing", label: "Pricing" },
   ];
 
@@ -50,16 +49,20 @@ export function Header() {
 
           {/* Nav links - hidden on mobile */}
           <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="group relative text-[13px] font-semibold uppercase tracking-wide text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {link.label}
-                <span className="absolute -bottom-1 left-0 right-0 h-[3px] bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-              </a>
-            ))}
+            {navLinks.map((link) => {
+              const isExternal = link.href.startsWith("#");
+              const Component = isExternal ? "a" : Link;
+              return (
+                <Component
+                  key={link.href}
+                  href={link.href}
+                  className="group relative text-[13px] font-semibold uppercase tracking-wide text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {link.label}
+                  <span className="absolute -bottom-1 left-0 right-0 h-[3px] bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                </Component>
+              );
+            })}
           </nav>
 
           {/* Right side */}

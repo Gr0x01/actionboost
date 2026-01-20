@@ -1,4 +1,6 @@
 export { Hero } from "./Hero";
-export { Frameworks } from "./Frameworks";
-export { WhatYouGet } from "./WhatYouGet";
+export { ProblemSection } from "./ProblemSection";
+export { FrameworksSection } from "./FrameworksSection";
 export { Pricing } from "./Pricing";
+export { FooterCTA } from "./FooterCTA";
+export { TacticCard } from "./TacticCard";

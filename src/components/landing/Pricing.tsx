@@ -76,7 +76,8 @@ export function Pricing() {
   return (
     <section id="pricing" className="relative py-24 overflow-hidden">
       {/* Background elements */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface/30 to-transparent" />
+      <div className="absolute inset-0 bg-mesh" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface/50 to-transparent" />
 
       <div className="relative mx-auto max-w-4xl px-6">
         {/* Section header */}
@@ -84,10 +85,13 @@ export function Pricing() {
           <span className="inline-block text-sm font-medium tracking-wide text-accent mb-3">
             Pricing
           </span>
-          <h2 className="text-4xl sm:text-5xl font-bold text-foreground tracking-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground tracking-tight">
             A consultant charges $200/hr.{" "}
-            <span className="whitespace-nowrap">This is $9.99.</span>
+            <span className="text-gradient whitespace-nowrap">This is $9.99.</span>
           </h2>
+          <p className="mt-4 text-lg text-muted max-w-xl mx-auto">
+            Real competitive research. Actual tactics ranked by impact. A plan you can execute.
+          </p>
         </div>
 
         {/* Comparison table */}
@@ -115,8 +119,14 @@ export function Pricing() {
             </div>
 
             {/* Paid tier header */}
-            <div className="p-6 text-center border-l border-border bg-primary/5">
-              <h3 className="text-2xl font-bold text-foreground mb-1">
+            <div className="relative p-6 text-center border-l border-border bg-primary/5">
+              {/* Most Popular badge */}
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span className="px-3 py-1 text-xs font-semibold bg-cta text-white rounded-full shadow-sm">
+                  Most Popular
+                </span>
+              </div>
+              <h3 className="text-2xl font-bold text-foreground mb-1 mt-2">
                 {config.singlePrice}
               </h3>
               <p className="text-sm text-muted mb-4">Full action plan</p>

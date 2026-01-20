@@ -1,5 +1,11 @@
 import { Header, Footer } from "@/components/layout";
-import { Hero, Frameworks, WhatYouGet, Pricing } from "@/components/landing";
+import {
+  Hero,
+  ProblemSection,
+  FrameworksSection,
+  Pricing,
+  FooterCTA,
+} from "@/components/landing";
 
 export default function Home() {
   return (
@@ -8,9 +14,10 @@ export default function Home() {
 
       <main className="flex-1">
         <Hero />
-        <Frameworks />
-        <WhatYouGet />
+        <ProblemSection />
+        <FrameworksSection />
         <Pricing />
+        <FooterCTA />
       </main>
 
       <Footer />

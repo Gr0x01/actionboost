@@ -4,6 +4,8 @@
 
 *Generated: January 2026*
 
+**Status tracking:** [memory-bank/growth.md](../memory-bank/growth.md)
+
 ---
 
 ## Executive Summary
