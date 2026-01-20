@@ -81,7 +81,7 @@ transition-all duration-100
 
 ### Configuration
 - Supabase SMTP configured with Resend credentials
-- Sender: `hello@actionboo.st`
+- Sender: `team@actionboo.st`
 - Magic link template pasted in Supabase Auth dashboard
 
 ---

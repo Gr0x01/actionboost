@@ -2,7 +2,7 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const FROM_EMAIL = "Actionboo.st <hello@actionboo.st>";
+const FROM_EMAIL = "Actionboo.st <team@actionboo.st>";
 
 // Brand colors
 const COLORS = {

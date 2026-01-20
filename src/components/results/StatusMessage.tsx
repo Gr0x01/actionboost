@@ -1,128 +1,146 @@
 "use client";
 
-import { Loader2, AlertCircle, Clock, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Check, X } from "lucide-react";
 import Link from "next/link";
 
-type Status = "pending" | "processing" | "failed";
+type Status = "pending" | "processing" | "complete" | "failed";
 
 interface StatusMessageProps {
   status: Status;
+  message?: string;
+  submessage?: string;
 }
 
-export function StatusMessage({ status }: StatusMessageProps) {
+export function StatusMessage({ status, message, submessage }: StatusMessageProps) {
+  // Complete state
+  if (status === "complete") {
+    return (
+      <div className="max-w-lg mx-auto text-center py-16 px-6">
+        <div className="mb-8">
+          <div className="w-20 h-20 mx-auto border-[3px] border-green-600 bg-green-600 flex items-center justify-center shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
+            <Check className="w-10 h-10 text-white" />
+          </div>
+        </div>
+        <h1 className="text-2xl sm:text-3xl font-black text-foreground mb-3">
+          {message || "Action plan ready!"}
+        </h1>
+        <p className="text-foreground/60 max-w-md mx-auto">
+          {submessage || "Redirecting you to your results"}
+        </p>
+      </div>
+    );
+  }
+
+  // Failed state
   if (status === "failed") {
     return (
-      <div className="max-w-md mx-auto text-center py-16 px-6">
-        {/* Error icon with glow */}
-        <div className="relative inline-flex mb-8">
-          <div className="absolute inset-0 bg-red-500/20 rounded-full blur-xl animate-pulse" />
-          <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-red-500/10 border border-red-500/20">
-            <AlertCircle className="h-10 w-10 text-red-500" />
+      <div className="max-w-lg mx-auto text-center py-16 px-6">
+        <div className="mb-8">
+          <div className="w-20 h-20 mx-auto border-[3px] border-red-500 bg-red-500 flex items-center justify-center shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
+            <X className="w-10 h-10 text-white" />
           </div>
         </div>
 
-        <h1 className="text-2xl font-light text-foreground mb-3">
-          Something went wrong
+        <h1 className="text-2xl sm:text-3xl font-black text-foreground mb-3">
+          {message || "Something went wrong"}
         </h1>
-        <p className="text-muted mb-8">
-          We encountered an error while generating your action plan.
-          <br />
-          Please try again or contact support.
+        <p className="text-foreground/60 mb-8">
+          {submessage || (
+            <>
+              We encountered an error while generating your action plan.
+              <br />
+              Please try again or contact support.
+            </>
+          )}
         </p>
 
         <div className="flex items-center justify-center gap-3">
-          <Link href="/start">
-            <Button>Try Again</Button>
+          <Link
+            href="/start"
+            className="px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100"
+          >
+            Try Again
           </Link>
-          <a href="mailto:support@actionboo.st">
-            <Button variant="ghost">Contact Support</Button>
+          <a
+            href="mailto:team@actionboo.st"
+            className="px-6 py-3 bg-transparent text-foreground font-bold border-2 border-foreground/30 hover:border-foreground transition-colors"
+          >
+            Contact Support
           </a>
         </div>
       </div>
     );
   }
 
-  // Processing/pending state
+  // Pending/processing state
   return (
-    <div className="max-w-md mx-auto text-center py-16 px-6">
-      {/* Animated loading visual */}
-      <div className="relative inline-flex mb-10">
-        {/* Outer glow ring - pulses */}
-        <div className="absolute inset-0 bg-primary/20 rounded-full blur-2xl animate-pulse" />
-
-        {/* Spinning outer ring */}
-        <div className="relative h-24 w-24">
-          <svg className="absolute inset-0 h-24 w-24 animate-spin" style={{ animationDuration: "3s" }}>
-            <circle
-              cx="48"
-              cy="48"
-              r="44"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeDasharray="20 10"
-              className="text-primary/30"
-            />
-          </svg>
-
-          {/* Inner icon */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            {status === "pending" ? (
-              <Clock className="h-10 w-10 text-primary/70" />
-            ) : (
-              <Sparkles className="h-10 w-10 text-primary animate-pulse" />
-            )}
-          </div>
-        </div>
-      </div>
-
-      <h1 className="text-2xl font-light text-foreground mb-2">
-        {status === "pending"
-          ? "Preparing your action plan..."
-          : "Generating your action plan..."}
+    <div className="max-w-lg mx-auto text-center py-16 px-6">
+      <h1 className="text-2xl sm:text-3xl font-black text-foreground mb-3">
+        {message || (status === "pending" ? "Preparing your action plan" : "Generating your action plan")}
+        <span className="inline-block w-8 text-left animate-pulse">...</span>
       </h1>
-
-      <p className="text-muted mb-8">
-        {status === "pending"
-          ? "Setting up the analysis. This usually takes a moment."
-          : "Analyzing your business, researching competitors, crafting personalized tactics."}
+      <p className="text-foreground/60 max-w-md mx-auto">
+        {submessage || (status === "pending"
+          ? "Setting up the analysis."
+          : "Analyzing your business, researching competitors, crafting personalized tactics.")}
       </p>
 
-      {/* Progress steps */}
-      <div className="flex items-center justify-center gap-8 text-sm">
-        <div className="flex flex-col items-center gap-2">
-          <div
-            className={`h-2 w-2 rounded-full transition-colors ${
-              status === "processing" ? "bg-green-500" : "bg-primary animate-pulse"
-            }`}
+      <div className="mt-10">
+        <div className="flex justify-center items-center gap-4">
+          <StepIndicator
+            label="Research"
+            active={status === "pending" || status === "processing"}
+            complete={status === "processing"}
           />
-          <span className={status === "processing" ? "text-green-500" : "text-primary"}>
-            Research
-          </span>
-        </div>
-        <div className="h-px w-8 bg-border" />
-        <div className="flex flex-col items-center gap-2">
-          <div
-            className={`h-2 w-2 rounded-full transition-colors ${
-              status === "processing" ? "bg-primary animate-pulse" : "bg-border"
-            }`}
+          <div className="w-8 h-0.5 bg-foreground/20" />
+          <StepIndicator
+            label="Analysis"
+            active={status === "processing"}
+            complete={false}
           />
-          <span className={status === "processing" ? "text-primary" : "text-muted"}>
-            Analysis
-          </span>
+          <div className="w-8 h-0.5 bg-foreground/20" />
+          <StepIndicator
+            label="Action Plan"
+            active={false}
+            complete={false}
+          />
         </div>
-        <div className="h-px w-8 bg-border" />
-        <div className="flex flex-col items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-border" />
-          <span className="text-muted">Action Plan</span>
-        </div>
+
+        <p className="text-sm text-foreground/40 font-mono mt-6">
+          This typically takes 2-3 minutes
+        </p>
       </div>
+    </div>
+  );
+}
 
-      {/* Time estimate */}
-      <p className="mt-8 text-xs text-muted/70">
-        This typically takes 2-3 minutes
-      </p>
+function StepIndicator({
+  label,
+  active,
+  complete,
+}: {
+  label: string;
+  active: boolean;
+  complete: boolean;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <div
+        className={`w-3 h-3 transition-colors ${
+          complete
+            ? "bg-green-600"
+            : active
+            ? "bg-cta"
+            : "bg-foreground/20"
+        }`}
+      />
+      <span
+        className={`text-xs font-bold ${
+          active || complete ? "text-foreground" : "text-foreground/40"
+        }`}
+      >
+        {label}
+      </span>
     </div>
   );
 }

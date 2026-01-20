@@ -434,6 +434,6 @@ Transactional email service for receipts and magic links.
 RESEND_API_KEY
 ```
 
-**Sender**: `hello@actionboo.st`
+**Sender**: `team@actionboo.st`
 
 ---
