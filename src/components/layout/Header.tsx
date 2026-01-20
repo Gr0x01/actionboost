@@ -36,6 +36,7 @@ export function Header() {
     { href: "/#how-it-works", label: "How It Works" },
     { href: "/#pricing", label: "Pricing" },
     { href: "/blog/our-growth-plan", label: "Our Plan" },
+    { href: "/about", label: "About" },
   ];
 
   return (
