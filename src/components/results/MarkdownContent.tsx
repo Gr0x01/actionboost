@@ -142,17 +142,55 @@ export function MarkdownContent({ content, className = "", extended = false }: M
     if (currentCodeBlock && extended) {
       const content = currentCodeBlock.lines.join("\n").trim();
 
-      // Check if this is a flywheel/cycle diagram (single line with → arrows)
-      const isFlywheel = content.includes("→") && !content.includes("\n") && content.split("→").length >= 4;
+      // Check if this is a flywheel/cycle diagram
+      // Single-line format: [Step 1] → [Step 2] → [Step 3] → [Step 4]
+      // Multi-line format:
+      //   [Step 1] → [Step 2] → [Step 3]
+      //        ↑                      ↓
+      //   [Step 6] ←←← [Step 5] ←←← [Step 4]
+      const isSingleLineFlywheel = content.includes("→") && !content.includes("\n") && content.split("→").length >= 4;
+      const isMultiLineFlywheel = content.includes("→") && content.includes("←") && content.includes("↑") && content.includes("↓");
+      const isFlywheel = isSingleLineFlywheel || isMultiLineFlywheel;
 
       if (isFlywheel) {
-        // Parse flywheel steps
-        const steps = content.split("→").map(s => s.trim()).filter(Boolean);
+        let topRow: string[] = [];
+        let bottomRow: string[] = [];
 
-        // Split into two rows for circular flow visualization
-        const midpoint = Math.ceil(steps.length / 2);
-        const topRow = steps.slice(0, midpoint);
-        const bottomRow = steps.slice(midpoint).reverse(); // Reverse for counter-flow
+        if (isSingleLineFlywheel) {
+          // Parse single-line flywheel
+          const steps = content.split("→").map(s => s.trim()).filter(Boolean);
+          const midpoint = Math.ceil(steps.length / 2);
+          topRow = steps.slice(0, midpoint);
+          bottomRow = steps.slice(midpoint).reverse();
+        } else {
+          // Parse multi-line flywheel
+          const lines = content.split("\n");
+          // Top line: contains → arrows
+          const topLine = lines.find(l => l.includes("→") && !l.includes("←"));
+          // Bottom line: contains ← arrows
+          const bottomLine = lines.find(l => l.includes("←"));
+
+          if (topLine) {
+            // Extract steps from brackets or split by →
+            const bracketMatches = topLine.match(/\[([^\]]+)\]/g);
+            if (bracketMatches) {
+              topRow = bracketMatches.map(m => m.slice(1, -1).trim());
+            } else {
+              topRow = topLine.split("→").map(s => s.trim()).filter(Boolean);
+            }
+          }
+
+          if (bottomLine) {
+            // Extract steps from brackets or split by ←
+            const bracketMatches = bottomLine.match(/\[([^\]]+)\]/g);
+            if (bracketMatches) {
+              // Reverse to maintain left-to-right reading order for display
+              bottomRow = bracketMatches.map(m => m.slice(1, -1).trim()).reverse();
+            } else {
+              bottomRow = bottomLine.split(/←+/).map(s => s.trim()).filter(Boolean).reverse();
+            }
+          }
+        }
 
         elements.push(
           <div key={keyIndex++} className="mb-6 py-6">
