@@ -132,13 +132,20 @@ export function CheckoutSection({
       className="text-center space-y-8 w-full"
     >
       {/* Header */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         <h2 className="text-3xl sm:text-4xl font-light text-foreground tracking-tight">
           Ready to <span className="font-black">generate your plan</span>
         </h2>
         <p className="text-foreground/60 text-lg max-w-lg mx-auto">
           Our AI will analyze your inputs and create a custom growth playbook
         </p>
+        {/* Guarantee badge - prominent placement */}
+        {!hasValidCode && !hasCredits && (
+          <div className="flex items-center justify-center gap-2 text-sm text-foreground/70 font-medium">
+            <Check className="w-5 h-5 text-green-600" />
+            <span>7-day money-back guarantee</span>
+          </div>
+        )}
       </div>
 
       {/* Email input for promo code users */}
@@ -174,7 +181,7 @@ export function CheckoutSection({
         </div>
       )}
 
-      {/* Action row - Back left, CTA right (matches question screens) */}
+      {/* Action row - Back left, buttons right */}
       {!showFreeOption && (
         <div className="flex items-center justify-between mt-4">
           {onBack ? (
@@ -189,70 +196,72 @@ export function CheckoutSection({
           ) : (
             <div />
           )}
-          <button
-            type="button"
-            onClick={() => {
-              posthog?.capture("checkout_initiated", {
-                method: hasCredits ? "credits" : hasValidCode ? "code" : "stripe",
-                credits_available: userCredits,
-              });
-              onSubmit();
-            }}
-            disabled={isSubmitting || (hasValidCode && !canSubmitWithCode)}
-            className={`flex items-center gap-1.5 px-6 py-3 text-base font-bold transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed ${
-              hasCredits || hasValidCode
-                ? "bg-green-600 text-white border-2 border-green-600 shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 disabled:hover:shadow-[3px_3px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0"
-                : "bg-cta text-white border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 disabled:hover:shadow-[3px_3px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0"
-            }`}
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Processing...
-              </>
-            ) : hasCredits ? (
-              <>
-                Use 1 Credit
-                <span className="text-white/70">({userCredits})</span>
-                <ArrowRight className="w-4 h-4" />
-              </>
-            ) : hasValidCode ? (
-              <>
-                Generate Plan
-                <ArrowRight className="w-4 h-4" />
-              </>
-            ) : (
-              <>
-                {config.singlePrice}
-                <ArrowRight className="w-4 h-4" />
-              </>
-            )}
-          </button>
-        </div>
-      )}
-      {!hasValidCode && !hasCredits && !showFreeOption && (
-        <p className="text-xs text-foreground/50 flex items-center justify-center gap-1.5">
-          <span className="text-green-600">✓</span>
-          7-day money-back guarantee
-        </p>
-      )}
 
-      {/* Free mini-audit option - hide when logged in */}
-      {!hasValidCode && formData && !isLoggedIn && (
-        <div className="pt-2">
-          {!showFreeOption ? (
+          {/* Button group - Free ghost + Paid CTA */}
+          <div className="flex items-center gap-3">
+            {/* Ghost free button - only show when not logged in and no credits/code */}
+            {!hasValidCode && !hasCredits && formData && !isLoggedIn && (
+              <button
+                type="button"
+                onClick={() => {
+                  posthog?.capture("free_audit_option_clicked");
+                  setShowFreeOption(true);
+                }}
+                className="px-5 py-3 text-base font-bold bg-transparent text-foreground border-2 border-foreground/30 transition-all duration-100 hover:border-foreground hover:shadow-[3px_3px_0_0_rgba(44,62,80,0.3)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5"
+              >
+                Free Preview
+              </button>
+            )}
+
+            {/* Main CTA */}
             <button
               type="button"
               onClick={() => {
-                posthog?.capture("free_audit_option_clicked");
-                setShowFreeOption(true);
+                posthog?.capture("checkout_initiated", {
+                  method: hasCredits ? "credits" : hasValidCode ? "code" : "stripe",
+                  credits_available: userCredits,
+                });
+                onSubmit();
               }}
-              className="group text-sm text-foreground/60 hover:text-foreground transition-colors flex items-center gap-2 mx-auto"
+              disabled={isSubmitting || (hasValidCode && !canSubmitWithCode)}
+              className={`flex items-center gap-1.5 px-6 py-3 text-base font-bold transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed ${
+                hasCredits || hasValidCode
+                  ? "bg-green-600 text-white border-2 border-green-600 shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 disabled:hover:shadow-[3px_3px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0"
+                  : "bg-cta text-white border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 disabled:hover:shadow-[3px_3px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0"
+              }`}
             >
-              <Sparkles className="w-4 h-4 text-cta" />
-              <span>Just want a taste? Get a free mini-audit</span>
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Processing...
+                </>
+              ) : hasCredits ? (
+                <>
+                  Use 1 Credit
+                  <span className="text-white/70">({userCredits})</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              ) : hasValidCode ? (
+                <>
+                  Generate Plan
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              ) : (
+                <>
+                  {config.singlePrice}
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
-          ) : (
+          </div>
+        </div>
+      )}
+
+
+      {/* Free mini-audit expanded form */}
+      {!hasValidCode && formData && !isLoggedIn && showFreeOption && (
+        <div className="pt-2">
+          {(
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -307,65 +316,65 @@ export function CheckoutSection({
         </div>
       )}
 
-      {/* Promo code section - hide when user has credits */}
-      {!hasCredits && (
-      <div>
-        {!showCode && !hasValidCode && !showFreeOption && (
-          <button
-            onClick={() => {
-              posthog?.capture("promo_code_toggled");
-              setShowCode(true);
-            }}
-            className="text-sm text-cta hover:text-cta/80 transition-colors underline underline-offset-2"
-          >
-            Have a promo code?
-          </button>
-        )}
-
-        {showCode && !hasValidCode && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            className="max-w-sm mx-auto mt-4 space-y-3"
-          >
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={promoCode}
-                onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                placeholder="Enter code"
-                className="flex-1 px-4 py-3 border-2 border-foreground/30 bg-background text-sm text-foreground placeholder:text-foreground/30 focus:border-foreground focus:outline-none font-mono tracking-wider"
-              />
-              <button
-                onClick={validateCode}
-                disabled={!promoCode.trim() || isValidatingCode}
-                className="px-5 py-3 bg-foreground text-background text-sm font-bold border-2 border-foreground hover:bg-foreground/90 transition-colors disabled:opacity-50"
-              >
-                {isValidatingCode ? <Loader2 className="w-4 h-4 animate-spin" /> : "Apply"}
-              </button>
-            </div>
-            {codeStatus && !codeStatus.valid && (
-              <p className="text-sm text-red-500 font-bold">{codeStatus.error || "Invalid code"}</p>
-            )}
-          </motion.div>
-        )}
-
-        {hasValidCode && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-bold"
-          >
-            <Check className="w-4 h-4" />
-            <span className="text-sm">
-              {codeStatus?.credits} free {codeStatus?.credits === 1 ? "action plan" : "action plans"}
-            </span>
-            <button onClick={clearCode} className="text-white/70 hover:text-white ml-1 text-lg leading-none">
-              ×
+      {/* Promo code - click to expand */}
+      {!hasValidCode && !hasCredits && !showFreeOption && (
+        <div className="space-y-3">
+          {!showCode ? (
+            <button
+              onClick={() => {
+                posthog?.capture("promo_code_toggled");
+                setShowCode(true);
+              }}
+              className="text-sm text-foreground/50 hover:text-foreground transition-colors underline underline-offset-2"
+            >
+              Have a promo code?
             </button>
-          </motion.div>
-        )}
-      </div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              className="max-w-xs mx-auto space-y-2"
+            >
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                  placeholder="Enter code"
+                  autoFocus
+                  className="flex-1 px-3 py-2 border-2 border-foreground/20 bg-background text-sm text-foreground placeholder:text-foreground/30 focus:border-foreground focus:outline-none font-mono tracking-wider"
+                />
+                <button
+                  onClick={validateCode}
+                  disabled={!promoCode.trim() || isValidatingCode}
+                  className="px-4 py-2 bg-foreground text-background text-sm font-bold border-2 border-foreground hover:bg-foreground/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isValidatingCode ? <Loader2 className="w-4 h-4 animate-spin" /> : "Apply"}
+                </button>
+              </div>
+              {codeStatus && !codeStatus.valid && (
+                <p className="text-sm text-red-500 font-bold">{codeStatus.error || "Invalid code"}</p>
+              )}
+            </motion.div>
+          )}
+        </div>
+      )}
+
+      {/* Valid code badge */}
+      {hasValidCode && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-bold"
+        >
+          <Check className="w-4 h-4" />
+          <span className="text-sm">
+            {codeStatus?.credits} free {codeStatus?.credits === 1 ? "action plan" : "action plans"}
+          </span>
+          <button onClick={clearCode} className="text-white/70 hover:text-white ml-1 text-lg leading-none">
+            ×
+          </button>
+        </motion.div>
       )}
 
     </motion.div>
