@@ -1,6 +1,37 @@
-# Current: Resend Email Integration
+# Current: Landing Page Visual Refresh
 
-## Latest Update: Resend Email Integration ✅
+## Latest Update: Brutalist + Tactile Redesign ✅
+
+**Completed Jan 2025** - New visual direction for landing page.
+
+### What Was Built
+- **Hero section**: Brutalist cards with harsh offset shadows, tactile button (lift on hover, squish on press)
+- **FrameworksSection**: Same brutalist treatment, scroll-spy sidebar with left-border indicator
+- **Visual direction established**: See `decisions.md` for full style guide
+
+### Key Patterns
+```
+/* Brutalist card */
+border-[3px] border-foreground bg-background shadow-[6px_6px_0_0_rgba(44,62,80,1)]
+
+/* Tactile interaction */
+hover:shadow-[6px_6px_0_0_...] hover:-translate-y-0.5
+active:shadow-none active:translate-y-1
+transition-all duration-100
+```
+
+### Files Changed
+- `src/components/landing/Hero.tsx` - Brutalist form + CTA
+- `src/components/landing/FrameworksSection.tsx` - Brutalist content cards, left-border nav
+
+### Next: Apply to Results Page
+- Wrap sections in brutalist frames
+- Keep content readable (Tienne serif, max-w-prose)
+- Tactile action buttons
+
+---
+
+## Previous: Resend Email Integration ✅
 
 **Completed Jan 2025** - Branded transactional emails via Resend.
 

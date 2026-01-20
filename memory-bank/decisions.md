@@ -4,6 +4,64 @@ Key architectural and product decisions. Reference this when you need to underst
 
 ---
 
+## Visual Style: Brutalist + Tactile Hybrid (Jan 2025)
+
+**Decision**: Brutalist structure with satisfying tactile interactions.
+
+**Brand vibe**: Snarky, quirky, funny but helpful. A $9.99 kick-in-the-ass tool that helps scrappy founders make money. NOT serious enterprise SaaS. NOT another polished AI landing page.
+
+**Why not editorial**: Editorial/magazine style (big serif type, dramatic whitespace) has been overdone. Every SaaS looks like this now. Doesn't match our irreverent personality.
+
+**The hybrid approach**:
+- **Brutalist structure**: Hard edges, no border-radius, harsh offset shadows, high contrast
+- **Tactile feedback**: Buttons lift on hover, squish on press. Fast 100ms transitions. Feels satisfying to click.
+
+**Implementation patterns**:
+```css
+/* Brutalist card */
+.brutalist-card {
+  border: 3px solid var(--foreground);
+  background: var(--background);
+  box-shadow: 6px 6px 0 0 rgba(44,62,80,1);
+}
+
+/* Tactile button */
+.tactile-button {
+  box-shadow: 4px 4px 0 0 rgba(44,62,80,1);
+  transition: all 100ms;
+}
+.tactile-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0 0 rgba(44,62,80,1);
+}
+.tactile-button:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+```
+
+**Typography**:
+- Headlines: Light/black weight contrast ("Stop guessing. **Start growing.**")
+- Taglines: Mono, uppercase, tracked out (`$9.99 → 30-day growth plan → no fluff`)
+- Body: Source Sans 3, readable
+
+**Colors**:
+- Keep warm cream background (`--background: #FDFCFB`)
+- Keep orange CTA (`--cta: #E67E22`) - it screams, which is good
+- Foreground for borders/shadows (`--foreground: #2C3E50`)
+
+**What this affects**:
+- Landing page: Hero, FrameworksSection (done)
+- Results page: Should adopt same brutalist cards for sections
+- Forms: Brutalist inputs with hard borders
+- Any new components
+
+**What to preserve**:
+- Tweet cards in ProblemSection stay rounded (intentional contrast: "lost founders" vs "solid solution")
+- Results page content stays readable (Tienne serif, max-w-prose) - brutalist frames, readable content inside
+
+---
+
 ## Results Page: Document Style
 
 **Decision**: Clean document layout over SaaS dashboard aesthetic.

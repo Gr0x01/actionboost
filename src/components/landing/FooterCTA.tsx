@@ -89,44 +89,46 @@ export function FooterCTA() {
   };
 
   return (
-    <section className="relative py-20 bg-navy overflow-hidden">
-      {/* Subtle gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-navy via-navy to-primary/20" />
-
-      <div className="relative max-w-2xl mx-auto px-6 text-center">
+    <section className="relative py-24 bg-foreground">
+      <div className="max-w-7xl mx-auto px-6 text-center">
         {/* Headline */}
-        <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 animate-fade-in">
-          Ready to stop guessing?
+        <p className="font-mono text-xs tracking-[0.15em] text-background/50 uppercase mb-4">
+          Let's go
+        </p>
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-background tracking-tight mb-4">
+          Ready to <span className="font-black">stop guessing?</span>
         </h2>
-        <p className="text-lg text-white/70 mb-8 animate-fade-in">
-          Tell us about your startup. Get a real growth plan.
+        <p className="text-lg text-background/60 mb-10">
+          Drop your URL. Get a real growth plan.
         </p>
 
-        {/* URL Input */}
-        <div className="max-w-md mx-auto mb-6 animate-slide-up">
-          <div className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-xl px-4 py-3.5 focus-within:border-white/40 focus-within:ring-2 focus-within:ring-white/20 transition-all">
-            {favicon ? (
-              <img
-                src={favicon}
-                alt=""
-                className="w-5 h-5 rounded shrink-0"
+        {/* URL Input - brutalist style */}
+        <div className="max-w-lg mx-auto mb-6">
+          <div className="flex border-[3px] border-background bg-foreground">
+            <div className="flex items-center gap-3 flex-1 px-4 py-3">
+              {favicon ? (
+                <img
+                  src={favicon}
+                  alt=""
+                  className="w-5 h-5 shrink-0"
+                />
+              ) : (
+                <Globe className="w-5 h-5 text-background/40 shrink-0" />
+              )}
+              <input
+                type="url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="yourproduct.com"
+                disabled={isAnalyzing}
+                className="flex-1 bg-transparent text-base text-background placeholder:text-background/30 outline-none min-w-0"
               />
-            ) : (
-              <Globe className="w-5 h-5 text-white/50 shrink-0" />
-            )}
-            <input
-              type="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="yourproduct.com"
-              disabled={isAnalyzing}
-              className="flex-1 bg-transparent text-base sm:text-lg text-white placeholder:text-white/40 outline-none min-w-0"
-            />
+            </div>
             <button
               onClick={handleAnalyze}
               disabled={!url.trim() || isAnalyzing}
-              className="shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-lg bg-cta text-white text-sm font-medium hover:bg-cta-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="shrink-0 flex items-center gap-2 px-6 py-3 bg-cta text-white font-bold border-l-[3px] border-background hover:bg-cta-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-100"
             >
               {isAnalyzing ? (
                 <>
@@ -144,7 +146,7 @@ export function FooterCTA() {
         </div>
 
         {/* Skip link */}
-        <p className="text-sm text-white/50 animate-slide-up stagger-1">
+        <p className="text-sm text-background/40 font-mono">
           <Link
             href="/start"
             onClick={() =>
@@ -153,9 +155,9 @@ export function FooterCTA() {
                 button: "skip_url",
               })
             }
-            className="text-white/70 hover:text-white hover:underline transition-colors"
+            className="text-background/60 hover:text-background underline underline-offset-2 transition-colors"
           >
-            No website yet? Start anyway
+            No website yet? Start anyway →
           </Link>
         </p>
       </div>

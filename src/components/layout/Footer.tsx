@@ -2,30 +2,30 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="bg-navy text-white/90">
-      <div className="mx-auto max-w-6xl px-6 py-12">
+    <footer className="bg-foreground text-background">
+      <div className="mx-auto max-w-7xl px-6 py-10">
         <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
           {/* Brand */}
           <div>
-            <span className="text-lg font-semibold text-white">
-              Actionboo.st
+            <span className="text-base font-black tracking-tight text-background">
+              ACTIONBOO.ST
             </span>
-            <p className="mt-1 text-sm text-white/60">
-              AI-powered action plan for startups and entrepreneurs
+            <p className="mt-1 text-sm text-background/50">
+              Growth plans that don't suck.
             </p>
           </div>
 
           {/* Links */}
-          <div className="flex gap-6 text-sm">
+          <div className="flex gap-6 text-sm font-mono">
             <Link
               href="/terms"
-              className="text-white/60 hover:text-white transition-colors"
+              className="text-background/50 hover:text-background transition-colors"
             >
               Terms
             </Link>
             <Link
               href="/privacy"
-              className="text-white/60 hover:text-white transition-colors"
+              className="text-background/50 hover:text-background transition-colors"
             >
               Privacy
             </Link>
@@ -33,8 +33,8 @@ export function Footer() {
         </div>
 
         {/* Copyright */}
-        <div className="mt-8 pt-6 border-t border-white/10 text-center text-sm text-white/40">
-          &copy; {new Date().getFullYear()} Actionboo.st. All rights reserved.
+        <div className="mt-8 pt-6 border-t border-background/20 text-center text-xs text-background/40 font-mono">
+          &copy; {new Date().getFullYear()} Actionboo.st
         </div>
       </div>
     </footer>

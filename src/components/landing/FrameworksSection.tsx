@@ -37,222 +37,180 @@ const FRAMEWORKS: Framework[] = [
   },
 ];
 
-// Document preview wrapper component
-function DocumentPreview({ filename, children }: { filename: string; children: React.ReactNode }) {
+// AARRR section content
+function AARRRContent() {
   return (
-    <div className="bg-background rounded-xl border border-border/60 shadow-md overflow-hidden">
-      {/* Document header */}
-      <div className="px-6 py-4 border-b border-border/30 bg-surface/30">
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-red-400/60" />
-          <div className="w-3 h-3 rounded-full bg-yellow-400/60" />
-          <div className="w-3 h-3 rounded-full bg-green-400/60" />
-          <span className="ml-3 text-xs text-muted">{filename}</span>
-        </div>
-      </div>
-      {/* Document content */}
-      <div className="p-6 max-h-[500px] overflow-y-auto">
-        <article className="font-serif text-[15px] leading-[1.75] text-foreground/90">
-          {children}
-        </article>
-      </div>
-      {/* Fade overlay at bottom */}
-      <div
-        className="h-16 -mt-16 relative z-10 pointer-events-none"
-        style={{ background: "linear-gradient(to bottom, transparent, var(--background))" }}
-      />
-    </div>
-  );
-}
-
-// AARRR section - actual strategy output
-function AARRRCard() {
-  return (
-    <DocumentPreview filename="your-growth-strategy.md">
-      <h2 className="text-xl font-bold text-foreground mb-4 font-sans">Current Situation Analysis</h2>
-
-      <h3 className="text-base font-semibold text-foreground mt-6 mb-3 font-sans">
-        AARRR Funnel Breakdown
+    <>
+      <h3 className="text-lg font-bold text-foreground mb-4">
+        Your AARRR Funnel Breakdown
       </h3>
 
       <div className="overflow-x-auto mb-6">
-        <table className="w-full text-sm border-collapse">
+        <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-border/50">
-              <th className="text-left py-2 pr-4 font-sans font-semibold text-foreground">Stage</th>
-              <th className="text-left py-2 pr-4 font-sans font-semibold text-foreground">Metric</th>
-              <th className="text-left py-2 font-sans font-semibold text-foreground">Status</th>
+            <tr className="border-b-2 border-foreground">
+              <th className="text-left py-2 pr-4 font-bold text-foreground">Stage</th>
+              <th className="text-left py-2 pr-4 font-bold text-foreground">Metric</th>
+              <th className="text-left py-2 font-bold text-foreground">Status</th>
             </tr>
           </thead>
-          <tbody className="text-muted">
-            <tr className="border-b border-border/30">
-              <td className="py-2 pr-4 font-sans font-medium text-foreground">Acquisition</td>
-              <td className="py-2 pr-4">2,000 visitors/mo</td>
-              <td className="py-2 text-amber-600">Needs work</td>
+          <tbody className="font-mono text-sm">
+            <tr className="border-b border-foreground/20">
+              <td className="py-3 pr-4 font-sans font-semibold">Acquisition</td>
+              <td className="py-3 pr-4 text-foreground/70">2,000 visitors/mo</td>
+              <td className="py-3 text-amber-600 font-semibold">Needs work</td>
             </tr>
-            <tr className="border-b border-border/30">
-              <td className="py-2 pr-4 font-sans font-medium text-foreground">Activation</td>
-              <td className="py-2 pr-4">15% start form</td>
-              <td className="py-2 text-green-600">Healthy</td>
+            <tr className="border-b border-foreground/20">
+              <td className="py-3 pr-4 font-sans font-semibold">Activation</td>
+              <td className="py-3 pr-4 text-foreground/70">15% start form</td>
+              <td className="py-3 text-green-600 font-semibold">Healthy</td>
             </tr>
-            <tr className="border-b border-border/30">
-              <td className="py-2 pr-4 font-sans font-medium text-foreground">Retention</td>
-              <td className="py-2 pr-4">10% return</td>
-              <td className="py-2 text-amber-600">Needs work</td>
+            <tr className="border-b border-foreground/20">
+              <td className="py-3 pr-4 font-sans font-semibold">Retention</td>
+              <td className="py-3 pr-4 text-foreground/70">10% return</td>
+              <td className="py-3 text-amber-600 font-semibold">Needs work</td>
             </tr>
-            <tr className="border-b border-border/30">
-              <td className="py-2 pr-4 font-sans font-medium text-foreground">Referral</td>
-              <td className="py-2 pr-4">5% share rate</td>
-              <td className="py-2 text-red-600">Critical gap</td>
+            <tr className="border-b border-foreground/20">
+              <td className="py-3 pr-4 font-sans font-semibold">Referral</td>
+              <td className="py-3 pr-4 text-foreground/70">5% share rate</td>
+              <td className="py-3 text-red-600 font-semibold">Critical gap</td>
             </tr>
             <tr>
-              <td className="py-2 pr-4 font-sans font-medium text-foreground">Revenue</td>
-              <td className="py-2 pr-4">3% conversion</td>
-              <td className="py-2 text-green-600">Healthy</td>
+              <td className="py-3 pr-4 font-sans font-semibold">Revenue</td>
+              <td className="py-3 pr-4 text-foreground/70">3% conversion</td>
+              <td className="py-3 text-green-600 font-semibold">Healthy</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <p className="mb-4">
-        <strong className="font-sans">Primary leak:</strong> Referral. Users who love the product aren't
-        sharing it. The share link exists but isn't promoted post-purchase.
+      <p className="text-foreground/80 leading-relaxed">
+        <span className="font-bold text-foreground">Primary leak:</span> Referral. Users who love the product aren't sharing it.{" "}
+        <span className="font-bold text-foreground">Secondary leak:</span> Acquisition. Zero organic traffic pipeline.
       </p>
-
-      <p>
-        <strong className="font-sans">Secondary leak:</strong> Acquisition. Zero organic traffic pipeline.
-        All growth depends on manual promotion.
-      </p>
-    </DocumentPreview>
+    </>
   );
 }
 
-// ICE section - actual strategy output with scored tactics
-function ICECard() {
+// ICE section content
+function ICEContent() {
   return (
-    <DocumentPreview filename="your-growth-strategy.md">
-      <h2 className="text-xl font-bold text-foreground mb-4 font-sans">Start Doing (ICE-Prioritized)</h2>
-
-      <h3 className="text-base font-semibold text-foreground mt-6 mb-2 font-sans">
-        1. Publish This Growth Plan as Content Marketing
+    <>
+      <h3 className="text-lg font-bold text-foreground mb-6">
+        Start Doing (ICE-Prioritized)
       </h3>
-      <p className="text-sm font-medium mb-3 font-sans">
-        <span className="text-cta">ICE Score: 10/9/9 = 28</span>
-      </p>
-      <p className="mb-4">
-        This document is the first piece of social proof. It demonstrates the quality of
-        output, your expertise in growth, and a real strategy—not generic advice.
-      </p>
 
-      <hr className="border-border/30 my-6" />
+      <div className="space-y-6">
+        <div className="border-l-4 border-cta pl-4">
+          <div className="flex items-baseline gap-3 mb-1">
+            <span className="font-mono text-xs bg-cta text-white px-2 py-0.5 font-bold">ICE: 28</span>
+            <h4 className="font-bold text-foreground">Publish This Growth Plan as Content</h4>
+          </div>
+          <p className="text-foreground/70 text-sm leading-relaxed">
+            This document is proof. It demonstrates output quality, growth expertise, and real strategy—not generic advice.
+          </p>
+        </div>
 
-      <h3 className="text-base font-semibold text-foreground mt-6 mb-2 font-sans">
-        2. Launch on Indie Hackers Before Product Hunt
-      </h3>
-      <p className="text-sm font-medium mb-3 font-sans">
-        <span className="text-cta">ICE Score: 9/9/8 = 26</span>
-      </p>
-      <p className="mb-4">
-        Indie Hackers is the natural habitat for your target user. Unlike Product Hunt
-        (one-day spike), IH builds persistent community presence.
-      </p>
+        <div className="border-l-4 border-cta/70 pl-4">
+          <div className="flex items-baseline gap-3 mb-1">
+            <span className="font-mono text-xs bg-foreground/10 text-foreground px-2 py-0.5 font-bold">ICE: 26</span>
+            <h4 className="font-bold text-foreground">Launch on Indie Hackers First</h4>
+          </div>
+          <p className="text-foreground/70 text-sm leading-relaxed">
+            IH is the natural habitat for your target user. Unlike Product Hunt (one-day spike), IH builds persistent community presence.
+          </p>
+        </div>
 
-      <hr className="border-border/30 my-6" />
-
-      <h3 className="text-base font-semibold text-foreground mt-6 mb-2 font-sans">
-        3. Build in Public on Twitter/X
-      </h3>
-      <p className="text-sm font-medium mb-3 font-sans">
-        <span className="text-cta">ICE Score: 8/8/9 = 25</span>
-      </p>
-      <p>
-        The #buildinpublic community is 500K+ founders who celebrate transparency.
-        Your pricing, margins, and architecture decisions are interesting content.
-      </p>
-    </DocumentPreview>
+        <div className="border-l-4 border-foreground/30 pl-4">
+          <div className="flex items-baseline gap-3 mb-1">
+            <span className="font-mono text-xs bg-foreground/10 text-foreground px-2 py-0.5 font-bold">ICE: 25</span>
+            <h4 className="font-bold text-foreground">Build in Public on Twitter/X</h4>
+          </div>
+          <p className="text-foreground/70 text-sm leading-relaxed">
+            The #buildinpublic community is 500K+ founders who celebrate transparency. Your pricing and architecture decisions are content.
+          </p>
+        </div>
+      </div>
+    </>
   );
 }
 
-// Output section - actual strategy output
-function OutputCard() {
+// Output section content
+function OutputContent() {
   return (
-    <DocumentPreview filename="your-growth-strategy.md">
-      <h2 className="text-xl font-bold text-foreground mb-4 font-sans">Stop Doing</h2>
+    <>
+      <div className="mb-8">
+        <h3 className="text-lg font-bold text-foreground mb-3">Stop Doing</h3>
+        <div className="bg-red-50 border-2 border-red-200 p-4">
+          <p className="font-bold text-red-800 mb-1">Building more features before proving distribution</p>
+          <p className="text-red-700/80 text-sm">
+            The MVP is complete. Every hour on features is an hour not on distribution. Freeze for 30 days.
+          </p>
+        </div>
+      </div>
 
-      <h3 className="text-base font-semibold text-foreground mt-6 mb-2 font-sans">
-        1. Building more features before proving distribution
-      </h3>
-      <p className="text-sm text-primary font-medium mb-3 font-sans">
-        ICE Score: Impact 3, Confidence 9, Ease 8
-      </p>
-      <p className="mb-3">
-        The MVP is complete. Adding Google OAuth, weekly crons, or integrations before
-        validating acquisition channels is premature optimization. Every hour spent on
-        features is an hour not spent on distribution.
-      </p>
-      <p className="mb-6">
-        <strong className="font-sans">Action:</strong> Freeze feature development for 30 days.
-        Exceptions only for critical bugs.
-      </p>
-
-      <hr className="border-border/30 my-6" />
-
-      <h2 className="text-xl font-bold text-foreground mb-4 font-sans">Quick Wins (This Week)</h2>
-
-      <p className="mb-2 font-sans font-semibold text-sm">Day 1-2: Publish this plan</p>
-      <ul className="list-disc list-inside space-y-1 mb-4 text-sm text-muted">
-        <li>Create /blog/our-growth-plan page</li>
-        <li>Share on Twitter with #buildinpublic tag</li>
-        <li>Post to Indie Hackers: "We ran our AI growth tool on ourselves"</li>
-      </ul>
-
-      <p className="mb-2 font-sans font-semibold text-sm">Day 3-4: Add founder presence</p>
-      <ul className="list-disc list-inside space-y-1 mb-4 text-sm text-muted">
-        <li>Add founder name and photo to landing page</li>
-        <li>Create or update Twitter bio with link</li>
-        <li>Set up Google Alert for brand mentions</li>
-      </ul>
-
-      <p>
-        <strong className="font-sans">By end of week:</strong> First paying customers from organic
-        channels, baseline metrics established.
-      </p>
-    </DocumentPreview>
+      <div>
+        <h3 className="text-lg font-bold text-foreground mb-4">Quick Wins (This Week)</h3>
+        <div className="space-y-3">
+          <div className="flex gap-3">
+            <span className="font-mono text-xs bg-foreground text-background px-2 py-1 h-fit font-bold">D1-2</span>
+            <div>
+              <p className="font-semibold text-foreground text-sm">Publish this plan</p>
+              <p className="text-foreground/60 text-sm">Create /blog/our-growth-plan, share on Twitter with #buildinpublic</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <span className="font-mono text-xs bg-foreground text-background px-2 py-1 h-fit font-bold">D3-4</span>
+            <div>
+              <p className="font-semibold text-foreground text-sm">Add founder presence</p>
+              <p className="text-foreground/60 text-sm">Photo on landing page, update Twitter bio with link</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <span className="font-mono text-xs bg-foreground text-background px-2 py-1 h-fit font-bold">D5-7</span>
+            <div>
+              <p className="font-semibold text-foreground text-sm">Launch on Indie Hackers</p>
+              <p className="text-foreground/60 text-sm">"We ran our AI growth tool on ourselves" — first paying customers</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 
 export function FrameworksSection() {
   const [activeFramework, setActiveFramework] = useState<string>("aarrr");
 
-  // Scroll-spy: track which card is in the center of the viewport
+  // Scroll-spy: track which card is closest to viewport center
   useEffect(() => {
-    const observers: IntersectionObserver[] = [];
+    const handleScroll = () => {
+      const viewportCenter = window.innerHeight / 2;
+      let closestId = "aarrr";
+      let closestDistance = Infinity;
 
-    FRAMEWORKS.forEach((framework) => {
-      const element = document.querySelector(
-        `[data-framework="${framework.id}"]`
-      );
-      if (!element) return;
+      FRAMEWORKS.forEach((framework) => {
+        const element = document.querySelector(`[data-framework="${framework.id}"]`);
+        if (!element) return;
 
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              setActiveFramework(framework.id);
-            }
-          });
-        },
-        {
-          // Trigger when card is in the middle 30% of viewport
-          rootMargin: "-35% 0px -35% 0px",
+        const rect = element.getBoundingClientRect();
+        const elementCenter = rect.top + rect.height / 2;
+        const distance = Math.abs(elementCenter - viewportCenter);
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestId = framework.id;
         }
-      );
+      });
 
-      observer.observe(element);
-      observers.push(observer);
-    });
+      setActiveFramework(closestId);
+    };
 
-    return () => observers.forEach((o) => o.disconnect());
+    // Initial check
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const scrollToFramework = (id: string) => {
@@ -269,26 +227,36 @@ export function FrameworksSection() {
     }
   };
 
-  const renderCard = (id: string) => {
+  const renderContent = (id: string) => {
     switch (id) {
       case "aarrr":
-        return <AARRRCard />;
+        return <AARRRContent />;
       case "ice":
-        return <ICECard />;
+        return <ICEContent />;
       case "growth":
-        return <OutputCard />;
+        return <OutputContent />;
       default:
         return null;
     }
   };
 
   return (
-    <section className="relative py-24">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="lg:flex lg:gap-12">
-          {/* Sidebar - sticky on desktop */}
-          <aside className="hidden lg:block lg:w-80 lg:shrink-0">
-            <nav className="sticky top-36 h-fit space-y-3">
+    <section id="how-it-works" className="relative py-24 bg-surface">
+      <div className="mx-auto max-w-7xl px-6">
+        {/* Section header */}
+        <div className="mb-16">
+          <p className="font-mono text-xs tracking-[0.15em] text-foreground/60 uppercase mb-4">
+            What you get
+          </p>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-foreground tracking-tight">
+            Frameworks that <span className="font-black">actually work.</span>
+          </h2>
+        </div>
+
+        <div className="lg:flex lg:gap-16">
+          {/* Sidebar - sticky nav with left border indicator */}
+          <aside className="hidden lg:block lg:w-72 lg:shrink-0">
+            <nav className="sticky top-36 space-y-4">
               {FRAMEWORKS.map((framework) => {
                 const isActive = activeFramework === framework.id;
 
@@ -297,77 +265,54 @@ export function FrameworksSection() {
                     key={framework.id}
                     onClick={() => scrollToFramework(framework.id)}
                     className={`
-                      w-full text-left p-4 rounded-xl transition-all duration-300
-                      ${
-                        isActive
-                          ? "bg-surface border border-border shadow-md"
-                          : "hover:bg-surface/50"
-                      }
+                      w-full text-left pl-5 border-l-4 transition-all duration-150
+                      ${isActive
+                        ? "border-cta opacity-100"
+                        : "border-transparent opacity-40 hover:opacity-70 hover:border-foreground/20"}
                     `}
                   >
                     <span
                       className={`
-                        text-xs font-medium uppercase tracking-wider transition-colors duration-300
-                        ${isActive ? "text-accent" : "text-muted"}
+                        font-mono text-[10px] uppercase tracking-[0.15em]
+                        ${isActive ? "text-cta font-semibold" : "text-foreground"}
                       `}
                     >
                       {framework.label}
                     </span>
-                    <h3
-                      className={`
-                        text-xl font-bold mt-1 transition-colors duration-300
-                        ${isActive ? "text-foreground" : "text-muted"}
-                      `}
-                    >
+                    <h3 className="text-2xl font-black text-foreground mt-1">
                       {framework.title}
                     </h3>
-
-                    {/* Expandable description */}
-                    <div
-                      className={`
-                        overflow-hidden transition-all duration-300
-                        ${isActive ? "max-h-40 opacity-100 mt-2" : "max-h-0 opacity-0"}
-                      `}
-                    >
-                      <p className="text-sm text-muted leading-relaxed">
-                        {framework.description}
-                      </p>
-                    </div>
+                    <p className="text-sm text-foreground/70 mt-1">
+                      {framework.subtitle}
+                    </p>
                   </button>
                 );
               })}
             </nav>
           </aside>
 
-          {/* Content - scrolling cards */}
-          <div className="flex-1 space-y-32">
+          {/* Content cards */}
+          <div className="flex-1 space-y-24">
             {FRAMEWORKS.map((framework) => (
               <div key={framework.id} data-framework={framework.id}>
-                {/* Mobile: show description above card */}
-                <div className="lg:hidden text-center mb-8">
-                  <span className="text-xs font-medium text-accent uppercase tracking-wider">
+                {/* Mobile header */}
+                <div className="lg:hidden mb-6">
+                  <span className="font-mono text-[10px] text-cta uppercase tracking-[0.15em] font-semibold">
                     {framework.label}
                   </span>
-                  <h3 className="text-2xl font-bold mt-1">{framework.title}</h3>
-                  <p className="text-muted mt-2 max-w-md mx-auto text-sm">
-                    {framework.description}
-                  </p>
+                  <h3 className="text-2xl font-bold text-foreground mt-1">{framework.title}</h3>
+                  <p className="text-foreground/60 mt-1 text-sm">{framework.subtitle}</p>
                 </div>
-                {renderCard(framework.id)}
+
+                {/* Content card - brutalist style, NO scroll */}
+                <div className="border-[3px] border-foreground bg-background p-6 lg:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
+                  {renderContent(framework.id)}
+                </div>
               </div>
             ))}
           </div>
         </div>
       </div>
-
-      {/* Bottom fade gradient */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-48 pointer-events-none z-10"
-        style={{
-          background:
-            "linear-gradient(to bottom, transparent 0%, var(--background) 100%)",
-        }}
-      />
     </section>
   );
 }

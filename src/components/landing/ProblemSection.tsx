@@ -143,7 +143,7 @@ export function ProblemSection() {
   const row2Tweets = STUCK_TWEETS.filter((_, i) => i % 2 !== 0);
 
   return (
-    <section className="relative py-20 overflow-hidden">
+    <section id="problem" className="relative py-20 overflow-hidden">
       {/* Section header - brutalist style */}
       <div className="max-w-7xl mx-auto px-6 mb-12">
         <p className="font-mono text-xs tracking-[0.2em] text-muted uppercase mb-4">
