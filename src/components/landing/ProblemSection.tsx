@@ -143,20 +143,15 @@ export function ProblemSection() {
   const row2Tweets = STUCK_TWEETS.filter((_, i) => i % 2 !== 0);
 
   return (
-    <section className="relative py-20 overflow-hidden bg-[#f7f9f9]">
-      {/* Section header */}
-      <div className="text-center mb-12 px-6">
-        <span className="inline-block text-sm font-medium text-[#1d9bf0] tracking-wide mb-3">
+    <section className="relative py-20 overflow-hidden">
+      {/* Section header - brutalist style */}
+      <div className="max-w-7xl mx-auto px-6 mb-12">
+        <p className="font-mono text-xs tracking-[0.2em] text-muted uppercase mb-4">
           Sound familiar?
-        </span>
-        <h2 className="text-3xl sm:text-4xl font-bold text-[#0f1419] tracking-tight">
-          You&apos;re not the only one{" "}
-          <span className="text-[#1d9bf0]">stuck after launch</span>
-        </h2>
-        <p className="mt-4 text-lg text-[#536471] max-w-2xl mx-auto">
-          Thousands of founders feel this every day. Here&apos;s the difference:
-          you&apos;re about to do something about it.
         </p>
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extralight text-foreground tracking-tight">
+          You&apos;re not the only one <span className="font-black">stuck after launch.</span>
+        </h2>
       </div>
 
       {/* Marquee container */}
@@ -176,9 +171,9 @@ export function ProblemSection() {
         </div>
       </div>
 
-      {/* Edge fades - match section background */}
-      <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#f7f9f9] to-transparent pointer-events-none z-10" />
-      <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#f7f9f9] to-transparent pointer-events-none z-10" />
+      {/* Edge fades */}
+      <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-background to-transparent pointer-events-none z-10" />
+      <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-background to-transparent pointer-events-none z-10" />
     </section>
   );
 }
