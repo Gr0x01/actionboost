@@ -257,12 +257,10 @@ export function CheckoutSection({
         </div>
       )}
 
-
       {/* Free mini-audit expanded form */}
       {!hasValidCode && formData && !isLoggedIn && showFreeOption && (
         <div className="pt-2">
-          {(
-            <motion.div
+          <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               className="max-w-lg mx-auto p-6 border-2 border-foreground/20 bg-background space-y-4"
@@ -311,8 +309,7 @@ export function CheckoutSection({
                 </button>
               </div>
               {freeError && <p className="text-sm text-red-500 font-bold">{freeError}</p>}
-            </motion.div>
-          )}
+          </motion.div>
         </div>
       )}
 
@@ -371,7 +368,7 @@ export function CheckoutSection({
           <span className="text-sm">
             {codeStatus?.credits} free {codeStatus?.credits === 1 ? "action plan" : "action plans"}
           </span>
-          <button onClick={clearCode} className="text-white/70 hover:text-white ml-1 text-lg leading-none">
+          <button onClick={clearCode} className="text-white/70 hover:text-white ml-1 text-lg leading-none" aria-label="Remove promo code">
             ×
           </button>
         </motion.div>
