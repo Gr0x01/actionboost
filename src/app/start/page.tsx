@@ -205,12 +205,12 @@ export default function StartPage() {
           localStorage.removeItem(HERO_PREFILL_KEY);
           prefillApplied.current = true;
 
-          // Update form with product description and skip to question 3 (traction)
+          // Update form with product description, start at question 1 (URL)
           setForm((prev) => ({
             ...prev,
             productDescription: heroPrefill.productDescription || "",
           }));
-          setCurrentQuestion(2); // Skip URL and product description, go to traction
+          setCurrentQuestion(0); // Start at URL question so we can collect website
 
           posthog?.capture("form_prefilled_from_hero", {
             type: "product_description",
@@ -291,6 +291,9 @@ export default function StartPage() {
     posthog?.capture("returning_user_start_fresh", { has_context: true });
   }, [posthog]);
 
+  // Track where checkout was entered from for back navigation
+  const [checkoutSource, setCheckoutSource] = useState<"questions" | "context_update">("questions");
+
   // Handle context update submission - merge delta and go to checkout
   const handleContextUpdateSubmit = useCallback((delta: string, focusArea: string) => {
     setContextDelta(delta);
@@ -300,6 +303,7 @@ export default function StartPage() {
       // Append delta to working/not working field for AI context
       workingOrNot: delta,
     }));
+    setCheckoutSource("context_update");
     setViewState("checkout");
     posthog?.capture("context_update_submitted", { focus_area: focusArea });
   }, [posthog]);
@@ -403,6 +407,7 @@ export default function StartPage() {
         setCurrentQuestion(nextQuestion);
         // If we've finished all questions, go to checkout
         if (nextQuestion >= QUESTIONS.length) {
+          setCheckoutSource("questions");
           setViewState("checkout");
           posthog?.capture("form_step_checkout", { step: 9, step_name: "checkout" });
         }
@@ -412,6 +417,7 @@ export default function StartPage() {
       setCurrentQuestion(nextQuestion);
       // If we've finished all questions, go to checkout
       if (nextQuestion >= QUESTIONS.length) {
+        setCheckoutSource("questions");
         setViewState("checkout");
         posthog?.capture("form_step_checkout", { step: 9, step_name: "checkout" });
       }
@@ -642,14 +648,18 @@ export default function StartPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="min-h-[300px] flex flex-col items-center justify-center"
+                className="min-h-[300px]"
               >
                 <CheckoutSection
                   onSubmit={handleSubmit}
                   onBack={() => {
                     setError(null);
-                    setViewState("questions");
-                    setCurrentQuestion(QUESTIONS.length - 1);
+                    if (checkoutSource === "context_update") {
+                      setViewState("context_update");
+                    } else {
+                      setViewState("questions");
+                      setCurrentQuestion(QUESTIONS.length - 1);
+                    }
                   }}
                   isSubmitting={isSubmitting}
                   hasValidCode={hasValidCode}

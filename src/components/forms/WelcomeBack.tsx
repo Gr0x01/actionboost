@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { RefreshCw, ArrowRight, Sparkles, ChevronLeft } from 'lucide-react'
 import type { UserContext } from '@/lib/types/context'
 import { getContextSummaryText } from '@/lib/hooks/useUserContext'
@@ -97,6 +98,7 @@ export function ContextUpdateForm({
   onBack,
 }: UpdateFormProps) {
   const { lastTraction } = getContextSummaryText(context)
+  const [error, setError] = useState<string | null>(null)
 
   return (
     <div className="space-y-6">
@@ -135,11 +137,19 @@ export function ContextUpdateForm({
       )}
 
       <form
+        noValidate
         onSubmit={(e) => {
           e.preventDefault()
           const formData = new FormData(e.currentTarget)
-          const delta = formData.get('delta') as string
+          const delta = (formData.get('delta') as string || '').trim()
           const focusArea = formData.get('focusArea') as string
+
+          if (!delta) {
+            setError('Please tell us what\'s new since your last action plan.')
+            return
+          }
+
+          setError(null)
           onSubmit(delta, focusArea)
         }}
         className="space-y-5"
@@ -154,9 +164,14 @@ export function ContextUpdateForm({
           <textarea
             name="delta"
             placeholder="e.g., We hit 1000 users! Twitter is driving signups but retention is dropping. Tried a referral program but it flopped..."
-            required
-            className="w-full min-h-[120px] p-4 border-2 border-foreground/30 bg-background text-foreground placeholder:text-foreground/30 focus:border-foreground outline-none transition-colors resize-none"
+            onChange={() => error && setError(null)}
+            className={`w-full min-h-[120px] p-4 border-2 bg-background text-foreground placeholder:text-foreground/30 focus:border-foreground outline-none transition-colors resize-none ${
+              error ? 'border-red-500' : 'border-foreground/30'
+            }`}
           />
+          {error && (
+            <p className="mt-2 text-sm font-bold text-red-600">{error}</p>
+          )}
         </div>
 
         <div>
