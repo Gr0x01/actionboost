@@ -2,58 +2,105 @@
 
 import { useEffect, useState, useRef } from "react";
 import type { ParsedStrategy } from "@/lib/markdown/parser";
+import { STRATEGY_SECTIONS, type TOCSection } from "@/lib/constants/toc-sections";
 
-interface Section {
-  id: string;
-  label: string;
-  shortLabel: string;
-}
+/**
+ * Maps section IDs to their corresponding ParsedStrategy field keys.
+ * Used to check if a section has content in strategy mode.
+ */
+const SECTION_ID_TO_STRATEGY_KEY: Record<string, keyof ParsedStrategy> = {
+  "executive-summary": "executiveSummary",
+  "current-situation": "currentSituation",
+  "competitive-landscape": "competitiveLandscape",
+  "channel-strategy": "channelStrategy",
+  "stop-doing": "stopDoing",
+  "start-doing": "startDoing",
+  "this-week": "thisWeek",
+  "roadmap": "roadmap",
+  "metrics-dashboard": "metricsDashboard",
+  "content-templates": "contentTemplates",
+};
 
-const SECTIONS: Section[] = [
-  { id: "executive-summary", label: "Executive Summary", shortLabel: "Summary" },
-  { id: "current-situation", label: "Your Situation", shortLabel: "Situation" },
-  { id: "competitive-landscape", label: "Competition", shortLabel: "Competition" },
-  { id: "channel-strategy", label: "Channel Strategy", shortLabel: "Channels" },
-  { id: "stop-doing", label: "Stop Doing", shortLabel: "Stop" },
-  { id: "start-doing", label: "Start Doing", shortLabel: "Start" },
-  { id: "this-week", label: "This Week", shortLabel: "This Week" },
-  { id: "roadmap", label: "30-Day Roadmap", shortLabel: "Roadmap" },
-  { id: "metrics-dashboard", label: "Metrics Dashboard", shortLabel: "Metrics" },
-  { id: "content-templates", label: "Content Templates", shortLabel: "Templates" },
-];
-
-interface TableOfContentsProps {
-  strategy: ParsedStrategy;
+/** Common props shared between both modes */
+interface BaseTableOfContentsProps {
+  /** Which variant to render */
   variant?: "mobile" | "desktop";
+  /** Section IDs to show as locked (grayed out, not clickable) */
   lockedSectionIds?: string[];
+  /** Scroll threshold before mobile nav can hide (default: 150) */
+  hideThreshold?: number;
 }
 
-export function TableOfContents({ strategy, variant, lockedSectionIds = [] }: TableOfContentsProps) {
-  const [activeSection, setActiveSection] = useState<string>("executive-summary");
+/** Props for strategy mode - sections filtered by strategy fields */
+interface StrategyModeProps extends BaseTableOfContentsProps {
+  /** Strategy object - sections are filtered based on which fields exist */
+  strategy: ParsedStrategy;
+  sections?: never;
+}
+
+/** Props for static mode - sections filtered by DOM presence */
+interface StaticModeProps extends BaseTableOfContentsProps {
+  strategy?: never;
+  /** Static sections array - sections are filtered based on DOM presence */
+  sections: TOCSection[];
+}
+
+/** Type-safe props requiring either strategy OR sections (not both, not neither) */
+type TableOfContentsProps = StrategyModeProps | StaticModeProps;
+
+/**
+ * Unified Table of Contents component.
+ *
+ * Two modes:
+ * 1. Strategy mode: Pass `strategy` prop, sections filtered by strategy fields
+ * 2. Static mode: Pass `sections` prop, sections filtered by DOM presence
+ */
+export function TableOfContents({
+  strategy,
+  sections,
+  variant,
+  lockedSectionIds = [],
+  hideThreshold = 150,
+}: TableOfContentsProps) {
+  const [activeSection, setActiveSection] = useState<string>("");
   const [mobileNavVisible, setMobileNavVisible] = useState(true);
+  const [availableSections, setAvailableSections] = useState<TOCSection[]>([]);
   const mobileNavRef = useRef<HTMLDivElement>(null);
   const lastScrollY = useRef(0);
   const keepVisibleUntilScroll = useRef(false);
+  const initialActiveSectionSet = useRef(false);
 
-  // Filter sections based on what's actually in the strategy
-  const availableSections = SECTIONS.filter((section) => {
-    switch (section.id) {
-      case "executive-summary": return !!strategy.executiveSummary;
-      case "current-situation": return !!strategy.currentSituation;
-      case "competitive-landscape": return !!strategy.competitiveLandscape;
-      case "channel-strategy": return !!strategy.channelStrategy;
-      case "stop-doing": return !!strategy.stopDoing;
-      case "start-doing": return !!strategy.startDoing;
-      case "this-week": return !!strategy.thisWeek;
-      case "roadmap": return !!strategy.roadmap;
-      case "metrics-dashboard": return !!strategy.metricsDashboard;
-      case "content-templates": return !!strategy.contentTemplates;
-      default: return false;
+  // Determine which sections to use based on mode
+  const baseSections = sections || STRATEGY_SECTIONS;
+
+  // Filter sections based on mode
+  useEffect(() => {
+    let filtered: TOCSection[] = [];
+
+    if (strategy) {
+      // Strategy mode: filter based on strategy fields using the mapping
+      filtered = baseSections.filter((section) => {
+        const strategyKey = SECTION_ID_TO_STRATEGY_KEY[section.id];
+        return strategyKey ? !!strategy[strategyKey] : false;
+      });
+    } else if (sections) {
+      // Static mode: filter based on DOM presence
+      filtered = sections.filter((section) => document.getElementById(section.id));
     }
-  });
+
+    setAvailableSections(filtered);
+
+    // Set initial active section only once
+    if (filtered.length > 0 && !initialActiveSectionSet.current) {
+      initialActiveSectionSet.current = true;
+      setActiveSection(filtered[0].id);
+    }
+  }, [strategy, sections, baseSections]);
 
   // Scroll spy - watch which section is in view
   useEffect(() => {
+    if (availableSections.length === 0) return;
+
     const observers: IntersectionObserver[] = [];
 
     availableSections.forEach((section) => {
@@ -110,8 +157,8 @@ export function TableOfContents({ strategy, variant, lockedSectionIds = [] }: Ta
       const currentScrollY = window.scrollY;
       const scrollingUp = currentScrollY < lastScrollY.current;
 
-      // Only hide after scrolling past the header area
-      if (currentScrollY > 150) {
+      // Only hide after scrolling past the threshold
+      if (currentScrollY > hideThreshold) {
         setMobileNavVisible(scrollingUp);
       } else {
         setMobileNavVisible(true);
@@ -122,7 +169,7 @@ export function TableOfContents({ strategy, variant, lockedSectionIds = [] }: Ta
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [hideThreshold]);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -146,6 +193,8 @@ export function TableOfContents({ strategy, variant, lockedSectionIds = [] }: Ta
       }, 800);
     }
   };
+
+  if (availableSections.length === 0) return null;
 
   // Mobile horizontal tabs - brutalist solid style
   const mobileNav = (
@@ -186,7 +235,7 @@ export function TableOfContents({ strategy, variant, lockedSectionIds = [] }: Ta
   );
 
   // Get locked sections from IDs
-  const lockedSections = SECTIONS.filter((s) => lockedSectionIds.includes(s.id));
+  const lockedSections = baseSections.filter((s) => lockedSectionIds.includes(s.id));
 
   // Desktop sidebar - brutalist left-border indicator
   const desktopNav = (

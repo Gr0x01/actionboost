@@ -14,3 +14,11 @@ export { CompetitiveLandscape } from "./sections/CompetitiveLandscape";
 export { StopDoing } from "./sections/StopDoing";
 export { StartDoing } from "./sections/StartDoing";
 export { Roadmap } from "./sections/Roadmap";
+
+// Re-export TOC types and constants for cleaner imports
+export type { TOCSection } from "@/lib/constants/toc-sections";
+export {
+  STRATEGY_SECTIONS,
+  BLOG_SECTIONS,
+  FREE_TIER_LOCKED_SECTIONS,
+} from "@/lib/constants/toc-sections";

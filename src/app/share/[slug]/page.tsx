@@ -2,10 +2,8 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { createServiceClient } from "@/lib/supabase/server";
 import { parseStrategy } from "@/lib/markdown/parser";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { ResultsContent, TableOfContents } from "@/components/results";
-import { Button } from "@/components/ui/Button";
+import { Header, Footer, ResultsLayout } from "@/components/layout";
+import { ResultsContent } from "@/components/results";
 import { SocialShareButtons } from "@/components/ui/SocialShareButtons";
 import { config } from "@/lib/config";
 import Link from "next/link";
@@ -79,68 +77,63 @@ export default async function SharePage({ params }: PageProps) {
 
   const strategy = parseStrategy(run.output);
 
+  const shareBanner = (
+    <div className="border-[3px] border-foreground bg-background p-4 shadow-[4px_4px_0_0_rgba(44,62,80,1)] mb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <p className="text-sm text-foreground/70">
+            This action plan was created with Actionboo.st
+          </p>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-foreground/30 hidden sm:inline">|</span>
+            <SocialShareButtons
+              url={`https://actionboo.st/share/${slug}`}
+              text="Interesting action plan I found on Actionboo.st"
+              source="share_page"
+            />
+          </div>
+        </div>
+        <Link href="/start">
+          <button className="whitespace-nowrap px-4 py-2 bg-cta text-white font-bold text-sm border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
+            Get Your Own Plan
+          </button>
+        </Link>
+      </div>
+    </div>
+  );
+
+  const bottomCta = (
+    <div className="mt-16 border-[3px] border-foreground bg-background p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] text-center space-y-4">
+      <p className="font-mono text-xs tracking-[0.15em] text-foreground/60 uppercase">
+        Your turn
+      </p>
+      <h2 className="text-2xl font-black text-foreground">
+        Want an action plan for your product?
+      </h2>
+      <p className="text-foreground/70 max-w-md mx-auto">
+        Actionboo.st uses live competitive research and AI to create actionable strategies for startups and entrepreneurs.
+      </p>
+      <Link href="/start">
+        <button className="px-8 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
+          Get Started - {config.singlePrice}
+        </button>
+      </Link>
+    </div>
+  );
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-1">
-        <div className="mx-auto max-w-7xl px-6">
-          {/* Shared banner */}
-          <div className="lg:ml-[220px] py-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-lg bg-surface border border-border">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                <p className="text-sm text-muted">
-                  This action plan was created with Actionboo.st
-                </p>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted hidden sm:inline">|</span>
-                  <SocialShareButtons
-                    url={`https://actionboo.st/share/${slug}`}
-                    text="Interesting action plan I found on Actionboo.st"
-                    source="share_page"
-                  />
-                </div>
-              </div>
-              <Link href="/start">
-                <Button size="sm">Get Your Own Action Plan</Button>
-              </Link>
-            </div>
-          </div>
-
-          {/* Mobile TOC */}
-          <div className="lg:hidden">
-            <TableOfContents strategy={strategy} variant="mobile" />
-          </div>
-
-          {/* Desktop layout */}
-          <div className="lg:flex lg:gap-8 py-8">
-            {/* Desktop sidebar */}
-            <div className="hidden lg:block lg:w-[200px] lg:flex-shrink-0">
-              <TableOfContents strategy={strategy} variant="desktop" />
-            </div>
-
-            {/* Main content */}
-            <div className="flex-1 max-w-prose">
-              <ResultsContent strategy={strategy} />
-            </div>
-          </div>
-
-          {/* Bottom CTA */}
-          <div className="lg:ml-[220px] pb-12">
-            <div className="p-8 rounded-xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 text-center space-y-4">
-              <h2 className="text-xl font-semibold text-foreground">
-                Want an action plan for your product?
-              </h2>
-              <p className="text-muted max-w-md mx-auto">
-                Actionboo.st uses live competitive research and AI to create actionable strategies for startups and entrepreneurs.
-              </p>
-              <Link href="/start">
-                <Button size="lg">Get Started - {config.singlePrice}</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </main>
+      <ResultsLayout
+        toc={{ strategy }}
+        slots={{
+          afterToc: shareBanner,
+          bottomCta,
+        }}
+      >
+        <ResultsContent strategy={strategy} />
+      </ResultsLayout>
 
       <Footer />
     </div>

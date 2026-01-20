@@ -1,8 +1,7 @@
 "use client";
 
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { ResultsContent, ExportBar, TableOfContents } from "@/components/results";
+import { Header, Footer, ResultsLayout } from "@/components/layout";
+import { ResultsContent, ExportBar } from "@/components/results";
 import { parseStrategy } from "@/lib/markdown/parser";
 
 // Real strategy output for Inkdex
@@ -445,49 +444,36 @@ const mockInput = {
 };
 
 export default function DemoResultsPage() {
+  const demoBanner = (
+    <div className="bg-amber-100 border-b-[3px] border-amber-600 px-6 py-3">
+      <p className="text-center font-mono text-xs tracking-[0.1em] text-amber-800 uppercase font-semibold">
+        Demo preview — Sample output for Inkdex
+      </p>
+    </div>
+  );
+
+  const exportBar = (
+    <ExportBar
+      markdown={DEMO_STRATEGY}
+      runId="demo"
+      shareSlug={null}
+      productName={mockInput.productDescription?.slice(0, 50)}
+    />
+  );
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      {/* Demo banner - brutalist style */}
-      <div className="bg-amber-100 border-b-[3px] border-amber-600 px-6 py-3">
-        <p className="text-center font-mono text-xs tracking-[0.1em] text-amber-800 uppercase font-semibold">
-          Demo preview — Sample output for Inkdex
-        </p>
-      </div>
-
-      <main className="flex-1">
-        <div className="mx-auto px-6">
-          {/* Mobile TOC - full width horizontal tabs */}
-          <div className="lg:hidden">
-            <TableOfContents strategy={strategy} variant="mobile" />
-          </div>
-
-          {/* Desktop layout wrapper */}
-          <div className="max-w-5xl mx-auto">
-            {/* Export bar */}
-            <ExportBar
-              markdown={DEMO_STRATEGY}
-              runId="demo"
-              shareSlug={null}
-              productName={mockInput.productDescription?.slice(0, 50)}
-            />
-
-            {/* Sidebar + content flex */}
-            <div className="lg:flex lg:gap-12 py-8">
-              {/* Desktop sidebar */}
-              <div className="hidden lg:block lg:w-[180px] lg:flex-shrink-0">
-                <TableOfContents strategy={strategy} variant="desktop" />
-              </div>
-
-              {/* Main content - extra padding for shadows on desktop */}
-              <div className="flex-1 min-w-0 lg:pr-2 overflow-x-hidden">
-                <ResultsContent strategy={strategy} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
+      <ResultsLayout
+        toc={{ strategy }}
+        slots={{
+          topBanner: demoBanner,
+          afterToc: exportBar,
+        }}
+      >
+        <ResultsContent strategy={strategy} />
+      </ResultsLayout>
 
       <Footer />
     </div>

@@ -6,10 +6,10 @@ import { usePostHog } from "posthog-js/react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { config } from "@/lib/config";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { ResultsContent, StatusMessage, TableOfContents, MagicLinkBanner } from "@/components/results";
+import { Header, Footer, ResultsLayout } from "@/components/layout";
+import { ResultsContent, StatusMessage, MagicLinkBanner } from "@/components/results";
 import { parseStrategy, type ParsedStrategy } from "@/lib/markdown/parser";
+import { FREE_TIER_LOCKED_SECTIONS } from "@/lib/constants/toc-sections";
 
 type AuditStatus = "pending" | "processing" | "complete" | "failed";
 
@@ -101,16 +101,6 @@ function UpgradeCTA() {
   );
 }
 
-// Locked section IDs for the free version (sections not included in mini audit)
-const LOCKED_SECTION_IDS = [
-  "channel-strategy",
-  "stop-doing",
-  "start-doing",
-  "this-week",
-  "roadmap",
-  "metrics-dashboard",
-  "content-templates",
-];
 
 function FreeResultsPageContent() {
   const params = useParams();
@@ -334,51 +324,34 @@ function FreeResultsPageContent() {
     startDoing: null,
   } : null;
 
+  const magicLinkBanner = isNewCheckout ? <MagicLinkBanner /> : undefined;
+
+  const topContent = (
+    <>
+      {magicLinkBanner}
+      <UpsellBanner />
+    </>
+  );
+
   // Success state - render free results with upsell
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-1">
-        <div className="mx-auto px-6">
-          {/* Mobile TOC - full width horizontal tabs */}
-          <div className="lg:hidden">
-            {freeStrategy && <TableOfContents strategy={freeStrategy} variant="mobile" />}
-          </div>
-
-          {/* Desktop layout wrapper */}
-          <div className="max-w-5xl mx-auto">
-            {/* Sidebar + content flex */}
-            <div className="lg:flex lg:gap-12 py-8">
-              {/* Desktop sidebar */}
-              <div className="hidden lg:block lg:w-[180px] lg:flex-shrink-0">
-                {freeStrategy && (
-                  <TableOfContents
-                    strategy={freeStrategy}
-                    variant="desktop"
-                    lockedSectionIds={LOCKED_SECTION_IDS}
-                  />
-                )}
-              </div>
-
-              {/* Main content - extra padding for shadows on desktop */}
-              <div className="flex-1 min-w-0 lg:pr-2 overflow-x-hidden">
-                {/* Magic link banner for new checkouts */}
-                {isNewCheckout && <MagicLinkBanner />}
-
-                {/* Upsell banner */}
-                <UpsellBanner />
-
-                {/* Strategy content */}
-                {freeStrategy && <ResultsContent strategy={freeStrategy} />}
-
-                {/* Locked sections teaser */}
-                <UpgradeCTA />
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
+      {freeStrategy && (
+        <ResultsLayout
+          toc={{
+            strategy: freeStrategy,
+            lockedSectionIds: FREE_TIER_LOCKED_SECTIONS,
+          }}
+          slots={{
+            afterToc: topContent,
+            bottomCta: <UpgradeCTA />,
+          }}
+        >
+          <ResultsContent strategy={freeStrategy} />
+        </ResultsLayout>
+      )}
 
       <Footer />
     </div>

@@ -3,9 +3,8 @@
 import { useEffect, useState, useCallback, Suspense, useRef } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { ResultsContent, StatusMessage, ExportBar, TableOfContents, MagicLinkBanner } from "@/components/results";
+import { Header, Footer, ResultsLayout } from "@/components/layout";
+import { ResultsContent, StatusMessage, ExportBar, MagicLinkBanner } from "@/components/results";
 import { parseStrategy, type ParsedStrategy } from "@/lib/markdown/parser";
 
 type RunStatus = "pending" | "processing" | "complete" | "failed";
@@ -227,46 +226,33 @@ function ResultsPageContent() {
         )
       : undefined;
 
+  const magicLinkBanner = isNewCheckout ? <MagicLinkBanner /> : undefined;
+
+  const exportBar = (
+    <ExportBar
+      markdown={run.output || ""}
+      runId={run.id}
+      shareSlug={run.share_slug}
+      productName={productName}
+    />
+  );
+
   // Success state - render full results
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-1">
-        <div className="mx-auto px-6">
-          {/* Magic link banner for new checkouts */}
-          {isNewCheckout && <MagicLinkBanner />}
-
-          {/* Mobile TOC - full width horizontal tabs */}
-          <div className="lg:hidden">
-            {strategy && <TableOfContents strategy={strategy} variant="mobile" />}
-          </div>
-
-          {/* Desktop layout wrapper */}
-          <div className="max-w-5xl mx-auto">
-            {/* Export bar */}
-            <ExportBar
-              markdown={run.output || ""}
-              runId={run.id}
-              shareSlug={run.share_slug}
-              productName={productName}
-            />
-
-            {/* Sidebar + content flex */}
-            <div className="lg:flex lg:gap-12 py-8">
-              {/* Desktop sidebar */}
-              <div className="hidden lg:block lg:w-[180px] lg:flex-shrink-0">
-                {strategy && <TableOfContents strategy={strategy} variant="desktop" />}
-              </div>
-
-              {/* Main content - extra padding for shadows on desktop */}
-              <div className="flex-1 min-w-0 lg:pr-2 overflow-x-hidden">
-                {strategy && <ResultsContent strategy={strategy} />}
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
+      {strategy && (
+        <ResultsLayout
+          toc={{ strategy }}
+          slots={{
+            beforeToc: magicLinkBanner,
+            afterToc: exportBar,
+          }}
+        >
+          <ResultsContent strategy={strategy} />
+        </ResultsLayout>
+      )}
 
       <Footer />
     </div>
