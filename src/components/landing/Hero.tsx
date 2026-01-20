@@ -97,20 +97,19 @@ export function Hero() {
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-surface to-transparent" />
 
       <div className="relative mx-auto max-w-7xl px-6">
-        <div className="grid xl:grid-cols-2 gap-12 xl:gap-8 items-center">
+        <div className="grid xl:grid-cols-[3fr_2fr] gap-12 xl:gap-8 items-center">
           {/* Left - Hero content */}
           <div className="text-center xl:text-left max-w-2xl mx-auto xl:mx-0 xl:max-w-none">
             {/* Headline */}
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl xl:text-6xl animate-slide-up">
-              <span className="text-foreground">Stuck on growth?</span>
+              <span className="text-foreground">Growth hacking for people</span>
               <br />
-              <span className="text-gradient">Get your next moves.</span>
+              <span className="text-gradient">who hate growth hacks.</span>
             </h1>
 
             {/* Subhead - sans for UI text */}
             <p className="mt-6 text-lg text-muted sm:text-xl max-w-xl mx-auto xl:mx-0 animate-slide-up stagger-1 leading-relaxed">
-              Real competitive research. Prioritized recommendations.
-              A 30-day roadmap built for <em className="text-foreground font-medium not-italic">your</em> business.
+              We pull your competitors' traffic data, score every tactic by impact, and hand you a 30-day plan. Not vibes. Actual moves, ranked.
             </p>
 
             {/* URL Input */}
@@ -177,7 +176,7 @@ export function Hero() {
               </a>
               <span className="hidden sm:block text-border">|</span>
               <span className="text-xs sm:text-sm text-muted-foreground">
-                Specific tactics. Ranked by impact. Ready this week.
+                One payment. No subscription. $9.99.
               </span>
             </div>
           </div>

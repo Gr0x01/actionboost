@@ -3,33 +3,33 @@ import { Check, Search, StopCircle, PlayCircle, Zap, Calendar, LineChart } from 
 const benefits = [
   {
     icon: Search,
-    text: "Competitive landscape analysis",
-    detail: "Real research, not generic",
+    text: "Competitors' playbook exposed",
+    detail: "Their traffic sources, keywords, tactics",
   },
   {
     icon: StopCircle,
-    text: "What to STOP doing",
-    detail: "With clear reasoning",
+    text: "What to STOP wasting time on",
+    detail: "Kill the tactics that aren't working",
   },
   {
     icon: PlayCircle,
     text: "What to START doing",
-    detail: "Prioritized by impact",
+    detail: "ICE-scored. Highest impact first.",
   },
   {
     icon: Zap,
     text: "Quick wins for this week",
-    detail: "Immediate actions",
+    detail: "3-5 moves you can ship tomorrow",
   },
   {
     icon: Calendar,
-    text: "30-day action roadmap",
-    detail: "Step by step plan",
+    text: "30-day execution plan",
+    detail: "Week-by-week, not vague goals",
   },
   {
     icon: LineChart,
-    text: "Metrics to track success",
-    detail: "See what's moving",
+    text: "Metrics that actually matter",
+    detail: "Know if it's working",
   },
 ];
 
@@ -46,10 +46,10 @@ export function WhatYouGet() {
             What you get
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
-            What&apos;s in your <span className="text-gradient">action plan</span>
+            What you get for <span className="text-gradient">$9.99</span>
           </h2>
           <p className="mt-4 text-lg text-muted max-w-2xl mx-auto leading-relaxed">
-            Research, priorities, and a plan. Built for your business, not a template.
+            Not a template. Not "have you tried content marketing?" Real research on YOUR competitors. Tactics ranked by impact.
           </p>
         </div>
 

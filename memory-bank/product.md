@@ -84,9 +84,10 @@ Subtle "Just want a taste?" option at checkout → 5-section condensed audit →
 ## Landing Page Content
 
 ### Hero
-- Headline: "Your competitors' growth playbook, reverse-engineered."
-- Subhead: Tell us about your startup. We dig into your competitors' traffic, analyze your traction, and hand you a 30-day playbook.
-- CTA: "Get My Growth Plan — $9.99" → /start
+- Headline: "Growth hacking for people who hate growth hacks."
+- Subhead: We pull your competitors' traffic data, score every tactic by impact, and hand you a 30-day plan. Not vibes. Actual moves, ranked.
+- Trust line: "One payment. No subscription. $9.99."
+- CTA: URL input → /start
 
 ### Pain → Solution Flow
 1. **Acknowledge the pain**: "You've read the blogs. You've tried 'just post consistently.' You're still stuck."

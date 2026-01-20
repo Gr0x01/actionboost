@@ -31,11 +31,10 @@ export function Frameworks() {
             How it works
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
-            Built on frameworks that <span className="text-gradient">actually work</span>
+            The same frameworks <span className="text-gradient">real growth teams use</span>
           </h2>
           <p className="mt-4 text-lg text-muted max-w-2xl mx-auto leading-relaxed">
-            Not random AI advice. These are the frameworks growth teams actually use.
-            Now applied to your&nbsp;business.
+            Not ChatGPT vibes. Actual growth methodology, applied to your business.
           </p>
         </div>
 

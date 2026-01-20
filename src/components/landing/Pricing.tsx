@@ -7,38 +7,38 @@ import { config } from "@/lib/config";
 
 const features = [
   {
-    name: "Competitive analysis",
-    description: "See what's working for your\u00A0competitors",
+    name: "Competitors' traffic sources",
+    description: "Where they get users. Now you\u00A0know.",
     free: "Basic",
-    paid: "Full",
+    paid: "Full breakdown",
   },
   {
-    name: "Recommendations",
-    description: "Specific actions ranked by impact and\u00A0effort",
+    name: "Tactics scored by ICE",
+    description: "Impact, Confidence, Ease. No\u00A0guesswork.",
     free: "3 quick tips",
-    paid: "Prioritized list",
+    paid: "Full ranked list",
   },
   {
-    name: "Market overview",
-    description: "Know the market before you\u00A0move",
+    name: "Market reality check",
+    description: "What's actually working in your\u00A0space",
     free: true,
     paid: true,
   },
   {
-    name: "30-day action roadmap",
-    description: "Week-by-week plan so you know exactly what to do\u00A0next",
+    name: "30-day execution plan",
+    description: "Week-by-week. What to do, when to do\u00A0it.",
     free: false,
     paid: true,
   },
   {
-    name: "Quick wins for this week",
-    description: "Quick tactics you can execute\u00A0today",
+    name: "This week's quick wins",
+    description: "3-5 moves you can ship\u00A0tomorrow",
     free: false,
     paid: true,
   },
   {
-    name: "Live competitor research",
-    description: "Real-time data on their traffic, keywords, and\u00A0tactics",
+    name: "Live competitor intel",
+    description: "Their traffic, keywords, and tactics.\u00A0Exposed.",
     free: false,
     paid: true,
   },
@@ -85,7 +85,8 @@ export function Pricing() {
             Pricing
           </span>
           <h2 className="text-4xl sm:text-5xl font-bold text-foreground tracking-tight">
-            Two options. Pick one.
+            A consultant charges $200/hr.{" "}
+            <span className="whitespace-nowrap">This is $9.99.</span>
           </h2>
         </div>
 
@@ -195,7 +196,7 @@ export function Pricing() {
 
         {/* Trust note */}
         <p className="text-center text-sm text-muted mt-10 animate-slide-up stagger-2">
-          No subscription required. One payment, one action plan.
+          No subscription. No account. Pay once, get your plan.
         </p>
       </div>
     </section>
