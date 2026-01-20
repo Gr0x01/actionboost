@@ -114,6 +114,11 @@ export function Pricing() {
             >
               Try Free
             </Link>
+
+            <p className="mt-4 text-xs text-foreground/60 text-center flex items-center justify-center gap-1.5">
+              <span className="text-green-600">✓</span>
+              30-day money-back guarantee
+            </p>
           </div>
 
           {/* Paid tier */}
@@ -144,12 +149,17 @@ export function Pricing() {
             >
               {loading ? "Loading..." : "Get My Action Plan"}
             </button>
+
+            <p className="mt-4 text-xs text-foreground/60 text-center flex items-center justify-center gap-1.5">
+              <span className="text-green-600">✓</span>
+              7-day money-back guarantee
+            </p>
           </div>
         </div>
 
         {/* Trust note */}
         <p className="text-sm text-foreground/50 mt-8 font-mono text-center">
-          No subscription. Pay once, get your plan.
+          No subscription. Pay once, get your plan. Not happy? Full refund within 7 days.
         </p>
       </div>
     </section>

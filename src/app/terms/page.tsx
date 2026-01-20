@@ -61,9 +61,17 @@ export default function TermsPage() {
                   Refund Policy
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
-                  All sales are final. As a digital product delivered immediately upon purchase,
-                  refunds are not available. If you experience a technical issue that prevents
-                  delivery of your action plan, contact us and we&apos;ll make it right.
+                  We offer a <strong className="text-foreground">7-day money-back guarantee</strong>.
+                  If you&apos;re not satisfied with your action plan, email us at{" "}
+                  <a
+                    href="mailto:team@actionboo.st"
+                    className="text-primary hover:text-primary/80"
+                  >
+                    team@actionboo.st
+                  </a>{" "}
+                  within 7 days of purchase with brief feedback on what didn&apos;t work for you,
+                  and we&apos;ll issue a full refund—no questions asked beyond the feedback. This
+                  helps us improve the product for everyone.
                 </p>
               </section>
 

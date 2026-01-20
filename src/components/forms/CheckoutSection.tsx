@@ -205,6 +205,7 @@ export function CheckoutSection({
 
       {/* Main CTA button */}
       {!shouldShowWaitlist && !showFreeOption && (
+        <>
         <button
           type="button"
           onClick={() => {
@@ -231,6 +232,13 @@ export function CheckoutSection({
             "Enter code to continue"
           )}
         </button>
+        {config.pricingEnabled && !hasValidCode && (
+          <p className="mt-3 text-xs text-foreground/50 flex items-center justify-center gap-1.5">
+            <span className="text-green-600">✓</span>
+            7-day money-back guarantee
+          </p>
+        )}
+      </>
       )}
 
       {/* Free mini-audit option */}
