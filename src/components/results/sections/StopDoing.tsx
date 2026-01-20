@@ -20,15 +20,27 @@ export function StopDoing({ content }: StopDoingProps) {
 
   return (
     <SectionCard id="stop-doing" title="Stop Doing" variant="clean">
-      <div className="space-y-4">
+      <p className="text-foreground/70 text-sm mb-6">
+        Activities draining resources without return. Cut these immediately.
+      </p>
+
+      <div className="space-y-5">
         {items.map((item: StopItem, index: number) => (
           <div
             key={index}
-            className="bg-red-50 border-2 border-red-200 p-4"
+            className="border-l-4 border-foreground pl-4 relative"
           >
-            <p className="font-bold text-red-800 mb-1">{item.action}</p>
+            {/* STOP badge above title */}
+            <span className="font-mono text-xs px-2 py-0.5 font-bold bg-red-600 text-white inline-block mb-1">
+              STOP
+            </span>
+            <h4 className="font-bold text-foreground mb-1">{item.action}</h4>
+
+            {/* Reasoning */}
             {item.reasoning && (
-              <p className="text-red-700/80 text-sm">{item.reasoning}</p>
+              <p className="text-foreground/70 text-sm leading-relaxed">
+                {item.reasoning}
+              </p>
             )}
           </div>
         ))}

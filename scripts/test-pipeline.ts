@@ -3,38 +3,63 @@ config({ path: '.env.local' })
 import { runResearch } from '../src/lib/ai/research'
 import { generateStrategy } from '../src/lib/ai/generate'
 import type { RunInput, ResearchContext } from '../src/lib/ai/types'
+import * as fs from 'fs'
+import * as path from 'path'
 
-// Test input based on Actionboo.st itself
+// Test input based on Actionboo.st itself (updated from memory-bank)
 const TEST_INPUT: RunInput = {
-  productDescription: `Actionboo.st is a one-shot AI growth strategist for startups and entrepreneurs who are stuck.
-Users pay $15, describe their situation (product, traction, what they've tried), and get a personalized
-growth strategy built on live competitive research (Tavily + DataForSEO) and Claude Opus 4.5 reasoning.
-The output is a comprehensive markdown document with executive summary, competitive analysis,
-stop doing/start doing recommendations with ICE prioritization, quick wins, and a 30-day roadmap.`,
+  productDescription: `Actionboo.st is an AI growth strategist for startups and entrepreneurs who are stuck.
 
-  currentTraction: `Just launched. Landing page is live at actionboo.st. No paying customers yet.
-Getting some traffic from indie hacker communities (Reddit, Twitter/X). About 50 unique visitors
-in the first week. A few email signups for updates.`,
+Not another ChatGPT wrapper. Not generic "have you tried content marketing?" advice.
 
-  whatYouTried: `- Posted on r/SideProject and r/startups - got some engagement but no conversions
-- Shared on Twitter/X a few times - limited reach (small following)
-- Cold outreach to 20 founders in Discord communities - 2 replied, neither converted
-- Tried ProductHunt but haven't launched yet (saving for when product is more polished)`,
+Users pay $9.99, paste their situation (product, traction, what they've tried, what's working), and get a real strategy built on live competitive research (Tavily + DataForSEO) and Claude Opus 4.5 reasoning.
 
-  whatsWorking: `People engage most when I share specific growth tips and mini case studies.
-Got good feedback on the concept - "I'd pay for specific, actionable advice instead of generic AI slop."
-The $15 price point doesn't seem to be a barrier in conversations - people are more skeptical
-about whether the output will actually be useful.`,
+The output is a comprehensive 10-section strategy document:
+1. Executive Summary with Growth Flywheel diagram
+2. Your Situation (AARRR stage analysis)
+3. Competitive Landscape (tables with competitor data)
+4. Channel Strategy (prioritized by effort/impact)
+5. Stop Doing (3-5 items with reasoning)
+6. Start Doing (5-8 items with ICE scores)
+7. This Week (day-by-day quick wins)
+8. 30-Day Roadmap (week-by-week with themes)
+9. Metrics Dashboard (AARRR targets)
+10. Content Templates (ready-to-use)
 
-  focusArea: 'acquisition', // AARRR-based: acquisition | activation | retention | referral | monetization | custom
+The flywheel: User does $9.99 one-shot, loves it → "Want this every week, automatically?" → $29/mo subscription (v2).
 
-  competitorUrls: ['growthhackers.com', 'reforge.com'],
+Key insight: User fills out detailed form BEFORE seeing checkout. After 10 minutes of input, they're committed.`,
+
+  currentTraction: `Pre-launch / early stage. Landing page live at actionboo.st.
+Building for launch. Feature-complete with:
+- Brutalist + tactile UI design
+- Magic link auth
+- Stripe payments
+- Resend transactional emails
+- RAG system for returning users
+- Free mini-audit lead magnet`,
+
+  whatYouTried: `- Building the product (feature-complete)
+- Establishing brand voice (blunt optimist, impatient for results, research nerd, allergic to guru culture)
+- Designing landing page with brutalist aesthetic (harsh offset shadows, tactile buttons)
+- Creating free mini-audit as lead magnet (3 sections vs 10, uses Sonnet instead of Opus)`,
+
+  whatsWorking: `- Brand positioning resonates: "The founder friend who's three steps ahead"
+- Clear enemy: The Growth Advice Industrial Complex (47-page decks, $5K consultants, "build in public" gurus)
+- Strong unit economics: ~$0.50 cost per run, $9.99 price = ~90% margin
+- Form-before-payment flow increases commitment (psychological investment)
+- Product actually delivers value (real research, not templated advice)`,
+
+  focusArea: 'acquisition',
+
+  competitorUrls: ['growthhackers.com', 'reforge.com', 'demandcurve.com'],
 
   websiteUrl: 'https://actionboo.st',
 
-  constraints: `Solo founder, limited budget (~$500/month for marketing),
-need to see traction within 30 days to justify continuing development.
-Can dedicate ~20 hours/week to this project alongside consulting work.`,
+  constraints: `Solo founder building MVP+. Limited marketing budget.
+Need to validate product-market fit before investing heavily in growth.
+Can dedicate focused time to launch and initial traction.
+Primary channels: indie hacker communities (Reddit, Twitter/X, Indie Hackers, Product Hunt).`,
 }
 
 async function main() {
@@ -103,16 +128,18 @@ async function main() {
     console.log(`   Output length: ${output.length} characters`)
     console.log(`   Output lines: ${output.split('\n').length}\n`)
 
-    // Verify output structure
+    // Verify output structure (10 sections from generate.ts OUTPUT_FORMAT_PROMPT)
     const expectedSections = [
       'Executive Summary',
-      'Your Current Situation',
+      'Your Situation',
       'Competitive Landscape',
+      'Channel Strategy',
       'Stop Doing',
       'Start Doing',
-      'Quick Wins',
+      'This Week',
       '30-Day Roadmap',
-      'Metrics to Track',
+      'Metrics Dashboard',
+      'Content Templates',
     ]
 
     console.log('3. Verifying output structure...')
@@ -121,7 +148,7 @@ async function main() {
     )
 
     if (missingSections.length === 0) {
-      console.log('   All expected sections present: OK\n')
+      console.log('   All 10 expected sections present: OK\n')
     } else {
       console.log(`   Missing sections: ${missingSections.join(', ')}\n`)
     }
@@ -147,6 +174,18 @@ async function main() {
     console.log(
       `Sections: ${expectedSections.length - missingSections.length}/${expectedSections.length} present`
     )
+
+    // Save output to file for blog post
+    const outputDir = path.join(process.cwd(), 'docs')
+    const outputFile = path.join(outputDir, 'actionboost-strategy-export.md')
+
+    // Ensure docs directory exists
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true })
+    }
+
+    fs.writeFileSync(outputFile, output)
+    console.log(`\nOutput saved to: ${outputFile}`)
     console.log()
   } catch (err) {
     console.error('   Generation failed:', err)

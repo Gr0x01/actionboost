@@ -100,11 +100,16 @@ export function parseStartDoing(content: string): ICEItem[] {
     const lines = item.split("\n");
     const title = lines[0].replace(/^###\s*/, "").trim();
 
-    // Extract ICE scores using regex
+    // Extract ICE scores using regex - support both formats:
+    // Format 1: **Impact**: 9/10 - reason
+    // Format 2: - **Impact**: 9/10 - reason (with bullet)
     const impactMatch = item.match(/\*\*Impact\*\*:\s*(\d+)\/10\s*[-–]\s*(.+)/i);
     const confidenceMatch = item.match(/\*\*Confidence\*\*:\s*(\d+)\/10\s*[-–]\s*(.+)/i);
     const easeMatch = item.match(/\*\*Ease\*\*:\s*(\d+)\/10\s*[-–]\s*(.+)/i);
-    const iceMatch = item.match(/\*\*ICE Score\*\*:\s*(\d+)/i);
+    // ICE Score can be: **ICE Score**: 26 OR **ICE Score: 26** OR ICE Score: 26
+    const iceMatch = item.match(/\*\*ICE Score[:\s]*(\d+)\*\*/i) ||
+                     item.match(/\*\*ICE Score\*\*[:\s]*(\d+)/i) ||
+                     item.match(/ICE Score[:\s]*(\d+)/i);
 
     // Get description (everything after the ICE scores section)
     const iceScoreIndex = item.toLowerCase().indexOf("ice score");
@@ -210,8 +215,18 @@ export function parseStopDoing(content: string): StopItem[] {
       if (currentAction) {
         items.push({ action: currentAction, reasoning: currentReasoning.trim() });
       }
-      currentAction = trimmed.replace(/^[-*\d.]\s*/, "").trim();
-      currentReasoning = "";
+
+      const bulletContent = trimmed.replace(/^[-*\d.]\s*/, "").trim();
+
+      // Check for format: **Action**: Reasoning (all on one line)
+      const inlineMatch = bulletContent.match(/^\*\*([^*]+)\*\*:\s*(.+)$/);
+      if (inlineMatch) {
+        currentAction = inlineMatch[1].trim();
+        currentReasoning = inlineMatch[2].trim();
+      } else {
+        currentAction = bulletContent;
+        currentReasoning = "";
+      }
     } else if (currentAction && trimmed) {
       // Continuation of reasoning
       currentReasoning += " " + trimmed;

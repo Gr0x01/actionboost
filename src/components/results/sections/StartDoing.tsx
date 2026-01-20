@@ -47,13 +47,11 @@ export function StartDoing({ content }: StartDoingProps) {
             key={item.title}
             className={`border-l-4 ${getBorderClass(index)} pl-4`}
           >
-            {/* Title row with inline ICE badge */}
-            <div className="flex items-baseline gap-3 mb-1 flex-wrap">
-              <span className={`font-mono text-xs px-2 py-0.5 font-bold ${getBadgeClass(index)}`}>
-                ICE: {item.iceScore}
-              </span>
-              <h4 className="font-bold text-foreground">{item.title}</h4>
-            </div>
+            {/* ICE badge above title */}
+            <span className={`font-mono text-xs px-2 py-0.5 font-bold inline-block mb-1 ${getBadgeClass(index)}`}>
+              ICE: {item.iceScore}
+            </span>
+            <h4 className="font-bold text-foreground mb-1">{item.title}</h4>
 
             {/* Description */}
             {item.description && (

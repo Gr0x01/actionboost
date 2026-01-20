@@ -2,9 +2,9 @@ import { Metadata } from "next";
 import { promises as fs } from "fs";
 import path from "path";
 import { Header, Footer, ResultsLayout } from "@/components/layout";
-import { MarkdownContent } from "@/components/results/MarkdownContent";
+import { ResultsContent } from "@/components/results";
+import { parseStrategy } from "@/lib/markdown/parser";
 import { SocialShareButtons } from "@/components/ui/SocialShareButtons";
-import { BLOG_SECTIONS } from "@/lib/constants/toc-sections";
 import { config } from "@/lib/config";
 import Link from "next/link";
 
@@ -23,27 +23,18 @@ export const metadata: Metadata = {
   },
 };
 
-async function getGrowthPlan(): Promise<string> {
-  const filePath = path.join(process.cwd(), "docs", "growth-plan-actionboost.md");
+async function getStrategy(): Promise<string> {
+  const filePath = path.join(process.cwd(), "docs", "actionboost-strategy-export.md");
   try {
-    const content = await fs.readFile(filePath, "utf-8");
-    return content;
+    return await fs.readFile(filePath, "utf-8");
   } catch {
     return "# Growth Plan Not Found\n\nThe growth plan document could not be loaded.";
   }
 }
 
 export default async function GrowthPlanPage() {
-  const markdown = await getGrowthPlan();
-
-  // Remove the title, subtitle, date, and first hr since we render them in the hero
-  const contentWithoutTitle = markdown
-    .replace(/^# Actionboo\.st Growth Plan\n+/, "")
-    .replace(/^\*\*AI Growth Strategist.*?\*\*\n+/m, "")
-    .replace(/^\*Generated:.*?\*\n+/m, "")
-    .replace(/^\*Updated:.*?\*\n+/m, "")
-    .replace(/^---\n+/, "")
-    .replace(/^\s+/, ""); // Remove leading whitespace
+  const markdown = await getStrategy();
+  const strategy = parseStrategy(markdown);
 
   const hero = (
     <>
@@ -122,12 +113,10 @@ export default async function GrowthPlanPage() {
       <Header />
 
       <ResultsLayout
-        toc={{ sections: BLOG_SECTIONS, hideThreshold: 400 }}
+        toc={{ strategy }}
         slots={{ hero, bottomCta }}
       >
-        <article className="font-serif text-[18px] leading-[1.75] text-foreground/90">
-          <MarkdownContent content={contentWithoutTitle} extended />
-        </article>
+        <ResultsContent strategy={strategy} />
       </ResultsLayout>
 
       <Footer />
