@@ -103,7 +103,7 @@ export function ResultsLayout({
       {/* Top banner slot (demo banner, upsell, etc.) */}
       {topBanner}
 
-      <div className="mx-auto px-6">
+      <div className="mx-auto px-6 pt-6">
         {/* Mobile TOC - full width horizontal tabs */}
         <div className="lg:hidden">
           {beforeToc}
