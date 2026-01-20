@@ -55,6 +55,7 @@ export function MarkdownContent({ content, className = "", extended = false }: M
   let currentTable: { headers: string[]; rows: string[][] } | null = null;
   let currentCodeBlock: { lang: string; lines: string[] } | null = null;
   let keyIndex = 0;
+  let isFirstH2 = true;
 
   const flushList = () => {
     if (currentList) {
@@ -396,11 +397,12 @@ export function MarkdownContent({ content, className = "", extended = false }: M
         <h2
           key={keyIndex++}
           id={headingId}
-          className="text-2xl font-bold text-foreground mt-14 mb-6 font-sans tracking-tight border-b border-border/30 pb-3 scroll-mt-32"
+          className={`text-2xl font-bold text-foreground ${isFirstH2 ? "" : "mt-14"} mb-6 font-sans tracking-tight border-b border-border/30 pb-3 scroll-mt-32`}
         >
           {headingText}
         </h2>
       );
+      isFirstH2 = false;
       continue;
     }
 

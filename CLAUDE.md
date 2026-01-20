@@ -142,7 +142,7 @@ Subagents are helpful but not mandatory for every tiny change. Use judgment:
 2. **code-architect**: Use when designing new feature modules or restructuring code
 3. **backend-architect**: Use for major architectural decisions or data model changes (not routine CRUD)
 4. **frontend-developer**: Use for complex UI or performance issues (not simple component edits)
-5. **ui-designer**: Use for new design systems or major UI overhauls (not button color tweaks)
+5. **ui-designer**: **MANDATORY for new frontend features/elements** - consult before implementing new components, pages, or UI patterns
 6. **growth-hacker**: Use for growth strategy, experiments, and optimization (key for this project)
 7. **legal-compliance-checker**: Use before launch or when handling user data
 8. **Complex Research**: Use general-purpose subagent for multi-step investigations
@@ -153,9 +153,13 @@ Subagents are helpful but not mandatory for every tiny change. Use judgment:
   1. Major changes: Consult backend-architect for design validation
   2. Simple changes: Just implement following existing patterns
   3. After finishing: Use appropriate subagent (backend-architect/frontend-developer) + code-reviewer
-- **FRONTEND FEATURES**: Implement using the frontend skill → Test → frontend-developer review + code-reviewer (for non-trivial changes)
-- **UI DESIGN**: Major redesigns use ui-designer; iterative improvements just do it using the frontend skill
-- **PRAGMATIC RULE**: If it's under 50 lines and follows existing patterns, just ship it with type checking
+- **FRONTEND FEATURES** (see SKILLS section for full workflow):
+  1. **ALWAYS** invoke `/frontend-design` skill first
+  2. New features/elements → consult `ui-designer` subagent before implementing
+  3. Implement following skill guidelines
+  4. Test with Playwright
+  5. For non-trivial changes: frontend-developer review + code-reviewer
+- **PRAGMATIC RULE**: Backend under 50 lines following existing patterns can skip subagent review. Frontend still requires the skill.
 
 ### Handling Subagent Feedback
 **Subagents suggest; you decide.**
@@ -169,14 +173,42 @@ Subagents are helpful but not mandatory for every tiny change. Use judgment:
 
 ### Available Skills
 - **frontend-design**: Guidelines for creating distinctive, high-quality frontend UI
-  - Use when: Building or modifying React components, pages, or visual elements
   - Location: `.claude/skills/frontend-design/SKILL.md`
-  - Read this skill before starting any frontend design work
+  - **MANDATORY** for all frontend work
 
-### Skill Usage
-- Read the relevant skill file before beginning design/UI implementation
-- Skills provide aesthetic guidelines and constraints that ensure consistency
-- Combine with subagents: Read skill → Use ui-designer/frontend-developer → code-reviewer
+### Frontend Work Requirements - CRITICAL
+**Any change to frontend code MUST follow this workflow:**
+
+1. **ALL frontend changes**: Invoke the `frontend-design` skill FIRST
+   - This is non-negotiable for any React component, page, or visual element
+   - The skill contains design system rules, typography, colors, and patterns
+   - Skipping this leads to inconsistent UI
+
+2. **NEW features or elements**: Consult `ui-designer` subagent BEFORE implementing
+   - New components, new pages, new UI patterns
+   - Major visual changes or layout restructuring
+   - The ui-designer ensures cohesive design decisions
+
+3. **Workflow**:
+   ```
+   Frontend change requested
+         ↓
+   Invoke /frontend-design skill (ALWAYS)
+         ↓
+   New feature? → Yes → Consult ui-designer subagent
+         ↓              ↓
+        No         Get design direction
+         ↓              ↓
+   Implement following skill guidelines
+         ↓
+   Test with Playwright
+   ```
+
+**Examples:**
+- Fixing a button color → Invoke skill → implement
+- Adding a new dashboard page → Invoke skill → consult ui-designer → implement
+- Tweaking padding on existing card → Invoke skill → implement
+- Creating a new pricing component → Invoke skill → consult ui-designer → implement
 
 ### Testing Workflow
 - **BEFORE COMPLETION**: Run `npm run test:e2e` to verify functionality across browsers
