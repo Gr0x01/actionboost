@@ -4,8 +4,7 @@ import { useState, useEffect, useRef, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { usePostHog } from "posthog-js/react"
 import { Header, Footer } from "@/components/layout"
-import { Button, Input } from "@/components/ui"
-import { Loader2, Mail, ArrowRight, CheckCircle } from "lucide-react"
+import { Loader2, ArrowRight } from "lucide-react"
 import Link from "next/link"
 
 function LoginForm() {
@@ -68,31 +67,25 @@ function LoginForm() {
       <Header />
 
       <main className="flex-1 py-10 sm:py-14 flex items-center justify-center">
-        <div className="mx-auto max-w-md w-full px-4 sm:px-6">
-          {/* Logo */}
-          <Link href="/" className="block text-center text-2xl font-bold text-foreground hover:text-foreground/80 transition-colors mb-6">
-            Actionboo.st
-          </Link>
-
-          <div className="bg-background rounded-xl shadow-lg shadow-foreground/5 border border-border/50 p-6 sm:p-8">
+        <div className="mx-auto max-w-lg w-full px-4 sm:px-6">
+          {/* Brutalist card */}
+          <div className="border-[3px] border-foreground bg-background p-6 sm:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
             {status === "sent" ? (
               /* Success state */
               <div className="text-center py-4">
-                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle className="h-6 w-6 text-green-600" />
-                </div>
-                <h1 className="text-xl font-semibold text-foreground mb-2">
+                <h1 className="text-xl font-black text-foreground mb-2">
                   Check your email
                 </h1>
-                <p className="text-muted text-sm mb-6">
-                  We sent a login link to <strong className="text-foreground">{email}</strong>
+                <p className="text-foreground/60 text-base mb-6">
+                  We sent a login link to{" "}
+                  <strong className="text-foreground font-bold">{email}</strong>
                 </p>
-                <p className="text-muted text-xs">
+                <p className="text-foreground/50 text-sm">
                   Didn&apos;t receive it?{" "}
                   <button
                     type="button"
                     onClick={() => setStatus("idle")}
-                    className="text-primary hover:text-primary/80 font-medium"
+                    className="text-cta hover:text-cta/80 font-bold underline underline-offset-2"
                   >
                     Try again
                   </button>
@@ -102,57 +95,67 @@ function LoginForm() {
               /* Form state */
               <>
                 <div className="text-center mb-6">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                    <Mail className="h-6 w-6 text-primary" />
-                  </div>
-                  <h1 className="text-xl font-semibold text-foreground">
+                  <h1 className="text-xl font-black text-foreground">
                     Sign in to Actionboo.st
                   </h1>
-                  <p className="text-muted text-sm mt-1">
+                  <p className="text-foreground/60 text-base mt-2">
                     View your past action plans and credit balance
                   </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <Input
-                    label="Email address"
-                    type="email"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => {
-                      setEmail(e.target.value)
-                      setError("")
-                    }}
-                    error={error}
-                    required
-                  />
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div>
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-bold text-foreground mb-2"
+                    >
+                      Email address
+                    </label>
+                    <input
+                      id="email"
+                      type="email"
+                      placeholder="you@example.com"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value)
+                        setError("")
+                      }}
+                      className="w-full bg-surface border-2 border-foreground/20 px-4 py-3 text-foreground placeholder:text-foreground/30 text-base focus:outline-none focus:border-foreground transition-colors"
+                      required
+                    />
+                    {error && (
+                      <p className="mt-2 text-sm font-medium text-red-600">
+                        {error}
+                      </p>
+                    )}
+                  </div>
 
-                  <Button
+                  {/* Tactile button */}
+                  <button
                     type="submit"
                     disabled={status === "loading"}
-                    className="w-full"
-                    size="lg"
+                    className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0 transition-all duration-100"
                   >
                     {status === "loading" ? (
                       <>
-                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        <Loader2 className="h-5 w-5 animate-spin" />
                         Sending...
                       </>
                     ) : (
                       <>
                         Send magic link
-                        <ArrowRight className="h-4 w-4 ml-2" />
+                        <ArrowRight className="h-5 w-5" />
                       </>
                     )}
-                  </Button>
+                  </button>
                 </form>
 
-                <div className="mt-6 pt-6 border-t border-border/50 text-center">
-                  <p className="text-muted text-sm">
+                <div className="mt-6 pt-6 border-t-2 border-foreground/10 text-center">
+                  <p className="text-foreground/60 text-sm">
                     New to Actionboo.st?{" "}
                     <Link
                       href="/start"
-                      className="text-primary hover:text-primary/80 font-medium"
+                      className="text-cta hover:text-cta/80 font-bold underline underline-offset-2"
                     >
                       Get your first action plan
                     </Link>
@@ -161,6 +164,11 @@ function LoginForm() {
               </>
             )}
           </div>
+
+          {/* Trust footer */}
+          <p className="mt-6 text-center text-sm text-foreground/40 font-mono">
+            No password needed · Magic link expires in 1 hour
+          </p>
         </div>
       </main>
 
@@ -176,7 +184,7 @@ export default function LoginPage() {
         <div className="min-h-screen flex flex-col bg-surface/30">
           <Header />
           <main className="flex-1 py-10 sm:py-14 flex items-center justify-center">
-            <div className="animate-pulse text-muted">Loading...</div>
+            <div className="font-mono text-foreground/50">Loading...</div>
           </main>
           <Footer />
         </div>
