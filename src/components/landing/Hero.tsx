@@ -1,15 +1,91 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
-import { Button } from "@/components/ui";
-import { config } from "@/lib/config";
+import { Globe, ArrowRight, Loader2 } from "lucide-react";
+
+const PREFILL_KEY = "actionboost-prefill";
 
 export function Hero() {
+  const router = useRouter();
   const posthog = usePostHog();
+
+  // URL input state
+  const [url, setUrl] = useState("");
+  const [favicon, setFavicon] = useState<string | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  // Update favicon as user types
+  useEffect(() => {
+    if (url && url.includes(".")) {
+      try {
+        const normalized = url.startsWith("http") ? url : `https://${url}`;
+        const domain = new URL(normalized).hostname;
+        setFavicon(`https://www.google.com/s2/favicons?domain=${domain}&sz=32`);
+      } catch {
+        setFavicon(null);
+      }
+    } else {
+      setFavicon(null);
+    }
+  }, [url]);
 
   const trackCTA = (button: string) => {
     posthog?.capture("cta_clicked", { location: "hero", button });
+  };
+
+  const handleAnalyze = async () => {
+    if (!url.trim()) return;
+
+    setIsAnalyzing(true);
+    posthog?.capture("hero_url_submitted", {
+      has_url: true,
+      url_domain: url.includes(".") ? new URL(url.startsWith("http") ? url : `https://${url}`).hostname : null,
+    });
+
+    try {
+      const response = await fetch("/api/metadata/extract", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+
+      const data = await response.json();
+
+      posthog?.capture("hero_metadata_extracted", {
+        success: data.success,
+        has_title: !!data.metadata?.title,
+        has_description: !!data.metadata?.description,
+      });
+
+      // Store prefill data
+      const prefillData = {
+        websiteUrl: data.metadata?.url || (url.startsWith("http") ? url : `https://${url}`),
+        metadata: data.metadata || { title: null, description: null, favicon: null, siteName: null },
+        timestamp: Date.now(),
+      };
+      localStorage.setItem(PREFILL_KEY, JSON.stringify(prefillData));
+
+      router.push("/start");
+    } catch (error) {
+      console.error("Metadata extraction failed:", error);
+      // Still navigate even if extraction fails
+      const prefillData = {
+        websiteUrl: url.startsWith("http") ? url : `https://${url}`,
+        metadata: { title: null, description: null, favicon, siteName: null },
+        timestamp: Date.now(),
+      };
+      localStorage.setItem(PREFILL_KEY, JSON.stringify(prefillData));
+      router.push("/start");
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && url.trim()) {
+      handleAnalyze();
+    }
   };
 
   return (
@@ -37,20 +113,51 @@ export function Hero() {
               A 30-day roadmap built for <em className="text-foreground font-medium not-italic">your</em> business.
             </p>
 
-            {/* CTAs */}
-            <div className="mt-10 flex flex-col sm:flex-row items-center xl:items-start justify-center xl:justify-start gap-6 animate-slide-up stagger-2">
-              <Link href="/start" onClick={() => trackCTA("get_started")}>
-                <Button size="xl">
-                  {config.pricingEnabled ? `Get Started — ${config.singlePrice}` : "Get Started"}
-                </Button>
-              </Link>
-              {config.pricingEnabled && (
-                <Link href="#pricing" onClick={() => trackCTA("see_pricing")}>
-                  <Button variant="outline" size="xl">
-                    See pricing
-                  </Button>
+            {/* URL Input */}
+            <div className="mt-6 animate-slide-up stagger-2 max-w-lg mx-auto xl:mx-0">
+              <div className="flex items-center gap-2 bg-surface/50 border border-border/60 rounded-xl px-4 py-3.5 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+                {favicon ? (
+                  <img src={favicon} alt="" className="w-5 h-5 rounded shrink-0" />
+                ) : (
+                  <Globe className="w-5 h-5 text-muted shrink-0" />
+                )}
+                <input
+                  type="url"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="yourproduct.com"
+                  disabled={isAnalyzing}
+                  className="flex-1 bg-transparent text-base sm:text-lg text-foreground placeholder:text-muted/50 outline-none min-w-0"
+                />
+                <button
+                  onClick={handleAnalyze}
+                  disabled={!url.trim() || isAnalyzing}
+                  className="shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Analyzing
+                    </>
+                  ) : (
+                    <>
+                      Analyze
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
+              </div>
+              {/* Helper link */}
+              <p className="mt-3 text-sm text-muted text-center">
+                <Link
+                  href="/start"
+                  onClick={() => trackCTA("skip_url")}
+                  className="text-primary hover:underline"
+                >
+                  No website yet? Start anyway
                 </Link>
-              )}
+              </p>
             </div>
 
             {/* Trust cluster: founder + positioning */}

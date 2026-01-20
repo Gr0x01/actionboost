@@ -30,6 +30,8 @@ import {
 import { useUserContext } from "@/lib/hooks/useUserContext";
 
 const STORAGE_KEY = "actionboost-form-v3";
+const PREFILL_KEY = "actionboost-prefill";
+const PREFILL_TTL = 5 * 60 * 1000; // 5 minutes
 
 // View states for the form flow
 type ViewState = "loading" | "welcome_back" | "context_update" | "questions" | "checkout";
@@ -136,6 +138,15 @@ export default function StartPage() {
   const [isValidatingCode, setIsValidatingCode] = useState(false);
   const [email, setEmail] = useState("");
 
+  // Prefill from homepage
+  const [prefillMetadata, setPrefillMetadata] = useState<{
+    title: string | null;
+    description: string | null;
+    favicon: string | null;
+    siteName: string | null;
+  } | null>(null);
+  const prefillApplied = useRef(false);
+
   const question = QUESTIONS[currentQuestion];
   const isQuestionsComplete = currentQuestion >= QUESTIONS.length;
 
@@ -150,6 +161,60 @@ export default function StartPage() {
       setViewState(hasContext ? "welcome_back" : "questions");
     }
   }, [isLoadingContext, hasContext, viewState]);
+
+  // Handle prefill from homepage URL input
+  useEffect(() => {
+    if (prefillApplied.current) return;
+    if (viewState !== "questions") return;
+
+    const prefillRaw = localStorage.getItem(PREFILL_KEY);
+    if (!prefillRaw) return;
+
+    try {
+      const prefill = JSON.parse(prefillRaw);
+
+      // Check TTL
+      if (Date.now() - prefill.timestamp > PREFILL_TTL) {
+        localStorage.removeItem(PREFILL_KEY);
+        return;
+      }
+
+      // Clear prefill to prevent re-application
+      localStorage.removeItem(PREFILL_KEY);
+      prefillApplied.current = true;
+
+      // Store metadata for context banner
+      if (prefill.metadata) {
+        setPrefillMetadata(prefill.metadata);
+      }
+
+      // Build description from metadata
+      let description = "";
+      if (prefill.metadata?.title) {
+        description = prefill.metadata.title;
+      }
+      if (prefill.metadata?.description) {
+        description += description ? " - " : "";
+        description += prefill.metadata.description;
+      }
+
+      // Update form and skip to step 2 (product description)
+      setForm((prev) => ({
+        ...prev,
+        websiteUrl: prefill.websiteUrl || "",
+        productDescription: description || prev.productDescription,
+      }));
+      setCurrentQuestion(1); // Skip URL step, go to product description
+
+      posthog?.capture("form_prefilled_from_hero", {
+        has_title: !!prefill.metadata?.title,
+        has_description: !!prefill.metadata?.description,
+        url_domain: prefill.websiteUrl ? new URL(prefill.websiteUrl).hostname : null,
+      });
+    } catch {
+      localStorage.removeItem(PREFILL_KEY);
+    }
+  }, [viewState, posthog]);
 
   // Handle "Continue with updates" - show conversational update form
   const handleContinueWithUpdates = useCallback(() => {
@@ -535,6 +600,27 @@ export default function StartPage() {
                 transition={{ duration: 0.3 }}
                 className="min-h-[300px]"
               >
+                {/* Prefill context banner */}
+                {prefillMetadata && form.websiteUrl && (
+                  <div className="flex items-center justify-center gap-3 mb-6 mx-auto max-w-md p-3 rounded-lg bg-surface/50 border border-border/60">
+                    {prefillMetadata.favicon && (
+                      <img src={prefillMetadata.favicon} alt="" className="w-5 h-5 rounded shrink-0" />
+                    )}
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">
+                        {prefillMetadata.siteName || new URL(form.websiteUrl).hostname}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setPrefillMetadata(null)}
+                      className="text-muted hover:text-foreground transition-colors ml-auto text-lg leading-none"
+                      aria-label="Dismiss"
+                    >
+                      &times;
+                    </button>
+                  </div>
+                )}
+
                 {/* Question */}
                 <h1 className="text-2xl sm:text-3xl font-semibold text-foreground text-center mb-8">
                   {question.question}
