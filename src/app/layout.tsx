@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Source_Sans_3, JetBrains_Mono, Tienne } from "next/font/google";
 import { headers } from "next/headers";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import { PHProvider } from "./providers";
 
@@ -70,6 +71,7 @@ export default async function RootLayout({
         className={`${sourceSans.variable} ${jetbrainsMono.variable} ${tienne.variable} font-sans antialiased`}
       >
         <PHProvider cookieless={isGdprCountry}>{children}</PHProvider>
+        <Analytics />
       </body>
     </html>
   );

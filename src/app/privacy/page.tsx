@@ -115,6 +115,9 @@ export default function PrivacyPage() {
                   <li>
                     <strong className="text-foreground">PostHog</strong> — privacy-focused analytics
                   </li>
+                  <li>
+                    <strong className="text-foreground">Vercel Analytics</strong> — page view and performance analytics
+                  </li>
                 </ul>
                 <p className="text-sm text-muted leading-relaxed mt-3">
                   Your data may be transferred to and processed in the United States. Our service
