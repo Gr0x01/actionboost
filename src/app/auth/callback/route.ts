@@ -6,6 +6,8 @@ import { trackServerEvent, identifyUser } from "@/lib/analytics"
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get("code")
+  const tokenHash = searchParams.get("token_hash")
+  const type = searchParams.get("type")
 
   // Sanitize next param to prevent open redirect attacks
   const rawNext = searchParams.get("next") ?? "/dashboard"
@@ -13,15 +15,28 @@ export async function GET(request: NextRequest) {
     ? rawNext
     : "/dashboard"
 
-  if (!code) {
-    // No code provided, redirect to login
-    return NextResponse.redirect(`${origin}/login?error=no_code`)
-  }
-
   const supabase = await createClient()
 
-  // Exchange code for session
-  const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+  let data: { user: { id: string; email?: string } | null } | null = null
+  let error: Error | null = null
+
+  // Handle token_hash (from dev bypass or email link)
+  if (tokenHash && type === "magiclink") {
+    const result = await supabase.auth.verifyOtp({
+      token_hash: tokenHash,
+      type: "magiclink",
+    })
+    data = result.data
+    error = result.error
+  } else if (code) {
+    // Exchange code for session
+    const result = await supabase.auth.exchangeCodeForSession(code)
+    data = result.data
+    error = result.error
+  } else {
+    // No code or token provided, redirect to login
+    return NextResponse.redirect(`${origin}/login?error=no_code`)
+  }
 
   if (error || !data.user) {
     console.error("Auth callback error:", error)

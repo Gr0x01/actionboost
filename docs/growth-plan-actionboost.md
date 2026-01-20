@@ -82,6 +82,7 @@ Connected analytics unlock usage-based growth
 - Active in communities: Indie Hackers, Twitter/X #buildinpublic, Reddit (r/startups, r/SaaS)
 - Uses AI tools but knows ChatGPT gives surface-level advice
 
+
 **Pain Points:**
 - "I launched, got 100 users, and now I'm stuck"
 - "I don't know which growth channel to prioritize"

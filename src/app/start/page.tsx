@@ -140,6 +140,10 @@ export default function StartPage() {
   const [isValidatingCode, setIsValidatingCode] = useState(false);
   const [email, setEmail] = useState("");
 
+  // User credits state
+  const [userCredits, setUserCredits] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   // Prefill from homepage
   const [prefillMetadata, setPrefillMetadata] = useState<{
     title: string | null;
@@ -163,6 +167,24 @@ export default function StartPage() {
       setViewState(hasContext ? "welcome_back" : "questions");
     }
   }, [isLoadingContext, hasContext, viewState]);
+
+  // Fetch user credits on mount
+  useEffect(() => {
+    async function fetchCredits() {
+      try {
+        const res = await fetch("/api/user/credits");
+        const data = await res.json();
+        setUserCredits(data.credits || 0);
+        setIsLoggedIn(data.loggedIn || false);
+        if (data.email) {
+          setEmail(data.email);
+        }
+      } catch {
+        // Silently fail - user just won't see credits
+      }
+    }
+    fetchCredits();
+  }, []);
 
   // Handle prefill from homepage (hero textarea or URL input)
   useEffect(() => {
@@ -445,7 +467,30 @@ export default function StartPage() {
     setError(null);
 
     try {
-      if (hasValidCode) {
+      // Use credits if available
+      if (userCredits > 0) {
+        const res = await fetch("/api/runs/create-with-credits", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            input: form,
+            contextDelta: contextDelta || undefined,
+            posthogDistinctId: posthog?.get_distinct_id(),
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          posthog?.capture("form_api_error", {
+            type: "create_run_with_credits",
+            error: data.error || "Failed to create run",
+          });
+          setError(data.error || "Failed to create run");
+          setIsSubmitting(false);
+          return;
+        }
+        localStorage.removeItem(STORAGE_KEY);
+        router.push(`/processing/${data.runId}?new=1`);
+      } else if (hasValidCode) {
         const res = await fetch("/api/runs/create-with-code", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -601,6 +646,11 @@ export default function StartPage() {
               >
                 <CheckoutSection
                   onSubmit={handleSubmit}
+                  onBack={() => {
+                    setError(null);
+                    setViewState("questions");
+                    setCurrentQuestion(QUESTIONS.length - 1);
+                  }}
                   isSubmitting={isSubmitting}
                   hasValidCode={hasValidCode}
                   promoCode={promoCode}
@@ -612,6 +662,9 @@ export default function StartPage() {
                   email={email}
                   setEmail={setEmail}
                   formData={form}
+                  userCredits={userCredits}
+                  isLoggedIn={isLoggedIn}
+                  error={error}
                 />
               </motion.div>
             )}

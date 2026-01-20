@@ -4,8 +4,11 @@ import { useState, useEffect, useRef, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { usePostHog } from "posthog-js/react"
 import { Header, Footer } from "@/components/layout"
-import { Loader2, ArrowRight } from "lucide-react"
+import { Loader2, ArrowRight, Zap } from "lucide-react"
 import Link from "next/link"
+
+const DEV_EMAIL = "gr0x01@pm.me"
+const isDev = process.env.NODE_ENV === "development"
 
 function LoginForm() {
   const searchParams = useSearchParams()
@@ -14,7 +17,7 @@ function LoginForm() {
   const hasTrackedView = useRef(false)
 
   const [email, setEmail] = useState("")
-  const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error">("idle")
+  const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error" | "dev-loading">("idle")
   const [error, setError] = useState("")
 
   // Track login page viewed
@@ -58,6 +61,32 @@ function LoginForm() {
     } catch {
       posthog?.capture("login_error", { error: "network_error" })
       setError("Something went wrong. Please try again.")
+      setStatus("error")
+    }
+  }
+
+  const handleDevBypass = async () => {
+    setStatus("dev-loading")
+    setError("")
+
+    try {
+      const res = await fetch("/api/auth/dev-bypass", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: DEV_EMAIL }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data.error || "Dev bypass failed")
+        setStatus("error")
+        return
+      }
+
+      window.location.href = data.redirectUrl
+    } catch {
+      setError("Dev bypass failed")
       setStatus("error")
     }
   }
@@ -164,6 +193,37 @@ function LoginForm() {
               </>
             )}
           </div>
+
+          {/* Dev bypass - localhost only */}
+          {isDev && (
+            <div className="mt-6 p-4 border-2 border-dashed border-amber-500/50 bg-amber-50/50">
+              <p className="text-xs font-mono text-amber-700 mb-3 text-center uppercase tracking-wide">
+                Dev Mode Only
+              </p>
+              <button
+                onClick={handleDevBypass}
+                disabled={status === "dev-loading"}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-amber-500 text-white font-bold text-sm border-2 border-amber-600 shadow-[3px_3px_0_0_rgba(180,83,9,1)] hover:shadow-[4px_4px_0_0_rgba(180,83,9,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 disabled:opacity-50 transition-all duration-100"
+              >
+                {status === "dev-loading" ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Logging in...
+                  </>
+                ) : (
+                  <>
+                    <Zap className="h-4 w-4" />
+                    Quick login as {DEV_EMAIL}
+                  </>
+                )}
+              </button>
+              {error && status === "error" && (
+                <p className="mt-2 text-xs text-red-600 font-mono break-all">
+                  {error}
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Trust footer */}
           <p className="mt-6 text-center text-sm text-foreground/40 font-mono">

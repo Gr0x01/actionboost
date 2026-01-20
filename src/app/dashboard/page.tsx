@@ -19,16 +19,16 @@ type RunStatus = "pending" | "processing" | "complete" | "failed"
 function StatusBadge({ status }: { status: string | null }) {
   const s = status as RunStatus
   const config = {
-    pending: { icon: Clock, label: "Pending", className: "bg-yellow-100 text-yellow-700" },
-    processing: { icon: Loader2, label: "Processing", className: "bg-blue-100 text-blue-700" },
-    complete: { icon: CheckCircle, label: "Complete", className: "bg-green-100 text-green-700" },
-    failed: { icon: AlertCircle, label: "Failed", className: "bg-red-100 text-red-700" },
-  }[s] ?? { icon: Clock, label: "Unknown", className: "bg-gray-100 text-gray-700" }
+    pending: { icon: Clock, label: "Pending", className: "bg-amber-50 text-amber-800 border-amber-800" },
+    processing: { icon: Loader2, label: "Processing", className: "bg-blue-50 text-blue-800 border-blue-800" },
+    complete: { icon: CheckCircle, label: "Complete", className: "bg-emerald-50 text-emerald-800 border-emerald-800" },
+    failed: { icon: AlertCircle, label: "Failed", className: "bg-red-50 text-red-800 border-red-800" },
+  }[s] ?? { icon: Clock, label: "Unknown", className: "bg-gray-50 text-gray-800 border-gray-800" }
 
   const Icon = config.icon
 
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${config.className}`}>
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 border-2 font-mono text-xs font-bold uppercase tracking-wide ${config.className}`}>
       <Icon className={`h-3 w-3 ${s === "processing" ? "animate-spin" : ""}`} />
       {config.label}
     </span>
@@ -37,8 +37,8 @@ function StatusBadge({ status }: { status: string | null }) {
 
 function FreeBadge() {
   return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
-      Free Preview
+    <span className="inline-flex items-center px-2 py-1 border-2 border-violet-800 bg-violet-50 text-violet-800 font-mono text-xs font-bold uppercase tracking-wide">
+      Free
     </span>
   )
 }
@@ -126,95 +126,98 @@ export default async function DashboardPage() {
           {/* Header section */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <div>
-              <h1 className="text-2xl font-semibold text-foreground tracking-tight">
+              <p className="font-mono text-xs tracking-[0.15em] text-foreground/50 uppercase mb-1">
+                Your Account
+              </p>
+              <h1 className="text-3xl font-black text-foreground tracking-tight">
                 Dashboard
               </h1>
-              <p className="text-muted mt-1 text-sm">
+              <p className="text-foreground/60 mt-1 text-sm font-mono">
                 {authUser.email}
               </p>
             </div>
             <SignOutButton />
           </div>
 
-          {/* Stats cards */}
+          {/* Stats cards - brutalist boxes */}
           <div className="grid grid-cols-2 gap-4 mb-8">
-            <div className="bg-background rounded-xl border border-border/50 p-5">
+            <div className="border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <FileText className="h-5 w-5 text-primary" />
+                <div className="w-10 h-10 border-2 border-foreground bg-surface flex items-center justify-center">
+                  <FileText className="h-5 w-5 text-foreground" />
                 </div>
                 <div>
-                  <p className="text-2xl font-semibold text-foreground">{strategies.length}</p>
-                  <p className="text-sm text-muted">
-                    {strategies.length === 1 ? "Action Plan" : "Action Plans"}
+                  <p className="text-3xl font-black text-foreground">{strategies.length}</p>
+                  <p className="text-sm text-foreground/60 font-mono uppercase tracking-wide">
+                    {strategies.length === 1 ? "Plan" : "Plans"}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-background rounded-xl border border-border/50 p-5">
+            <div className="border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
-                  <Zap className="h-5 w-5 text-green-600" />
+                <div className="w-10 h-10 border-2 border-foreground bg-cta/10 flex items-center justify-center">
+                  <Zap className="h-5 w-5 text-cta" />
                 </div>
                 <div>
-                  <p className="text-2xl font-semibold text-foreground">{remainingCredits}</p>
-                  <p className="text-sm text-muted">
-                    {remainingCredits === 1 ? "Credit" : "Credits"} remaining
+                  <p className="text-3xl font-black text-foreground">{remainingCredits}</p>
+                  <p className="text-sm text-foreground/60 font-mono uppercase tracking-wide">
+                    {remainingCredits === 1 ? "Credit" : "Credits"}
                   </p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Strategies list */}
-          <div className="bg-background rounded-xl shadow-lg shadow-foreground/5 border border-border/50 overflow-hidden">
-            <div className="px-6 py-4 border-b border-border/50">
-              <h2 className="font-semibold text-foreground">Your Action Plans</h2>
+          {/* Strategies list - brutalist container */}
+          <div className="border-[3px] border-foreground bg-background shadow-[6px_6px_0_0_rgba(44,62,80,1)] overflow-hidden">
+            <div className="px-6 py-4 border-b-[3px] border-foreground bg-surface">
+              <h2 className="font-bold text-foreground uppercase tracking-wide">Your Action Plans</h2>
             </div>
 
             {strategies.length === 0 ? (
               <div className="p-8 text-center">
-                <div className="w-12 h-12 rounded-full bg-surface flex items-center justify-center mx-auto mb-4">
-                  <FileText className="h-6 w-6 text-muted" />
+                <div className="w-14 h-14 border-[3px] border-foreground bg-surface flex items-center justify-center mx-auto mb-4">
+                  <FileText className="h-7 w-7 text-foreground/50" />
                 </div>
-                <p className="text-muted mb-4">No action plans yet</p>
+                <p className="text-foreground/60 mb-6 font-medium">No action plans yet</p>
                 <TrackedCTAButton button="get_first_strategy" />
               </div>
             ) : (
-              <div className="divide-y divide-border/50">
+              <div className="divide-y-[2px] divide-foreground/20">
                 {strategies.map((item) =>
                   item.type === "free_audit" ? (
                     <TrackedFreeAuditLink key={item.id} auditId={item.id} status={item.status}>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <p className="font-medium text-foreground truncate">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="font-bold text-foreground truncate">
                             {getProductName(item.input)}
                           </p>
                           <FreeBadge />
                         </div>
-                        <p className="text-sm text-muted mt-0.5">
+                        <p className="text-sm text-foreground/50 mt-1 font-mono">
                           {formatDate(item.created_at)}
                         </p>
                       </div>
                       <div className="flex items-center gap-4 ml-4">
                         <StatusBadge status={item.status} />
-                        <ArrowRight className="h-4 w-4 text-muted" />
+                        <ArrowRight className="h-5 w-5 text-foreground/40" />
                       </div>
                     </TrackedFreeAuditLink>
                   ) : (
                     <TrackedStrategyLink key={item.id} runId={item.id} status={item.status}>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-foreground truncate">
+                        <p className="font-bold text-foreground truncate">
                           {getProductName(item.input)}
                         </p>
-                        <p className="text-sm text-muted mt-0.5">
+                        <p className="text-sm text-foreground/50 mt-1 font-mono">
                           {formatDate(item.created_at)}
                         </p>
                       </div>
                       <div className="flex items-center gap-4 ml-4">
                         <StatusBadge status={item.status} />
-                        <ArrowRight className="h-4 w-4 text-muted" />
+                        <ArrowRight className="h-5 w-5 text-foreground/40" />
                       </div>
                     </TrackedStrategyLink>
                   )
@@ -225,7 +228,7 @@ export default async function DashboardPage() {
 
           {/* CTA */}
           {strategies.length > 0 && (
-            <div className="mt-6 text-center">
+            <div className="mt-8 text-center">
               <TrackedCTAButton button="generate_another" variant="secondary" />
             </div>
           )}

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePostHog } from "posthog-js/react";
-import { Button } from "@/components/ui";
 import { ArrowRight } from "lucide-react";
 
 interface TrackedStrategyLinkProps {
@@ -23,7 +22,7 @@ export function TrackedStrategyLink({ runId, status, children }: TrackedStrategy
           status: status || "unknown",
         });
       }}
-      className="flex items-center justify-between px-6 py-4 hover:bg-surface/50 transition-colors"
+      className="group flex items-center justify-between px-6 py-4 bg-background hover:bg-surface/80 border-l-4 border-l-transparent hover:border-l-cta transition-all duration-100"
     >
       {children}
     </Link>
@@ -48,7 +47,7 @@ export function TrackedFreeAuditLink({ auditId, status, children }: TrackedFreeA
           status: status || "unknown",
         });
       }}
-      className="flex items-center justify-between px-6 py-4 hover:bg-surface/50 transition-colors"
+      className="group flex items-center justify-between px-6 py-4 bg-background hover:bg-surface/80 border-l-4 border-l-transparent hover:border-l-violet-600 transition-all duration-100"
     >
       {children}
     </Link>
@@ -65,20 +64,24 @@ export function TrackedCTAButton({ button, variant = "primary" }: TrackedCTAButt
 
   const label = button === "get_first_strategy"
     ? "Get your first action plan"
-    : "Generate another action plan";
+    : "Generate another plan";
+
+  const isPrimary = variant === "primary";
 
   return (
-    <Link href="/start">
-      <Button
-        variant={variant}
-        size="lg"
-        onClick={() => {
-          posthog?.capture("dashboard_cta_clicked", { button });
-        }}
-      >
-        {label}
-        <ArrowRight className="h-4 w-4 ml-2" />
-      </Button>
+    <Link
+      href="/start"
+      onClick={() => {
+        posthog?.capture("dashboard_cta_clicked", { button });
+      }}
+      className={`inline-flex items-center gap-2 px-6 py-3 font-bold border-2 transition-all duration-100
+        ${isPrimary
+          ? "bg-cta text-white border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1"
+          : "bg-background text-foreground border-foreground shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1"
+        }`}
+    >
+      {label}
+      <ArrowRight className="h-4 w-4" />
     </Link>
   );
 }

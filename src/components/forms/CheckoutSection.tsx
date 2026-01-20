@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Check, Loader2, Mail, Sparkles } from "lucide-react";
+import { Check, Loader2, Mail, Sparkles, ChevronLeft } from "lucide-react";
 import { usePostHog } from "posthog-js/react";
 import { isValidEmail } from "@/lib/validation";
 import { config } from "@/lib/config";
@@ -11,6 +11,7 @@ import type { FormInput } from "@/lib/types/form";
 
 interface CheckoutSectionProps {
   onSubmit: () => void;
+  onBack?: () => void;
   isSubmitting: boolean;
   hasValidCode: boolean;
   promoCode: string;
@@ -22,10 +23,14 @@ interface CheckoutSectionProps {
   email: string;
   setEmail: (v: string) => void;
   formData?: FormInput;
+  userCredits?: number;
+  isLoggedIn?: boolean;
+  error?: string | null;
 }
 
 export function CheckoutSection({
   onSubmit,
+  onBack,
   isSubmitting,
   hasValidCode,
   promoCode,
@@ -37,7 +42,11 @@ export function CheckoutSection({
   email,
   setEmail,
   formData,
+  userCredits = 0,
+  isLoggedIn = false,
+  error: externalError,
 }: CheckoutSectionProps) {
+  const hasCredits = userCredits > 0;
   const router = useRouter();
   const posthog = usePostHog();
   const [showCode, setShowCode] = useState(!config.pricingEnabled);
@@ -165,7 +174,7 @@ export function CheckoutSection({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="text-center space-y-8"
+      className="text-center space-y-8 w-full"
     >
       {/* Header */}
       <div className="space-y-3">
@@ -209,12 +218,15 @@ export function CheckoutSection({
         <button
           type="button"
           onClick={() => {
-            posthog?.capture("checkout_initiated", { method: hasValidCode ? "code" : "stripe" });
+            posthog?.capture("checkout_initiated", {
+              method: hasCredits ? "credits" : hasValidCode ? "code" : "stripe",
+              credits_available: userCredits,
+            });
             onSubmit();
           }}
-          disabled={isSubmitting || (hasValidCode && !canSubmitWithCode) || (!config.pricingEnabled && !hasValidCode)}
+          disabled={isSubmitting || (hasValidCode && !canSubmitWithCode) || (!config.pricingEnabled && !hasValidCode && !hasCredits)}
           className={`px-10 py-5 text-lg font-bold transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed ${
-            hasValidCode
+            hasCredits || hasValidCode
               ? "bg-green-600 text-white border-2 border-green-600 shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 disabled:hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0"
               : "bg-cta text-white border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 disabled:hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0"
           }`}
@@ -224,6 +236,8 @@ export function CheckoutSection({
               <Loader2 className="w-5 h-5 animate-spin" />
               Processing...
             </span>
+          ) : hasCredits ? (
+            <>Use 1 Credit <span className="text-white/70 ml-1">({userCredits} remaining)</span></>
           ) : hasValidCode ? (
             "Generate Action Plan — Free"
           ) : config.pricingEnabled ? (
@@ -232,7 +246,7 @@ export function CheckoutSection({
             "Enter code to continue"
           )}
         </button>
-        {config.pricingEnabled && !hasValidCode && (
+        {config.pricingEnabled && !hasValidCode && !hasCredits && (
           <p className="mt-3 text-xs text-foreground/50 flex items-center justify-center gap-1.5">
             <span className="text-green-600">✓</span>
             7-day money-back guarantee
@@ -241,8 +255,8 @@ export function CheckoutSection({
       </>
       )}
 
-      {/* Free mini-audit option */}
-      {config.pricingEnabled && !hasValidCode && !shouldShowWaitlist && formData && (
+      {/* Free mini-audit option - hide when logged in */}
+      {config.pricingEnabled && !hasValidCode && !shouldShowWaitlist && formData && !isLoggedIn && (
         <div className="pt-2">
           {!showFreeOption ? (
             <button
@@ -311,7 +325,8 @@ export function CheckoutSection({
         </div>
       )}
 
-      {/* Promo code section */}
+      {/* Promo code section - hide when user has credits */}
+      {!hasCredits && (
       <div>
         {!showCode && !hasValidCode && config.pricingEnabled && !showFreeOption && (
           <button
@@ -372,6 +387,7 @@ export function CheckoutSection({
           </motion.div>
         )}
       </div>
+      )}
 
       {/* Waitlist fallback */}
       {shouldShowWaitlist && (
@@ -421,6 +437,25 @@ export function CheckoutSection({
             </>
           )}
         </motion.div>
+      )}
+
+      {/* Error message */}
+      {externalError && (
+        <p className="text-sm text-red-500 font-bold">{externalError}</p>
+      )}
+
+      {/* Back button - matches other input components */}
+      {onBack && (
+        <div className="flex justify-start mt-4">
+          <button
+            type="button"
+            onClick={onBack}
+            className="flex items-center gap-1 text-sm font-medium text-foreground/50 hover:text-foreground transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            Back
+          </button>
+        </div>
       )}
     </motion.div>
   );
