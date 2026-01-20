@@ -70,17 +70,17 @@ export function FocusInput({
           <button
             key={option.value}
             onClick={() => handleSelect(option.value)}
-            className={`flex flex-col items-center gap-2 p-4 rounded-xl border text-center transition-all ${
+            className={`flex flex-col items-center gap-2 p-4 border-2 text-center transition-all duration-100 ${
               value === option.value
-                ? "bg-primary text-white border-primary shadow-lg shadow-primary/25"
-                : "bg-surface/50 border-border/60 text-foreground hover:border-primary/50 hover:bg-surface"
+                ? "bg-foreground text-background border-foreground"
+                : "bg-background border-foreground/30 text-foreground hover:border-foreground hover:shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5"
             }`}
           >
-            <span className={value === option.value ? "text-white" : "text-primary"}>
+            <span className={value === option.value ? "text-background" : "text-cta"}>
               {option.icon}
             </span>
-            <span className="font-medium text-sm">{option.label}</span>
-            <span className={`text-xs ${value === option.value ? "text-white/80" : "text-muted"}`}>
+            <span className="font-bold text-sm">{option.label}</span>
+            <span className={`text-xs ${value === option.value ? "text-background/70" : "text-foreground/50"}`}>
               {option.hint}
             </span>
           </button>
@@ -88,8 +88,8 @@ export function FocusInput({
       </div>
 
       {showCustomInput && (
-        <div className="max-w-md mx-auto space-y-3">
-          <div className="bg-surface/50 border border-border/60 rounded-xl px-4 py-3 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+        <div className="max-w-md mx-auto space-y-4">
+          <div className="border-2 border-foreground/30 bg-background px-4 py-3 focus-within:border-foreground transition-colors">
             <input
               ref={inputRef}
               type="text"
@@ -97,14 +97,14 @@ export function FocusInput({
               onChange={(e) => setLocalCustom(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="What's your biggest challenge right now?"
-              className="w-full bg-transparent text-lg text-foreground placeholder:text-muted/50 outline-none"
+              className="w-full bg-transparent text-lg text-foreground placeholder:text-foreground/30 outline-none"
             />
           </div>
           <div className="flex items-center justify-between">
             {onBack ? (
               <button
                 onClick={onBack}
-                className="flex items-center gap-1 text-sm text-muted hover:text-foreground transition-colors"
+                className="flex items-center gap-1 text-sm font-medium text-foreground/50 hover:text-foreground transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
                 Back
@@ -115,7 +115,7 @@ export function FocusInput({
             <button
               onClick={handleCustomSubmit}
               disabled={!localCustom.trim()}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              className="flex items-center gap-1.5 px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-100"
             >
               Continue
               <ArrowRight className="w-3.5 h-3.5" />
@@ -124,15 +124,28 @@ export function FocusInput({
         </div>
       )}
 
-      {!showCustomInput && onBack && (
-        <div className="flex justify-center">
-          <button
-            onClick={onBack}
-            className="flex items-center gap-1 text-sm text-muted hover:text-foreground transition-colors"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            Back
-          </button>
+      {!showCustomInput && (
+        <div className="flex items-center justify-between max-w-xl mx-auto">
+          {onBack ? (
+            <button
+              onClick={onBack}
+              className="flex items-center gap-1 text-sm font-medium text-foreground/50 hover:text-foreground transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Back
+            </button>
+          ) : (
+            <div />
+          )}
+          {value && value !== "custom" && (
+            <button
+              onClick={onSubmit}
+              className="flex items-center gap-1.5 px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-100"
+            >
+              Continue
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
       )}
     </div>

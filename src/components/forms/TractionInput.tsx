@@ -31,24 +31,26 @@ export function TractionInput({ value, onChange, onSubmit, onBack }: TractionInp
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex flex-wrap gap-2 justify-center">
         {TRACTION_CHIPS.map((chip) => (
           <button
             key={chip}
             onClick={() => handleChipClick(chip)}
-            className={`px-4 py-2 rounded-full border text-sm font-medium transition-all ${
+            className={`px-4 py-2 border-2 text-sm font-bold transition-all duration-100 ${
               value === chip
-                ? "bg-primary text-white border-primary"
-                : "bg-surface/50 border-border/60 text-foreground hover:border-primary/50 hover:bg-surface"
+                ? "bg-foreground text-background border-foreground"
+                : "bg-background border-foreground/30 text-foreground hover:border-foreground hover:shadow-[2px_2px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5"
             }`}
           >
             {chip}
           </button>
         ))}
       </div>
-      <div className="text-center text-muted text-sm">or type specifics</div>
-      <div className="bg-surface/50 border border-border/60 rounded-xl px-4 py-3 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+
+      <div className="text-center text-foreground/50 text-sm font-mono">or type specifics</div>
+
+      <div className="border-2 border-foreground/30 bg-background px-4 py-3 focus-within:border-foreground transition-colors">
         <input
           ref={inputRef}
           type="text"
@@ -56,14 +58,15 @@ export function TractionInput({ value, onChange, onSubmit, onBack }: TractionInp
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="e.g., 500 users, $2k MRR, 10k monthly visitors"
-          className="w-full bg-transparent text-lg text-foreground placeholder:text-muted/50 outline-none"
+          className="w-full bg-transparent text-lg text-foreground placeholder:text-foreground/30 outline-none"
         />
       </div>
+
       <div className="flex items-center justify-between">
         {onBack ? (
           <button
             onClick={onBack}
-            className="flex items-center gap-1 text-sm text-muted hover:text-foreground transition-colors"
+            className="flex items-center gap-1 text-sm font-medium text-foreground/50 hover:text-foreground transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
             Back
@@ -71,10 +74,10 @@ export function TractionInput({ value, onChange, onSubmit, onBack }: TractionInp
         ) : (
           <div />
         )}
-        {value.trim() && !TRACTION_CHIPS.includes(value) && (
+        {value.trim() && (
           <button
             onClick={onSubmit}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-100"
           >
             Continue
             <ArrowRight className="w-3.5 h-3.5" />

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { ArrowRight, ChevronLeft } from "lucide-react";
+import { ArrowRight, ChevronLeft, X } from "lucide-react";
 
 interface CompetitorInputProps {
   value: string[];
@@ -54,14 +54,14 @@ export function CompetitorInput({
           {value.map((url, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-sm"
+              className="inline-flex items-center gap-2 px-3 py-1.5 bg-foreground text-background text-sm font-bold"
             >
               {url}
               <button
                 onClick={() => removeCompetitor(i)}
-                className="text-muted hover:text-foreground"
+                className="text-background/60 hover:text-background"
               >
-                ×
+                <X className="w-3.5 h-3.5" />
               </button>
             </span>
           ))}
@@ -69,7 +69,7 @@ export function CompetitorInput({
       )}
 
       {value.length < 3 && (
-        <div className="bg-surface/50 border border-border/60 rounded-xl px-4 py-3 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+        <div className="border-2 border-foreground/30 bg-background px-4 py-3 focus-within:border-foreground transition-colors">
           <input
             ref={inputRef}
             type="url"
@@ -77,7 +77,7 @@ export function CompetitorInput({
             onChange={(e) => setCurrent(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="https://competitor.com"
-            className="w-full bg-transparent text-lg text-foreground placeholder:text-muted/50 outline-none"
+            className="w-full bg-transparent text-lg text-foreground placeholder:text-foreground/30 outline-none"
           />
         </div>
       )}
@@ -86,7 +86,7 @@ export function CompetitorInput({
         <div className="flex justify-center">
           <button
             onClick={addCompetitor}
-            className="text-sm text-primary hover:text-primary/80 transition-colors"
+            className="text-sm font-bold text-cta hover:text-cta/80 transition-colors"
           >
             + Add ({value.length}/3)
           </button>
@@ -97,7 +97,7 @@ export function CompetitorInput({
         {onBack ? (
           <button
             onClick={onBack}
-            className="flex items-center gap-1 text-sm text-muted hover:text-foreground transition-colors"
+            className="flex items-center gap-1 text-sm font-medium text-foreground/50 hover:text-foreground transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
             Back
@@ -109,14 +109,14 @@ export function CompetitorInput({
           {value.length === 0 && (
             <button
               onClick={onSkip}
-              className="px-4 py-2 rounded-lg border border-border/60 text-sm font-medium text-muted hover:text-foreground hover:border-border transition-colors"
+              className="px-4 py-2 border-2 border-foreground/30 text-sm font-bold text-foreground/60 hover:border-foreground hover:text-foreground transition-colors"
             >
               Skip
             </button>
           )}
           <button
             onClick={value.length > 0 ? onSubmit : onSkip}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-100"
           >
             Continue
             <ArrowRight className="w-3.5 h-3.5" />

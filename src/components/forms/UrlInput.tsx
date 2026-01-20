@@ -41,11 +41,11 @@ export function UrlInput({ value, onChange, onSubmit, onSkip, onBack }: UrlInput
 
   return (
     <div className="relative">
-      <div className="flex items-center gap-3 bg-surface/50 border border-border/60 rounded-xl px-4 py-4 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+      <div className="flex items-center gap-3 border-2 border-foreground/30 bg-background px-4 py-4 focus-within:border-foreground transition-colors">
         {favicon ? (
-          <img src={favicon} alt="" className="w-5 h-5 rounded" />
+          <img src={favicon} alt="" className="w-5 h-5" />
         ) : (
-          <Globe className="w-5 h-5 text-muted" />
+          <Globe className="w-5 h-5 text-foreground/40" />
         )}
         <input
           ref={inputRef}
@@ -54,14 +54,14 @@ export function UrlInput({ value, onChange, onSubmit, onSkip, onBack }: UrlInput
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="https://yourproduct.com"
-          className="flex-1 bg-transparent text-lg text-foreground placeholder:text-muted/50 outline-none"
+          className="flex-1 bg-transparent text-lg text-foreground placeholder:text-foreground/30 outline-none"
         />
       </div>
-      <div className="flex items-center justify-between mt-3">
+      <div className="flex items-center justify-between mt-4">
         {onBack ? (
           <button
             onClick={onBack}
-            className="flex items-center gap-1 text-sm text-muted hover:text-foreground transition-colors"
+            className="flex items-center gap-1 text-sm font-medium text-foreground/50 hover:text-foreground transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
             Back
@@ -73,14 +73,14 @@ export function UrlInput({ value, onChange, onSubmit, onSkip, onBack }: UrlInput
           {onSkip && !value.trim() && (
             <button
               onClick={onSkip}
-              className="px-4 py-2 rounded-lg border border-border/60 text-sm font-medium text-muted hover:text-foreground hover:border-border transition-colors"
+              className="px-4 py-2 border-2 border-foreground/30 text-sm font-bold text-foreground/60 hover:border-foreground hover:text-foreground transition-colors"
             >
               Skip
             </button>
           )}
           <button
             onClick={value.trim() ? onSubmit : onSkip}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-100"
           >
             Continue
             <ArrowRight className="w-3.5 h-3.5" />

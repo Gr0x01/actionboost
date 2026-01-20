@@ -108,7 +108,6 @@ export function UploadInput({ value, onChange, onSubmit, onSkip, onBack }: Uploa
   const handleDragLeave = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    // Only set isDragging to false if we're actually leaving the container
     if (!e.currentTarget.contains(e.relatedTarget as Node)) {
       setIsDragging(false);
     }
@@ -145,16 +144,16 @@ export function UploadInput({ value, onChange, onSubmit, onSkip, onBack }: Uploa
           {value.map((file) => (
             <div
               key={file.id}
-              className="flex items-center gap-3 p-3 rounded-lg bg-surface/50 border border-border/60"
+              className="flex items-center gap-3 p-3 border-2 border-foreground/20 bg-background"
             >
-              <div className="text-muted">{getFileIcon(file.type)}</div>
+              <div className="text-foreground/50">{getFileIcon(file.type)}</div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-foreground truncate">{file.name}</p>
-                <p className="text-xs text-muted">{formatSize(file.size)}</p>
+                <p className="text-sm font-medium text-foreground truncate">{file.name}</p>
+                <p className="text-xs text-foreground/50 font-mono">{formatSize(file.size)}</p>
               </div>
               <button
                 onClick={() => removeFile(file.id)}
-                className="p-1 text-muted hover:text-foreground transition-colors"
+                className="p-1 text-foreground/50 hover:text-foreground transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -171,24 +170,24 @@ export function UploadInput({ value, onChange, onSubmit, onSkip, onBack }: Uploa
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
         >
-          <div className={`border-2 border-dashed rounded-xl p-8 text-center transition-all ${
+          <div className={`border-2 border-dashed p-8 text-center transition-all ${
             isDragging
-              ? "border-primary bg-primary/5"
-              : "border-border/60 hover:border-primary/50 hover:bg-surface/30"
+              ? "border-cta bg-cta/5"
+              : "border-foreground/30 hover:border-foreground"
           }`}>
             {isUploading ? (
               <div className="flex flex-col items-center gap-2">
-                <Loader2 className="w-8 h-8 text-primary animate-spin" />
-                <p className="text-sm text-muted">Uploading...</p>
+                <Loader2 className="w-8 h-8 text-cta animate-spin" />
+                <p className="text-sm text-foreground/60 font-mono">Uploading...</p>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-2">
-                <Upload className="w-8 h-8 text-muted" />
+                <Upload className="w-8 h-8 text-foreground/40" />
                 <p className="text-sm text-foreground">
-                  Drop files here or <span className="text-primary">browse</span>
+                  Drop files here or <span className="font-bold text-cta">browse</span>
                 </p>
-                <p className="text-xs text-muted">
-                  Screenshots, analytics exports, spreadsheets (max {MAX_SIZE_MB}MB each)
+                <p className="text-xs text-foreground/50 font-mono">
+                  Screenshots, analytics, spreadsheets (max {MAX_SIZE_MB}MB)
                 </p>
               </div>
             )}
@@ -205,13 +204,13 @@ export function UploadInput({ value, onChange, onSubmit, onSkip, onBack }: Uploa
         </label>
       )}
 
-      {error && <p className="text-sm text-red-500 text-center">{error}</p>}
+      {error && <p className="text-sm text-red-500 text-center font-bold">{error}</p>}
 
       <div className="flex items-center justify-between pt-2">
         {onBack ? (
           <button
             onClick={onBack}
-            className="flex items-center gap-1 text-sm text-muted hover:text-foreground transition-colors"
+            className="flex items-center gap-1 text-sm font-medium text-foreground/50 hover:text-foreground transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
             Back
@@ -223,14 +222,14 @@ export function UploadInput({ value, onChange, onSubmit, onSkip, onBack }: Uploa
           {value.length === 0 && (
             <button
               onClick={onSkip}
-              className="px-4 py-2 rounded-lg border border-border/60 text-sm font-medium text-muted hover:text-foreground hover:border-border transition-colors"
+              className="px-4 py-2 border-2 border-foreground/30 text-sm font-bold text-foreground/60 hover:border-foreground hover:text-foreground transition-colors"
             >
               Skip
             </button>
           )}
           <button
             onClick={value.length > 0 ? onSubmit : onSkip}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-100"
           >
             Continue
             <ArrowRight className="w-3.5 h-3.5" />

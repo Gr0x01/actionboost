@@ -538,7 +538,7 @@ export default function StartPage() {
                 exit={{ opacity: 0 }}
                 className="min-h-[300px] flex items-center justify-center"
               >
-                <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                <Loader2 className="w-8 h-8 text-cta animate-spin" />
               </motion.div>
             )}
 
@@ -618,7 +618,7 @@ export default function StartPage() {
                     setCurrentQuestion(QUESTIONS.length - 1);
                     setViewState("questions");
                   }}
-                  className="flex items-center gap-1 text-sm text-muted hover:text-foreground transition-colors mt-8"
+                  className="flex items-center gap-1 text-sm font-medium text-foreground/50 hover:text-foreground transition-colors mt-8"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   Back
@@ -638,18 +638,18 @@ export default function StartPage() {
               >
                 {/* Prefill context banner */}
                 {prefillMetadata && form.websiteUrl && (
-                  <div className="flex items-center justify-center gap-3 mb-6 mx-auto max-w-md p-3 rounded-lg bg-surface/50 border border-border/60">
+                  <div className="flex items-center justify-center gap-3 mb-6 mx-auto max-w-md p-3 border-2 border-foreground/20 bg-background">
                     {prefillMetadata.favicon && (
-                      <img src={prefillMetadata.favicon} alt="" className="w-5 h-5 rounded shrink-0" />
+                      <img src={prefillMetadata.favicon} alt="" className="w-5 h-5 shrink-0" />
                     )}
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate">
+                      <p className="text-sm font-bold text-foreground truncate">
                         {prefillMetadata.siteName || new URL(form.websiteUrl).hostname}
                       </p>
                     </div>
                     <button
                       onClick={() => setPrefillMetadata(null)}
-                      className="text-muted hover:text-foreground transition-colors ml-auto text-lg leading-none"
+                      className="text-foreground/50 hover:text-foreground transition-colors ml-auto text-lg leading-none font-bold"
                       aria-label="Dismiss"
                     >
                       &times;
@@ -658,7 +658,7 @@ export default function StartPage() {
                 )}
 
                 {/* Question */}
-                <h1 className="text-2xl sm:text-3xl font-semibold text-foreground text-center mb-8">
+                <h1 className="text-2xl sm:text-3xl font-black text-foreground text-center mb-8">
                   {question.question}
                 </h1>
 
@@ -745,7 +745,7 @@ export default function StartPage() {
 
           {/* Error message */}
           {error && (
-            <p className="text-center text-red-500 mt-4">{error}</p>
+            <p className="text-center text-red-500 font-bold mt-4">{error}</p>
           )}
         </div>
       </main>

@@ -21,7 +21,7 @@ interface CheckoutSectionProps {
   clearCode: () => void;
   email: string;
   setEmail: (v: string) => void;
-  formData?: FormInput; // For free audit submission
+  formData?: FormInput;
 }
 
 export function CheckoutSection({
@@ -48,22 +48,19 @@ export function CheckoutSection({
   const hasTrackedView = useRef(false);
   const hasTrackedWaitlist = useRef(false);
 
-  // Free audit states
   const [showFreeOption, setShowFreeOption] = useState(false);
   const [freeEmail, setFreeEmail] = useState("");
   const [freeSubmitting, setFreeSubmitting] = useState(false);
   const [freeError, setFreeError] = useState<string | null>(null);
-  const freeSubmitRef = useRef(false); // Prevent double-click
+  const freeSubmitRef = useRef(false);
 
   const emailValid = isValidEmail(email);
   const canSubmitWithCode = hasValidCode && emailValid;
   const waitlistEmailValid = isValidEmail(waitlistEmail);
   const freeEmailValid = isValidEmail(freeEmail);
 
-  // Show waitlist when code fails and pricing is disabled
   const shouldShowWaitlist = !config.pricingEnabled && codeStatus && !codeStatus.valid && !hasValidCode;
 
-  // Handler for free audit submission
   async function handleFreeAuditSubmit() {
     if (freeSubmitRef.current || !freeEmailValid || !formData) return;
     freeSubmitRef.current = true;
@@ -89,7 +86,6 @@ export function CheckoutSection({
         posthog?.capture("free_audit_success", { free_audit_id: data.freeAuditId });
         router.push(`/free-results/${data.freeAuditId}?new=1&token=${encodeURIComponent(data.token)}`);
       } else if (res.status === 409) {
-        // Already has a free audit
         posthog?.capture("free_audit_duplicate", { error: data.error });
         setFreeError("You've already received a free audit. Get the full version for deeper insights!");
       } else {
@@ -98,19 +94,14 @@ export function CheckoutSection({
       }
     } catch (error) {
       console.error("Free audit error:", error);
-      posthog?.capture("checkout_api_error", {
-        type: "free_audit",
-        error: "network_error",
-      });
-      posthog?.capture("free_audit_error", { error: "network_error" });
+      posthog?.capture("checkout_api_error", { type: "free_audit", error: "network_error" });
       setFreeError("Connection failed. Please try again.");
     } finally {
       setFreeSubmitting(false);
-      freeSubmitRef.current = false; // Reset for retry
+      freeSubmitRef.current = false;
     }
   }
 
-  // Track checkout section viewed (once)
   useEffect(() => {
     if (!hasTrackedView.current) {
       posthog?.capture("checkout_viewed", {
@@ -121,17 +112,13 @@ export function CheckoutSection({
     }
   }, [posthog, hasValidCode]);
 
-  // Track waitlist section viewed
   useEffect(() => {
     if (shouldShowWaitlist && !hasTrackedWaitlist.current) {
-      posthog?.capture("waitlist_viewed", {
-        reason: codeStatus?.errorCode || "invalid_code",
-      });
+      posthog?.capture("waitlist_viewed", { reason: codeStatus?.errorCode || "invalid_code" });
       hasTrackedWaitlist.current = true;
     }
   }, [shouldShowWaitlist, posthog, codeStatus?.errorCode]);
 
-  // Track promo code validation result
   const prevCodeStatus = useRef<typeof codeStatus>(null);
   useEffect(() => {
     if (codeStatus && codeStatus !== prevCodeStatus.current) {
@@ -167,11 +154,7 @@ export function CheckoutSection({
       }
     } catch (error) {
       console.error("Waitlist error:", error);
-      posthog?.capture("checkout_api_error", {
-        type: "waitlist",
-        error: "network_error",
-      });
-      posthog?.capture("waitlist_error", { error: "network_error" });
+      posthog?.capture("checkout_api_error", { type: "waitlist", error: "network_error" });
       setWaitlistError("Connection failed. Please try again.");
     } finally {
       setWaitlistSubmitting(false);
@@ -184,12 +167,12 @@ export function CheckoutSection({
       animate={{ opacity: 1, y: 0 }}
       className="text-center space-y-8"
     >
-      {/* Header with editorial flair */}
+      {/* Header */}
       <div className="space-y-3">
-        <h2 className="text-3xl sm:text-4xl font-serif font-bold text-foreground tracking-tight">
-          Ready to generate your action plan
+        <h2 className="text-3xl sm:text-4xl font-light text-foreground tracking-tight">
+          Ready to <span className="font-black">generate your plan</span>
         </h2>
-        <p className="text-muted text-lg max-w-md mx-auto">
+        <p className="text-foreground/60 text-lg max-w-md mx-auto">
           Our AI will analyze your inputs and create a custom growth playbook
         </p>
       </div>
@@ -197,8 +180,8 @@ export function CheckoutSection({
       {/* Email input for promo code users */}
       {hasValidCode && (
         <div className="max-w-sm mx-auto mb-6 space-y-2">
-          <div className="flex items-center gap-3 bg-surface/50 border border-border/60 rounded-xl px-4 py-3 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
-            <Mail className="w-5 h-5 text-muted" />
+          <div className="flex items-center gap-3 border-2 border-foreground/30 bg-background px-4 py-3 focus-within:border-foreground transition-colors">
+            <Mail className="w-5 h-5 text-foreground/40" />
             <input
               type="email"
               value={email}
@@ -209,66 +192,48 @@ export function CheckoutSection({
                 }
               }}
               placeholder="your@email.com"
-              className="flex-1 bg-transparent text-lg text-foreground placeholder:text-muted/50 outline-none"
+              className="flex-1 bg-transparent text-lg text-foreground placeholder:text-foreground/30 outline-none"
             />
           </div>
           {email.trim() && !emailValid ? (
-            <p className="text-xs text-red-500 text-center">
-              Please enter a valid email address
-            </p>
+            <p className="text-xs text-red-500 text-center font-bold">Please enter a valid email</p>
           ) : (
-            <p className="text-xs text-muted text-center">
-              Your results will be sent via magic link — use a real email
-            </p>
+            <p className="text-xs text-foreground/50 text-center font-mono">Results sent via magic link</p>
           )}
         </div>
       )}
 
-      {/* Main CTA button - hide when waitlist or free option is showing */}
+      {/* Main CTA button */}
       {!shouldShowWaitlist && !showFreeOption && (
-        <motion.button
+        <button
           type="button"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
           onClick={() => {
-            posthog?.capture("checkout_initiated", {
-              method: hasValidCode ? "code" : "stripe",
-            });
+            posthog?.capture("checkout_initiated", { method: hasValidCode ? "code" : "stripe" });
             onSubmit();
           }}
           disabled={isSubmitting || (hasValidCode && !canSubmitWithCode) || (!config.pricingEnabled && !hasValidCode)}
-          className={`group relative px-10 py-5 rounded-2xl text-lg font-semibold transition-all duration-300 ${
+          className={`px-10 py-5 text-lg font-bold transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed ${
             hasValidCode
-              ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30"
-              : "bg-gradient-to-r from-cta to-amber-500 text-white shadow-lg shadow-cta/30 hover:shadow-xl hover:shadow-cta/40"
-          } disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100`}
+              ? "bg-green-600 text-white border-2 border-green-600 shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 disabled:hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0"
+              : "bg-cta text-white border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 disabled:hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0"
+          }`}
         >
-          {/* Subtle shine effect */}
-          <span className="absolute inset-0 rounded-2xl overflow-hidden">
-            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-          </span>
-
-          <span className="relative flex items-center justify-center gap-2">
-            {isSubmitting ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                Processing...
-              </>
-            ) : hasValidCode ? (
-              "Generate Action Plan — Free"
-            ) : config.pricingEnabled ? (
-              <>
-                Generate Action Plan
-                <span className="font-normal opacity-90">— {config.singlePrice}</span>
-              </>
-            ) : (
-              "Enter code to continue"
-            )}
-          </span>
-        </motion.button>
+          {isSubmitting ? (
+            <span className="flex items-center justify-center gap-2">
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Processing...
+            </span>
+          ) : hasValidCode ? (
+            "Generate Action Plan — Free"
+          ) : config.pricingEnabled ? (
+            <>Generate Action Plan — {config.singlePrice}</>
+          ) : (
+            "Enter code to continue"
+          )}
+        </button>
       )}
 
-      {/* Free mini-audit option - only show when pricing enabled and no promo code */}
+      {/* Free mini-audit option */}
       {config.pricingEnabled && !hasValidCode && !shouldShowWaitlist && formData && (
         <div className="pt-2">
           {!showFreeOption ? (
@@ -278,27 +243,27 @@ export function CheckoutSection({
                 posthog?.capture("free_audit_option_clicked");
                 setShowFreeOption(true);
               }}
-              className="group text-sm text-muted hover:text-foreground transition-colors flex items-center gap-2 mx-auto"
+              className="group text-sm text-foreground/60 hover:text-foreground transition-colors flex items-center gap-2 mx-auto"
             >
-              <Sparkles className="w-4 h-4 text-accent group-hover:text-cta transition-colors" />
+              <Sparkles className="w-4 h-4 text-cta" />
               <span>Just want a taste? Get a free mini-audit</span>
             </button>
           ) : (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="max-w-md mx-auto p-6 rounded-2xl bg-surface/60 border border-border/50 space-y-4"
+              className="max-w-md mx-auto p-6 border-2 border-foreground/20 bg-background space-y-4"
             >
-              <div className="flex items-center gap-2 justify-center text-accent">
+              <div className="flex items-center gap-2 justify-center text-cta">
                 <Sparkles className="w-4 h-4" />
-                <span className="text-sm font-medium">Free Mini-Audit</span>
+                <span className="text-sm font-bold">Free Mini-Audit</span>
               </div>
-              <p className="text-sm text-muted">
+              <p className="text-sm text-foreground/60">
                 Get a condensed 5-section audit to preview our analysis style
               </p>
               <div className="flex gap-2">
-                <div className="flex-1 flex items-center gap-2 bg-background border border-border/60 rounded-xl px-4 py-3 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
-                  <Mail className="w-4 h-4 text-muted" />
+                <div className="flex-1 flex items-center gap-2 border-2 border-foreground/30 bg-background px-4 py-3 focus-within:border-foreground transition-colors">
+                  <Mail className="w-4 h-4 text-foreground/40" />
                   <input
                     type="email"
                     value={freeEmail}
@@ -310,29 +275,23 @@ export function CheckoutSection({
                       }
                     }}
                     placeholder="your@email.com"
-                    className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted/50 outline-none"
+                    className="flex-1 bg-transparent text-sm text-foreground placeholder:text-foreground/30 outline-none"
                   />
                 </div>
                 <button
                   type="button"
                   onClick={handleFreeAuditSubmit}
                   disabled={!freeEmailValid || freeSubmitting}
-                  className="px-5 py-3 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
+                  className="px-5 py-3 bg-cta text-white text-sm font-bold border-2 border-cta hover:bg-cta-hover transition-colors disabled:opacity-50"
                 >
-                  {freeSubmitting ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    "Get It"
-                  )}
+                  {freeSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Get It"}
                 </button>
               </div>
-              {freeError && (
-                <p className="text-sm text-red-500">{freeError}</p>
-              )}
+              {freeError && <p className="text-sm text-red-500 font-bold">{freeError}</p>}
               <button
                 type="button"
                 onClick={() => setShowFreeOption(false)}
-                className="text-xs text-muted hover:text-foreground transition-colors"
+                className="text-xs text-foreground/50 hover:text-foreground transition-colors"
               >
                 ← Back to full version
               </button>
@@ -341,7 +300,7 @@ export function CheckoutSection({
         </div>
       )}
 
-      {/* Promo code section - hide when free option is showing */}
+      {/* Promo code section */}
       <div>
         {!showCode && !hasValidCode && config.pricingEnabled && !showFreeOption && (
           <button
@@ -349,7 +308,7 @@ export function CheckoutSection({
               posthog?.capture("promo_code_toggled");
               setShowCode(true);
             }}
-            className="text-sm text-primary/80 hover:text-primary transition-colors underline underline-offset-2 decoration-primary/30 hover:decoration-primary/60"
+            className="text-sm text-cta hover:text-cta/80 transition-colors underline underline-offset-2"
           >
             Have a promo code?
           </button>
@@ -362,7 +321,7 @@ export function CheckoutSection({
             className="max-w-sm mx-auto mt-4 space-y-3"
           >
             {!config.pricingEnabled && (
-              <p className="text-sm text-muted">Enter your promo code to continue</p>
+              <p className="text-sm text-foreground/60">Enter your promo code to continue</p>
             )}
             <div className="flex gap-2">
               <input
@@ -370,18 +329,18 @@ export function CheckoutSection({
                 value={promoCode}
                 onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
                 placeholder="Enter code"
-                className="flex-1 px-4 py-3 rounded-xl border border-border/60 bg-background text-sm text-foreground placeholder:text-muted/50 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 font-mono tracking-wider"
+                className="flex-1 px-4 py-3 border-2 border-foreground/30 bg-background text-sm text-foreground placeholder:text-foreground/30 focus:border-foreground focus:outline-none font-mono tracking-wider"
               />
               <button
                 onClick={validateCode}
                 disabled={!promoCode.trim() || isValidatingCode}
-                className="px-5 py-3 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
+                className="px-5 py-3 bg-foreground text-background text-sm font-bold border-2 border-foreground hover:bg-foreground/90 transition-colors disabled:opacity-50"
               >
                 {isValidatingCode ? <Loader2 className="w-4 h-4 animate-spin" /> : "Apply"}
               </button>
             </div>
             {codeStatus && !codeStatus.valid && config.pricingEnabled && (
-              <p className="text-sm text-red-500">{codeStatus.error || "Invalid code"}</p>
+              <p className="text-sm text-red-500 font-bold">{codeStatus.error || "Invalid code"}</p>
             )}
           </motion.div>
         )}
@@ -390,71 +349,61 @@ export function CheckoutSection({
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 border border-green-200 text-green-700"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-bold"
           >
             <Check className="w-4 h-4" />
-            <span className="text-sm font-medium">
+            <span className="text-sm">
               {codeStatus?.credits} free {codeStatus?.credits === 1 ? "action plan" : "action plans"}
             </span>
-            <button onClick={clearCode} className="text-green-500 hover:text-green-700 ml-1 text-lg leading-none">
+            <button onClick={clearCode} className="text-white/70 hover:text-white ml-1 text-lg leading-none">
               ×
             </button>
           </motion.div>
         )}
       </div>
 
-      {/* Waitlist fallback when code fails (promo-only mode) */}
+      {/* Waitlist fallback */}
       {shouldShowWaitlist && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-sm mx-auto p-6 rounded-xl bg-surface/50 border border-border/60"
+          className="max-w-sm mx-auto p-6 border-2 border-foreground/20 bg-background"
         >
           {waitlistSuccess ? (
             <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-green-100 flex items-center justify-center">
-                <Check className="w-6 h-6 text-green-600" />
+              <div className="w-12 h-12 mx-auto mb-3 bg-green-600 flex items-center justify-center">
+                <Check className="w-6 h-6 text-white" />
               </div>
-              <p className="text-lg font-semibold text-foreground mb-1">You&apos;re on the list!</p>
-              <p className="text-sm text-muted">We&apos;ll be in touch soon.</p>
+              <p className="text-lg font-bold text-foreground mb-1">You&apos;re on the list!</p>
+              <p className="text-sm text-foreground/60">We&apos;ll be in touch soon.</p>
             </div>
           ) : (
             <>
-              <p className="text-lg font-semibold text-foreground mb-1">
-                We&apos;re launching this week!
-              </p>
-              <p className="text-sm text-muted mb-4">
-                Join the waitlist to get notified when we go live.
-              </p>
+              <p className="text-lg font-bold text-foreground mb-1">We&apos;re launching this week!</p>
+              <p className="text-sm text-foreground/60 mb-4">Join the waitlist to get notified.</p>
               <div className="flex gap-2">
                 <input
                   type="email"
                   value={waitlistEmail}
                   onChange={(e) => setWaitlistEmail(e.target.value)}
                   placeholder="your@email.com"
-                  className="flex-1 px-3 py-2 rounded-lg border border-border/60 bg-background text-sm text-foreground placeholder:text-muted/50 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  className="flex-1 px-3 py-2 border-2 border-foreground/30 bg-background text-sm text-foreground placeholder:text-foreground/30 focus:border-foreground focus:outline-none"
                 />
                 <button
                   onClick={handleWaitlistSubmit}
                   disabled={!waitlistEmailValid || waitlistSubmitting}
-                  className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
+                  className="px-4 py-2 bg-foreground text-background text-sm font-bold border-2 border-foreground hover:bg-foreground/90 transition-colors disabled:opacity-50"
                 >
-                  {waitlistSubmitting ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    "Join"
-                  )}
+                  {waitlistSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Join"}
                 </button>
               </div>
-              {waitlistError && (
-                <p className="text-sm text-red-500 mt-2">{waitlistError}</p>
-              )}
+              {waitlistError && <p className="text-sm text-red-500 mt-2 font-bold">{waitlistError}</p>}
               <button
                 onClick={() => {
                   clearCode();
                   setShowCode(true);
                 }}
-                className="mt-3 text-xs text-muted hover:text-foreground transition-colors"
+                className="mt-3 text-xs text-foreground/50 hover:text-foreground transition-colors"
               >
                 Try another code
               </button>
