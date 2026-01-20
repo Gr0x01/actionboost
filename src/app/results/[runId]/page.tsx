@@ -242,9 +242,9 @@ function ResultsPageContent() {
             {strategy && <TableOfContents strategy={strategy} variant="mobile" />}
           </div>
 
-          {/* Desktop layout wrapper - centers sidebar + content as a unit */}
-          <div className="lg:w-fit lg:mx-auto">
-            {/* Export bar - spans full width of the wrapper */}
+          {/* Desktop layout wrapper */}
+          <div className="max-w-5xl mx-auto">
+            {/* Export bar */}
             <ExportBar
               markdown={run.output || ""}
               runId={run.id}
@@ -253,14 +253,14 @@ function ResultsPageContent() {
             />
 
             {/* Sidebar + content flex */}
-            <div className="lg:flex lg:gap-8 py-8">
+            <div className="lg:flex lg:gap-12 py-8">
               {/* Desktop sidebar */}
-              <div className="hidden lg:block lg:w-[200px] lg:flex-shrink-0">
+              <div className="hidden lg:block lg:w-[180px] lg:flex-shrink-0">
                 {strategy && <TableOfContents strategy={strategy} variant="desktop" />}
               </div>
 
-              {/* Main content */}
-              <div className="max-w-3xl">
+              {/* Main content - extra padding for shadows on desktop */}
+              <div className="flex-1 min-w-0 lg:pr-2 overflow-x-hidden">
                 {strategy && <ResultsContent strategy={strategy} />}
               </div>
             </div>

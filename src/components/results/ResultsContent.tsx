@@ -4,6 +4,7 @@ import { CurrentSituation } from "./sections/CurrentSituation";
 import { CompetitiveLandscape } from "./sections/CompetitiveLandscape";
 import { StopDoing } from "./sections/StopDoing";
 import { StartDoing } from "./sections/StartDoing";
+import { ThisWeek } from "./sections/ThisWeek";
 import { Roadmap } from "./sections/Roadmap";
 import { SectionCard } from "./SectionCard";
 import { MarkdownContent } from "./MarkdownContent";
@@ -42,9 +43,7 @@ export function ResultsContent({ strategy }: ResultsContentProps) {
       )}
 
       {strategy.thisWeek && (
-        <SectionCard id="this-week" title="This Week" variant="boxed">
-          <MarkdownContent content={strategy.thisWeek.content} extended />
-        </SectionCard>
+        <ThisWeek content={strategy.thisWeek.content} />
       )}
 
       {strategy.roadmap && (

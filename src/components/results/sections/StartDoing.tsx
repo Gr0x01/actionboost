@@ -1,10 +1,26 @@
 import { SectionCard } from "../SectionCard";
 import { MarkdownContent } from "../MarkdownContent";
-import { IceScoreBadge } from "@/components/ui/IceScoreBadge";
 import { parseStartDoing, type ICEItem } from "@/lib/markdown/parser";
 
 interface StartDoingProps {
   content: string;
+}
+
+/**
+ * Get border color intensity based on ICE score rank
+ */
+function getBorderClass(index: number): string {
+  if (index === 0) return "border-cta";
+  if (index === 1) return "border-cta/70";
+  return "border-foreground/30";
+}
+
+/**
+ * Get badge style based on ICE score rank
+ */
+function getBadgeClass(index: number): string {
+  if (index === 0) return "bg-cta text-white";
+  return "bg-foreground/10 text-foreground";
 }
 
 export function StartDoing({ content }: StartDoingProps) {
@@ -13,46 +29,41 @@ export function StartDoing({ content }: StartDoingProps) {
   // Fallback if parsing fails
   if (items.length === 0) {
     return (
-      <SectionCard id="start-doing" title="Start Doing" variant="boxed">
+      <SectionCard id="start-doing" title="Start Doing" variant="clean">
         <MarkdownContent content={content} extended />
       </SectionCard>
     );
   }
 
   return (
-    <SectionCard id="start-doing" title="Start Doing" variant="boxed">
-      <p className="text-foreground/80 mb-6">
+    <SectionCard id="start-doing" title="Start Doing" variant="clean">
+      <p className="text-foreground/70 text-sm mb-6">
         Ranked by ICE score — Impact, Confidence, and Ease combined.
       </p>
 
-      <div className="space-y-8">
+      <div className="space-y-6">
         {items.map((item: ICEItem, index: number) => (
-          <div key={item.title}>
-            {/* ICE Callout - floats right, content wraps around */}
-            <IceScoreBadge
-              impact={item.impact.score}
-              confidence={item.confidence.score}
-              ease={item.ease.score}
-            />
-
-            {/* Title */}
-            <h3 className="text-lg font-medium text-foreground leading-tight mb-3">
-              {item.title}
-            </h3>
+          <div
+            key={item.title}
+            className={`border-l-4 ${getBorderClass(index)} pl-4`}
+          >
+            {/* Title row with inline ICE badge */}
+            <div className="flex items-baseline gap-3 mb-1 flex-wrap">
+              <span className={`font-mono text-xs px-2 py-0.5 font-bold ${getBadgeClass(index)}`}>
+                ICE: {item.iceScore}
+              </span>
+              <h4 className="font-bold text-foreground">{item.title}</h4>
+            </div>
 
             {/* Description */}
             {item.description && (
-              <div>
+              <div className="text-foreground/70 text-sm leading-relaxed">
                 <MarkdownContent
                   content={cleanDescription(item.description)}
                   extended
+                  className="[&>p]:mb-2 [&>p:last-child]:mb-0"
                 />
               </div>
-            )}
-
-            {/* Divider between items (except last) */}
-            {index < items.length - 1 && (
-              <div className="mt-8 border-b border-border/20" />
             )}
           </div>
         ))}

@@ -77,11 +77,34 @@ export function MarkdownContent({ content, className = "", extended = false }: M
 
   const flushTable = () => {
     if (currentTable && extended) {
+      // Helper to style priority/status cells
+      const getCellStyle = (cell: string, header: string): string => {
+        const cellLower = cell.toLowerCase().replace(/\*\*/g, "");
+        const headerLower = header.toLowerCase();
+
+        // Priority column styling
+        if (headerLower.includes("priority") || headerLower.includes("status")) {
+          if (cellLower.includes("high") || cellLower.includes("healthy")) {
+            return "text-green-600 font-semibold";
+          }
+          if (cellLower.includes("medium") || cellLower.includes("needs work")) {
+            return "text-amber-600 font-semibold";
+          }
+          if (cellLower.includes("low")) {
+            return "text-foreground/50 font-semibold";
+          }
+          if (cellLower.includes("stop") || cellLower.includes("critical")) {
+            return "text-red-600 font-semibold";
+          }
+        }
+        return "text-foreground/70";
+      };
+
       elements.push(
         <div key={keyIndex++} className="mb-6 overflow-x-auto">
-          <table className="min-w-full text-sm border-2 border-foreground">
+          <table className="w-full text-sm">
             <thead>
-              <tr className="border-b-2 border-foreground bg-surface">
+              <tr className="border-b-2 border-foreground">
                 {currentTable.headers.map((header, i) => (
                   <th key={i} className="px-4 py-3 text-left font-bold text-foreground">
                     {renderInline(header)}
@@ -89,14 +112,21 @@ export function MarkdownContent({ content, className = "", extended = false }: M
                 ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="font-mono text-sm">
               {currentTable.rows.map((row, rowIndex) => (
-                <tr key={rowIndex} className="border-b border-foreground/30">
-                  {row.map((cell, cellIndex) => (
-                    <td key={cellIndex} className="px-4 py-2 text-foreground/80">
-                      {renderInline(cell)}
-                    </td>
-                  ))}
+                <tr key={rowIndex} className="border-b border-foreground/20">
+                  {row.map((cell, cellIndex) => {
+                    const isFirstCol = cellIndex === 0;
+                    const cellStyle = getCellStyle(cell, currentTable!.headers[cellIndex] || "");
+                    return (
+                      <td
+                        key={cellIndex}
+                        className={`px-4 py-3 ${isFirstCol ? "font-sans font-semibold text-foreground" : cellStyle}`}
+                      >
+                        {renderInline(cell.replace(/\*\*/g, ""))}
+                      </td>
+                    );
+                  })}
                 </tr>
               ))}
             </tbody>
@@ -109,8 +139,60 @@ export function MarkdownContent({ content, className = "", extended = false }: M
 
   const flushCodeBlock = () => {
     if (currentCodeBlock && extended) {
+      const content = currentCodeBlock.lines.join("\n").trim();
+
+      // Check if this is a flywheel/cycle diagram (single line with → arrows)
+      const isFlywheel = content.includes("→") && !content.includes("\n") && content.split("→").length >= 4;
+
+      if (isFlywheel) {
+        // Parse flywheel steps
+        const steps = content.split("→").map(s => s.trim()).filter(Boolean);
+
+        // Split into two rows for circular flow visualization
+        const midpoint = Math.ceil(steps.length / 2);
+        const topRow = steps.slice(0, midpoint);
+        const bottomRow = steps.slice(midpoint).reverse(); // Reverse for counter-flow
+
+        elements.push(
+          <div key={keyIndex++} className="mb-6 py-6 overflow-x-auto">
+            {/* Top row: left to right */}
+            <div className="flex justify-center items-center gap-2 sm:gap-3 text-xs sm:text-sm mb-6">
+              {topRow.map((step, i) => (
+                <React.Fragment key={i}>
+                  <span className="bg-surface border border-foreground/20 text-foreground px-2 sm:px-4 py-1.5 sm:py-2 font-medium text-center whitespace-nowrap">
+                    {step}
+                  </span>
+                  {i < topRow.length - 1 && (
+                    <span className="text-cta text-sm sm:text-base">→</span>
+                  )}
+                </React.Fragment>
+              ))}
+              {/* Down arrow to bottom row */}
+              <span className="text-cta text-sm sm:text-base">↓</span>
+            </div>
+
+            {/* Bottom row: right to left (reversed order, left arrows) */}
+            <div className="flex justify-center items-center gap-2 sm:gap-3 text-xs sm:text-sm">
+              {/* Up arrow from bottom row back to top */}
+              <span className="text-cta text-sm sm:text-base">↑</span>
+              {bottomRow.map((step, i) => (
+                <React.Fragment key={i}>
+                  <span className="bg-surface border border-foreground/20 text-foreground px-2 sm:px-4 py-1.5 sm:py-2 font-medium text-center whitespace-nowrap">
+                    {step}
+                  </span>
+                  {i < bottomRow.length - 1 && (
+                    <span className="text-cta text-sm sm:text-base">←</span>
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+        );
+        currentCodeBlock = null;
+        return;
+      }
+
       // Check if this is an ASCII diagram (contains arrows)
-      const content = currentCodeBlock.lines.join("\n");
       const isAsciiDiagram = content.includes("→") || content.includes("↓") || content.includes("↑");
 
       elements.push(

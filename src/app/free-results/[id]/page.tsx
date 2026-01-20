@@ -340,38 +340,41 @@ function FreeResultsPageContent() {
       <Header />
 
       <main className="flex-1">
-        <div className="mx-auto max-w-7xl px-6">
+        <div className="mx-auto px-6">
           {/* Mobile TOC - full width horizontal tabs */}
           <div className="lg:hidden">
             {freeStrategy && <TableOfContents strategy={freeStrategy} variant="mobile" />}
           </div>
 
-          {/* Desktop layout: sidebar + content */}
-          <div className="lg:flex lg:gap-8 py-8">
-            {/* Desktop sidebar */}
-            <div className="hidden lg:block lg:w-[200px] lg:flex-shrink-0">
-              {freeStrategy && (
-                <TableOfContents
-                  strategy={freeStrategy}
-                  variant="desktop"
-                  lockedSectionIds={LOCKED_SECTION_IDS}
-                />
-              )}
-            </div>
+          {/* Desktop layout wrapper */}
+          <div className="max-w-5xl mx-auto">
+            {/* Sidebar + content flex */}
+            <div className="lg:flex lg:gap-12 py-8">
+              {/* Desktop sidebar */}
+              <div className="hidden lg:block lg:w-[180px] lg:flex-shrink-0">
+                {freeStrategy && (
+                  <TableOfContents
+                    strategy={freeStrategy}
+                    variant="desktop"
+                    lockedSectionIds={LOCKED_SECTION_IDS}
+                  />
+                )}
+              </div>
 
-            {/* Main content */}
-            <div className="flex-1 max-w-3xl">
-              {/* Magic link banner for new checkouts */}
-              {isNewCheckout && <MagicLinkBanner />}
+              {/* Main content - extra padding for shadows on desktop */}
+              <div className="flex-1 min-w-0 lg:pr-2 overflow-x-hidden">
+                {/* Magic link banner for new checkouts */}
+                {isNewCheckout && <MagicLinkBanner />}
 
-              {/* Upsell banner */}
-              <UpsellBanner />
+                {/* Upsell banner */}
+                <UpsellBanner />
 
-              {/* Strategy content */}
-              {freeStrategy && <ResultsContent strategy={freeStrategy} />}
+                {/* Strategy content */}
+                {freeStrategy && <ResultsContent strategy={freeStrategy} />}
 
-              {/* Locked sections teaser */}
-              <UpgradeCTA />
+                {/* Locked sections teaser */}
+                <UpgradeCTA />
+              </div>
             </div>
           </div>
         </div>
