@@ -51,7 +51,7 @@ export function PaidTierButton() {
       disabled={loading}
       className="w-full py-3 px-4 font-bold bg-cta text-white border-[3px] border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 disabled:opacity-50 disabled:hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0 transition-all duration-100"
     >
-      {loading ? "Loading..." : "Get My Action Plan"}
+      {loading ? "Loading..." : "Get My Plan in 5 Minutes"}
     </button>
   );
 }

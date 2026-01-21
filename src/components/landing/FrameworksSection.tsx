@@ -92,30 +92,24 @@ function ICEContent() {
 
       <div className="space-y-6">
         <div className="border-l-4 border-cta pl-4">
-          <div className="flex items-baseline gap-3 mb-1">
-            <span className="font-mono text-xs bg-cta text-white px-2 py-0.5 font-bold">ICE: 28</span>
-            <h4 className="font-bold text-foreground">Publish This Growth Plan as Content</h4>
-          </div>
+          <span className="font-mono text-xs bg-cta text-white px-2 py-0.5 font-bold inline-block mb-2">ICE: 28</span>
+          <h4 className="font-bold text-foreground mb-1">Publish This Growth Plan as Content</h4>
           <p className="text-foreground/70 text-sm leading-relaxed">
             This document is proof. It demonstrates output quality, growth expertise, and real strategy—not generic advice.
           </p>
         </div>
 
         <div className="border-l-4 border-cta/70 pl-4">
-          <div className="flex items-baseline gap-3 mb-1">
-            <span className="font-mono text-xs bg-foreground/10 text-foreground px-2 py-0.5 font-bold">ICE: 26</span>
-            <h4 className="font-bold text-foreground">Launch on Indie Hackers First</h4>
-          </div>
+          <span className="font-mono text-xs bg-foreground/10 text-foreground px-2 py-0.5 font-bold inline-block mb-2">ICE: 26</span>
+          <h4 className="font-bold text-foreground mb-1">Launch on Indie Hackers First</h4>
           <p className="text-foreground/70 text-sm leading-relaxed">
             IH is the natural habitat for your target user. Unlike Product Hunt (one-day spike), IH builds persistent community presence.
           </p>
         </div>
 
         <div className="border-l-4 border-foreground/30 pl-4">
-          <div className="flex items-baseline gap-3 mb-1">
-            <span className="font-mono text-xs bg-foreground/10 text-foreground px-2 py-0.5 font-bold">ICE: 25</span>
-            <h4 className="font-bold text-foreground">Build in Public on Twitter/X</h4>
-          </div>
+          <span className="font-mono text-xs bg-foreground/10 text-foreground px-2 py-0.5 font-bold inline-block mb-2">ICE: 25</span>
+          <h4 className="font-bold text-foreground mb-1">Build in Public on Twitter/X</h4>
           <p className="text-foreground/70 text-sm leading-relaxed">
             The #buildinpublic community is 500K+ founders who celebrate transparency. Your pricing and architecture decisions are content.
           </p>
