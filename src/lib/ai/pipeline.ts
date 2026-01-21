@@ -2,7 +2,8 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { runResearch, runTavilyOnlyResearch } from './research'
 import { generateStrategy, generateMiniStrategy, generateRefinedStrategy, generateFirstImpressions } from './generate'
 import { tavily } from '@tavily/core'
-import { accumulateUserContext } from '@/lib/context/accumulate'
+import { accumulateBusinessContext, accumulateUserContext } from '@/lib/context/accumulate'
+import { getOrCreateDefaultBusiness } from '@/lib/business'
 import { searchUserContext } from './embeddings'
 import {
   sendRunReadyEmail,
@@ -87,30 +88,32 @@ async function updateStage(runId: string, stage: PipelineStage): Promise<void> {
 }
 
 /**
- * Retrieve user history context for RAG
+ * Retrieve business history context for RAG
  * Combines stored context with vector search for relevant past chunks
+ * Scoped to a specific business, not the entire user
  */
-async function retrieveUserHistory(
+async function retrieveBusinessHistory(
   userId: string,
+  businessId: string,
   input: RunInput
 ): Promise<UserHistoryContext | null> {
   const supabase = createServiceClient()
 
-  // 1. Fetch existing user context
-  const { data: user, error } = await supabase
-    .from('users')
+  // 1. Fetch existing business context
+  const { data: business, error } = await supabase
+    .from('businesses')
     .select('context')
-    .eq('id', userId)
+    .eq('id', businessId)
     .single()
 
-  if (error || !user?.context) {
-    console.log(`[Pipeline] No existing context for user ${userId}`)
+  if (error || !business?.context) {
+    console.log(`[Pipeline] No existing context for business ${businessId}`)
     return null
   }
 
-  const context = user.context as UserContext
+  const context = business.context as UserContext
 
-  // Skip if this is user's first run
+  // Skip if this is business's first run
   if (!context.totalRuns || context.totalRuns === 0) {
     return null
   }
@@ -118,26 +121,50 @@ async function retrieveUserHistory(
   // 2. Build search query from current input
   const searchQuery = `${input.focusArea || ''} ${(input.productDescription || '').slice(0, 200)}`
 
-  // 3. Search for relevant past recommendations and insights
+  // 3. Search for relevant past recommendations and insights - SCOPED TO BUSINESS
   const [recommendations, insights] = await Promise.all([
-    searchUserContext(userId, searchQuery, { chunkTypes: ['recommendation'], limit: 5 }),
-    searchUserContext(userId, searchQuery, { chunkTypes: ['insight'], limit: 5 }),
+    searchUserContext(userId, searchQuery, { chunkTypes: ['recommendation'], limit: 5, businessId }),
+    searchUserContext(userId, searchQuery, { chunkTypes: ['insight'], limit: 5, businessId }),
   ])
 
   // 4. Build structured history context
   const history: UserHistoryContext = {
     totalRuns: context.totalRuns,
     previousTraction: context.traction?.history?.slice(-5) || [],
-    tacticsTried: context.tactics?.tried?.slice(-15) || [],
+    tacticsTried: context.tactics?.history?.slice(-15) || context.tactics?.tried?.slice(-15) || [],
     pastRecommendations: recommendations.map(r => r.content),
     pastInsights: insights.map(i => i.content),
   }
 
   console.log(
-    `[Pipeline] Retrieved user history: ${history.totalRuns} runs, ${history.pastRecommendations.length} recommendations, ${history.pastInsights.length} insights`
+    `[Pipeline] Retrieved business history: ${history.totalRuns} runs, ${history.pastRecommendations.length} recommendations, ${history.pastInsights.length} insights`
   )
 
   return history
+}
+
+/**
+ * Retrieve user history context for RAG (backwards-compatible wrapper)
+ * @deprecated Use retrieveBusinessHistory when business_id is available
+ */
+async function retrieveUserHistory(
+  userId: string,
+  input: RunInput,
+  businessId?: string
+): Promise<UserHistoryContext | null> {
+  // If businessId provided, use business-scoped retrieval
+  if (businessId) {
+    return retrieveBusinessHistory(userId, businessId, input)
+  }
+
+  // Fallback: get default business
+  try {
+    const resolvedBusinessId = await getOrCreateDefaultBusiness(userId, input)
+    return retrieveBusinessHistory(userId, resolvedBusinessId, input)
+  } catch (err) {
+    console.error('[Pipeline] Failed to resolve business for history retrieval:', err)
+    return null
+  }
 }
 
 /**
@@ -198,14 +225,16 @@ export async function runPipeline(runId: string): Promise<PipelineResult> {
     }
   }
 
-  // 4. Retrieve user history for RAG (if returning user)
+  // 4. Retrieve business history for RAG (if returning user with business)
   await updateStage(runId, 'loading_history')
   let userHistory: UserHistoryContext | null = null
+  const businessId = run.business_id as string | null
   if (run.user_id) {
     try {
-      userHistory = await retrieveUserHistory(run.user_id, input)
+      // Use business-scoped history if available, otherwise fallback
+      userHistory = await retrieveUserHistory(run.user_id, input, businessId || undefined)
     } catch (err) {
-      console.error('[Pipeline] User history retrieval failed:', err)
+      console.error('[Pipeline] Business history retrieval failed:', err)
       // Continue without history - graceful degradation
     }
   }
@@ -234,11 +263,19 @@ export async function runPipeline(runId: string): Promise<PipelineResult> {
       return { success: false, error: `Failed to save output: ${updateError.message}` }
     }
 
-    // Accumulate user context for multi-run support (fire-and-forget)
+    // Accumulate business context for multi-run support (fire-and-forget)
     if (run.user_id) {
-      accumulateUserContext(run.user_id, runId, input, output).catch((err) => {
-        console.error('[Pipeline] Context accumulation failed:', err)
-      })
+      // Use business-scoped accumulation if business_id exists
+      if (businessId) {
+        accumulateBusinessContext(businessId, run.user_id, runId, input, output).catch((err) => {
+          console.error('[Pipeline] Business context accumulation failed:', err)
+        })
+      } else {
+        // Fallback for runs without business_id (will create/assign one)
+        accumulateUserContext(run.user_id, runId, input, output).catch((err) => {
+          console.error('[Pipeline] Context accumulation failed:', err)
+        })
+      }
 
       // Send "run ready" email (fire-and-forget)
       getEmailForUser(run.user_id)
@@ -494,14 +531,15 @@ export async function runRefinementPipeline(runId: string): Promise<RefinementPi
     }
   }
 
-  // 5. Retrieve user history for RAG (if returning user)
+  // 5. Retrieve business history for RAG (if returning user)
   await updateStage(runId, 'loading_history')
   let userHistory: UserHistoryContext | null = null
+  const refinementBusinessId = run.business_id as string | null
   if (run.user_id) {
     try {
-      userHistory = await retrieveUserHistory(run.user_id, input)
+      userHistory = await retrieveUserHistory(run.user_id, input, refinementBusinessId || undefined)
     } catch (err) {
-      console.error('[RefinementPipeline] User history retrieval failed:', err)
+      console.error('[RefinementPipeline] Business history retrieval failed:', err)
     }
   }
 

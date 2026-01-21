@@ -7,6 +7,7 @@ import { trackServerEvent } from "@/lib/analytics";
 import { isValidEmail } from "@/lib/validation";
 import { sendMagicLink } from "@/lib/auth/send-magic-link";
 import { signAuditToken } from "@/lib/auth/audit-token";
+import { createBusiness } from "@/lib/business";
 
 // Field length limits for server-side validation
 const MAX_FIELD_LENGTHS: Record<string, number> = {
@@ -132,12 +133,25 @@ export async function POST(request: NextRequest) {
       constraints: input.constraints || "",
     };
 
+    // Create a new business for this free audit (each audit is a different business)
+    let businessId: string | null = null;
+    if (userId) {
+      try {
+        businessId = await createBusiness(userId, runInput);
+        console.log(`[FreeAudit] Created business ${businessId} for user ${userId}`);
+      } catch (err) {
+        console.error("[FreeAudit] Failed to create business:", err);
+        // Continue without business - audit still works
+      }
+    }
+
     // Create free_audits record (store normalized email for rate limiting)
     const { data: freeAudit, error: insertError } = await supabase
       .from("free_audits")
       .insert({
         email: normalizedEmail,
         user_id: userId,
+        business_id: businessId,
         input: runInput as unknown as Json,
         status: "pending",
       })

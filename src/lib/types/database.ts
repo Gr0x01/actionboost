@@ -9,6 +9,41 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      businesses: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          context: Json | null
+          context_updated_at: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name?: string
+          context?: Json | null
+          context_updated_at?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          context?: Json | null
+          context_updated_at?: string | null
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "businesses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       first_impressions: {
         Row: {
           id: string
@@ -41,6 +76,7 @@ export type Database = {
           id: string
           email: string
           user_id: string | null
+          business_id: string | null
           input: Json
           output: string | null
           status: string
@@ -52,6 +88,7 @@ export type Database = {
           id?: string
           email: string
           user_id?: string | null
+          business_id?: string | null
           input: Json
           output?: string | null
           status?: string
@@ -63,6 +100,7 @@ export type Database = {
           id?: string
           email?: string
           user_id?: string | null
+          business_id?: string | null
           input?: Json
           output?: string | null
           status?: string
@@ -76,6 +114,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "free_audits_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
         ]
@@ -149,6 +194,7 @@ export type Database = {
         Row: {
           additional_context: string | null
           attachments: Json | null
+          business_id: string | null
           completed_at: string | null
           created_at: string | null
           feedback_email_sent: string | null
@@ -167,6 +213,7 @@ export type Database = {
         Insert: {
           additional_context?: string | null
           attachments?: Json | null
+          business_id?: string | null
           completed_at?: string | null
           created_at?: string | null
           feedback_email_sent?: string | null
@@ -185,6 +232,7 @@ export type Database = {
         Update: {
           additional_context?: string | null
           attachments?: Json | null
+          business_id?: string | null
           completed_at?: string | null
           created_at?: string | null
           feedback_email_sent?: string | null
@@ -215,10 +263,18 @@ export type Database = {
             referencedRelation: "runs"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "runs_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
         ]
       }
       user_context_chunks: {
         Row: {
+          business_id: string | null
           chunk_type: string
           content: string
           created_at: string | null
@@ -230,6 +286,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          business_id?: string | null
           chunk_type: string
           content: string
           created_at?: string | null
@@ -241,6 +298,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          business_id?: string | null
           chunk_type?: string
           content?: string
           created_at?: string | null
@@ -257,6 +315,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_context_chunks_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
         ]
@@ -335,6 +400,7 @@ export type TablesUpdate<T extends keyof Database["public"]["Tables"]> =
 
 // Convenience aliases
 export type User = Tables<"users">
+export type Business = Tables<"businesses">
 export type Run = Tables<"runs">
 export type RunCredit = Tables<"run_credits">
 export type Code = Tables<"codes">

@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, Suspense } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, ChevronLeft } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Header } from "@/components/layout";
 import {
   ProgressBar,
@@ -29,68 +29,69 @@ import {
   MAX_TOTAL_CHARS,
 } from "@/lib/types/form";
 import { useUserContext } from "@/lib/hooks/useUserContext";
+import { useBusinesses } from "@/lib/hooks/useBusinesses";
+import { useFormWizard, Question } from "@/lib/hooks/useFormWizard";
+import { usePromoCode } from "@/lib/hooks/usePromoCode";
+import { useFormPrefill, PrefillResult } from "@/lib/hooks/useFormPrefill";
+import { useFormAnalytics } from "@/lib/hooks/useFormAnalytics";
 
 const STORAGE_KEY = "actionboost-form-v3";
-const PREFILL_KEY = "actionboost-prefill";
-const HERO_PREFILL_KEY = "actionboost-hero-prefill";
-const PREFILL_TTL = 5 * 60 * 1000; // 5 minutes
-const HERO_PREFILL_TTL = 10 * 60 * 1000; // 10 minutes
 
 // View states for the form flow
 type ViewState = "loading" | "welcome_back" | "context_update" | "questions" | "checkout";
 
 // Question definitions
-const QUESTIONS = [
+const QUESTIONS: Question[] = [
   {
     id: "websiteUrl",
     question: "What's your website?",
     acknowledgment: "Got it, I'll analyze this",
-    type: "url" as const,
+    type: "url",
     optional: true,
   },
   {
     id: "productDescription",
     question: "Tell me about your product in a sentence or two",
     acknowledgment: "Interesting product",
-    type: "textarea" as const,
+    type: "textarea",
   },
   {
     id: "currentTraction",
     question: "What traction do you have so far?",
     acknowledgment: "Good baseline",
-    type: "traction" as const,
+    type: "traction",
   },
   {
     id: "tacticsAndResults",
     question: "What have you tried, and how's it going?",
     acknowledgment: "This helps a lot",
-    type: "textarea" as const,
+    type: "textarea",
   },
   {
     id: "attachments",
     question: "Got any screenshots or data to share?",
     acknowledgment: null,
-    type: "upload" as const,
+    type: "upload",
     optional: true,
   },
   {
     id: "focusArea",
     question: "Where should we focus?",
     acknowledgment: null,
-    type: "focus" as const,
+    type: "focus",
   },
   {
     id: "email",
     question: "Where should we send your strategy?",
     acknowledgment: null,
-    type: "email" as const,
+    type: "email",
     optional: true,
   },
   {
     id: "competitors",
     question: "Any competitors I should study?",
     acknowledgment: null,
-    type: "competitors" as const,
+    type: "competitors",
     optional: true,
   },
 ];
@@ -102,18 +103,6 @@ const SUGGESTED_UPDATE_QUESTIONS = [
   "What tactics worked?",
 ];
 
-// Map question IDs to funnel step names
-const STEP_NAMES: Record<string, string> = {
-  websiteUrl: "url",
-  productDescription: "product",
-  currentTraction: "traction",
-  tacticsAndResults: "tactics",
-  attachments: "uploads",
-  focusArea: "focus",
-  email: "email",
-  competitors: "competitors",
-};
-
 function StartPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -122,57 +111,90 @@ function StartPageContent() {
   // Entry source for analytics (hero, footer, or direct)
   const entrySource = searchParams.get("source") || "direct";
 
-  // User context for returning users
-  const { context, isLoading: isLoadingContext, hasContext, prefillForm } = useUserContext();
+  // Business selection for multi-business users
+  const { businesses, selectedBusinessId, setSelectedBusinessId, hasBusinesses, isLoading: isLoadingBusinesses } = useBusinesses();
+
+  // Track if user wants to start fresh (new business)
+  const [startFresh, setStartFresh] = useState(false);
+
+  // User context for returning users - fetch for selected business
+  const { context, isLoading: isLoadingContext, hasContext, prefillForm, refetch: refetchContext } = useUserContext(
+    startFresh ? null : selectedBusinessId
+  );
 
   // View state machine
   const [viewState, setViewState] = useState<ViewState>("loading");
 
   // Form state
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [showAcknowledgment, setShowAcknowledgment] = useState(false);
   const [form, setForm] = useState<FormInput>(INITIAL_FORM_STATE);
   const [contextDelta, setContextDelta] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Promo code state
-  const [promoCode, setPromoCode] = useState("");
-  const [codeStatus, setCodeStatus] = useState<{
-    valid: boolean;
-    credits?: number;
-    error?: string;
-  } | null>(null);
-  const [isValidatingCode, setIsValidatingCode] = useState(false);
   const [email, setEmail] = useState("");
 
   // User credits state
   const [userCredits, setUserCredits] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Prefill from homepage
-  const [prefillMetadata, setPrefillMetadata] = useState<{
-    title: string | null;
-    description: string | null;
-    favicon: string | null;
-    siteName: string | null;
-  } | null>(null);
-  const prefillApplied = useRef(false);
+  // Track where checkout was entered from for back navigation
+  const [checkoutSource, setCheckoutSource] = useState<"questions" | "context_update">("questions");
 
-  const question = QUESTIONS[currentQuestion];
-  const isQuestionsComplete = currentQuestion >= QUESTIONS.length;
+  // Form wizard navigation
+  const {
+    currentQuestion,
+    setCurrentQuestion,
+    showAcknowledgment,
+    goToNext,
+    goBack,
+    question,
+    isComplete: isQuestionsComplete,
+  } = useFormWizard({
+    questions: QUESTIONS,
+    posthog,
+    onComplete: () => {
+      setCheckoutSource("questions");
+      setViewState("checkout");
+    },
+  });
 
-  // Tracking refs
-  const stepStartTime = useRef<number>(Date.now());
-  const formStartTime = useRef<number>(Date.now());
-  const hasTrackedStart = useRef(false);
+  // Form analytics tracking - handles form start and abandonment tracking
+  const { trackFormStart } = useFormAnalytics({
+    posthog,
+    entrySource,
+    viewState,
+    currentQuestion,
+    questionId: question?.id,
+  });
 
-  // Determine initial view state once context is loaded
+  // Promo code handling
+  const {
+    promoCode,
+    setPromoCode,
+    codeStatus,
+    isValidatingCode,
+    validateCode,
+    clearCode,
+    hasValidCode,
+  } = usePromoCode();
+
+  // Form prefill from homepage
+  const handlePrefillApplied = useCallback((result: PrefillResult) => {
+    setForm((prev) => ({ ...prev, ...result.formUpdates }));
+    setCurrentQuestion(result.startQuestion);
+  }, [setCurrentQuestion]);
+
+  const { prefillMetadata, clearPrefillMetadata } = useFormPrefill({
+    posthog,
+    isActive: viewState === "questions",
+    onPrefillApplied: handlePrefillApplied,
+  });
+
+  // Determine initial view state once context and businesses are loaded
   useEffect(() => {
-    if (!isLoadingContext && viewState === "loading") {
-      setViewState(hasContext ? "welcome_back" : "questions");
+    if (!isLoadingContext && !isLoadingBusinesses && viewState === "loading") {
+      setViewState((hasContext || hasBusinesses) ? "welcome_back" : "questions");
     }
-  }, [isLoadingContext, hasContext, viewState]);
+  }, [isLoadingContext, isLoadingBusinesses, hasContext, hasBusinesses, viewState]);
 
   // Fetch user credits on mount
   useEffect(() => {
@@ -192,133 +214,6 @@ function StartPageContent() {
     fetchCredits();
   }, []);
 
-  // Handle prefill from homepage (hero textarea or URL input)
-  useEffect(() => {
-    if (prefillApplied.current) return;
-    if (viewState !== "questions") return;
-
-    // Check for hero description prefill first (new landing page)
-    const heroPrefillRaw = localStorage.getItem(HERO_PREFILL_KEY);
-    if (heroPrefillRaw) {
-      try {
-        const heroPrefill = JSON.parse(heroPrefillRaw);
-
-        // Check TTL
-        if (Date.now() - heroPrefill.timestamp > HERO_PREFILL_TTL) {
-          localStorage.removeItem(HERO_PREFILL_KEY);
-        } else {
-          // Clear prefill to prevent re-application
-          localStorage.removeItem(HERO_PREFILL_KEY);
-          prefillApplied.current = true;
-
-          // Update form with product description, start at question 1 (URL)
-          setForm((prev) => ({
-            ...prev,
-            productDescription: heroPrefill.productDescription || "",
-          }));
-          setCurrentQuestion(0); // Start at URL question so we can collect website
-
-          posthog?.capture("form_prefilled_from_hero", {
-            type: "product_description",
-            char_count: heroPrefill.productDescription?.length || 0,
-          });
-          return;
-        }
-      } catch {
-        localStorage.removeItem(HERO_PREFILL_KEY);
-      }
-    }
-
-    // Check for URL prefill (footer CTA or legacy)
-    const prefillRaw = localStorage.getItem(PREFILL_KEY);
-    if (!prefillRaw) return;
-
-    try {
-      const prefill = JSON.parse(prefillRaw);
-
-      // Check TTL
-      if (Date.now() - prefill.timestamp > PREFILL_TTL) {
-        localStorage.removeItem(PREFILL_KEY);
-        return;
-      }
-
-      // Clear prefill to prevent re-application
-      localStorage.removeItem(PREFILL_KEY);
-      prefillApplied.current = true;
-
-      // Store metadata for context banner
-      if (prefill.metadata) {
-        setPrefillMetadata(prefill.metadata);
-      }
-
-      // Build description from metadata
-      let description = "";
-      if (prefill.metadata?.title) {
-        description = prefill.metadata.title;
-      }
-      if (prefill.metadata?.description) {
-        description += description ? " - " : "";
-        description += prefill.metadata.description;
-      }
-
-      // Update form and skip to step 2 (product description)
-      setForm((prev) => ({
-        ...prev,
-        websiteUrl: prefill.websiteUrl || "",
-        productDescription: description || prev.productDescription,
-      }));
-      setCurrentQuestion(1); // Skip URL step, go to product description
-
-      posthog?.capture("form_prefilled_from_hero", {
-        type: "url_metadata",
-        has_title: !!prefill.metadata?.title,
-        has_description: !!prefill.metadata?.description,
-        url_domain: prefill.websiteUrl ? new URL(prefill.websiteUrl).hostname : null,
-      });
-    } catch {
-      localStorage.removeItem(PREFILL_KEY);
-    }
-  }, [viewState, posthog]);
-
-  // Handle "Continue with updates" - show conversational update form
-  const handleContinueWithUpdates = useCallback(() => {
-    const prefilled = prefillForm();
-    if (prefilled) {
-      setForm(prefilled);
-    }
-    setViewState("context_update");
-    posthog?.capture("returning_user_continue", { has_context: true });
-  }, [prefillForm, posthog]);
-
-  // Handle "Start fresh" - go to questions with clean form
-  const handleStartFresh = useCallback(() => {
-    setForm(INITIAL_FORM_STATE);
-    setViewState("questions");
-    posthog?.capture("returning_user_start_fresh", { has_context: true });
-  }, [posthog]);
-
-  // Track where checkout was entered from for back navigation
-  const [checkoutSource, setCheckoutSource] = useState<"questions" | "context_update">("questions");
-
-  // Handle context update submission - merge delta and go to checkout
-  const handleContextUpdateSubmit = useCallback((delta: string, focusArea: string) => {
-    setContextDelta(delta);
-    setForm((prev) => ({
-      ...prev,
-      focusArea: focusArea as FocusArea,
-      // Append delta to tactics field for AI context
-      tacticsAndResults: delta,
-    }));
-    setCheckoutSource("context_update");
-    setViewState("checkout");
-    posthog?.capture("context_update_submitted", { focus_area: focusArea });
-  }, [posthog]);
-
-  // Handle back from context update
-  const handleBackFromContextUpdate = useCallback(() => {
-    setViewState("welcome_back");
-  }, []);
-
   // Load from localStorage and track form start
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -333,35 +228,8 @@ function StartPageContent() {
         // Invalid JSON
       }
     }
-    if (!hasTrackedStart.current) {
-      posthog?.capture("form_started", {
-        version: "rapid-fire",
-        entry_source: entrySource,
-      });
-      formStartTime.current = Date.now();
-      stepStartTime.current = Date.now();
-      hasTrackedStart.current = true;
-    }
-  }, [posthog, entrySource]);
-
-  // Form abandonment tracking
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      if (viewState === "questions" || viewState === "checkout") {
-        const stepName = viewState === "checkout" ? "checkout" : STEP_NAMES[question?.id || ""] || "unknown";
-        const timeSpent = Math.round((Date.now() - formStartTime.current) / 1000);
-        posthog?.capture("form_abandoned", {
-          last_step: currentQuestion + 1,
-          step_name: stepName,
-          view_state: viewState,
-          time_spent_seconds: timeSpent,
-        });
-      }
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [viewState, currentQuestion, question?.id, posthog]);
+    trackFormStart();
+  }, [trackFormStart]);
 
   // Save to localStorage
   useEffect(() => {
@@ -371,104 +239,57 @@ function StartPageContent() {
     return () => clearTimeout(timeout);
   }, [form]);
 
-  const hasValidCode = codeStatus?.valid === true;
+  // Handle "Continue with updates" - show conversational update form
+  const handleContinueWithUpdates = useCallback(() => {
+    const prefilled = prefillForm();
+    if (prefilled) {
+      setForm(prefilled);
+    }
+    setViewState("context_update");
+    posthog?.capture("returning_user_continue", { has_context: true });
+  }, [prefillForm, posthog]);
+
+  // Handle "Start fresh" - go to questions with clean form and create new business
+  const handleStartFresh = useCallback(() => {
+    setForm(INITIAL_FORM_STATE);
+    setStartFresh(true);
+    setViewState("questions");
+    posthog?.capture("returning_user_start_fresh", { has_context: true, has_businesses: hasBusinesses });
+  }, [posthog, hasBusinesses]);
+
+  // Handle business selection change
+  const handleSelectBusiness = useCallback((businessId: string) => {
+    setSelectedBusinessId(businessId);
+    setStartFresh(false);
+    refetchContext(businessId);
+    posthog?.capture("business_selected", { business_id: businessId });
+  }, [setSelectedBusinessId, refetchContext, posthog]);
+
+  // Handle context update submission - merge delta and go to checkout
+  const handleContextUpdateSubmit = useCallback((delta: string, focusArea: string) => {
+    setContextDelta(delta);
+    setForm((prev) => ({
+      ...prev,
+      focusArea: focusArea as FocusArea,
+      tacticsAndResults: delta,
+    }));
+    setCheckoutSource("context_update");
+    setViewState("checkout");
+    posthog?.capture("context_update_submitted", { focus_area: focusArea });
+  }, [posthog]);
+
+  // Handle back from context update
+  const handleBackFromContextUpdate = useCallback(() => {
+    setViewState("welcome_back");
+  }, []);
 
   const updateField = useCallback(<K extends keyof FormInput>(field: K, value: FormInput[K]) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   }, []);
 
-  const goToNext = useCallback((skipped = false) => {
-    const currentQ = QUESTIONS[currentQuestion];
-    const stepName = STEP_NAMES[currentQ?.id || ""] || "unknown";
-    const stepSeconds = Math.round((Date.now() - stepStartTime.current) / 1000);
-    const ack = currentQ?.acknowledgment;
-
-    // Track step completion with distinct event name
-    posthog?.capture(`form_step_${stepName}`, {
-      step: currentQuestion + 1,
-      step_name: stepName,
-      skipped,
-    });
-
-    // Track time spent on step
-    posthog?.capture("form_step_time", {
-      step: currentQuestion + 1,
-      step_name: stepName,
-      seconds: stepSeconds,
-    });
-
-    // Track skip separately if applicable
-    if (skipped) {
-      posthog?.capture("form_step_skipped", {
-        step: currentQuestion + 1,
-        step_name: stepName,
-      });
-    }
-
-    // Reset step timer for next question
-    stepStartTime.current = Date.now();
-
-    if (ack) {
-      setShowAcknowledgment(true);
-      setTimeout(() => {
-        setShowAcknowledgment(false);
-        const nextQuestion = currentQuestion + 1;
-        setCurrentQuestion(nextQuestion);
-        // If we've finished all questions, go to checkout
-        if (nextQuestion >= QUESTIONS.length) {
-          setCheckoutSource("questions");
-          setViewState("checkout");
-          posthog?.capture("form_step_checkout", { step: 9, step_name: "checkout" });
-        }
-      }, 600);
-    } else {
-      const nextQuestion = currentQuestion + 1;
-      setCurrentQuestion(nextQuestion);
-      // If we've finished all questions, go to checkout
-      if (nextQuestion >= QUESTIONS.length) {
-        setCheckoutSource("questions");
-        setViewState("checkout");
-        posthog?.capture("form_step_checkout", { step: 9, step_name: "checkout" });
-      }
-    }
-  }, [currentQuestion, posthog]);
-
-  const goBack = useCallback(() => {
-    if (currentQuestion > 0) {
-      setCurrentQuestion((c) => c - 1);
-    }
-  }, [currentQuestion]);
-
-  const validateCode = async () => {
-    if (!promoCode.trim()) return;
-    setIsValidatingCode(true);
-    setCodeStatus(null);
-
-    try {
-      const res = await fetch("/api/codes/validate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: promoCode }),
-      });
-      const data = await res.json();
-      setCodeStatus(data);
-    } catch {
-      setCodeStatus({ valid: false, error: "Failed to validate" });
-    } finally {
-      setIsValidatingCode(false);
-    }
-  };
-
-  const clearCode = () => {
-    setPromoCode("");
-    setCodeStatus(null);
-  };
-
   const handleSubmit = async () => {
     if (isSubmitting) return;
 
-    // Validate form before submission
-    // Returning users (via context_update flow) have relaxed validation since they've provided info before
     const isReturningUser = checkoutSource === "context_update";
     const errors = validateForm(form, isReturningUser);
     if (Object.keys(errors).length > 0) {
@@ -484,7 +305,6 @@ function StartPageContent() {
     setError(null);
 
     try {
-      // Use credits if available
       if (userCredits > 0) {
         const res = await fetch("/api/runs/create-with-credits", {
           method: "POST",
@@ -493,6 +313,8 @@ function StartPageContent() {
             input: form,
             contextDelta: contextDelta || undefined,
             posthogDistinctId: posthog?.get_distinct_id(),
+            businessId: startFresh ? undefined : selectedBusinessId,
+            startFresh,
           }),
         });
         const data = await res.json();
@@ -517,6 +339,8 @@ function StartPageContent() {
             input: form,
             contextDelta: contextDelta || undefined,
             posthogDistinctId: posthog?.get_distinct_id(),
+            businessId: startFresh ? undefined : selectedBusinessId,
+            startFresh,
           }),
         });
         const data = await res.json();
@@ -539,6 +363,8 @@ function StartPageContent() {
             input: form,
             contextDelta: contextDelta || undefined,
             posthogDistinctId: posthog?.get_distinct_id(),
+            businessId: startFresh ? undefined : selectedBusinessId,
+            startFresh,
           }),
         });
         const data = await res.json();
@@ -563,10 +389,16 @@ function StartPageContent() {
     }
   };
 
-  // Get current value for the question
-  const getValue = (id: string) => {
-    if (id === "competitors") return form.competitors.filter(Boolean);
-    return form[id as keyof FormInput] as string;
+  // Get current value for the question with proper type handling
+  const getValue = (id: keyof FormInput): string | string[] => {
+    const value = form[id];
+    if (id === "competitors") {
+      return (value as string[]).filter(Boolean);
+    }
+    if (id === "attachments") {
+      return value as string[];
+    }
+    return value as string;
   };
 
   // Calculate progress for the progress bar
@@ -605,7 +437,7 @@ function StartPageContent() {
             )}
 
             {/* Welcome back for returning users */}
-            {viewState === "welcome_back" && context && (
+            {viewState === "welcome_back" && (context || hasBusinesses) && (
               <motion.div
                 key="welcome-back"
                 initial={{ opacity: 0, y: 20 }}
@@ -614,9 +446,12 @@ function StartPageContent() {
                 className="min-h-[300px] flex items-center justify-center"
               >
                 <WelcomeBack
-                  context={context}
+                  context={context || {}}
                   onContinueWithUpdates={handleContinueWithUpdates}
                   onStartFresh={handleStartFresh}
+                  businesses={businesses}
+                  selectedBusinessId={selectedBusinessId}
+                  onSelectBusiness={handleSelectBusiness}
                 />
               </motion.div>
             )}
@@ -712,7 +547,7 @@ function StartPageContent() {
                       </p>
                     </div>
                     <button
-                      onClick={() => setPrefillMetadata(null)}
+                      onClick={clearPrefillMetadata}
                       className="text-foreground/50 hover:text-foreground transition-colors ml-auto text-lg leading-none font-bold"
                       aria-label="Dismiss"
                     >
@@ -744,7 +579,7 @@ function StartPageContent() {
 
                   {question.type === "textarea" && (
                     <TextareaInput
-                      value={getValue(question.id) as string}
+                      value={getValue(question.id as keyof FormInput) as string}
                       onChange={(v) => updateField(question.id as keyof FormInput, v as never)}
                       onSubmit={() => goToNext(false)}
                       onBack={currentQuestion > 0 ? goBack : undefined}

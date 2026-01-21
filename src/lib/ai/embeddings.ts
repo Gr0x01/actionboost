@@ -91,10 +91,17 @@ interface ChunkToEmbed {
 /**
  * Extract key facts from run input/output and store as embedded chunks
  * Gracefully skips if OpenAI is not configured
+ *
+ * @param runId - The run ID
+ * @param userId - The user ID (for backwards compatibility)
+ * @param businessId - The business ID to scope embeddings (optional for backwards compat)
+ * @param input - The run input
+ * @param output - The generated strategy output
  */
 export async function extractAndEmbedRunContext(
   runId: string,
   userId: string,
+  businessId: string | null,
   input: RunInput,
   output: string
 ): Promise<void> {
@@ -177,6 +184,7 @@ export async function extractAndEmbedRunContext(
 
   const rows = chunks.map((chunk, i) => ({
     user_id: userId,
+    business_id: businessId, // Scope embeddings to business
     content: chunk.content,
     chunk_type: chunk.chunkType,
     source_type: chunk.sourceType,
@@ -190,12 +198,14 @@ export async function extractAndEmbedRunContext(
   if (error) {
     console.error('[Embeddings] Failed to store chunks:', error)
   } else {
-    console.log(`[Embeddings] Stored ${rows.length} context chunks for user ${userId}`)
+    const scope = businessId ? `business ${businessId}` : `user ${userId}`
+    console.log(`[Embeddings] Stored ${rows.length} context chunks for ${scope}`)
   }
 }
 
 /**
  * Search user's context chunks by semantic similarity
+ * Can be scoped to a specific business for multi-business support
  */
 export async function searchUserContext(
   userId: string,
@@ -203,6 +213,7 @@ export async function searchUserContext(
   options?: {
     chunkTypes?: ChunkType[]
     limit?: number
+    businessId?: string // Scope search to a specific business
   }
 ): Promise<Array<{
   content: string
@@ -231,6 +242,7 @@ export async function searchUserContext(
     match_user_id: userId,
     match_threshold: 0.5,
     match_count: fetchLimit,
+    match_business_id: options?.businessId || null, // Scope to business if provided
   })
 
   if (error) {
@@ -272,6 +284,7 @@ async function searchUserContextFallback(
   options?: {
     chunkTypes?: ChunkType[]
     limit?: number
+    businessId?: string
   }
 ): Promise<Array<{
   content: string
@@ -294,6 +307,11 @@ async function searchUserContextFallback(
     .ilike('content', `%${escapedQuery}%`)
     .order('created_at', { ascending: false })
     .limit(limit)
+
+  // Scope to business if provided
+  if (options?.businessId) {
+    queryBuilder = queryBuilder.eq('business_id', options.businessId)
+  }
 
   if (options?.chunkTypes && options.chunkTypes.length > 0) {
     queryBuilder = queryBuilder.in('chunk_type', options.chunkTypes)

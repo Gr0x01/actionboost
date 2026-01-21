@@ -7,16 +7,19 @@ import { setSessionCookie } from "@/lib/auth/session-cookie";
 import { sendMagicLink } from "@/lib/auth/send-magic-link";
 import { trackServerEvent, identifyUser } from "@/lib/analytics";
 import { isValidEmail } from "@/lib/validation";
-import { applyContextDeltaToUser } from "@/lib/context/accumulate";
+import { applyContextDeltaToBusiness } from "@/lib/context/accumulate";
+import { createBusiness, getOrCreateDefaultBusiness, verifyBusinessOwnership } from "@/lib/business";
 
 export async function POST(request: NextRequest) {
   try {
-    const { code, email, input, contextDelta, posthogDistinctId } = (await request.json()) as {
+    const { code, email, input, contextDelta, posthogDistinctId, businessId, startFresh } = (await request.json()) as {
       code: string;
       email: string;
       input: FormInput;
       contextDelta?: string;
       posthogDistinctId?: string;
+      businessId?: string;
+      startFresh?: boolean;
     };
 
     if (!code || typeof code !== "string") {
@@ -147,25 +150,56 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // If returning user provided a context update, merge it into their stored context
+    // Resolve business: startFresh creates new, otherwise use provided or default
+    const runInput = {
+      productDescription: input.productDescription,
+      currentTraction: input.currentTraction,
+      tacticsAndResults: input.tacticsAndResults,
+      focusArea: input.focusArea,
+      competitorUrls: input.competitors?.filter(Boolean) || [],
+      websiteUrl: input.websiteUrl || "",
+    };
+
+    let resolvedBusinessId: string;
+    if (startFresh) {
+      // "Start fresh" creates a new business
+      resolvedBusinessId = await createBusiness(userId, runInput);
+      console.log(`[API] Created new business ${resolvedBusinessId} for user ${userId} (start fresh)`);
+    } else if (businessId) {
+      // Verify business belongs to user
+      const isOwner = await verifyBusinessOwnership(businessId, userId);
+      if (!isOwner) {
+        return NextResponse.json(
+          { error: "Not authorized to access this business" },
+          { status: 403 }
+        );
+      }
+      resolvedBusinessId = businessId;
+    } else {
+      // Default: get or create first business
+      resolvedBusinessId = await getOrCreateDefaultBusiness(userId, runInput);
+    }
+
+    // If returning user provided a context update, merge it into their business context
     // This ensures the pipeline sees the latest user information
-    if (contextDelta) {
-      const result = await applyContextDeltaToUser(userId, contextDelta);
+    if (contextDelta && !startFresh) {
+      const result = await applyContextDeltaToBusiness(resolvedBusinessId, contextDelta);
       if (!result.success) {
-        console.error(`[API] Failed to merge context delta for user ${userId}:`, result.error);
+        console.error(`[API] Failed to merge context delta for business ${resolvedBusinessId}:`, result.error);
         // Continue anyway - run will use stale context but at least it will process
       } else {
-        console.log(`[API] Merged context delta for user ${userId}`);
+        console.log(`[API] Merged context delta for business ${resolvedBusinessId}`);
       }
     }
 
-    // Create the run linked to the user
+    // Create the run linked to the user and business
     const { data: run, error: runError } = await supabase
       .from("runs")
       .insert({
         input: input as unknown as Json,
         status: "pending",
         user_id: userId,
+        business_id: resolvedBusinessId,
         source: "promo",
       })
       .select("id")

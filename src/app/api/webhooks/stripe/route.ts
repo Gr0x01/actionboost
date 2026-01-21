@@ -7,7 +7,8 @@ import { sendMagicLink } from "@/lib/auth/send-magic-link";
 import { sendReceiptEmail, sendAbandonedCheckoutEmail } from "@/lib/email/resend";
 import { trackServerEvent, identifyUser } from "@/lib/analytics";
 import { config } from "@/lib/config";
-import { applyContextDeltaToUser } from "@/lib/context/accumulate";
+import { applyContextDeltaToBusiness } from "@/lib/context/accumulate";
+import { createBusiness, getOrCreateDefaultBusiness, verifyBusinessOwnership } from "@/lib/business";
 import { isValidEmail } from "@/lib/validation";
 import type { FocusArea } from "@/lib/types/form";
 
@@ -150,9 +151,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   }
 
   // Validate focusArea - fallback to acquisition if invalid
-  const validFocusAreas = ["acquisition", "activation", "retention", "referral", "monetization", "custom"];
-  const focusArea = validFocusAreas.includes(metadata.form_focus || "")
-    ? metadata.form_focus
+  const validFocusAreas: FocusArea[] = ["acquisition", "activation", "retention", "referral", "monetization", "custom"];
+  const focusArea: FocusArea = validFocusAreas.includes(metadata.form_focus as FocusArea)
+    ? (metadata.form_focus as FocusArea)
     : "acquisition";
 
   // Support both new (form_tactics) and legacy (form_tried + form_working) formats
@@ -176,16 +177,46 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     console.warn("Webhook: Missing productDescription for session:", session.id);
   }
 
-  // If returning user provided a context update, merge it into their stored context
+  // Business resolution: startFresh creates new, otherwise use provided or default
+  const businessId = metadata.business_id || undefined;
+  const startFresh = metadata.start_fresh === "true";
+
+  let resolvedBusinessId: string | null = null;
+  if (userId) {
+    try {
+      if (startFresh) {
+        // "Start fresh" creates a new business
+        resolvedBusinessId = await createBusiness(userId, formInput);
+        console.log(`[Webhook] Created new business ${resolvedBusinessId} for user ${userId} (start fresh)`);
+      } else if (businessId) {
+        // Verify business belongs to user
+        const isOwner = await verifyBusinessOwnership(businessId, userId);
+        if (isOwner) {
+          resolvedBusinessId = businessId;
+        } else {
+          console.warn(`[Webhook] Business ${businessId} not owned by user ${userId}, creating default`);
+          resolvedBusinessId = await getOrCreateDefaultBusiness(userId, formInput);
+        }
+      } else {
+        // Default: get or create first business
+        resolvedBusinessId = await getOrCreateDefaultBusiness(userId, formInput);
+      }
+    } catch (err) {
+      console.error(`[Webhook] Failed to resolve business for user ${userId}:`, err);
+      // Continue without business - run will still work
+    }
+  }
+
+  // If returning user provided a context update, merge it into their business context
   // This ensures the pipeline sees the latest user information
   const contextDelta = metadata.context_delta;
-  if (contextDelta && userId) {
-    const result = await applyContextDeltaToUser(userId, contextDelta);
+  if (contextDelta && resolvedBusinessId && !startFresh) {
+    const result = await applyContextDeltaToBusiness(resolvedBusinessId, contextDelta);
     if (!result.success) {
-      console.error(`[Webhook] Failed to merge context delta for user ${userId}:`, result.error);
+      console.error(`[Webhook] Failed to merge context delta for business ${resolvedBusinessId}:`, result.error);
       // Continue anyway - run will use stale context but at least it will process
     } else {
-      console.log(`[Webhook] Merged context delta for user ${userId}`);
+      console.log(`[Webhook] Merged context delta for business ${resolvedBusinessId}`);
     }
   }
 
@@ -194,6 +225,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     .from("runs")
     .insert({
       user_id: userId,
+      business_id: resolvedBusinessId,
       input: formInput as unknown as Json,
       status: "pending",
       stripe_session_id: session.id,
@@ -365,12 +397,25 @@ async function handleCheckoutExpired(session: Stripe.Checkout.Session) {
     }
   }
 
+  // Create a new business for this free audit (each audit is a different business)
+  let businessId: string | null = null;
+  if (userId) {
+    try {
+      businessId = await createBusiness(userId, runInput);
+      console.log(`[Webhook] Created business ${businessId} for abandoned checkout user ${userId}`);
+    } catch (err) {
+      console.error("[Webhook] Failed to create business for abandoned checkout:", err);
+      // Continue without business - audit still works
+    }
+  }
+
   // Create free audit record with abandoned_checkout source
   const { data: freeAudit, error: insertError } = await supabase
     .from("free_audits")
     .insert({
       email: normalizedEmail,
       user_id: userId,
+      business_id: businessId,
       input: runInput as unknown as Json,
       status: "pending",
       source: "abandoned_checkout",

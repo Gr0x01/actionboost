@@ -88,8 +88,9 @@ function validateContextDelta(data: unknown): ContextDelta | null {
 /**
  * GET /api/user/context
  * Returns the authenticated user's accumulated context for pre-filling forms
+ * Accepts optional ?businessId= query param to get context for a specific business
  */
-export async function GET(): Promise<NextResponse<UserContextResponse | { error: string }>> {
+export async function GET(request: Request): Promise<NextResponse<UserContextResponse | { error: string }>> {
   const sessionUser = await getSessionUser()
 
   if (!sessionUser) {
@@ -107,6 +108,57 @@ export async function GET(): Promise<NextResponse<UserContextResponse | { error:
 
   const supabase = createServiceClient()
 
+  // Check if businessId is specified
+  const url = new URL(request.url)
+  const businessId = url.searchParams.get('businessId')
+
+  if (businessId) {
+    // Fetch context from specific business (verify ownership)
+    const { data: business, error: bizError } = await supabase
+      .from('businesses')
+      .select('context, context_updated_at, user_id')
+      .eq('id', businessId)
+      .single()
+
+    if (bizError || !business) {
+      return NextResponse.json({ error: 'Business not found' }, { status: 404 })
+    }
+
+    // Verify ownership
+    if (business.user_id !== sessionUser.publicUserId) {
+      return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
+    }
+
+    const context = (business?.context as UserContext) || {}
+
+    return NextResponse.json({
+      context,
+      lastUpdated: business?.context_updated_at || null,
+      suggestedQuestions: hasUserContext(context) ? getSuggestedQuestions(context) : [],
+    })
+  }
+
+  // No businessId specified - fetch from default/first business or fallback to user context
+  // First, try to get the most recent business
+  const { data: recentBusiness } = await supabase
+    .from('businesses')
+    .select('context, context_updated_at')
+    .eq('user_id', sessionUser.publicUserId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single()
+
+  if (recentBusiness) {
+    const context = (recentBusiness?.context as UserContext) || {}
+    return NextResponse.json({
+      context,
+      lastUpdated: recentBusiness?.context_updated_at || null,
+      suggestedQuestions: hasUserContext(context) ? getSuggestedQuestions(context) : [],
+    })
+  }
+
+  // Fallback to legacy user context (for users who haven't been migrated)
+  console.log(`[API] Using legacy user context fallback for user ${sessionUser.publicUserId}`)
   const { data: user, error } = await supabase
     .from('users')
     .select('context, context_updated_at')
@@ -130,6 +182,7 @@ export async function GET(): Promise<NextResponse<UserContextResponse | { error:
 /**
  * PATCH /api/user/context
  * Apply a delta update to the user's context (conversational updates)
+ * Accepts optional businessId in request body to update specific business context
  */
 export async function PATCH(request: Request): Promise<NextResponse> {
   const sessionUser = await getSessionUser()
@@ -149,6 +202,10 @@ export async function PATCH(request: Request): Promise<NextResponse> {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
   }
 
+  // Extract businessId from body if present
+  const bodyObj = rawBody as Record<string, unknown>
+  const businessId = typeof bodyObj?.businessId === 'string' ? bodyObj.businessId : null
+
   const delta = validateContextDelta(rawBody)
   if (!delta) {
     return NextResponse.json({ error: 'Invalid request body structure' }, { status: 400 })
@@ -156,7 +213,46 @@ export async function PATCH(request: Request): Promise<NextResponse> {
 
   const supabase = createServiceClient()
 
-  // Fetch existing context
+  // If businessId is provided, update business context
+  if (businessId) {
+    // Verify ownership
+    const { data: business, error: bizError } = await supabase
+      .from('businesses')
+      .select('context, user_id')
+      .eq('id', businessId)
+      .single()
+
+    if (bizError || !business) {
+      return NextResponse.json({ error: 'Business not found' }, { status: 404 })
+    }
+
+    if (business.user_id !== sessionUser.publicUserId) {
+      return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
+    }
+
+    const existingContext = (business.context as UserContext) || {}
+    const updatedContext = mergeContextDelta(existingContext, delta)
+
+    const { error: updateError } = await supabase
+      .from('businesses')
+      .update({
+        context: JSON.parse(JSON.stringify(updatedContext)),
+        context_updated_at: new Date().toISOString(),
+      })
+      .eq('id', businessId)
+
+    if (updateError) {
+      console.error('[API] Failed to update business context:', updateError)
+      return NextResponse.json({ error: 'Failed to update context' }, { status: 500 })
+    }
+
+    return NextResponse.json({
+      success: true,
+      context: updatedContext,
+    })
+  }
+
+  // No businessId - update legacy user context (backwards compatibility)
   const { data: user, error: fetchError } = await supabase
     .from('users')
     .select('context')

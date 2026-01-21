@@ -12,10 +12,12 @@ const PRICE_SINGLE = process.env.STRIPE_PRICE_SINGLE!; // $9.99 for 1 credit
 
 export async function POST(request: NextRequest) {
   try {
-    const { input, contextDelta, posthogDistinctId } = (await request.json()) as {
+    const { input, contextDelta, posthogDistinctId, businessId, startFresh } = (await request.json()) as {
       input: FormInput;
       contextDelta?: string;
       posthogDistinctId?: string;
+      businessId?: string;
+      startFresh?: boolean;
     };
 
     if (!input || !input.productDescription) {
@@ -89,6 +91,9 @@ export async function POST(request: NextRequest) {
       // Context delta: if already applied to user, don't duplicate in metadata
       // If not applied (edge case: user not authenticated), fall back to truncated version
       context_delta: contextAppliedToUser ? "" : (contextDelta?.slice(0, 500) || ""),
+      // Business selection
+      business_id: businessId || "",
+      start_fresh: startFresh ? "true" : "",
     };
 
     const session = await stripe.checkout.sessions.create({

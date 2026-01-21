@@ -4,14 +4,17 @@ import { FormInput, validateForm } from "@/lib/types/form";
 import { Json, MAX_CONTEXT_LENGTH } from "@/lib/types/database";
 import { runPipeline } from "@/lib/ai/pipeline";
 import { trackServerEvent } from "@/lib/analytics";
-import { applyContextDeltaToUser } from "@/lib/context/accumulate";
+import { applyContextDeltaToBusiness } from "@/lib/context/accumulate";
+import { createBusiness, getOrCreateDefaultBusiness, verifyBusinessOwnership } from "@/lib/business";
 
 export async function POST(request: NextRequest) {
   try {
-    const { input, contextDelta, posthogDistinctId } = (await request.json()) as {
+    const { input, contextDelta, posthogDistinctId, businessId, startFresh } = (await request.json()) as {
       input: FormInput;
       contextDelta?: string;
       posthogDistinctId?: string;
+      businessId?: string;
+      startFresh?: boolean;
     };
 
     if (!input || !input.productDescription) {
@@ -67,15 +70,50 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // If returning user provided a context update, merge it into their stored context
+    // Resolve business: startFresh creates new, otherwise use provided or default
+    let resolvedBusinessId: string;
+    if (startFresh) {
+      // "Start fresh" creates a new business
+      resolvedBusinessId = await createBusiness(publicUser.id, {
+        productDescription: input.productDescription,
+        currentTraction: input.currentTraction,
+        tacticsAndResults: input.tacticsAndResults,
+        focusArea: input.focusArea,
+        competitorUrls: input.competitors?.filter(Boolean) || [],
+        websiteUrl: input.websiteUrl || "",
+      });
+      console.log(`[API] Created new business ${resolvedBusinessId} for user ${publicUser.id} (start fresh)`);
+    } else if (businessId) {
+      // Verify business belongs to user
+      const isOwner = await verifyBusinessOwnership(businessId, publicUser.id);
+      if (!isOwner) {
+        return NextResponse.json(
+          { error: "Not authorized to access this business" },
+          { status: 403 }
+        );
+      }
+      resolvedBusinessId = businessId;
+    } else {
+      // Default: get or create first business
+      resolvedBusinessId = await getOrCreateDefaultBusiness(publicUser.id, {
+        productDescription: input.productDescription,
+        currentTraction: input.currentTraction,
+        tacticsAndResults: input.tacticsAndResults,
+        focusArea: input.focusArea,
+        competitorUrls: input.competitors?.filter(Boolean) || [],
+        websiteUrl: input.websiteUrl || "",
+      });
+    }
+
+    // If returning user provided a context update, merge it into their business context
     // This ensures the pipeline sees the latest user information
-    if (contextDelta) {
-      const result = await applyContextDeltaToUser(publicUser.id, contextDelta);
+    if (contextDelta && !startFresh) {
+      const result = await applyContextDeltaToBusiness(resolvedBusinessId, contextDelta);
       if (!result.success) {
-        console.error(`[API] Failed to merge context delta for user ${publicUser.id}:`, result.error);
+        console.error(`[API] Failed to merge context delta for business ${resolvedBusinessId}:`, result.error);
         // Continue anyway - run will use stale context but at least it will process
       } else {
-        console.log(`[API] Merged context delta for user ${publicUser.id}`);
+        console.log(`[API] Merged context delta for business ${resolvedBusinessId}`);
       }
     }
 
@@ -108,6 +146,7 @@ export async function POST(request: NextRequest) {
         input: input as unknown as Json,
         status: "pending",
         user_id: publicUser.id,
+        business_id: resolvedBusinessId,
         source: "credits",
       })
       .select("id")

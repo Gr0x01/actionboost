@@ -1,8 +1,8 @@
 /**
- * Context accumulation logic for multi-run user profiles
+ * Context accumulation logic for multi-run business profiles
  *
  * After each run completes, we:
- * 1. Merge run input into users.context JSONB (product replaces, history appends)
+ * 1. Merge run input into businesses.context JSONB (product replaces, history appends)
  * 2. Create embeddings for vector search (via embeddings module)
  *
  * Merge rules:
@@ -12,10 +12,14 @@
  * - Traction: Append to history (keep last 10 snapshots)
  * - Tactics & results: Append to history array (combined field)
  * - Constraints: Replace with latest (if provided)
+ *
+ * Context is now scoped to BUSINESSES, not users.
+ * Each user can have multiple businesses, each with their own context.
  */
 
 import { createServiceClient } from '@/lib/supabase/server'
 import { extractAndEmbedRunContext } from '@/lib/ai/embeddings'
+import { getOrCreateDefaultBusiness, updateBusinessName } from '@/lib/business'
 import type { RunInput } from '@/lib/ai/types'
 import type { UserContext, ContextDelta, TractionSnapshot } from '@/lib/types/context'
 
@@ -36,10 +40,17 @@ function getTacticsFromInput(input: RunInput): string[] {
 }
 
 /**
- * Accumulate user context after a run completes
+ * Accumulate business context after a run completes
  * Called from the pipeline after successful generation
+ *
+ * @param businessId - The business to accumulate context for
+ * @param userId - The user who owns the business (for embeddings)
+ * @param runId - The run that just completed
+ * @param input - The run input
+ * @param output - The generated strategy output
  */
-export async function accumulateUserContext(
+export async function accumulateBusinessContext(
+  businessId: string,
   userId: string,
   runId: string,
   input: RunInput,
@@ -47,45 +58,77 @@ export async function accumulateUserContext(
 ): Promise<UserContext> {
   const supabase = createServiceClient()
 
-  // 1. Fetch existing context
-  const { data: user, error: fetchError } = await supabase
-    .from('users')
+  // 1. Fetch existing business context
+  const { data: business, error: fetchError } = await supabase
+    .from('businesses')
     .select('context')
-    .eq('id', userId)
+    .eq('id', businessId)
     .single()
 
   if (fetchError) {
-    console.error('[Context] Failed to fetch user context:', fetchError)
-    throw new Error(`Failed to fetch user: ${fetchError.message}`)
+    console.error('[Context] Failed to fetch business context:', fetchError)
+    throw new Error(`Failed to fetch business: ${fetchError.message}`)
   }
 
-  const existingContext = (user?.context as UserContext) || {}
+  const existingContext = (business?.context as UserContext) || {}
 
   // 2. Merge run input into context
   const updatedContext = mergeRunIntoContext(existingContext, input, runId)
 
-  // 3. Save updated context (cast to Json type for Supabase)
+  // 3. Save updated context to business (cast to Json type for Supabase)
   const { error: updateError } = await supabase
-    .from('users')
+    .from('businesses')
     .update({
       context: JSON.parse(JSON.stringify(updatedContext)),
       context_updated_at: new Date().toISOString(),
     })
-    .eq('id', userId)
+    .eq('id', businessId)
 
   if (updateError) {
-    console.error('[Context] Failed to save user context:', updateError)
+    console.error('[Context] Failed to save business context:', updateError)
     throw new Error(`Failed to save context: ${updateError.message}`)
   }
 
-  console.log(`[Context] Updated context for user ${userId} (run ${runId})`)
+  console.log(`[Context] Updated context for business ${businessId} (run ${runId})`)
 
-  // 4. Create embeddings (fire-and-forget, don't block on this)
-  extractAndEmbedRunContext(runId, userId, input, output).catch((err) => {
+  // 4. Update business name if still default
+  updateBusinessName(businessId, input.productDescription).catch((err) => {
+    console.error('[Context] Business name update failed:', err)
+  })
+
+  // 5. Create embeddings with business scope (fire-and-forget, don't block on this)
+  extractAndEmbedRunContext(runId, userId, businessId, input, output).catch((err) => {
     console.error('[Context] Embedding extraction failed:', err)
   })
 
   return updatedContext
+}
+
+/**
+ * Accumulate user context after a run completes (backwards-compatible wrapper)
+ * Delegates to business-scoped accumulation
+ *
+ * @deprecated Use accumulateBusinessContext directly when business_id is available
+ */
+export async function accumulateUserContext(
+  userId: string,
+  runId: string,
+  input: RunInput,
+  output: string,
+  businessId?: string
+): Promise<UserContext> {
+  const supabase = createServiceClient()
+
+  // Get or create a business for this user
+  const resolvedBusinessId = businessId || await getOrCreateDefaultBusiness(userId, input)
+
+  // Link run to business if not already linked
+  if (!businessId) {
+    await supabase.from('runs').update({ business_id: resolvedBusinessId }).eq('id', runId)
+  }
+
+  // Delegate to business-scoped accumulation
+  return accumulateBusinessContext(resolvedBusinessId, userId, runId, input, output)
 }
 
 /**
@@ -207,28 +250,28 @@ export function mergeContextDelta(
 }
 
 /**
- * Apply a context delta update to a user's stored context
+ * Apply a context delta update to a business's stored context
  * Used by run creation routes to merge "what's new" from returning users
  *
  * @returns { success: true } or { success: false, error: string }
  */
-export async function applyContextDeltaToUser(
-  userId: string,
+export async function applyContextDeltaToBusiness(
+  businessId: string,
   contextDelta: string
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = createServiceClient()
 
-  const { data: userData, error: fetchError } = await supabase
-    .from('users')
+  const { data: businessData, error: fetchError } = await supabase
+    .from('businesses')
     .select('context')
-    .eq('id', userId)
+    .eq('id', businessId)
     .single()
 
   if (fetchError) {
-    return { success: false, error: `Failed to fetch user context: ${fetchError.message}` }
+    return { success: false, error: `Failed to fetch business context: ${fetchError.message}` }
   }
 
-  const existingContext = (userData?.context as UserContext) || {}
+  const existingContext = (businessData?.context as UserContext) || {}
 
   // Merge contextDelta as a traction update (what's new since last time)
   const delta: ContextDelta = { tractionDelta: contextDelta }
@@ -236,18 +279,41 @@ export async function applyContextDeltaToUser(
 
   // JSON.parse(JSON.stringify(...)) ensures the object is plain JSON for Supabase JSONB
   const { error: updateError } = await supabase
-    .from('users')
+    .from('businesses')
     .update({
       context: JSON.parse(JSON.stringify(updatedContext)),
       context_updated_at: new Date().toISOString(),
     })
-    .eq('id', userId)
+    .eq('id', businessId)
 
   if (updateError) {
-    return { success: false, error: `Failed to update user context: ${updateError.message}` }
+    return { success: false, error: `Failed to update business context: ${updateError.message}` }
   }
 
   return { success: true }
+}
+
+/**
+ * Apply a context delta update to a user's stored context
+ * @deprecated Use applyContextDeltaToBusiness when business_id is available
+ */
+export async function applyContextDeltaToUser(
+  userId: string,
+  contextDelta: string,
+  businessId?: string
+): Promise<{ success: boolean; error?: string }> {
+  // If business ID provided, apply to business
+  if (businessId) {
+    return applyContextDeltaToBusiness(businessId, contextDelta)
+  }
+
+  // Fallback: get default business and apply there
+  try {
+    const resolvedBusinessId = await getOrCreateDefaultBusiness(userId)
+    return applyContextDeltaToBusiness(resolvedBusinessId, contextDelta)
+  } catch (err) {
+    return { success: false, error: `Failed to resolve business: ${err instanceof Error ? err.message : String(err)}` }
+  }
 }
 
 /**

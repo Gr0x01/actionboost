@@ -71,6 +71,15 @@ export interface UserContextResponse {
   suggestedQuestions: string[]
 }
 
+// Business summary for UI display (business selector)
+export interface BusinessSummary {
+  id: string
+  name: string
+  totalRuns: number
+  lastRunDate: string | null
+  productDescription: string | null
+}
+
 // Helper to check if user has meaningful context
 export function hasUserContext(context: UserContext | null | undefined): boolean {
   if (!context) return false

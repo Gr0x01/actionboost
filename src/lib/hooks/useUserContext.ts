@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import type { UserContext, UserContextResponse } from '@/lib/types/context'
 import type { FormInput } from '@/lib/types/form'
 
@@ -11,28 +11,29 @@ interface UseUserContextResult {
   lastUpdated: string | null
   suggestedQuestions: string[]
   prefillForm: () => FormInput | null
+  refetch: (businessId?: string | null) => Promise<void>
 }
 
 /**
  * Hook to fetch user context for returning users
  * Used on /start page to show "Welcome back" panel and pre-fill form
+ * Accepts optional businessId to fetch context for a specific business
  */
-export function useUserContext(): UseUserContextResult {
+export function useUserContext(businessId?: string | null): UseUserContextResult {
   const [context, setContext] = useState<UserContext | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState<string | null>(null)
   const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([])
 
-  useEffect(() => {
-    fetchContext()
-  }, [])
-
-  async function fetchContext() {
+  const fetchContext = useCallback(async (bizId?: string | null) => {
+    setIsLoading(true)
     try {
-      const res = await fetch('/api/user/context')
+      const url = bizId ? `/api/user/context?businessId=${bizId}` : '/api/user/context'
+      const res = await fetch(url)
 
       if (!res.ok) {
         // User not authenticated or no context - that's fine
+        setContext(null)
         setIsLoading(false)
         return
       }
@@ -43,10 +44,15 @@ export function useUserContext(): UseUserContextResult {
       setSuggestedQuestions(data.suggestedQuestions)
     } catch {
       // Silently fail - context is optional
+      setContext(null)
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchContext(businessId)
+  }, [businessId, fetchContext])
 
   const hasContext = !!(
     context?.product?.description ||
@@ -97,6 +103,7 @@ export function useUserContext(): UseUserContextResult {
     lastUpdated,
     suggestedQuestions,
     prefillForm,
+    refetch: fetchContext,
   }
 }
 
