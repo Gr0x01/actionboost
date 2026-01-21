@@ -11,6 +11,7 @@ interface FocusInputProps {
   onBack?: () => void;
   customChallenge?: string;
   onCustomChallengeChange?: (v: string) => void;
+  showContinue?: boolean; // Hide continue button when embedded in another form
 }
 
 const FOCUS_OPTIONS: { value: FocusArea; label: string; hint: string; icon: React.ReactNode }[] = [
@@ -29,6 +30,7 @@ export function FocusInput({
   onBack,
   customChallenge = "",
   onCustomChallengeChange,
+  showContinue = true,
 }: FocusInputProps) {
   const [showCustomInput, setShowCustomInput] = useState(value === "custom");
   const [localCustom, setLocalCustom] = useState(customChallenge);
@@ -124,7 +126,7 @@ export function FocusInput({
         </div>
       )}
 
-      {!showCustomInput && (
+      {!showCustomInput && showContinue && (
         <div className="flex items-center justify-between max-w-xl mx-auto">
           {onBack ? (
             <button

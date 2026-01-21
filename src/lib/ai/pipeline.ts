@@ -494,11 +494,14 @@ export type FirstImpressionsPipelineResult = {
 /**
  * Run the first impressions pipeline for URL-only social content
  *
- * Lightest pipeline:
- * - URL only as input (no form)
- * - ONE Tavily search for market context
- * - Sonnet generates social-ready output
- * - No user history, no DataForSEO
+ * Deep research pipeline:
+ * - Tavily extract for actual website content
+ * - Multiple Tavily searches in parallel for rich context:
+ *   - Competitors/market
+ *   - Reviews/user feedback
+ *   - Social mentions (Twitter/Reddit)
+ *   - Recent news/press
+ * - Sonnet generates sharp, insightful output
  */
 export async function runFirstImpressionsPipeline(
   impressionId: string,
@@ -511,41 +514,98 @@ export async function runFirstImpressionsPipeline(
   // Update status to processing
   await supabase.from('first_impressions').update({ status: 'processing' }).eq('id', impressionId)
 
-  // Extract domain for search query
+  // Extract domain and company name for searches
   let domain: string
+  let companyName: string
   try {
-    domain = new URL(url).hostname.replace('www.', '')
+    const urlObj = new URL(url)
+    domain = urlObj.hostname.replace('www.', '')
+    // Get company name from domain (e.g., "inkdex" from "inkdex.io")
+    companyName = domain.split('.')[0]
   } catch {
     domain = url
+    companyName = url
   }
 
-  // Run ONE Tavily search for market context
-  let marketContext = ''
+  const tvly = tavily({ apiKey: process.env.TAVILY_API! })
+
+  // 1. Extract actual website content using Tavily
+  let websiteContent = ''
   try {
-    console.log(`[FirstImpressions] Running Tavily search for ${domain}`)
-    const tvly = tavily({ apiKey: process.env.TAVILY_API! })
-    const results = await tvly.search(`${domain} competitors market startup`, {
+    console.log(`[FirstImpressions] Extracting content from ${url}`)
+    const extractResult = await tvly.extract([url])
+
+    if (extractResult.results?.length && extractResult.results[0].rawContent) {
+      websiteContent = extractResult.results[0].rawContent.slice(0, 5000)
+      console.log(`[FirstImpressions] Extracted ${websiteContent.length} chars of content`)
+    } else {
+      console.log(`[FirstImpressions] No content extracted, will use research context`)
+    }
+  } catch (err) {
+    console.error('[FirstImpressions] Tavily extract failed:', err)
+  }
+
+  // 2. Run MULTIPLE Tavily searches in parallel for deep context
+  console.log(`[FirstImpressions] Running deep research for ${domain}`)
+
+  const searchPromises = [
+    // Competitors and market positioning
+    tvly.search(`${domain} competitors alternatives market`, {
       searchDepth: 'basic',
       maxResults: 5,
       includeRawContent: false,
-    })
+    }).catch(() => ({ results: [] })),
 
-    if (results.results?.length) {
-      marketContext = results.results
-        .slice(0, 5)
-        .map((r) => `- ${r.title}: ${r.content?.slice(0, 200) || ''}`)
-        .join('\n')
-    }
-    console.log(`[FirstImpressions] Found ${results.results?.length || 0} market context results`)
-  } catch (err) {
-    console.error('[FirstImpressions] Tavily search failed:', err)
-    // Continue without market context - graceful degradation
+    // Reviews and user feedback
+    tvly.search(`${companyName} review feedback users`, {
+      searchDepth: 'basic',
+      maxResults: 5,
+      includeRawContent: false,
+    }).catch(() => ({ results: [] })),
+
+    // Social mentions - Twitter, Reddit, HN
+    tvly.search(`${domain} site:twitter.com OR site:reddit.com OR site:news.ycombinator.com`, {
+      searchDepth: 'basic',
+      maxResults: 5,
+      includeRawContent: false,
+    }).catch(() => ({ results: [] })),
+
+    // Recent news and press
+    tvly.search(`"${companyName}" startup launch announcement`, {
+      searchDepth: 'basic',
+      maxResults: 5,
+      includeRawContent: false,
+    }).catch(() => ({ results: [] })),
+  ]
+
+  const [competitorResults, reviewResults, socialResults, newsResults] = await Promise.all(searchPromises)
+
+  // Build rich research context
+  const formatResults = (results: { title?: string; content?: string }[], label: string) => {
+    if (!results?.length) return ''
+    const formatted = results
+      .slice(0, 4)
+      .map((r) => `- ${r.title}: ${r.content?.slice(0, 250) || ''}`)
+      .join('\n')
+    return `### ${label}\n${formatted}\n`
   }
+
+  let researchContext = ''
+  researchContext += formatResults(competitorResults.results || [], 'Competitors & Market')
+  researchContext += formatResults(reviewResults.results || [], 'Reviews & User Feedback')
+  researchContext += formatResults(socialResults.results || [], 'Social Mentions')
+  researchContext += formatResults(newsResults.results || [], 'News & Press')
+
+  const totalResults = (competitorResults.results?.length || 0) +
+    (reviewResults.results?.length || 0) +
+    (socialResults.results?.length || 0) +
+    (newsResults.results?.length || 0)
+  console.log(`[FirstImpressions] Deep research complete: ${totalResults} total results`)
 
   // Generate first impressions
   try {
     console.log(`[FirstImpressions] Generating output with Sonnet`)
-    const output = await generateFirstImpressions(url, marketContext)
+    const output = await generateFirstImpressions(url, websiteContent, researchContext)
     console.log(`[FirstImpressions] Generated: ${output.length} characters`)
 
     // Save output and mark complete

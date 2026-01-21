@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowRight, ArrowDown, ExternalLink, X, Loader2 } from "lucide-react";
+import { ArrowRight, ArrowDown, ExternalLink, X, Loader2, Mail, Sparkles } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Header, Footer } from "@/components/layout";
-import { FormInput, FocusArea, FOCUS_AREA_OPTIONS, INITIAL_FORM_STATE } from "@/lib/types/form";
+import { FocusInput } from "@/components/forms";
+import { FormInput, FocusArea, INITIAL_FORM_STATE } from "@/lib/types/form";
+import { isValidEmail } from "@/lib/validation";
 
 type ImpressionStatus = "pending" | "processing" | "complete" | "failed";
 
@@ -42,6 +44,7 @@ function ProcessingState({ url }: { url?: string }) {
 }
 
 function FullStrategyForm({ url }: { url: string }) {
+  const router = useRouter();
   const [form, setForm] = useState<FormInput>({
     ...INITIAL_FORM_STATE,
     websiteUrl: url,
@@ -49,8 +52,52 @@ function FullStrategyForm({ url }: { url: string }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Free option state
+  const [showFreeOption, setShowFreeOption] = useState(false);
+  const [freeEmail, setFreeEmail] = useState("");
+  const [freeSubmitting, setFreeSubmitting] = useState(false);
+  const [freeError, setFreeError] = useState<string | null>(null);
+
   const updateField = <K extends keyof FormInput>(field: K, value: FormInput[K]) => {
     setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleFreeSubmit = async () => {
+    if (freeSubmitting || !isValidEmail(freeEmail)) return;
+
+    // Basic validation (same as paid - server requires both)
+    if (!form.productDescription.trim()) {
+      setFreeError("Tell us about your product first");
+      return;
+    }
+    if (!form.currentTraction.trim()) {
+      setFreeError("What traction do you have?");
+      return;
+    }
+
+    setFreeSubmitting(true);
+    setFreeError(null);
+
+    try {
+      const res = await fetch("/api/free-audit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: freeEmail, input: form }),
+      });
+      const data = await res.json();
+
+      if (res.ok && data.freeAuditId && data.token) {
+        router.push(`/free-results/${data.freeAuditId}?new=1&token=${encodeURIComponent(data.token)}`);
+      } else if (res.status === 409) {
+        setFreeError("You've already received a free audit. Get the full version!");
+      } else {
+        setFreeError(data.error || "Something went wrong");
+      }
+    } catch {
+      setFreeError("Something went wrong");
+    } finally {
+      setFreeSubmitting(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -151,39 +198,100 @@ function FullStrategyForm({ url }: { url: string }) {
 
         {/* Focus area */}
         <div>
-          <label className="block text-sm font-bold text-foreground mb-1">Where should we focus?</label>
-          <select
+          <label className="block text-sm font-bold text-foreground mb-3">Where should we focus?</label>
+          <FocusInput
             value={form.focusArea}
-            onChange={(e) => updateField("focusArea", e.target.value as FocusArea)}
-            className="w-full px-3 py-2 bg-background border-2 border-foreground/30 text-foreground text-sm focus:outline-none focus:border-cta"
-          >
-            {FOCUS_AREA_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label} — {opt.description}
-              </option>
-            ))}
-          </select>
+            onChange={(v) => updateField("focusArea", v)}
+            onSubmit={() => {}}
+            showContinue={false}
+          />
         </div>
 
         {error && <p className="text-red-600 text-sm">{error}</p>}
 
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isSubmitting ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Processing...
-            </>
-          ) : (
-            <>
-              Get Full Strategy — $9.99
-              <ArrowRight className="w-4 h-4" />
-            </>
-          )}
-        </button>
+        {/* Button row - Free ghost + Paid CTA */}
+        {!showFreeOption && (
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setShowFreeOption(true)}
+              className="flex-1 px-5 py-3 text-sm font-bold bg-transparent text-foreground border-2 border-foreground/30 transition-all duration-100 hover:border-foreground hover:shadow-[3px_3px_0_0_rgba(44,62,80,0.3)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5"
+            >
+              Free Preview
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  $9.99
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+          </div>
+        )}
+
+        {/* Free option expanded */}
+        {showFreeOption && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="p-4 border-2 border-foreground/20 bg-background space-y-3"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-cta">
+                <Sparkles className="w-4 h-4" />
+                <span className="text-sm font-bold">Free Mini-Audit</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowFreeOption(false)}
+                aria-label="Close"
+                className="text-foreground/40 hover:text-foreground transition-colors text-xl leading-none font-bold"
+              >
+                ×
+              </button>
+            </div>
+            <p className="text-xs text-foreground/60">
+              Get a condensed 5-section audit to preview our analysis
+            </p>
+            <div className="flex gap-2">
+              <div className="flex-1 flex items-center gap-2 border-2 border-foreground/30 bg-background px-3 py-2 focus-within:border-foreground transition-colors">
+                <Mail className="w-4 h-4 text-foreground/40" />
+                <input
+                  type="email"
+                  value={freeEmail}
+                  onChange={(e) => setFreeEmail(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && isValidEmail(freeEmail)) {
+                      e.preventDefault();
+                      handleFreeSubmit();
+                    }
+                  }}
+                  placeholder="your@email.com"
+                  className="flex-1 bg-transparent text-sm text-foreground placeholder:text-foreground/30 outline-none"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={handleFreeSubmit}
+                disabled={!isValidEmail(freeEmail) || freeSubmitting}
+                className="px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta hover:bg-cta-hover transition-colors disabled:opacity-50"
+              >
+                {freeSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Get It"}
+              </button>
+            </div>
+            {freeError && <p className="text-xs text-red-500 font-bold">{freeError}</p>}
+          </motion.div>
+        )}
 
         <p className="text-xs text-foreground/50 text-center">
           Or use a promo code on the <a href="/start" className="underline hover:text-cta">full form</a>
