@@ -38,8 +38,26 @@ export function Footer() {
           </div>
         </div>
 
+        {/* Badge */}
+        <div className="mt-8 flex justify-center">
+          <a
+            href="https://peerpush.net/p/actionboost"
+            target="_blank"
+            rel="noopener"
+            className="opacity-70 hover:opacity-100 transition-opacity"
+          >
+            <img
+              src="https://peerpush.net/p/actionboost/badge.png"
+              alt="Actionboo.st on PeerPush"
+              width={180}
+              height={40}
+              className="h-auto"
+            />
+          </a>
+        </div>
+
         {/* Copyright */}
-        <div className="mt-8 pt-6 border-t border-background/20 text-center text-xs text-background/40 font-mono">
+        <div className="mt-6 pt-6 border-t border-background/20 text-center text-xs text-background/40 font-mono">
           &copy; {new Date().getFullYear()} Actionboo.st
         </div>
       </div>
