@@ -4,6 +4,7 @@ import {
   ProblemSection,
   FrameworksSection,
   Pricing,
+  Testimonials,
   FooterCTA,
 } from "@/components/landing";
 
@@ -17,6 +18,7 @@ export default function Home() {
         <ProblemSection />
         <FrameworksSection />
         <Pricing />
+        <Testimonials />
         <FooterCTA />
       </main>
 

@@ -45,8 +45,8 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Badge */}
-        <div className="mt-8 flex justify-center">
+        {/* Badges */}
+        <div className="mt-8 flex justify-center items-center gap-4">
           <a
             href="https://peerpush.net/p/actionboost"
             target="_blank"
@@ -56,6 +56,19 @@ export function Footer() {
             <Image
               src="https://peerpush.net/p/actionboost/badge.png"
               alt="Actionboo.st on PeerPush"
+              width={180}
+              height={40}
+            />
+          </a>
+          <a
+            href="https://www.uneed.best/tool/actionboost"
+            target="_blank"
+            rel="noopener"
+            className="opacity-70 hover:opacity-100 transition-opacity"
+          >
+            <Image
+              src="https://www.uneed.best/EMBED1B.png"
+              alt="Featured on Uneed"
               width={180}
               height={40}
             />
