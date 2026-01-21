@@ -66,14 +66,14 @@ async function retrieveUserHistory(
   // 3. Search for relevant past recommendations and insights
   const [recommendations, insights] = await Promise.all([
     searchUserContext(userId, searchQuery, { chunkTypes: ['recommendation'], limit: 5 }),
-    searchUserContext(userId, searchQuery, { chunkTypes: ['insight'], limit: 3 }),
+    searchUserContext(userId, searchQuery, { chunkTypes: ['insight'], limit: 5 }),
   ])
 
   // 4. Build structured history context
   const history: UserHistoryContext = {
     totalRuns: context.totalRuns,
     previousTraction: context.traction?.history?.slice(-5) || [],
-    tacticsTried: context.tactics?.tried?.slice(-10) || [],
+    tacticsTried: context.tactics?.tried?.slice(-15) || [],
     pastRecommendations: recommendations.map(r => r.content),
     pastInsights: insights.map(i => i.content),
   }

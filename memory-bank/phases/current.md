@@ -1,6 +1,41 @@
-# Current: Strategy Refinement Feature
+# Current: AI Context Limits Relaxed
 
-## Latest Update: "Tell Us More" Refinement Feature
+## Latest Update: Relaxed Restrictive Limits
+
+**Completed Jan 21, 2026** - Increased context sent to Claude to improve output quality.
+
+### The Problem
+At $9.99/run with ~$0.50 cost, we were aggressively truncating context (150-300 chars) to save pennies. This degraded output quality unnecessarily.
+
+### Changes Made
+
+| Setting | Old | New | File |
+|---------|-----|-----|------|
+| MAX_TOKENS | 8000 | 12000 | generate.ts |
+| Traction snapshots | 200 | 500 chars | generate.ts |
+| Tactics tried | 150 | 400 chars | generate.ts |
+| Past recommendations | 300 | 600 chars | generate.ts |
+| Past insights | 300 | 600 chars | generate.ts |
+| Competitor insights | 300 | 500 chars | generate.ts |
+| Market/growth trends | 200 | 400 chars | generate.ts |
+| Previous output summary | 400 | 800 chars | generate.ts |
+| Tavily maxResults | 5 | 7 | research.ts |
+| Ranked keywords | 10 | 15 | research.ts |
+| Past insights RAG | 3 | 5 | pipeline.ts |
+| Tactics displayed | 10 | 15 | pipeline.ts |
+
+### Cost Impact
+- Typical run: ~$0.50 → ~$0.60
+- Margin remains 85-94%
+
+### What Stayed the Same
+- Competitor limit: 3 (appropriate)
+- Historical storage: 10 traction snapshots, 50 tactics
+- Stripe metadata: 500 chars (just backup)
+
+---
+
+## Previous: "Tell Us More" Refinement Feature
 
 **Completed Jan 21, 2026** - Users can now refine their strategy with additional context.
 

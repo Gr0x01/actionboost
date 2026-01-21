@@ -68,7 +68,7 @@ async function searchWithTimeout(
   const response = await Promise.race([
     tvly.search(query, {
       searchDepth: 'advanced',
-      maxResults: 5,
+      maxResults: 7,
       includeRawContent: false,
       topic: 'general',
     }),
@@ -294,14 +294,14 @@ async function fetchRankedKeywords(
       target: domain,
       location_code: 2840,
       language_code: 'en',
-      limit: 10, // Top 10 keywords
+      limit: 15, // Top 15 keywords
       order_by: ['keyword_data.keyword_info.search_volume,desc'],
     }],
     credentials
   )
 
   const items = response?.tasks?.[0]?.result?.[0]?.items || []
-  return items.slice(0, 10).map((item: RankedKeywordItem) => ({
+  return items.slice(0, 15).map((item: RankedKeywordItem) => ({
     keyword: item.keyword_data?.keyword || '',
     position: item.ranked_serp_element?.serp_item?.rank_absolute || 0,
     searchVolume: item.keyword_data?.keyword_info?.search_volume || 0,

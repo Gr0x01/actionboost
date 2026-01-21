@@ -3,7 +3,7 @@ import type { RunInput, ResearchContext, FocusArea, UserHistoryContext } from '.
 
 // DO NOT CHANGE without explicit approval
 const MODEL = 'claude-opus-4-5-20251101'
-const MAX_TOKENS = 8000
+const MAX_TOKENS = 12000
 
 /**
  * Generate growth strategy using Claude Opus 4.5
@@ -434,7 +434,7 @@ ${input.whatsWorking}
     if (userHistory.previousTraction.length > 0) {
       message += `\n## Traction Timeline\n`
       for (const snapshot of userHistory.previousTraction) {
-        message += `- **${snapshot.date}**: ${truncate(snapshot.summary, 200)}\n`
+        message += `- **${snapshot.date}**: ${truncate(snapshot.summary, 500)}\n`
       }
     }
 
@@ -442,7 +442,7 @@ ${input.whatsWorking}
     if (userHistory.tacticsTried.length > 0) {
       message += `\n## Tactics They've Tried Before\n`
       for (const tactic of userHistory.tacticsTried.slice(0, 10)) {
-        message += `- ${truncate(tactic, 150)}\n`
+        message += `- ${truncate(tactic, 400)}\n`
       }
     }
 
@@ -451,7 +451,7 @@ ${input.whatsWorking}
       message += `\n## Your Previous Recommendations\n`
       message += `*These are recommendations you gave in past runs - build on them, don't repeat:*\n`
       for (const rec of userHistory.pastRecommendations) {
-        message += `- ${truncate(rec, 300)}\n`
+        message += `- ${truncate(rec, 600)}\n`
       }
     }
 
@@ -459,7 +459,7 @@ ${input.whatsWorking}
     if (userHistory.pastInsights.length > 0) {
       message += `\n## Insights From Previous Analysis\n`
       for (const insight of userHistory.pastInsights) {
-        message += `- ${truncate(insight, 300)}\n`
+        message += `- ${truncate(insight, 600)}\n`
       }
     }
 
@@ -488,21 +488,21 @@ ${input.whatsWorking}
   if (research.competitorInsights.length) {
     message += `\n## Competitor Insights\n`
     for (const r of research.competitorInsights) {
-      message += `- **${r.title}** (${r.url})\n  ${truncate(r.content, 300)}\n\n`
+      message += `- **${r.title}** (${r.url})\n  ${truncate(r.content, 500)}\n\n`
     }
   }
 
   if (research.marketTrends.length) {
     message += `\n## Market Trends\n`
     for (const r of research.marketTrends) {
-      message += `- **${r.title}**: ${truncate(r.content, 200)}\n`
+      message += `- **${r.title}**: ${truncate(r.content, 400)}\n`
     }
   }
 
   if (research.growthTactics.length) {
     message += `\n## Growth Tactics Research\n`
     for (const r of research.growthTactics) {
-      message += `- **${r.title}**: ${truncate(r.content, 200)}\n`
+      message += `- **${r.title}**: ${truncate(r.content, 400)}\n`
     }
   }
 
@@ -786,14 +786,14 @@ ${input.whatsWorking}
     if (userHistory.previousTraction.length > 0) {
       message += `\n## Traction Timeline\n`
       for (const snapshot of userHistory.previousTraction) {
-        message += `- **${snapshot.date}**: ${truncate(snapshot.summary, 200)}\n`
+        message += `- **${snapshot.date}**: ${truncate(snapshot.summary, 500)}\n`
       }
     }
 
     if (userHistory.tacticsTried.length > 0) {
       message += `\n## Tactics They've Tried Before\n`
       for (const tactic of userHistory.tacticsTried.slice(0, 10)) {
-        message += `- ${truncate(tactic, 150)}\n`
+        message += `- ${truncate(tactic, 400)}\n`
       }
     }
 
@@ -822,21 +822,21 @@ ${input.whatsWorking}
   if (research.competitorInsights.length) {
     message += `\n## Competitor Insights\n`
     for (const r of research.competitorInsights) {
-      message += `- **${r.title}** (${r.url})\n  ${truncate(r.content, 300)}\n\n`
+      message += `- **${r.title}** (${r.url})\n  ${truncate(r.content, 500)}\n\n`
     }
   }
 
   if (research.marketTrends.length) {
     message += `\n## Market Trends\n`
     for (const r of research.marketTrends) {
-      message += `- **${r.title}**: ${truncate(r.content, 200)}\n`
+      message += `- **${r.title}**: ${truncate(r.content, 400)}\n`
     }
   }
 
   if (research.growthTactics.length) {
     message += `\n## Growth Tactics Research\n`
     for (const r of research.growthTactics) {
-      message += `- **${r.title}**: ${truncate(r.content, 200)}\n`
+      message += `- **${r.title}**: ${truncate(r.content, 400)}\n`
     }
   }
 
@@ -878,8 +878,8 @@ function summarizePreviousOutput(output: string): string {
     const match = output.match(regex)
     if (match) {
       const content = match[1].trim()
-      // Take first 400 chars of each section
-      const truncated = content.length > 400 ? content.slice(0, 400) + '...' : content
+      // Take first 800 chars of each section
+      const truncated = content.length > 800 ? content.slice(0, 800) + '...' : content
       summary += `### ${section}\n${truncated}\n\n`
     }
   }
@@ -924,7 +924,7 @@ ${input.whatsWorking}
   if (research.competitorInsights.length) {
     message += `\n## Competitor Insights\n`
     for (const r of research.competitorInsights.slice(0, 3)) {
-      message += `- **${r.title}**: ${truncate(r.content, 200)}\n`
+      message += `- **${r.title}**: ${truncate(r.content, 400)}\n`
     }
   }
 

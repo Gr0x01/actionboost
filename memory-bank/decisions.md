@@ -459,3 +459,45 @@ npx tsx scripts/retry-run.ts <runId>
 **Why**: Prevents unbounded growth. JSONB columns with huge arrays hurt performance.
 
 **Implementation**: `.slice(-MAX)` on all array operations in `accumulate.ts`.
+
+---
+
+## AI Context Limits: Relaxed for Quality (Jan 21 2026)
+
+**Decision**: Increase truncation limits and output tokens to prioritize quality over minimal cost savings.
+
+**Context**: At $9.99/run with ~$0.50 cost (~90% margin), aggressive truncation was degrading output quality to save pennies.
+
+**Changes made**:
+
+| Setting | Old | New | File |
+|---------|-----|-----|------|
+| MAX_TOKENS | 8000 | 12000 | generate.ts |
+| Traction snapshots | 200 chars | 500 chars | generate.ts |
+| Tactics tried | 150 chars | 400 chars | generate.ts |
+| Past recommendations | 300 chars | 600 chars | generate.ts |
+| Past insights | 300 chars | 600 chars | generate.ts |
+| Competitor insights | 300 chars | 500 chars | generate.ts |
+| Market/growth trends | 200 chars | 400 chars | generate.ts |
+| Previous output summary | 400 chars | 800 chars | generate.ts |
+| Tavily maxResults | 5 | 7 | research.ts |
+| Ranked keywords | 10 | 15 | research.ts |
+| Past insights RAG | 3 | 5 | pipeline.ts |
+| Tactics displayed | 10 | 15 | pipeline.ts |
+
+**Cost impact**:
+- Current: ~$0.50/run
+- After changes: ~$0.60/run (typical), ~$0.96/run (worst case)
+- Margin remains 85-94%
+
+**Why these limits**:
+- 500 char traction = can describe "100 users, $500 MRR, 20% WoW growth, launched ProductHunt..."
+- 400 char tactics = multi-step efforts like "LinkedIn ads ($2k), cold outreach (500 emails)..."
+- 600 char recommendations = preserves the "why" behind past advice
+- 800 char output summary = Claude understands previous strategy for refinements
+- 12k output tokens = room for complex strategies without truncation
+
+**What stayed the same**:
+- Competitor limit: 3 (appropriate for most users)
+- Historical storage: 10 traction snapshots, 50 tactics (already generous)
+- Stripe metadata truncation: 500 chars (just backup, full data in DB)
