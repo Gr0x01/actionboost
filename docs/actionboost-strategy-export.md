@@ -8,13 +8,6 @@ Your biggest opportunity is hiding in plain sight: **you're launching a growth t
 
 The strategic direction: **Launch ugly and loud, not polished and quiet.** Your competitive advantage isn't a slick Product Hunt launch—it's authentic, in-the-trenches credibility. Use yourself as the case study. Document the entire journey of using Actionboo.st to grow Actionboo.st. This creates a recursive proof-of-concept that no competitor can copy because they're too big to be vulnerable.
 
-**The Flywheel:**
-```
-[Founder shares real strategy] → [Community engages/debates] → [Readers try mini-audit]
-         ↑                                                               ↓
-    [Posts results]           ←←←     [Converts to paid]     ←←← [Loves output]
-```
-
 ---
 
 ## Your Situation

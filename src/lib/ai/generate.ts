@@ -278,11 +278,6 @@ Structure your response as a markdown document with these exact sections:
 - The biggest opportunity you see
 - The strategic direction you recommend
 
-Then include "The Flywheel" - a simple ASCII diagram showing how their growth compounds:
-\`\`\`
-[Action A] → [Result B] → [Action C] → loops back to A
-\`\`\`
-
 ## Your Situation
 Analyze through the AARRR lens:
 - Which stage is their bottleneck? (Acquisition/Activation/Retention/Referral/Revenue)
@@ -395,7 +390,6 @@ Make templates specific to their product and situation, not generic.
 ## Content Formatting Rules
 
 - **Tables**: Use for comparative data (channels, metrics, competitors). Keep to 4-5 columns max.
-- **ASCII diagrams**: Only for the Flywheel in Executive Summary. Keep simple with → arrows.
 - **Code blocks**: ONLY for Content Templates section. Never for explanatory text.
 - **Checkboxes**: Only for 30-Day Roadmap tasks (- [ ] format).
 - **Bold**: Use **bold** for emphasis on key terms and table headers.`
@@ -636,11 +630,6 @@ Structure your response as a markdown document with EXACTLY these sections:
 - The core insight about their situation
 - The biggest opportunity you see
 - The strategic direction you recommend
-
-Then include "The Flywheel" - a simple ASCII diagram showing how their growth could compound:
-\`\`\`
-[Action A] → [Result B] → [Action C] → loops back to A
-\`\`\`
 
 ## Your Situation
 Full analysis:
