@@ -668,6 +668,236 @@ End with exactly this text:
 "Want the complete playbook? The full analysis includes Channel Strategy, Stop Doing, Start Doing with ICE scores, This Week actions, your 30-Day Roadmap, Metrics Dashboard, and ready-to-use Content Templates."`
 }
 
+// =============================================================================
+// REFINED STRATEGY GENERATION (User provides additional context)
+// =============================================================================
+
+const REFINEMENT_PROMPT = `
+
+## This is a REFINEMENT Request
+
+The user has reviewed their initial strategy and wants adjustments based on additional context they've provided.
+
+**Your task:**
+1. Read their additional context carefully - this contains corrections, clarifications, or new information
+2. Review the summary of your previous strategy below
+3. Generate a COMPLETE new strategy that:
+   - Incorporates their feedback and new context
+   - Keeps recommendations that still apply
+   - Removes or adjusts recommendations that no longer fit
+   - Does NOT simply append to the old strategy - rewrite it properly
+
+**Tone:** Frame this as "Now that I know more about your situation..." not "I got it wrong before."
+The user is providing information they didn't share initially, or clarifying something. This is collaborative refinement, not error correction.`
+
+/**
+ * Generate a refined strategy based on user's additional context
+ * This is called when a user provides feedback on their initial strategy
+ */
+export async function generateRefinedStrategy(
+  input: RunInput,
+  research: ResearchContext,
+  additionalContext: string,
+  previousOutput: string,
+  userHistory?: UserHistoryContext | null
+): Promise<string> {
+  const client = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY!,
+  })
+
+  // Build system prompt with refinement instructions
+  const systemPrompt = buildRefinementSystemPrompt(input.focusArea, input.customFocusArea, !!userHistory)
+
+  // Build user message with all context including refinement
+  const userMessage = buildRefinementUserMessage(input, research, additionalContext, previousOutput, userHistory)
+
+  const response = await client.messages.create({
+    model: MODEL,
+    max_tokens: MAX_TOKENS,
+    system: systemPrompt,
+    messages: [{ role: 'user', content: userMessage }],
+  })
+
+  const textContent = response.content.find((block) => block.type === 'text')
+  if (!textContent || textContent.type !== 'text') {
+    throw new Error('No text content in Claude response')
+  }
+
+  return textContent.text
+}
+
+function buildRefinementSystemPrompt(focusArea: FocusArea, customFocus?: string, isReturningUser?: boolean): string {
+  const returningUserPrompt = isReturningUser ? RETURNING_USER_PROMPT : ''
+
+  return `${BASE_PROMPT}
+${REFINEMENT_PROMPT}
+${returningUserPrompt}
+${FOCUS_AREA_PROMPTS[focusArea](customFocus)}
+
+${OUTPUT_FORMAT_PROMPT}`
+}
+
+function buildRefinementUserMessage(
+  input: RunInput,
+  research: ResearchContext,
+  additionalContext: string,
+  previousOutput: string,
+  userHistory?: UserHistoryContext | null
+): string {
+  // Create a summary of the previous output (first 2000 chars of key sections)
+  const previousSummary = summarizePreviousOutput(previousOutput)
+
+  // Start with the refinement context prominently
+  let message = `# Strategy Refinement Request
+
+## Additional Context from User
+**The user has provided this feedback after reviewing their initial strategy:**
+
+${additionalContext}
+
+---
+
+## Summary of Previous Strategy
+**This is what you recommended before (for reference - do not repeat, but evolve):**
+
+${previousSummary}
+
+---
+
+`
+
+  // Then add the standard context
+  const focusLabel = input.focusArea === 'custom' && input.customFocusArea
+    ? `Custom: ${input.customFocusArea}`
+    : input.focusArea.charAt(0).toUpperCase() + input.focusArea.slice(1)
+
+  message += `# Original Request Context
+
+## Focus Area
+**${focusLabel}**
+
+## About My Product
+${input.productDescription}
+
+## Current Traction
+${input.currentTraction}
+
+## What I've Tried
+${input.whatYouTried}
+
+## What's Working
+${input.whatsWorking}
+`
+
+  // Add user history if available
+  if (userHistory && userHistory.totalRuns > 0) {
+    message += `\n---\n\n# User History\n`
+    message += `*This is their strategy #${userHistory.totalRuns + 1}*\n`
+
+    if (userHistory.previousTraction.length > 0) {
+      message += `\n## Traction Timeline\n`
+      for (const snapshot of userHistory.previousTraction) {
+        message += `- **${snapshot.date}**: ${truncate(snapshot.summary, 200)}\n`
+      }
+    }
+
+    if (userHistory.tacticsTried.length > 0) {
+      message += `\n## Tactics They've Tried Before\n`
+      for (const tactic of userHistory.tacticsTried.slice(0, 10)) {
+        message += `- ${truncate(tactic, 150)}\n`
+      }
+    }
+
+    message += `\n---\n`
+  }
+
+  if (input.websiteUrl) {
+    message += `\n## My Website\n${input.websiteUrl}\n`
+  }
+
+  if (input.competitorUrls?.length) {
+    message += `\n## Competitors\n${input.competitorUrls.join('\n')}\n`
+  }
+
+  if (input.analyticsSummary) {
+    message += `\n## Analytics Summary\n${input.analyticsSummary}\n`
+  }
+
+  if (input.constraints) {
+    message += `\n## Constraints\n${input.constraints}\n`
+  }
+
+  // Add research context (same as regular generation)
+  message += `\n---\n\n# Research Data\n`
+
+  if (research.competitorInsights.length) {
+    message += `\n## Competitor Insights\n`
+    for (const r of research.competitorInsights) {
+      message += `- **${r.title}** (${r.url})\n  ${truncate(r.content, 300)}\n\n`
+    }
+  }
+
+  if (research.marketTrends.length) {
+    message += `\n## Market Trends\n`
+    for (const r of research.marketTrends) {
+      message += `- **${r.title}**: ${truncate(r.content, 200)}\n`
+    }
+  }
+
+  if (research.growthTactics.length) {
+    message += `\n## Growth Tactics Research\n`
+    for (const r of research.growthTactics) {
+      message += `- **${r.title}**: ${truncate(r.content, 200)}\n`
+    }
+  }
+
+  if (research.seoMetrics.length) {
+    message += `\n## Competitor SEO Intelligence\n`
+    for (const m of research.seoMetrics) {
+      if (m.error) continue
+      message += `\n### ${m.domain}\n`
+      if (m.organicTraffic || m.organicKeywords) {
+        message += `- **Traffic**: ~${m.organicTraffic?.toLocaleString() || 'N/A'} monthly organic visits\n`
+        message += `- **Keywords**: ${m.organicKeywords?.toLocaleString() || 'N/A'} keywords ranking\n`
+      }
+      if (m.topRankedKeywords?.length) {
+        message += `- **Top Keywords**: ${m.topRankedKeywords.slice(0, 3).map(k => `"${k.keyword}"`).join(', ')}\n`
+      }
+    }
+  }
+
+  return message
+}
+
+/**
+ * Extract key sections from previous output to include as context
+ * Keeps it concise to avoid token bloat
+ */
+function summarizePreviousOutput(output: string): string {
+  const sections = [
+    'Executive Summary',
+    'Your Situation',
+    'Stop Doing',
+    'Start Doing',
+    'This Week',
+  ]
+
+  let summary = ''
+
+  for (const section of sections) {
+    const regex = new RegExp(`## ${section}\\n([\\s\\S]*?)(?=\\n## |$)`, 'i')
+    const match = output.match(regex)
+    if (match) {
+      const content = match[1].trim()
+      // Take first 400 chars of each section
+      const truncated = content.length > 400 ? content.slice(0, 400) + '...' : content
+      summary += `### ${section}\n${truncated}\n\n`
+    }
+  }
+
+  return summary || 'Previous strategy not available for reference.'
+}
+
 function buildMiniUserMessage(input: RunInput, research: ResearchContext): string {
   const focusLabel = input.focusArea === 'custom' && input.customFocusArea
     ? `Custom: ${input.customFocusArea}`

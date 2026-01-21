@@ -7,6 +7,7 @@ import { sendMagicLink } from "@/lib/auth/send-magic-link";
 import { sendReceiptEmail } from "@/lib/email/resend";
 import { trackServerEvent, identifyUser } from "@/lib/analytics";
 import { config } from "@/lib/config";
+import { applyContextDeltaToUser } from "@/lib/context/accumulate";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -158,6 +159,19 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   // Log if critical fields are missing (shouldn't happen normally)
   if (!formInput.productDescription) {
     console.warn("Webhook: Missing productDescription for session:", session.id);
+  }
+
+  // If returning user provided a context update, merge it into their stored context
+  // This ensures the pipeline sees the latest user information
+  const contextDelta = metadata.context_delta;
+  if (contextDelta && userId) {
+    const result = await applyContextDeltaToUser(userId, contextDelta);
+    if (!result.success) {
+      console.error(`[Webhook] Failed to merge context delta for user ${userId}:`, result.error);
+      // Continue anyway - run will use stale context but at least it will process
+    } else {
+      console.log(`[Webhook] Merged context delta for user ${userId}`);
+    }
   }
 
   // Create the run

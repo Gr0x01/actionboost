@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, Suspense, useRef } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 import { Header, Footer, ResultsLayout } from "@/components/layout";
-import { ResultsContent, StatusMessage, ExportBar, MagicLinkBanner } from "@/components/results";
+import { ResultsContent, StatusMessage, ExportBar, MagicLinkBanner, AddContextSection } from "@/components/results";
 import { parseStrategy, type ParsedStrategy } from "@/lib/markdown/parser";
 
 type RunStatus = "pending" | "processing" | "complete" | "failed";
@@ -16,6 +16,8 @@ interface RunData {
   output: string | null;
   share_slug: string | null;
   completed_at: string | null;
+  refinements_used: number | null;
+  parent_run_id: string | null;
 }
 
 function ResultsPageContent() {
@@ -33,6 +35,8 @@ function ResultsPageContent() {
   const [strategy, setStrategy] = useState<ParsedStrategy | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  // Track if user is accessing via share link (not the owner)
+  const isShareAccess = !!shareSlug;
 
   // Track time spent on results page
   useEffect(() => {
@@ -251,6 +255,13 @@ function ResultsPageContent() {
           }}
         >
           <ResultsContent strategy={strategy} />
+
+          {/* Add Context Section - only shown to owners, not share viewers */}
+          <AddContextSection
+            runId={run.id}
+            refinementsUsed={run.refinements_used ?? 0}
+            isOwner={!isShareAccess}
+          />
         </ResultsLayout>
       )}
 

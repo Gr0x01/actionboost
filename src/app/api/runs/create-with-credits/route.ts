@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse, after } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { FormInput, validateForm } from "@/lib/types/form";
-import { Json } from "@/lib/types/database";
+import { Json, MAX_CONTEXT_LENGTH } from "@/lib/types/database";
 import { runPipeline } from "@/lib/ai/pipeline";
 import { trackServerEvent } from "@/lib/analytics";
+import { applyContextDeltaToUser } from "@/lib/context/accumulate";
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,6 +28,14 @@ export async function POST(request: NextRequest) {
     if (Object.keys(formErrors).length > 0) {
       return NextResponse.json(
         { error: Object.values(formErrors)[0] },
+        { status: 400 }
+      );
+    }
+
+    // Validate contextDelta length
+    if (contextDelta && contextDelta.length > MAX_CONTEXT_LENGTH) {
+      return NextResponse.json(
+        { error: `Context update too long (max ${MAX_CONTEXT_LENGTH} characters)` },
         { status: 400 }
       );
     }
@@ -56,6 +65,18 @@ export async function POST(request: NextRequest) {
         { error: "User account not found" },
         { status: 404 }
       );
+    }
+
+    // If returning user provided a context update, merge it into their stored context
+    // This ensures the pipeline sees the latest user information
+    if (contextDelta) {
+      const result = await applyContextDeltaToUser(publicUser.id, contextDelta);
+      if (!result.success) {
+        console.error(`[API] Failed to merge context delta for user ${publicUser.id}:`, result.error);
+        // Continue anyway - run will use stale context but at least it will process
+      } else {
+        console.log(`[API] Merged context delta for user ${publicUser.id}`);
+      }
     }
 
     // Check credits

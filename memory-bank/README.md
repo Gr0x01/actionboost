@@ -1,5 +1,7 @@
 # Actionboo.st
 
+**Founder**: Rashaad
+
 ## The Product
 
 **AI growth strategist for startups and entrepreneurs who are stuck.**

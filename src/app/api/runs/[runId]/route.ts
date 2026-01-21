@@ -23,7 +23,7 @@ export async function GET(
   // Fetch the run
   const { data: run, error } = await supabase
     .from("runs")
-    .select("id, status, input, output, share_slug, completed_at, created_at, user_id")
+    .select("id, status, input, output, share_slug, completed_at, created_at, user_id, refinements_used, parent_run_id")
     .eq("id", runId)
     .single();
 

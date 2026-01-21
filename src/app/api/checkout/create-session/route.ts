@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { FormInput, validateForm } from "@/lib/types/form";
+import { MAX_CONTEXT_LENGTH } from "@/lib/types/database";
+import { applyContextDeltaToUser } from "@/lib/context/accumulate";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -9,8 +12,9 @@ const PRICE_SINGLE = process.env.STRIPE_PRICE_SINGLE!; // $9.99 for 1 credit
 
 export async function POST(request: NextRequest) {
   try {
-    const { input, posthogDistinctId } = (await request.json()) as {
+    const { input, contextDelta, posthogDistinctId } = (await request.json()) as {
       input: FormInput;
+      contextDelta?: string;
       posthogDistinctId?: string;
     };
 
@@ -22,12 +26,51 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate form content (character limits)
-    const formErrors = validateForm(input);
+    // contextDelta present means this is a returning user update, relax validation
+    const isReturningUser = !!contextDelta;
+    const formErrors = validateForm(input, isReturningUser);
     if (Object.keys(formErrors).length > 0) {
       return NextResponse.json(
         { error: Object.values(formErrors)[0] },
         { status: 400 }
       );
+    }
+
+    // Validate contextDelta length
+    if (contextDelta && contextDelta.length > MAX_CONTEXT_LENGTH) {
+      return NextResponse.json(
+        { error: `Context update too long (max ${MAX_CONTEXT_LENGTH} characters)` },
+        { status: 400 }
+      );
+    }
+
+    // For returning users with contextDelta, apply it NOW before Stripe checkout
+    // This avoids the 500 char Stripe metadata limit entirely
+    let contextAppliedToUser = false;
+    if (contextDelta) {
+      const supabase = await createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (user) {
+        // User is authenticated - find their public user ID and apply context
+        const serviceClient = createServiceClient();
+        const { data: publicUser } = await serviceClient
+          .from("users")
+          .select("id")
+          .eq("auth_id", user.id)
+          .single();
+
+        if (publicUser) {
+          const result = await applyContextDeltaToUser(publicUser.id, contextDelta);
+          if (result.success) {
+            contextAppliedToUser = true;
+            console.log(`[Checkout] Applied context delta for user ${publicUser.id} before Stripe checkout`);
+          } else {
+            console.error(`[Checkout] Failed to apply context delta:`, result.error);
+            // Continue anyway - they can still checkout, context just won't be updated
+          }
+        }
+      }
     }
 
     // Store form data in metadata (500 char limit per key)
@@ -43,6 +86,9 @@ export async function POST(request: NextRequest) {
       form_constraints: (input.constraints || "").slice(0, 500),
       credits: "1",
       posthog_distinct_id: posthogDistinctId || "",
+      // Context delta: if already applied to user, don't duplicate in metadata
+      // If not applied (edge case: user not authenticated), fall back to truncated version
+      context_delta: contextAppliedToUser ? "" : (contextDelta?.slice(0, 500) || ""),
     };
 
     const session = await stripe.checkout.sessions.create({

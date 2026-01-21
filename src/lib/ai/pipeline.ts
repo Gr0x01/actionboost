@@ -1,6 +1,6 @@
 import { createServiceClient } from '@/lib/supabase/server'
 import { runResearch, runTavilyOnlyResearch } from './research'
-import { generateStrategy, generateMiniStrategy } from './generate'
+import { generateStrategy, generateMiniStrategy, generateRefinedStrategy } from './generate'
 import { accumulateUserContext } from '@/lib/context/accumulate'
 import { searchUserContext } from './embeddings'
 import {
@@ -10,6 +10,7 @@ import {
 } from '@/lib/email/resend'
 import type { RunInput, PipelineResult, ResearchContext, UserHistoryContext } from './types'
 import type { UserContext } from '@/lib/types/context'
+import { MAX_CONTEXT_LENGTH } from '@/lib/types/database'
 
 // Validate critical env vars at module load
 const REQUIRED_ENV_VARS = ['ANTHROPIC_API_KEY', 'TAVILY_API'] as const
@@ -308,6 +309,153 @@ export async function runFreePipeline(
     console.error('[FreePipeline] Generation failed:', errorMsg)
 
     await supabase.from('free_audits').update({ status: 'failed' }).eq('id', freeAuditId)
+
+    return { success: false, error: `Generation failed: ${errorMsg}` }
+  }
+}
+
+// =============================================================================
+// REFINEMENT PIPELINE (User provides additional context after seeing results)
+// =============================================================================
+
+export type RefinementPipelineResult = {
+  success: boolean
+  output?: string
+  error?: string
+}
+
+/**
+ * Run the refinement pipeline for a run with additional context
+ *
+ * This is similar to the main pipeline but:
+ * - Fetches the parent run to get the original output
+ * - Passes additional context to Claude
+ * - Uses the refinement-specific prompt
+ */
+export async function runRefinementPipeline(runId: string): Promise<RefinementPipelineResult> {
+  validateEnv()
+
+  const supabase = createServiceClient()
+
+  // 1. Fetch the refinement run
+  const { data: run, error: fetchError } = await supabase
+    .from('runs')
+    .select('*')
+    .eq('id', runId)
+    .single()
+
+  if (fetchError || !run) {
+    return { success: false, error: `Run not found: ${fetchError?.message || 'No data'}` }
+  }
+
+  // 2. Fetch the parent run to get original output
+  if (!run.parent_run_id) {
+    return { success: false, error: 'Refinement run has no parent_run_id' }
+  }
+
+  const { data: parentRun, error: parentError } = await supabase
+    .from('runs')
+    .select('output, user_id')
+    .eq('id', run.parent_run_id)
+    .single()
+
+  if (parentError || !parentRun?.output) {
+    return { success: false, error: `Parent run not found or has no output: ${parentError?.message || 'No data'}` }
+  }
+
+  // Defense-in-depth: Verify parent run belongs to same user
+  if (parentRun.user_id !== run.user_id) {
+    console.error(`[RefinementPipeline] Ownership mismatch: run ${runId} user ${run.user_id} vs parent user ${parentRun.user_id}`)
+    return { success: false, error: 'Parent run ownership mismatch' }
+  }
+
+  // 3. Update status to processing
+  const { error: statusError } = await supabase.from('runs').update({ status: 'processing' }).eq('id', runId)
+  if (statusError) {
+    console.error('[RefinementPipeline] Failed to update status to processing:', statusError)
+    // Continue anyway - the run will still process
+  }
+
+  const input = run.input as RunInput
+  // Defensive validation - limit context even if DB was modified directly
+  const additionalContext = (run.additional_context || '').slice(0, MAX_CONTEXT_LENGTH)
+  let research: ResearchContext
+
+  // 4. Run research (with graceful degradation)
+  try {
+    console.log(`[RefinementPipeline] Starting research for run ${runId}`)
+    research = await runResearch(input)
+    console.log(
+      `[RefinementPipeline] Research completed: ${research.competitorInsights.length} competitor insights, ${research.marketTrends.length} trends`
+    )
+  } catch (err) {
+    console.error('[RefinementPipeline] Research failed entirely:', err)
+    research = {
+      competitorInsights: [],
+      marketTrends: [],
+      growthTactics: [],
+      seoMetrics: [],
+      researchCompletedAt: new Date().toISOString(),
+      errors: [`Research failed: ${err instanceof Error ? err.message : String(err)}`],
+    }
+  }
+
+  // 5. Retrieve user history for RAG (if returning user)
+  let userHistory: UserHistoryContext | null = null
+  if (run.user_id) {
+    try {
+      userHistory = await retrieveUserHistory(run.user_id, input)
+    } catch (err) {
+      console.error('[RefinementPipeline] User history retrieval failed:', err)
+    }
+  }
+
+  // 6. Generate refined strategy with Claude
+  try {
+    console.log(`[RefinementPipeline] Starting refined strategy generation with Claude Opus 4.5`)
+    const output = await generateRefinedStrategy(input, research, additionalContext, parentRun.output, userHistory)
+    console.log(`[RefinementPipeline] Refined strategy generated: ${output.length} characters`)
+
+    // 7. Save output and mark complete
+    const { error: updateError } = await supabase
+      .from('runs')
+      .update({
+        status: 'complete',
+        output,
+        completed_at: new Date().toISOString(),
+      })
+      .eq('id', runId)
+
+    if (updateError) {
+      console.error('[RefinementPipeline] Failed to save output:', updateError)
+      return { success: false, error: `Failed to save output: ${updateError.message}` }
+    }
+
+    // Send "run ready" email (fire-and-forget)
+    if (run.user_id) {
+      getEmailForUser(run.user_id)
+        .then((email) => {
+          if (email) sendRunReadyEmail({ to: email, runId })
+        })
+        .catch((err) => console.error('[RefinementPipeline] Run ready email failed:', err))
+    }
+
+    console.log(`[RefinementPipeline] Refinement ${runId} completed successfully`)
+    return { success: true, output }
+  } catch (err) {
+    const errorMsg = err instanceof Error ? err.message : String(err)
+    console.error('[RefinementPipeline] Strategy generation failed:', errorMsg)
+
+    await supabase.from('runs').update({ status: 'failed' }).eq('id', runId)
+
+    // Send "run failed" email (fire-and-forget)
+    if (run.user_id) {
+      getEmailForUser(run.user_id)
+        .then((email) => {
+          if (email) sendRunFailedEmail({ to: email, runId })
+        })
+        .catch((emailErr) => console.error('[RefinementPipeline] Run failed email failed:', emailErr))
+    }
 
     return { success: false, error: `Generation failed: ${errorMsg}` }
   }

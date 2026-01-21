@@ -6,6 +6,7 @@ export { ShareModal } from "./ShareModal";
 export { SectionCard } from "./SectionCard";
 export { TableOfContents } from "./TableOfContents";
 export { MagicLinkBanner } from "./MagicLinkBanner";
+export { AddContextSection } from "./AddContextSection";
 
 // Section components
 export { ExecutiveSummary } from "./sections/ExecutiveSummary";

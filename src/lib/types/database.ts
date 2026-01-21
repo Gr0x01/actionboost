@@ -117,6 +117,7 @@ export type Database = {
       }
       runs: {
         Row: {
+          additional_context: string | null
           attachments: Json | null
           completed_at: string | null
           created_at: string | null
@@ -124,12 +125,15 @@ export type Database = {
           id: string
           input: Json
           output: string | null
+          parent_run_id: string | null
+          refinements_used: number | null
           share_slug: string | null
           status: string | null
           stripe_session_id: string | null
           user_id: string | null
         }
         Insert: {
+          additional_context?: string | null
           attachments?: Json | null
           completed_at?: string | null
           created_at?: string | null
@@ -137,12 +141,15 @@ export type Database = {
           id?: string
           input: Json
           output?: string | null
+          parent_run_id?: string | null
+          refinements_used?: number | null
           share_slug?: string | null
           status?: string | null
           stripe_session_id?: string | null
           user_id?: string | null
         }
         Update: {
+          additional_context?: string | null
           attachments?: Json | null
           completed_at?: string | null
           created_at?: string | null
@@ -150,6 +157,8 @@ export type Database = {
           id?: string
           input?: Json
           output?: string | null
+          parent_run_id?: string | null
+          refinements_used?: number | null
           share_slug?: string | null
           status?: string | null
           stripe_session_id?: string | null
@@ -161,6 +170,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "runs_parent_run_id_fkey"
+            columns: ["parent_run_id"]
+            isOneToOne: false
+            referencedRelation: "runs"
             referencedColumns: ["id"]
           },
         ]
@@ -302,3 +318,8 @@ export type Attachment = {
   name: string      // Original filename
   size?: number     // File size in bytes
 }
+
+// Refinement constants
+export const MAX_FREE_REFINEMENTS = 2
+export const MIN_CONTEXT_LENGTH = 10
+export const MAX_CONTEXT_LENGTH = 10000 // ~2000 words - enough for real updates, discourages AI dumps

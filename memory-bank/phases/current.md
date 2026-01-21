@@ -1,6 +1,89 @@
-# Current: Form Flow Fixes
+# Current: Strategy Refinement Feature
 
-## Latest Update: Hero Flow + Checkout Fix ✅
+## Latest Update: "Tell Us More" Refinement Feature
+
+**Completed Jan 21, 2026** - Users can now refine their strategy with additional context.
+
+### The Problem (from dogfooding)
+Users get their strategy, read through it, and realize "No, we already tried that" or "We have that feature." The AI made assumptions based on limited info, making the output feel less tailored.
+
+### Solution
+1-2 free refinements per $9.99 purchase. User provides additional context, we re-generate the full strategy with that info incorporated.
+
+### Strategic Decisions (from growth-hacker)
+- **Naming**: "Tell Us More" - frames as information gap, not AI error
+- **Placement**: Subtle, end of results page - safety net, not headline feature
+- **Pre-purchase**: Don't advertise refinements - let it be discovered as over-delivery
+- **Narrative**: "More context = better output" not "fix our mistakes"
+- **Subscription bridge**: Track refiners as PQLs for $29/mo upsell
+
+### What Was Built
+
+**Database Changes**:
+- `runs.refinements_used` (INTEGER DEFAULT 0) - count per original run
+- `runs.additional_context` (TEXT) - user's refinement input
+- `runs.parent_run_id` (UUID) - links refinement to original run
+
+**API**:
+- `POST /api/runs/[runId]/add-context` - creates refinement run, triggers pipeline
+
+**Pipeline**:
+- `runRefinementPipeline()` in `pipeline.ts` - similar to main but fetches parent output
+- `generateRefinedStrategy()` in `generate.ts` - includes refinement prompt + previous output summary
+
+**UI**:
+- `AddContextSection` component - collapsible form at bottom of results page
+- Shows remaining count: "1 of 2 remaining"
+- Brutalist styling matching existing design system
+
+### Files Changed
+- `src/lib/types/database.ts` - new columns + constants
+- `src/lib/ai/pipeline.ts` - added `runRefinementPipeline()`
+- `src/lib/ai/generate.ts` - added `generateRefinedStrategy()` + refinement prompt
+- `src/app/api/runs/[runId]/add-context/route.ts` - new endpoint
+- `src/app/api/runs/[runId]/route.ts` - include refinements_used in response
+- `src/components/results/AddContextSection.tsx` - new component
+- `src/components/results/index.ts` - export new component
+- `src/app/results/[runId]/page.tsx` - integrate AddContextSection
+
+### Cost Impact
+- Each refinement: ~$0.30-0.50 (full Opus 4.5 + research)
+- Max 2 refinements = up to $1.00 additional per $9.99
+- Margin: ~80% instead of ~90%
+- Trade-off: Higher perceived value, better subscription conversion
+
+---
+
+## Bug Fix: Returning User Context Updates Not Applied
+
+**Fixed Jan 21, 2026** - Context delta from returning users was being ignored.
+
+### The Problem
+When a returning user clicked "Continue with updates" in the WelcomeBack flow and provided "what's new" text, that context delta was:
+1. Collected by `ContextUpdateForm`
+2. Sent to the API in the request body as `contextDelta`
+3. **But completely ignored** - only used as a boolean for validation relaxation
+
+The AI was generating strategies without seeing the user's updates.
+
+### Root Cause
+In all three run creation routes (`create-with-credits`, `create-with-code`, Stripe webhook), the `contextDelta` was received but never stored or merged into `users.context`.
+
+### The Fix
+Before creating the run, merge `contextDelta` into `users.context` using `mergeContextDelta()`:
+- Sets `contextDelta` as `tractionDelta` in the delta object
+- This adds it to `traction.history` and `traction.latest`
+- The pipeline's `retrieveUserHistory()` then sees the updated context
+
+### Files Changed
+- `src/app/api/runs/create-with-credits/route.ts` - merge context before run creation
+- `src/app/api/runs/create-with-code/route.ts` - merge context before run creation
+- `src/app/api/checkout/create-session/route.ts` - pass `context_delta` in Stripe metadata
+- `src/app/api/webhooks/stripe/route.ts` - read metadata and merge context before run creation
+
+---
+
+## Previous: Hero Flow + Checkout Fix ✅
 
 **Completed Jan 21, 2025** - Fixed broken form flow and removed stale feature flag.
 
@@ -26,6 +109,32 @@
 - `src/components/forms/CheckoutSection.tsx` - Removed feature flag logic, simplified checkout
 - `src/lib/config.ts` - Removed `pricingEnabled`
 - `src/components/landing/Pricing.tsx` - Removed conditional hide
+
+---
+
+## Previous: Share Page ✅
+
+**Completed Jan 2025** - Public shareable links for action plans.
+
+### What Was Built
+- **Route**: `/share/[slug]` - Server-rendered public page
+- **API**: `POST /api/runs/[runId]/share` - Generates 10-char slug, stores in `runs.share_slug`
+- **UI**: Share button in ExportBar opens ShareModal with copy link + social buttons
+- **Social**: OG tags for Twitter/Facebook previews
+- **CTAs**: "Get Your Own Plan" banner + bottom CTA
+
+### How It Works
+1. User clicks "Share" on results page
+2. If no slug exists, API generates one and saves to DB
+3. Returns shareable URL: `actionboo.st/share/{slug}`
+4. Public visitors see full results + conversion CTAs
+
+### Files
+- `src/app/share/[slug]/page.tsx` - Public share page (SSR)
+- `src/app/api/runs/[runId]/share/route.ts` - Slug generation endpoint
+- `src/components/results/ExportBar.tsx` - Share button trigger
+- `src/components/results/ShareModal.tsx` - Copy link + social sharing UI
+- `src/components/ui/SocialShareButtons.tsx` - Twitter/LinkedIn/Copy buttons
 
 ---
 
@@ -176,5 +285,4 @@ src/components/forms/
 ## What's Next
 
 - Weekly automated runs (cron job for subscribed users)
-- Share page route `/share/[slug]` (public view without auth)
 - Google OAuth (optional)

@@ -2,7 +2,7 @@
 
 Reference: [Full growth plan](../docs/growth-plan-actionboost.md)
 
-## Current Status: Day 1 - Launch & Learn
+## Current Status: Day 0 - Launch & Learn
 
 ### Completed
 | Activity | Date | Result |
@@ -10,8 +10,8 @@ Reference: [Full growth plan](../docs/growth-plan-actionboost.md)
 | Add founder to site | Jan 20 | ✅ Live |
 | Create promo codes | Jan 20 | ✅ REDDIT, UNEED, PEERPUSH, TWITTERBIP |
 | Submit to Uneed | Jan 20 | ⏳ Pending review |
-| Submit to PeerPush | Jan 20 | ⏳ Pending review |
-| Post on r/sideprojects | Jan 20 | 🔄 Downvotes, spam DMs - giving it time |
+| Submit to PeerPush | Jan 20 | 🔥 Live - #2 for Jan 21 |
+| Post on r/sideprojects | Jan 20 | ❌ Dead (-3, spam DMs only) |
 | Start X posting | Jan 20 | 🔄 Ongoing |
 | Remove homepage click barrier | Jan 20 | ✅ Form starts on landing |
 | Publish growth plan blog post | Jan 20 | ✅ Live at /blog |
@@ -22,12 +22,35 @@ Reference: [Full growth plan](../docs/growth-plan-actionboost.md)
 | r/indiehackers launch | Account blocked | Posted to r/sideprojects instead |
 
 ### Learnings
-- Reddit: Got downvotes and DMs from people pitching their products (not genuine engagement) - will keep trying
+- Reddit: Launch subs are dead for this. Everyone's promoting, no one's engaging. DMs/emails all pitching their own products. Skip going forward.
 - X: General posting not fun, but BIP groups giving better responses - focus there
 - Homepage: Direct form start is a good conversion optimization
 
-### Not Started (from Week 1 plan)
-- [ ] First Twitter BIP thread
+### Day 0 Bugs
+1. **Feature flag left on prod** - `NEXT_PUBLIC_PRICING_ENABLED=false` blocked both $9.99 AND free mini-audit paths. Only promo codes worked. Lesson: clean up feature flags before launch.
+2. **Serverless termination** - Runs stuck at "pending". Fire-and-forget doesn't work on Vercel. Fixed with `after()` API.
+- 2 real users (used coupon codes) got stuck.
+
+---
+
+## Day 1 - Jan 21
+
+### Completed
+| Activity | Result |
+|----------|--------|
+| Fix feature flag bug | ✅ Removed flag, checkout works |
+| Fix serverless termination | ✅ Using `after()` API now |
+| Unstuck 2 user runs | ✅ Manually completed |
+| Give free credits to stuck users | ✅ 1 credit each |
+
+### Wins
+- **PeerPush #2** for today's launches
+- **PeerPush testimonial** from @noahpraduns: "This is exactly what I needed! The competitor analysis feature is incredibly valuable. The 30-day playbook alone is worth the price. Highly recommend!"
+- **BIP thread posted** - Better engagement than general X posting
+
+### To Do
+- [x] **Contact stuck users** - ✅ Sent apology emails with free credit info
+- [x] First Twitter BIP thread - ✅ Posted
 - [ ] Respond to feedback (waiting for engagement)
 
 ### Spend

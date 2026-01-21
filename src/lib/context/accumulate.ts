@@ -193,6 +193,50 @@ export function mergeContextDelta(
 }
 
 /**
+ * Apply a context delta update to a user's stored context
+ * Used by run creation routes to merge "what's new" from returning users
+ *
+ * @returns { success: true } or { success: false, error: string }
+ */
+export async function applyContextDeltaToUser(
+  userId: string,
+  contextDelta: string
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = createServiceClient()
+
+  const { data: userData, error: fetchError } = await supabase
+    .from('users')
+    .select('context')
+    .eq('id', userId)
+    .single()
+
+  if (fetchError) {
+    return { success: false, error: `Failed to fetch user context: ${fetchError.message}` }
+  }
+
+  const existingContext = (userData?.context as UserContext) || {}
+
+  // Merge contextDelta as a traction update (what's new since last time)
+  const delta: ContextDelta = { tractionDelta: contextDelta }
+  const updatedContext = mergeContextDelta(existingContext, delta)
+
+  // JSON.parse(JSON.stringify(...)) ensures the object is plain JSON for Supabase JSONB
+  const { error: updateError } = await supabase
+    .from('users')
+    .update({
+      context: JSON.parse(JSON.stringify(updatedContext)),
+      context_updated_at: new Date().toISOString(),
+    })
+    .eq('id', userId)
+
+  if (updateError) {
+    return { success: false, error: `Failed to update user context: ${updateError.message}` }
+  }
+
+  return { success: true }
+}
+
+/**
  * Merge and deduplicate competitor arrays
  */
 function mergeCompetitors(
