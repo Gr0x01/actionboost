@@ -1,317 +1,231 @@
-# Growth Strategy for Actionboo.st
+# Growth Strategy Analysis: Windburn Lip Balm for Equestrians
 
 ## Executive Summary
 
-You've built something smart: a high-margin, psychologically optimized growth tool that actually delivers on its promise. The form-before-payment commitment flow, the clear enemy (the Growth Advice Industrial Complex), the brutalist aesthetic—these choices signal taste and conviction. Most founders launching in this space make a generic "AI for startups" product. You've made a weapon.
+You have something rare in the startup world: a validated product with genuine product-market fit. Your 9.4/10 beta score and 13 five-star reviews from a cold audience aren't vanity metrics—they're proof that when horse riders try your product, they love it. The week-long sales slump isn't a product problem; it's a distribution problem. You've exhausted your warm network and haven't yet built sustainable acquisition channels.
 
-Your biggest opportunity is hiding in plain sight: **you're launching a growth tool in a community obsessed with growth, where every member is a potential customer**. The indie hacker ecosystem (Reddit's r/SaaS, r/startups, r/Entrepreneur, Indie Hackers, Twitter/X, Product Hunt) isn't just a marketing channel—it's your entire addressable market for the first 6 months. These people understand CAC, AARRR, and ICE scores. They're actively seeking what you sell. The positioning writes itself: "I built a tool for people like us."
+Your biggest opportunity is that you're playing in an underserved niche. The lip care market is dominated by generic products from L'Oreal, Estée Lauder, and Elizabeth Arden—none of which speak directly to equestrians or the specific windburn problem. You're not competing with them; you're creating a new category. The 550k addressable market in Australia/NZ might seem small, but a focused niche strategy can capture meaningful market share before larger players even notice you exist.
 
-The strategic direction: **Launch ugly and loud, not polished and quiet.** Your competitive advantage isn't a slick Product Hunt launch—it's authentic, in-the-trenches credibility. Use yourself as the case study. Document the entire journey of using Actionboo.st to grow Actionboo.st. This creates a recursive proof-of-concept that no competitor can copy because they're too big to be vulnerable.
-
----
+Your strategic direction should be ruthless niche focus. Stop thinking about "lip balm customers" and start thinking about "horse riders who suffer from windburn." Every piece of content, every ad, every partnership should scream "this was made by a horse rider, for horse riders." Your competition is generic; your advantage is specificity.
 
 ## Your Situation
 
-**Bottleneck: Acquisition**
+Through the AARRR lens, your funnel breaks down as follows:
 
-You're at the classic "great product, zero distribution" stage. Activation, retention, and revenue mechanics are well-designed (form-first commitment, subscription upsell planned). But none of that matters until people discover you.
+| Stage | Current State | Assessment |
+|-------|---------------|------------|
+| Acquisition | Stalled after initial network exhausted | BOTTLENECK |
+| Activation | 9.4/10 beta score, strong first experience | Strong |
+| Retention | 13 five-star reviews, repeat purchase unclear | Needs data |
+| Referral | One ambassador active, no systematic program | Underdeveloped |
+| Revenue | 60 sales in 5 weeks, second product in beta | Early stage |
 
-**What You're Doing Right:**
-- The form-before-payment flow is psychologically brilliant—10 minutes of input creates sunk cost commitment and higher conversion
-- 90% margins give you room to experiment with acquisition costs others can't touch
-- Your brand voice ("blunt optimist, allergic to guru culture") is differentiated in a sea of hustle-bro "crush it" energy
-- The free mini-audit lead magnet is the right move—it's a sampling strategy, not a free tier
-- Brutalist design stands out when everyone else is using the same Tailwind components
+**What you're doing right:**
+- You solved a real problem you personally experienced—authenticity that can't be manufactured
+- Beta testing before launch showed discipline and gave you social proof
+- You're building multiple products, suggesting vision beyond a single SKU
+- Your Traction framework reading shows strategic thinking about channels
 
-**Where the Gaps Are:**
-- Zero distribution channels active yet—the landing page is a billboard in an empty field
-- No social proof, case studies, or testimonials (the cold start problem)
-- Haven't built audience before product—you need to launch into an existing relationship
-- Free mini-audit needs to be weaponized, not just offered
-
-| Asset | Your Current State | What's Needed |
-|-------|-------------------|---------------|
-| Product | Feature-complete | ✓ Ready |
-| Pricing | Optimized ($9.99 one-shot) | ✓ Ready |
-| Landing Page | Live, designed | Needs social proof |
-| Email List | Zero subscribers | Need 200+ before launch |
-| Community Presence | None | Need 30 days of activity |
-| Case Studies | None | Need 3-5 before paid ads |
-
----
+**Where the gaps are:**
+- Your $500 Christmas ad spend was premature—you tested messaging and timing simultaneously, learning nothing useful from either
+- Organic social "engagement" without conversion suggests you're creating content for algorithms, not buyers
+- You have no email list capturing interested visitors who aren't ready to buy yet
+- Your trade stands are 4 weeks away, leaving a dangerous gap in acquisition
 
 ## Competitive Landscape
 
 | Competitor | Their Approach | Your Advantage |
 |------------|----------------|----------------|
-| **Reforge** | $2,000-$3,500 courses, cohort-based, targets mid-career operators at funded startups | You're $9.99 and instant. They're for people optimizing careers; you're for founders optimizing businesses. |
-| **Demand Curve** | Free content + paid community + agency services, $1,000+/year membership | They're building a media company; you're building a tool. Your output is actionable immediately, not educational over time. |
-| **GrowthHackers** | Community forum + courses, mostly free content, ad-supported | Stale, cluttered, stuck in 2015 growth hacking mindset. You're the modern alternative with actual AI utility. |
-| **Generic AI tools** | ChatGPT/Claude prompts, YouTube gurus sharing "templates" | You have live competitive research. They have recycled frameworks. You're opinionated; they're neutral. |
+| Elizabeth Arden Eight Hour | Premium mass-market, SPF focus, $20-30 price point | No sport-specific positioning; sold in department stores, not tack shops |
+| Burt's Bees | Natural ingredients, mainstream distribution | Generic "outdoor" positioning; doesn't speak to equestrians |
+| ChapStick | Commodity pricing, ubiquitous availability | Zero differentiation; competes on convenience, not performance |
+| Lanolin-based products (Lanolips, etc.) | Ingredient-led marketing for dry/damaged lips | No windburn-specific claims; no community connection |
 
-**Market Opportunity:** The competitors have all moved upmarket. Reforge prices out bootstrappers. Demand Curve wants enterprise. GrowthHackers is community-only. Nobody is serving the pre-revenue to $10K MRR founder with an *instant, one-shot* professional strategy. That gap is yours.
+The market research reveals a clear trend: major players are competing on ingredients (peptides, hyaluronic acid, SPF) and luxury positioning (Louis Vuitton's $160 lip balm). Nobody is competing on use-case specificity for athletic communities. You have white space to own "windburn protection for equestrians" in a way that generic brands simply cannot.
 
----
+One opportunity competitors are missing entirely: the equestrian community is tight-knit, event-based, and intensely loyal to brands that understand their lifestyle. A product that becomes "what endurance riders use" has built-in distribution through word-of-mouth at events, online forums, and club networks.
 
 ## Channel Strategy
 
 | Channel | Effort/Week | Time to Results | Priority |
 |---------|-------------|-----------------|----------|
-| Reddit (r/SaaS, r/startups, r/Entrepreneur, r/SideProject) | 5-7 hrs | 1-3 weeks | **HIGH** |
-| Twitter/X (indie hacker ecosystem) | 4-6 hrs | 4-8 weeks | **HIGH** |
-| Indie Hackers (posts, comments, product page) | 3-4 hrs | 2-4 weeks | **HIGH** |
-| Product Hunt | 8-10 hrs (one-time launch prep) | 1 day spike, 2-week tail | **MEDIUM** |
-| Cold outreach to newsletter operators | 2-3 hrs | 2-6 weeks | **MEDIUM** |
-| SEO/Content | 4-6 hrs | 3-6 months | **LOW** (for now) |
+| Equestrian-specific Meta ads | 3-4 hrs | 2-4 weeks | HIGH |
+| Email list building + nurture | 2-3 hrs | 4-8 weeks | HIGH |
+| Trade stands + sampling | 4-8 hrs (event days) | Immediate at events | HIGH |
+| Ambassador/referral program | 2 hrs | 4-6 weeks | MEDIUM |
+| Niche Facebook group engagement | 2-3 hrs | 2-4 weeks | MEDIUM |
+| Magazine/PR (editorial) | 1 hr (already in motion) | 1-2 weeks | LOW (already done) |
 
-**Top Channel: Reddit**
+**Top Channel: Equestrian-Specific Meta Ads**
+Your $10/day budget is sufficient for testing, but your previous spend failed because it wasn't targeted tightly enough. The opportunity is to create ads that immediately signal "this is for horse riders"—imagery of riders, language about 8-hour rides, before/after windburn comparisons. You're not competing for "lip balm" searches; you're interrupting equestrians scrolling and making them think "finally, someone gets it." A $300/month budget with proper targeting to equestrian interest groups in Australia/NZ should generate predictable, scalable acquisition.
 
-Reddit is your Day 1 channel because the intent is explicit. Someone posting "How do I get my first 100 users?" in r/SaaS *literally needs your product right now*. The key is providing genuine value first—write substantive comments that demonstrate your expertise, then mention you built a tool that automates this analysis. Reddit hates overt promotion but loves founders who show up authentically. Your tone ("blunt optimist") is native to Reddit culture.
-
-**Second Channel: Twitter/X Build-in-Public**
-
-The indie hacker corner of Twitter rewards transparency and real numbers. You're launching a growth tool, so you need to publicly grow it. Share your numbers: signups, conversion rates, what's working, what's failing. Thread your own Actionboo.st strategy output and show how you're implementing it. This creates a recursive case study that's impossible to fake.
-
----
+**Second Priority: Email List Building**
+You currently have zero ability to re-engage visitors who weren't ready to purchase. A simple "Get 10% off your first order" popup captures emails, and a 3-email welcome sequence (your story, the problem you solved, customer testimonials) converts browsers into buyers. This compounds: every visitor becomes a future sales opportunity, and email has the highest ROI of any marketing channel.
 
 ## Stop Doing
 
-- **Perfectionism on launch**: You're at feature-complete. Stop building; start distributing. Every hour spent tweaking the landing page is an hour not spent getting it in front of founders.
-
-- **Waiting for the "perfect" Product Hunt launch**: PH is a nice-to-have spike, not a strategy. The pressure to nail it causes founders to delay everything. Launch messily elsewhere first.
-
-- **Thinking about SEO right now**: Your competitors rank for high-volume keywords because they've published for years. You won't outrank Reforge for "growth strategy" in 6 months. SEO is a year-2 play.
-
-- **Building more lead magnets before validating the first one**: The mini-audit is enough. Make it work before adding complexity.
-
-- **Targeting "everyone who needs growth help"**: Your ICP is narrower: bootstrapped founders, $0-$10K MRR, who've tried ChatGPT for strategy and been disappointed. Speak to them specifically.
-
----
+- **Posting generic product photos on Instagram**: Your engagement-without-conversion pattern suggests your content looks like every other lip balm. Either make content that screams "equestrian" or stop wasting time here.
+- **Boosting posts or running untargeted ads**: Spending money to reach "women 25-45 interested in beauty" is burning cash. Only spend on hyper-targeted equestrian audiences.
+- **Waiting passively for the magazine feature to work**: Editorial coverage drives awareness, not sales. Have a capture mechanism ready (discount code, landing page) when it drops.
+- **Treating ambassadors as content creators**: One ambassador "sharing content" is a rounding error. Ambassadors should be recruiting other ambassadors and driving trackable sales with personal discount codes.
 
 ## Start Doing (Prioritized by ICE)
 
-### 1. Launch a "Build Actionboo.st in Public" Series
-- **Impact**: 9/10 - Creates recursive proof-of-concept, generates content for weeks, builds audience before paid launch
-- **Confidence**: 8/10 - Proven playbook from Pieter Levels, Jon Yongfook, and dozens of indie hackers
-- **Ease**: 9/10 - You're already doing the work; you just need to document it
-- **ICE Score: 26**
+### Build and Launch Your Email Capture System
+- **Impact**: 9/10 - Every visitor becomes a recoverable asset; email converts 3-5x better than social
+- **Confidence**: 9/10 - This is proven across every DTC brand; it will work
+- **Ease**: 8/10 - Can be set up in a single afternoon with free tools
+- **ICE Score**: 26
 
-Start a Twitter thread and Indie Hackers series documenting your own launch using Actionboo.st's strategy. Post daily updates: "Day 3: The strategy told me to focus on Reddit r/SaaS. Here's what happened." Every post is proof your product works. Screenshot the actual output. Show the 7-day plan and whether it's working.
+Install a popup on your website offering 10% off the first order in exchange for an email. Use a free tool like Mailchimp or MailerLite (both have free tiers sufficient for your volume). Create a 3-email automated sequence: Email 1 (immediate) delivers the discount code and tells your story. Email 2 (day 3) shares the windburn problem and your 8-hour solution. Email 3 (day 7) includes a testimonial from a beta tester and a reminder the discount expires soon. This system runs 24/7 without your involvement and converts visitors who weren't ready to buy immediately.
 
-This isn't "build in public" vanity metrics ("just crossed 10 followers!"). It's a concrete, falsifiable test of your product that generates shareable content and attracts your exact target customer.
+### Create "Equestrian-First" Ad Creative for Meta
+- **Impact**: 8/10 - Properly targeted ads to a niche audience can be highly efficient
+- **Confidence**: 7/10 - Your previous spend failed, but targeting was wrong; proper targeting changes everything
+- **Ease**: 7/10 - Requires creative iteration but no special skills
+- **ICE Score**: 22
 
-### 2. Reddit Value-First Commenting Campaign
-- **Impact**: 9/10 - High-intent prospects actively asking for exactly what you sell
-- **Confidence**: 8/10 - You can write substantive answers; the audience is clearly defined
-- **Ease**: 8/10 - 30-60 minutes/day, no ad spend, starts working immediately
-- **ICE Score: 25**
+Stop running ads that could be for any lip balm. Create 3-4 ad variations with unmistakably equestrian imagery: a rider with windburned face, a close-up applying balm before mounting, a testimonial from an endurance competitor. Your copy should lead with the problem ("8-hour rides destroy your lips") and your unique solution ("The only lip balm made for endurance riders"). Target Facebook/Instagram users in Australia/NZ who are members of equestrian groups, follow horse-related pages, or have interests in "endurance riding," "dressage," "eventing," etc. Start with $10/day across 3 ad sets to find what works, then scale winners.
 
-Spend 1 hour daily in r/SaaS, r/startups, r/Entrepreneur, and r/SideProject. Find posts asking about growth, acquisition, or "how do I get users." Write genuine, detailed responses (300-500 words) that demonstrate your expertise. After 5-7 standalone value-adds, you can naturally mention: "I actually built a tool that automates this analysis—happy to share if useful."
+### Launch a Structured Ambassador Recruitment Program
+- **Impact**: 8/10 - Peer recommendations in tight-knit communities drive purchasing decisions
+- **Confidence**: 7/10 - One ambassador isn't a program; systematic recruitment will generate results
+- **Ease**: 6/10 - Requires building a simple system and ongoing relationship management
+- **ICE Score**: 21
 
-**Tactical details:**
-- Use keywords like "growth strategy," "first users," "marketing channels," "CAC" to find posts
-- Never lead with promotion—lead with insights, close with mention
-- Track which subreddits convert and double down
-- Aim for 3-5 substantive comments per day to start
+Your single ambassador should become your first recruiter. Create a simple ambassador program: ambassadors get free product, a personal discount code (tracks their referrals), and 15% of sales they generate. Target active competitors in your discipline who have social followings (even small ones—500 engaged followers beats 10k passive ones). Your outreach: "I saw your [specific result/post]. I'm an endurance rider who created a windburn lip balm after suffering through [specific experience]. Would you be interested in trying it and potentially becoming an ambassador?" Aim to have 5 ambassadors active by the end of month 1.
 
-### 3. Deploy Free Mini-Audits as Lead Gen Weapons
-- **Impact**: 8/10 - Converts lurkers into email list, showcases product quality
-- **Confidence**: 9/10 - Freemium sampling is proven; you've already built the tool
-- **Ease**: 8/10 - Tool exists; you just need distribution and follow-up email sequence
-- **ICE Score: 25**
+### Dominate Facebook Group Engagement
+- **Impact**: 7/10 - Direct access to your exact target audience at zero cost
+- **Confidence**: 8/10 - You're already in these groups; this is about improving execution
+- **Ease**: 7/10 - Just requires consistency and value-first approach
+- **ICE Score**: 22
 
-The mini-audit shouldn't be a passive "sign up for free trial" button. It should be aggressively promoted in every community post, comment, and thread. "Here's what I'd do—but I built a free tool that can give you a 3-section audit in 2 minutes. Drop your link and I'll run one."
+Stop posting product announcements in Facebook groups—this screams "salesy" and gets ignored or removed. Instead, become the helpful windburn expert. When someone asks about gear recommendations, answer thoroughly (include your product as one suggestion among many). When someone posts about a tough ride in harsh conditions, share your own experience and mention what you've learned about lip protection. Create a valuable post like "5 things I wish I knew about windburn before my first 80km ride" that provides genuine value, with your product mentioned naturally. The goal is that when someone in these groups thinks "windburn," they think of you first.
 
-Build a 3-email follow-up sequence for mini-audit users:
-1. Immediate: "Here's your mini-audit. Want the full 10-section version?"
-2. Day 2: Case study of another founder who used it
-3. Day 5: "Your mini-audit analyzed your acquisition challenge. Here's one specific tactic to try this week."
+### Prepare a Trade Stand Conversion System
+- **Impact**: 8/10 - Face-to-face sampling at events converts at extremely high rates for niche products
+- **Confidence**: 8/10 - You've correctly identified this as a key channel; execution determines results
+- **Ease**: 5/10 - Requires physical setup, inventory, and event attendance
+- **ICE Score**: 21
 
-### 4. Create 3 "Teardown" Case Studies
-- **Impact**: 8/10 - Social proof, shareable content, demonstrates product quality
-- **Confidence**: 7/10 - Depends on getting founders to opt-in, but many will for free analysis
-- **Ease**: 8/10 - Your product generates the content; you just need to format and post
-- **ICE Score: 23**
+Your trade stands shouldn't just sell product—they should build your email list and create content. Bring a signup sheet (or tablet for digital signup) offering entry into a draw for free product. Take photos with customers (with permission) for social proof. Have a QR code linking to your Instagram for immediate follows. Offer a "show special" discount code valid for 30 days that tracks event-driven sales. Collect brief video testimonials from happy customers ("Would you mind telling me in 15 seconds what you think?"). One event should generate 50+ emails, 20+ social follows, and content for weeks of posting.
 
-Reach out to 10 founders in your network or indie hacker communities: "I'll run a full Actionboo.st strategy for your product—free—in exchange for letting me publish it as a case study." 
+### Create a Referral Mechanism for Existing Customers
+- **Impact**: 7/10 - You have 60 satisfied customers who've never been asked to refer others
+- **Confidence**: 6/10 - Referral programs vary in effectiveness; worth testing
+- **Ease**: 7/10 - Simple email to existing customers can launch this immediately
+- **ICE Score**: 20
 
-Publish these as Twitter threads, Reddit posts, and Indie Hackers articles. Format: "I analyzed [Product]'s growth strategy. Here's what I found..." with screenshots of the actual output. This is social proof at scale and creates content you can recycle.
-
-### 5. Pre-Launch Email List with Mini-Audit Bribe
-- **Impact**: 7/10 - Converts all channel activity into owned audience
-- **Confidence**: 9/10 - Email capture is foundational and tested
-- **Ease**: 7/10 - Requires landing page update and lead magnet integration
-- **ICE Score: 23**
-
-Every piece of content, every Reddit comment, every Twitter thread should drive to a single CTA: "Get a free mini-audit of your startup's growth." This builds your email list before any paid promotion.
-
-Target: 200+ email subscribers before Product Hunt launch or any paid spend. These are warm leads who've experienced your product quality.
-
-### 6. Indie Hackers Launch Post + Product Page
-- **Impact**: 7/10 - Built-in audience of your exact ICP
-- **Confidence**: 8/10 - IH community is supportive and high-converting for dev tools
-- **Ease**: 7/10 - Requires writing a solid launch post and engaging with comments
-- **ICE Score: 22**
-
-Write a "How I Built Actionboo.st" post for Indie Hackers covering: the problem you saw, your approach, what's unique (live research, not templates), and invite feedback. Link to the product page with the mini-audit.
-
-Post on a Tuesday or Wednesday morning (US time) when engagement is highest. Reply to every comment within 2 hours.
-
-### 7. Partnership with Startup Newsletter Operators
-- **Impact**: 7/10 - Tap into established audiences
-- **Confidence**: 6/10 - Depends on finding right partners and negotiating
-- **Ease**: 6/10 - Requires outreach and relationship building
-- **ICE Score: 19**
-
-Identify 10 newsletters in the bootstrapped startup space (examples: Starter Story, First 1000, The Bootstrapped Founder). Offer: "I'll give your readers free mini-audits—no affiliate, just value. If they love it, they'll buy the full version."
-
-This is not a cold pitch for a sponsored slot. It's offering free value to their audience with zero risk to them.
-
-### 8. Capture Launch Week with Product Hunt
-- **Impact**: 7/10 - Traffic spike, credibility badge, backlinks
-- **Confidence**: 5/10 - PH results are unpredictable; depends on timing and competition
-- **Ease**: 5/10 - Requires prep, hunter coordination, and launch day commitment
-- **ICE Score: 17**
-
-Product Hunt is a *complement* to your other channels, not the strategy. Time your PH launch *after* you have 200+ email subscribers and 3+ case studies. Use your list and community engagement to drive Day 1 upvotes.
-
-Don't over-index on this. A mediocre PH launch after strong community validation is better than a "perfect" PH launch into a vacuum.
-
----
+Your 60 customers are an untapped referral source. Send them a simple email: "You're one of [X] people who've tried [product name]. If you've loved it (thank you for those reviews!), I'd love your help spreading the word. Share this link with a friend—they'll get 15% off, and you'll get 20% off your next order when they purchase." Use a simple referral tool (ReferralCandy has a free trial, or just track manually with unique codes for now). Even a 10% referral rate would add 6 new customers this month at zero acquisition cost.
 
 ## This Week
 
 | Day | Action | Time | Success Metric |
 |-----|--------|------|----------------|
-| 1 | Set up Reddit tracking: subscribe to r/SaaS, r/startups, r/Entrepreneur, r/SideProject. Save 10 posts where you can add value. | 1.5 hrs | 10 posts saved to comment on |
-| 2 | Write and post 5 detailed Reddit comments (no product mention yet). Start "Day 1" build-in-public thread on Twitter. | 2 hrs | 5 comments posted, 1 thread live |
-| 3 | Reach out to 5 founders offering free teardown in exchange for case study rights. Post Day 2 update on Twitter. | 2 hrs | 5 DMs/emails sent |
-| 4 | Write 5 more Reddit comments. In 2 of them, mention mini-audit naturally. Post Day 3 update. | 2 hrs | 5 comments, 2 with CTA, first mini-audit signups |
-| 5 | Draft Indie Hackers launch post. Create product page. Run first teardown case study. | 3 hrs | Draft complete, product page live |
-| 6 | Build 3-email follow-up sequence for mini-audit users (just write copy—implement Monday). Post Day 5 update. | 2 hrs | Emails drafted |
-| 7 | Review week: Which Reddit subs converted? Which content got engagement? Adjust next week's focus. | 1 hr | Data on what's working |
-
----
+| 1 | Set up email capture popup with 10% discount offer using Mailchimp or MailerLite | 2 hrs | Popup live on website, triggers on all pages |
+| 2 | Write 3-email welcome sequence (your story, the problem/solution, testimonial + urgency) | 2 hrs | Sequence scheduled and connected to signup |
+| 3 | Create 3 new ad creatives with unmistakable equestrian imagery/copy | 3 hrs | 3 different ads ready to launch |
+| 4 | Launch Meta ad campaign with 3 ad sets targeting different equestrian interests | 1 hr | Campaign live with $10/day budget split across 3 ad sets |
+| 5 | Draft ambassador outreach template; identify 10 potential ambassadors from your discipline | 2 hrs | List of 10 names with social handles and contact method |
+| 6 | Send referral email to all 60 existing customers with unique tracking codes | 1.5 hrs | Email sent, tracking codes assigned |
+| 7 | Send ambassador outreach to first 5 candidates; engage in 3 Facebook groups with value-first comments | 2 hrs | 5 outreach messages sent; 3 genuine helpful comments posted |
 
 ## 30-Day Roadmap
 
-### Week 1: Foundation & First Signals
-- [ ] 20+ value-first Reddit comments across target subreddits
-- [ ] Build-in-public series launched (Twitter + Indie Hackers cross-post)
-- [ ] 5 founders contacted for teardown case studies
-- [ ] Email follow-up sequence drafted
-- [ ] First mini-audit signups tracked
+### Week 1: Foundation
+- [ ] Email capture system live with automated welcome sequence
+- [ ] New Meta ad campaign launched with equestrian-specific creative
+- [ ] Referral email sent to existing customers
+- [ ] First 5 ambassador outreach messages sent
 
-### Week 2: Social Proof & List Building
-- [ ] First teardown case study published (Twitter thread + Reddit post)
-- [ ] Indie Hackers launch post and product page live
-- [ ] Email sequence implemented and automated
-- [ ] 50+ mini-audit completions
-- [ ] 50+ email list subscribers
-- [ ] Continue daily Reddit engagement (5 comments/day)
+### Week 2: Amplify
+- [ ] Review ad performance; pause lowest performer, create 2 new variants based on learning
+- [ ] Send second ambassador outreach batch (5 more candidates)
+- [ ] Post value-first content in 5 different Facebook groups
+- [ ] Prepare magazine feature capture plan (unique discount code, landing page)
+- [ ] Onboard first new ambassador with tracking code and content guidelines
 
-### Week 3: Amplification & Partnerships
-- [ ] Second and third teardown case studies published
-- [ ] 10 newsletter operators contacted with free mini-audit offer
-- [ ] Build-in-public series shows concrete results (screenshot numbers)
-- [ ] 100+ email subscribers
-- [ ] First paid customer via organic channels
-- [ ] Identify which 2 channels are highest-converting; increase focus
+### Week 3: Convert
+- [ ] Magazine feature lands—drive traffic to capture page with limited-time offer
+- [ ] Send re-engagement email to abandoned cart / non-purchasers on email list
+- [ ] Have 3 ambassadors active and posting
+- [ ] Scale ad spend on winning ad creative (increase to $15-20/day if ROAS positive)
 
-### Week 4: Scale & Prepare PH
-- [ ] 200+ email subscribers
-- [ ] 10+ paid customers (validates product-market fit signal)
-- [ ] Product Hunt assets prepared (screenshots, video, description)
-- [ ] Line up Product Hunt hunter
-- [ ] Schedule PH launch for Week 5-6
-- [ ] Double down on highest-performing channel
-
----
+### Week 4: Scale + Event Prep
+- [ ] Finalize trade stand setup (display, samples, signup sheet, QR codes, testimonial capture plan)
+- [ ] Create event-specific discount code for tracking
+- [ ] Review month 1 metrics; identify top 2 performing channels
+- [ ] Send monthly email to full list with riding season prep content + soft sell
 
 ## Metrics Dashboard
 
 | Stage | Metric | Target (30 days) | How to Measure |
-|-------|--------|-----------------|----------------|
-| **Acquisition** | Mini-audit completions | 150+ | Stripe/DB count |
-| **Acquisition** | Email list subscribers | 200+ | Resend/email tool |
-| **Acquisition** | Website visitors | 1,000+ | Plausible/Fathom/analytics |
-| **Activation** | Mini-audit → email signup rate | 60%+ | Completions / signups |
-| **Activation** | Email open rate | 40%+ | Resend |
-| **Retention** | Email click rate | 15%+ | Resend |
-| **Revenue** | Paid strategy purchases | 10+ | Stripe |
-| **Revenue** | Conversion (mini-audit → paid) | 5-10% | Stripe / completions |
-| **Referral** | Shares of teardown case studies | 20+ retweets/upvotes per | Twitter/Reddit |
+|-------|--------|------------------|----------------|
+| Acquisition | New website visitors | 1,000+ | Google Analytics or Shopify analytics |
+| Acquisition | Email list size | 150+ subscribers | Mailchimp/MailerLite dashboard |
+| Acquisition | Meta ad ROAS | >2.0 (2x return on ad spend) | Meta Ads Manager |
+| Activation | Email signup rate | 3-5% of visitors | Popup tool analytics |
+| Activation | Welcome sequence open rate | >40% | Email tool analytics |
+| Retention | Repeat purchase rate | Track for baseline | Shopify customer reports |
+| Referral | Referral link shares | 20+ shares | Tracking code redemptions |
+| Referral | Active ambassadors | 5 | Manual count |
+| Revenue | Total orders | 30+ | Shopify dashboard |
 
-**Acquisition-Specific Metrics to Track:**
-- Reddit comment → mini-audit conversion (use UTM links)
-- Twitter thread engagement rate (impressions / engagements)
-- Cost per acquisition breakdown by channel (even if $0, track time spent)
-
----
+**Additional acquisition-specific metrics:**
+- Cost per email subscriber (ad spend / new subscribers from ads)
+- Facebook group engagement rate (comments/replies generated from your posts)
+- Ambassador-driven sales as % of total
 
 ## Content Templates
 
 ```
-REDDIT VALUE COMMENT TEMPLATE
-[For posts asking "How do I get my first users?"]
+META AD PRIMARY COPY - PROBLEM/SOLUTION
 
-Your situation is pretty common for [product type]—here's what I'd focus on:
+8 hours in the saddle. 0 windburn.
 
-**1. Where your users already are**
-[Specific channel recommendation based on their product]. For a [product type], your best bet is probably [channel] because [reasoning].
+I created [PRODUCT NAME] after years of coming home from endurance rides with cracked, painful lips. Regular lip balms wore off after the first hour.
 
-**2. What to say when you get there**
-Don't lead with "check out my product." Lead with: "[specific value prop or insight]." People engage with usefulness, not pitches.
+This one lasts the entire ride.
 
-**3. The one thing I'd try this week**
-[Specific, actionable tactic]. Track [metric] to know if it's working.
+Made by an endurance rider in Australia. 13 five-star reviews. Tested by 40+ riders who gave it a 9.4/10.
 
-I built a tool that automates this kind of analysis if you want a more detailed breakdown—happy to share a link if useful. But the above should get you started.
+[LINK] to try it with 10% off your first order.
 ```
 
 ```
-TWITTER BUILD-IN-PUBLIC THREAD STARTER
-Day [X]: Using my own growth tool to grow the growth tool.
+FACEBOOK GROUP VALUE POST - WINDBURN TIPS
 
-Here's what Actionboo.st told me to do this week:
+"5 things I wish I knew about windburn before my first long ride"
 
-[Screenshot of 7-day plan from your own strategy output]
+Been competing in endurance for [X years] and learned a lot of this the hard way:
 
-Today I'm starting with [Day 1 action].
+1. Windburn isn't just a winter problem - any sustained wind exposure damages skin, even in mild temps
+2. SPF doesn't protect against wind - you need a barrier, not just UV protection  
+3. Re-apply before you think you need to - by the time your lips feel dry, damage is already done
+4. Your lips take longer to heal than regular skin - prevention is 10x easier than treatment
+5. Not all lip balms are created equal - most drugstore options wear off within 1-2 hours of riding
 
-I'll post daily what happens. If it works, that's proof. If it fails, that's content.
-
-Follow along and roast my execution. 🧵👇
+Happy to share more if helpful - what have you all found works best for protecting your lips on long rides?
 ```
 
 ```
-INDIE HACKERS LAUNCH POST TEMPLATE
+AMBASSADOR OUTREACH MESSAGE
 
-# I built an AI growth strategist that's brutally honest
+Hi [NAME],
 
-Most "AI growth tools" are ChatGPT wrappers with generic advice.
+I saw your [specific post/result - be genuine and specific] - congrats on [specific achievement].
 
-I got tired of:
-- $5K consultants who charge for 47-page decks
-- "Build in public" gurus selling courses about selling courses
-- AI tools that say "try content marketing" to everyone
+I'm reaching out because I'm an endurance rider who created a windburn lip balm after suffering through years of cracked lips on long rides. It's specifically designed to last 8 hours - basically one ride without re-applying.
 
-So I built Actionboo.st.
+I'm building a small ambassador community of riders who love the product and would love to have you try it (free, of course). If you like it, there's a program where you can earn commission sharing it with other riders.
 
-**What it does:**
-- You paste your situation (product, traction, what's working)
-- It runs live competitive research (not a cached database)
-- Claude Opus 4.5 generates a 10-section strategy doc
-- Everything is ICE-scored and prioritized
+Completely understand if it's not for you - but if you're interested, I'd love to send you a sample. What do you think?
 
-**What it costs:** $9.99 one-shot (no subscription required)
-
-**What it's NOT:**
-- Generic frameworks
-- "Have you considered SEO?"
-- Fluffy motivation
-
-**I'm offering free mini-audits** (3-section version) to IH readers. Grab yours at [link].
-
-AMA about the build, the strategy, or the market.
+[YOUR NAME]
+Endurance rider, [LOCATION]
 ```
+
+---
+
+**Final note**: Your one-week sales slump feels scary, but it's actually normal. You've built something riders genuinely love—now you're learning how to tell the world about it. The magazine feature, trade stands, and ambassador program will all contribute, but your sustainable growth engine is the combination of targeted ads, email capture, and community engagement. Execute this plan consistently for 90 days and you'll look back at this slump as a minor blip.
