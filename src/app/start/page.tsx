@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useCallback, useRef, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, ChevronLeft } from "lucide-react";
@@ -114,9 +114,13 @@ const STEP_NAMES: Record<string, string> = {
   competitors: "competitors",
 };
 
-export default function StartPage() {
+function StartPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const posthog = usePostHog();
+
+  // Entry source for analytics (hero, footer, or direct)
+  const entrySource = searchParams.get("source") || "direct";
 
   // User context for returning users
   const { context, isLoading: isLoadingContext, hasContext, prefillForm } = useUserContext();
@@ -330,12 +334,15 @@ export default function StartPage() {
       }
     }
     if (!hasTrackedStart.current) {
-      posthog?.capture("form_started", { version: "rapid-fire" });
+      posthog?.capture("form_started", {
+        version: "rapid-fire",
+        entry_source: entrySource,
+      });
       formStartTime.current = Date.now();
       stepStartTime.current = Date.now();
       hasTrackedStart.current = true;
     }
-  }, [posthog]);
+  }, [posthog, entrySource]);
 
   // Form abandonment tracking
   useEffect(() => {
@@ -815,5 +822,22 @@ export default function StartPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function StartPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex flex-col bg-surface/30">
+          <Header />
+          <main className="flex-1 flex items-center justify-center">
+            <Loader2 className="w-8 h-8 animate-spin text-foreground/30" />
+          </main>
+        </div>
+      }
+    >
+      <StartPageContent />
+    </Suspense>
   );
 }

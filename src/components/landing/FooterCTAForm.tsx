@@ -68,7 +68,7 @@ export function FooterCTAForm() {
       };
       localStorage.setItem(PREFILL_KEY, JSON.stringify(prefillData));
 
-      router.push("/start");
+      router.push("/start?source=footer");
     } catch (error) {
       console.error("Metadata extraction failed:", error);
       // Still navigate even if extraction fails
@@ -78,7 +78,7 @@ export function FooterCTAForm() {
         timestamp: Date.now(),
       };
       localStorage.setItem(PREFILL_KEY, JSON.stringify(prefillData));
-      router.push("/start");
+      router.push("/start?source=footer");
     }
   };
 
@@ -136,7 +136,7 @@ export function FooterCTAForm() {
       {/* Skip link */}
       <p className="text-sm text-background/40 font-mono">
         <Link
-          href="/start"
+          href="/start?source=footer"
           onClick={() =>
             posthog?.capture("cta_clicked", {
               location: "footer",

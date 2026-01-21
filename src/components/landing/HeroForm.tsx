@@ -33,7 +33,7 @@ export function HeroForm() {
     };
     localStorage.setItem(HERO_PREFILL_KEY, JSON.stringify(prefillData));
 
-    router.push("/start?prefill=hero");
+    router.push("/start?source=hero");
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
