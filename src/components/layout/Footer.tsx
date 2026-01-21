@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export function Footer() {
@@ -17,6 +18,12 @@ export function Footer() {
 
           {/* Links */}
           <div className="flex gap-6 text-sm font-mono">
+            <Link
+              href="/blog"
+              className="text-background/50 hover:text-background transition-colors"
+            >
+              Blog
+            </Link>
             <Link
               href="/about"
               className="text-background/50 hover:text-background transition-colors"
@@ -46,12 +53,11 @@ export function Footer() {
             rel="noopener"
             className="opacity-70 hover:opacity-100 transition-opacity"
           >
-            <img
+            <Image
               src="https://peerpush.net/p/actionboost/badge.png"
               alt="Actionboo.st on PeerPush"
               width={180}
               height={40}
-              className="h-auto"
             />
           </a>
         </div>
