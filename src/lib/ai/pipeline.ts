@@ -1,6 +1,7 @@
 import { createServiceClient } from '@/lib/supabase/server'
 import { runResearch, runTavilyOnlyResearch } from './research'
-import { generateStrategy, generateMiniStrategy, generateRefinedStrategy } from './generate'
+import { generateStrategy, generateMiniStrategy, generateRefinedStrategy, generateFirstImpressions } from './generate'
+import { tavily } from '@tavily/core'
 import { accumulateUserContext } from '@/lib/context/accumulate'
 import { searchUserContext } from './embeddings'
 import {
@@ -10,7 +11,7 @@ import {
 } from '@/lib/email/resend'
 import type { RunInput, PipelineResult, ResearchContext, UserHistoryContext } from './types'
 import type { UserContext } from '@/lib/types/context'
-import { MAX_CONTEXT_LENGTH } from '@/lib/types/database'
+import { MAX_CONTEXT_LENGTH, type PipelineStage } from '@/lib/types/database'
 
 // Validate critical env vars at module load
 const REQUIRED_ENV_VARS = ['ANTHROPIC_API_KEY', 'TAVILY_API'] as const
@@ -29,6 +30,17 @@ async function getEmailForUser(userId: string): Promise<string | null> {
   const supabase = createServiceClient()
   const { data } = await supabase.from('users').select('email').eq('id', userId).single()
   return data?.email || null
+}
+
+/**
+ * Update the pipeline stage for progress display
+ */
+async function updateStage(runId: string, stage: PipelineStage): Promise<void> {
+  const supabase = createServiceClient()
+  const { error } = await supabase.from('runs').update({ stage }).eq('id', runId)
+  if (error) {
+    console.warn(`[Pipeline] Failed to update stage to ${stage} for run ${runId}:`, error.message)
+  }
 }
 
 /**
@@ -113,8 +125,8 @@ export async function runPipeline(runId: string): Promise<PipelineResult> {
     return { success: false, error: `Run not found: ${fetchError?.message || 'No data'}` }
   }
 
-  // 2. Update status to processing
-  await supabase.from('runs').update({ status: 'processing' }).eq('id', runId)
+  // 2. Update status to processing with initial stage
+  await supabase.from('runs').update({ status: 'processing', stage: 'researching' }).eq('id', runId)
 
   const input = run.input as RunInput
   let research: ResearchContext
@@ -144,6 +156,7 @@ export async function runPipeline(runId: string): Promise<PipelineResult> {
   }
 
   // 4. Retrieve user history for RAG (if returning user)
+  await updateStage(runId, 'loading_history')
   let userHistory: UserHistoryContext | null = null
   if (run.user_id) {
     try {
@@ -155,16 +168,19 @@ export async function runPipeline(runId: string): Promise<PipelineResult> {
   }
 
   // 5. Generate strategy with Claude
+  await updateStage(runId, 'generating')
   try {
     console.log(`[Pipeline] Starting strategy generation with Claude Opus 4.5`)
     const output = await generateStrategy(input, research, userHistory)
     console.log(`[Pipeline] Strategy generated: ${output.length} characters`)
 
     // 6. Save output and mark complete
+    await updateStage(runId, 'finalizing')
     const { error: updateError } = await supabase
       .from('runs')
       .update({
         status: 'complete',
+        stage: null,
         output,
         completed_at: new Date().toISOString(),
       })
@@ -196,7 +212,7 @@ export async function runPipeline(runId: string): Promise<PipelineResult> {
     const errorMsg = err instanceof Error ? err.message : String(err)
     console.error('[Pipeline] Strategy generation failed:', errorMsg)
 
-    await supabase.from('runs').update({ status: 'failed' }).eq('id', runId)
+    await supabase.from('runs').update({ status: 'failed', stage: null }).eq('id', runId)
 
     // Send "run failed" email (fire-and-forget)
     if (run.user_id) {
@@ -369,8 +385,8 @@ export async function runRefinementPipeline(runId: string): Promise<RefinementPi
     return { success: false, error: 'Parent run ownership mismatch' }
   }
 
-  // 3. Update status to processing
-  const { error: statusError } = await supabase.from('runs').update({ status: 'processing' }).eq('id', runId)
+  // 3. Update status to processing with initial stage
+  const { error: statusError } = await supabase.from('runs').update({ status: 'processing', stage: 'researching' }).eq('id', runId)
   if (statusError) {
     console.error('[RefinementPipeline] Failed to update status to processing:', statusError)
     // Continue anyway - the run will still process
@@ -401,6 +417,7 @@ export async function runRefinementPipeline(runId: string): Promise<RefinementPi
   }
 
   // 5. Retrieve user history for RAG (if returning user)
+  await updateStage(runId, 'loading_history')
   let userHistory: UserHistoryContext | null = null
   if (run.user_id) {
     try {
@@ -411,16 +428,19 @@ export async function runRefinementPipeline(runId: string): Promise<RefinementPi
   }
 
   // 6. Generate refined strategy with Claude
+  await updateStage(runId, 'generating')
   try {
     console.log(`[RefinementPipeline] Starting refined strategy generation with Claude Opus 4.5`)
     const output = await generateRefinedStrategy(input, research, additionalContext, parentRun.output, userHistory)
     console.log(`[RefinementPipeline] Refined strategy generated: ${output.length} characters`)
 
     // 7. Save output and mark complete
+    await updateStage(runId, 'finalizing')
     const { error: updateError } = await supabase
       .from('runs')
       .update({
         status: 'complete',
+        stage: null,
         output,
         completed_at: new Date().toISOString(),
       })
@@ -446,7 +466,7 @@ export async function runRefinementPipeline(runId: string): Promise<RefinementPi
     const errorMsg = err instanceof Error ? err.message : String(err)
     console.error('[RefinementPipeline] Strategy generation failed:', errorMsg)
 
-    await supabase.from('runs').update({ status: 'failed' }).eq('id', runId)
+    await supabase.from('runs').update({ status: 'failed', stage: null }).eq('id', runId)
 
     // Send "run failed" email (fire-and-forget)
     if (run.user_id) {
@@ -456,6 +476,100 @@ export async function runRefinementPipeline(runId: string): Promise<RefinementPi
         })
         .catch((emailErr) => console.error('[RefinementPipeline] Run failed email failed:', emailErr))
     }
+
+    return { success: false, error: `Generation failed: ${errorMsg}` }
+  }
+}
+
+// =============================================================================
+// FIRST IMPRESSIONS PIPELINE (URL-only, lightweight for social posting)
+// =============================================================================
+
+export type FirstImpressionsPipelineResult = {
+  success: boolean
+  output?: string
+  error?: string
+}
+
+/**
+ * Run the first impressions pipeline for URL-only social content
+ *
+ * Lightest pipeline:
+ * - URL only as input (no form)
+ * - ONE Tavily search for market context
+ * - Sonnet generates social-ready output
+ * - No user history, no DataForSEO
+ */
+export async function runFirstImpressionsPipeline(
+  impressionId: string,
+  url: string
+): Promise<FirstImpressionsPipelineResult> {
+  validateEnv()
+
+  const supabase = createServiceClient()
+
+  // Update status to processing
+  await supabase.from('first_impressions').update({ status: 'processing' }).eq('id', impressionId)
+
+  // Extract domain for search query
+  let domain: string
+  try {
+    domain = new URL(url).hostname.replace('www.', '')
+  } catch {
+    domain = url
+  }
+
+  // Run ONE Tavily search for market context
+  let marketContext = ''
+  try {
+    console.log(`[FirstImpressions] Running Tavily search for ${domain}`)
+    const tvly = tavily({ apiKey: process.env.TAVILY_API! })
+    const results = await tvly.search(`${domain} competitors market startup`, {
+      searchDepth: 'basic',
+      maxResults: 5,
+      includeRawContent: false,
+    })
+
+    if (results.results?.length) {
+      marketContext = results.results
+        .slice(0, 5)
+        .map((r) => `- ${r.title}: ${r.content?.slice(0, 200) || ''}`)
+        .join('\n')
+    }
+    console.log(`[FirstImpressions] Found ${results.results?.length || 0} market context results`)
+  } catch (err) {
+    console.error('[FirstImpressions] Tavily search failed:', err)
+    // Continue without market context - graceful degradation
+  }
+
+  // Generate first impressions
+  try {
+    console.log(`[FirstImpressions] Generating output with Sonnet`)
+    const output = await generateFirstImpressions(url, marketContext)
+    console.log(`[FirstImpressions] Generated: ${output.length} characters`)
+
+    // Save output and mark complete
+    const { error: updateError } = await supabase
+      .from('first_impressions')
+      .update({
+        status: 'complete',
+        output,
+        completed_at: new Date().toISOString(),
+      })
+      .eq('id', impressionId)
+
+    if (updateError) {
+      console.error('[FirstImpressions] Failed to save output:', updateError)
+      return { success: false, error: `Failed to save output: ${updateError.message}` }
+    }
+
+    console.log(`[FirstImpressions] ${impressionId} completed successfully`)
+    return { success: true, output }
+  } catch (err) {
+    const errorMsg = err instanceof Error ? err.message : String(err)
+    console.error('[FirstImpressions] Generation failed:', errorMsg)
+
+    await supabase.from('first_impressions').update({ status: 'failed' }).eq('id', impressionId)
 
     return { success: false, error: `Generation failed: ${errorMsg}` }
   }

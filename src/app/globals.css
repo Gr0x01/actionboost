@@ -134,6 +134,15 @@ body {
   }
 }
 
+@keyframes stage-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
 @keyframes marquee-left {
   0% {
     transform: translateX(0);

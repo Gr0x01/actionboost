@@ -1,17 +1,54 @@
 "use client";
 
-import { Check, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Check, X, Lightbulb, HelpCircle, Sparkles } from "lucide-react";
 import Link from "next/link";
+import {
+  PIPELINE_STAGES,
+  PROCESSING_TIPS,
+  TIP_ROTATION_INTERVAL,
+  type TipType,
+} from "@/lib/constants/processing-content";
+import type { PipelineStage } from "@/lib/types/database";
 
 type Status = "pending" | "processing" | "complete" | "failed";
 
 interface StatusMessageProps {
   status: Status;
+  stage?: PipelineStage | null;
   message?: string;
   submessage?: string;
 }
 
-export function StatusMessage({ status, message, submessage }: StatusMessageProps) {
+export function StatusMessage({
+  status,
+  stage,
+  message,
+  submessage,
+}: StatusMessageProps) {
+  const [currentTipIndex, setCurrentTipIndex] = useState(0);
+  const [tipVisible, setTipVisible] = useState(true);
+
+  // Rotate tips during processing
+  useEffect(() => {
+    if (status !== "pending" && status !== "processing") return;
+
+    let timeoutId: NodeJS.Timeout | null = null;
+
+    const interval = setInterval(() => {
+      setTipVisible(false);
+      timeoutId = setTimeout(() => {
+        setCurrentTipIndex((prev) => (prev + 1) % PROCESSING_TIPS.length);
+        setTipVisible(true);
+      }, 200);
+    }, TIP_ROTATION_INTERVAL);
+
+    return () => {
+      clearInterval(interval);
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [status]);
+
   // Complete state
   if (status === "complete") {
     return (
@@ -72,75 +109,110 @@ export function StatusMessage({ status, message, submessage }: StatusMessageProp
     );
   }
 
-  // Pending/processing state
+  // Pending/processing state - enhanced with stages and tips
+  const currentStageIndex = stage
+    ? PIPELINE_STAGES.findIndex((s) => s.key === stage)
+    : 0;
+  const currentStageLabel =
+    PIPELINE_STAGES[currentStageIndex >= 0 ? currentStageIndex : 0]?.label ||
+    "Preparing...";
+  const currentTip = PROCESSING_TIPS[currentTipIndex];
+
   return (
     <div className="max-w-lg mx-auto text-center py-16 px-6">
-      <h1 className="text-2xl sm:text-3xl font-black text-foreground mb-3">
-        {message || (status === "pending" ? "Preparing your action plan" : "Generating your action plan")}
+      {/* Headline */}
+      <h1 className="text-2xl sm:text-3xl font-black text-foreground mb-2">
+        {message || "Generating your action plan"}
         <span className="inline-block w-8 text-left animate-pulse">...</span>
       </h1>
-      <p className="text-foreground/60 max-w-md mx-auto">
-        {submessage || (status === "pending"
-          ? "Setting up the analysis."
-          : "Analyzing your business, researching competitors, crafting personalized tactics.")}
-      </p>
 
-      <div className="mt-10">
-        <div className="flex justify-center items-center gap-4">
-          <StepIndicator
-            label="Research"
-            active={status === "pending" || status === "processing"}
-            complete={status === "processing"}
-          />
-          <div className="w-8 h-0.5 bg-foreground/20" />
-          <StepIndicator
-            label="Analysis"
-            active={status === "processing"}
-            complete={false}
-          />
-          <div className="w-8 h-0.5 bg-foreground/20" />
-          <StepIndicator
-            label="Action Plan"
-            active={false}
-            complete={false}
-          />
-        </div>
+      {/* Current stage label */}
+      <p className="text-foreground/60 mb-8">{currentStageLabel}</p>
 
-        <p className="text-sm text-foreground/40 font-mono mt-6">
-          This typically takes 2-3 minutes
-        </p>
+      {/* Stage Progress Bar */}
+      <div className="mb-10">
+        <StageProgressBar
+          currentIndex={currentStageIndex >= 0 ? currentStageIndex : 0}
+        />
       </div>
+
+      {/* Rotating Tip Card */}
+      <div className="border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)] text-left">
+        <div
+          className={`transition-all duration-200 ${
+            tipVisible
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-2"
+          }`}
+        >
+          <div className="flex items-start gap-3">
+            <TipIcon type={currentTip.type} />
+            <p className="text-foreground/80 text-sm leading-relaxed">
+              {currentTip.content}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Time estimate */}
+      <p className="text-sm text-foreground/40 font-mono mt-6">
+        typically 2-3 minutes
+      </p>
     </div>
   );
 }
 
-function StepIndicator({
-  label,
-  active,
-  complete,
-}: {
-  label: string;
-  active: boolean;
-  complete: boolean;
-}) {
+function StageProgressBar({ currentIndex }: { currentIndex: number }) {
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div
-        className={`w-3 h-3 transition-colors ${
-          complete
-            ? "bg-green-600"
-            : active
-            ? "bg-cta"
-            : "bg-foreground/20"
-        }`}
-      />
-      <span
-        className={`text-xs font-bold ${
-          active || complete ? "text-foreground" : "text-foreground/40"
-        }`}
-      >
-        {label}
-      </span>
+    <div className="flex items-center justify-center gap-1 sm:gap-2">
+      {PIPELINE_STAGES.map((stage, index) => (
+        <div key={stage.key} className="flex items-center">
+          {/* Stage dot */}
+          <div className="flex flex-col items-center gap-1.5">
+            <div
+              className={`w-4 h-4 transition-all duration-300 ${
+                index < currentIndex
+                  ? "bg-green-600"
+                  : index === currentIndex
+                  ? "bg-cta animate-[stage-pulse_1.5s_ease-in-out_infinite]"
+                  : "bg-foreground/20"
+              }`}
+            />
+            <span
+              className={`text-[10px] sm:text-xs font-bold uppercase tracking-wide ${
+                index <= currentIndex
+                  ? "text-foreground"
+                  : "text-foreground/40"
+              }`}
+            >
+              {stage.shortLabel}
+            </span>
+          </div>
+
+          {/* Connector line */}
+          {index < PIPELINE_STAGES.length - 1 && (
+            <div
+              className={`w-6 sm:w-10 h-0.5 mx-1 sm:mx-2 ${
+                index < currentIndex ? "bg-green-600" : "bg-foreground/20"
+              }`}
+            />
+          )}
+        </div>
+      ))}
     </div>
   );
+}
+
+function TipIcon({ type }: { type: TipType }) {
+  const iconClass = "w-5 h-5 text-cta flex-shrink-0 mt-0.5";
+  switch (type) {
+    case "tip":
+      return <Lightbulb className={iconClass} />;
+    case "reflection":
+      return <HelpCircle className={iconClass} />;
+    case "preview":
+      return <Sparkles className={iconClass} />;
+    default:
+      return <Lightbulb className={iconClass} />;
+  }
 }

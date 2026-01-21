@@ -6,10 +6,13 @@ import { usePostHog } from "posthog-js/react";
 import { Header, Footer } from "@/components/layout";
 import { StatusMessage } from "@/components/results";
 
+import type { PipelineStage } from "@/lib/types/database";
+
 type RunStatus = "pending" | "processing" | "complete" | "failed";
 
 interface RunData {
   status: RunStatus;
+  stage?: PipelineStage | null;
 }
 
 export default function ProcessingPage() {
@@ -28,6 +31,7 @@ export default function ProcessingPage() {
   const runId = resolvedRunId;
 
   const [status, setStatus] = useState<RunStatus>("pending");
+  const [stage, setStage] = useState<PipelineStage | null>(null);
   const [error, setError] = useState<string | null>(null);
   const trackedStart = useRef(false);
   const trackedStatuses = useRef<Set<string>>(new Set());
@@ -112,6 +116,7 @@ export default function ProcessingPage() {
 
         const data: RunData = await res.json();
         setStatus(data.status);
+        setStage(data.stage || null);
 
         if (data.status === "complete") {
           // Short delay before redirect for UX
@@ -148,6 +153,7 @@ export default function ProcessingPage() {
       <main className="flex-1 flex items-center justify-center">
         <StatusMessage
           status={status}
+          stage={stage}
           submessage={error || undefined}
         />
       </main>

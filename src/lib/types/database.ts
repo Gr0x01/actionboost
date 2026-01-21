@@ -9,6 +9,33 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      first_impressions: {
+        Row: {
+          id: string
+          url: string
+          output: string | null
+          status: string
+          created_at: string
+          completed_at: string | null
+        }
+        Insert: {
+          id?: string
+          url: string
+          output?: string | null
+          status?: string
+          created_at?: string
+          completed_at?: string | null
+        }
+        Update: {
+          id?: string
+          url?: string
+          output?: string | null
+          status?: string
+          created_at?: string
+          completed_at?: string | null
+        }
+        Relationships: []
+      }
       free_audits: {
         Row: {
           id: string
@@ -128,6 +155,7 @@ export type Database = {
           parent_run_id: string | null
           refinements_used: number | null
           share_slug: string | null
+          stage: string | null
           status: string | null
           stripe_session_id: string | null
           user_id: string | null
@@ -144,6 +172,7 @@ export type Database = {
           parent_run_id?: string | null
           refinements_used?: number | null
           share_slug?: string | null
+          stage?: string | null
           status?: string | null
           stripe_session_id?: string | null
           user_id?: string | null
@@ -160,6 +189,7 @@ export type Database = {
           parent_run_id?: string | null
           refinements_used?: number | null
           share_slug?: string | null
+          stage?: string | null
           status?: string | null
           stripe_session_id?: string | null
           user_id?: string | null
@@ -305,8 +335,10 @@ export type Code = Tables<"codes">
 export type UserContextChunk = Tables<"user_context_chunks">
 export type Waitlist = Tables<"waitlist">
 export type FreeAudit = Tables<"free_audits">
+export type FirstImpression = Tables<"first_impressions">
 
 export type RunStatus = "pending" | "processing" | "complete" | "failed"
+export type PipelineStage = "researching" | "loading_history" | "generating" | "finalizing"
 export type CreditSource = "stripe" | "code" | "manual"
 export type ChunkType = "product" | "traction" | "tactic" | "insight" | "recommendation"
 export type SourceType = "run_input" | "run_output" | "delta_update"

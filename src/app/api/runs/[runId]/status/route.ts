@@ -22,7 +22,7 @@ export async function GET(
 
   const { data: run, error } = await supabase
     .from("runs")
-    .select("status, share_slug, user_id")
+    .select("status, share_slug, user_id, stage")
     .eq("id", runId)
     .single();
 
@@ -49,5 +49,6 @@ export async function GET(
 
   return NextResponse.json({
     status: run.status || "pending",
+    stage: run.stage || null,
   });
 }
