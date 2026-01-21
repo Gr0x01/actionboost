@@ -38,15 +38,14 @@ Not another ChatGPT wrapper. Not generic "have you tried content marketing?" adv
 
 ## Pricing & Economics
 
-| Product | Price | Cost |
-|---------|-------|------|
-| One-shot | $9.99 | ~$0.50 |
-| Free mini-audit | $0 | ~$0.04 |
-| Subscription (v2) | $29/mo | TBD |
+| Product | Price | Cost | Margin |
+|---------|-------|------|--------|
+| One-shot (no competitors) | $9.99 | ~$0.18 | 98% |
+| One-shot (3 competitors) | $9.99 | ~$0.66 | 93% |
+| Free mini-audit | $0 | ~$0.07 | lead gen |
+| Subscription (v2) | $29/mo | TBD | TBD |
 
-Per-run cost: ~$0.50 (Opus + research APIs). Free tier uses Sonnet + Tavily only (~$0.04).
-
-3-pack removed — subscription is the upsell path, not bulk credits.
+Cost breakdown in `architecture.md`. 3-pack removed — subscription is the upsell path.
 
 ---
 

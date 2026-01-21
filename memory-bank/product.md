@@ -73,10 +73,10 @@ Landing (/) → Input Form (/start) → Checkout → Processing → Results
 **Key insight**: User fills out form BEFORE paying. Invested time = harder to bounce.
 
 ### Free Mini-Audit (Lead Magnet)
-Subtle "Just want a taste?" option at checkout → 5-section condensed audit → upsell to full version.
-- Model: Claude Sonnet (cheaper)
+Subtle "Just want a taste?" option at checkout → 4-section condensed audit → upsell to full version.
+- Model: Claude Opus 4.5 (same quality as paid)
 - Research: Tavily only (no DataForSEO)
-- Cost: ~$0.04/run
+- Cost: ~$0.07/run
 - Rate limit: 1 per email (Gmail aliases normalized)
 
 ---

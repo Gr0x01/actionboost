@@ -565,7 +565,7 @@ function truncate(text: string, maxLength: number): string {
 // MINI STRATEGY GENERATION (Free tier - uses Sonnet)
 // =============================================================================
 
-const MINI_MODEL = 'claude-sonnet-4-20250514'
+const MINI_MODEL = 'claude-opus-4-5-20251101' // Upgraded from Sonnet - only +$0.01/run
 const MINI_MAX_TOKENS = 3000
 
 /**
@@ -947,7 +947,7 @@ ${marketContext || 'No additional market research available.'}
 Write your first impressions take now. Base it on the ACTUAL website content above, not assumptions.`
 
   const response = await client.messages.create({
-    model: MINI_MODEL,
+    model: MODEL, // Opus 4.5 for better quality
     max_tokens: FIRST_IMPRESSIONS_MAX_TOKENS,
     system: FIRST_IMPRESSIONS_PROMPT,
     messages: [{ role: 'user', content: userMessage }],

@@ -157,24 +157,66 @@ This keeps costs proportional to how useful SEO data is for each problem type.
 10. Content Templates (2-3 ready-to-use templates in code blocks)
 
 ### Cost & Performance
-- Cost per run: ~$0.30
+
+**Paid Run (Opus 4.5):**
+| Component | Calculation | Cost |
+|-----------|-------------|------|
+| Claude Opus input | ~4,000 tokens × $5/MTok | $0.020 |
+| Claude Opus output | ~4,400 tokens × $25/MTok | $0.110 |
+| Tavily | 3 searches × 2 credits × $0.008 | $0.048 |
+| DataForSEO (if competitors) | varies by focus | $0-0.48 |
+| **Total (no competitors)** | | **~$0.18** |
+| **Total (3 competitors, acquisition)** | | **~$0.66** |
+
+**DataForSEO by focus area (per competitor):**
+| Focus | Endpoints | Cost/Competitor | Max (3) |
+|-------|-----------|-----------------|---------|
+| acquisition / custom | all 5 | $0.16 | $0.48 |
+| referral | 3 | $0.14 | $0.42 |
+| activation / retention / monetization | 1 | $0.10 | $0.30 |
+
 - Total time: ~2 minutes
 - Graceful degradation: Research fails → proceed with limited context
 
 ### Free Pipeline (Mini-Audit)
 Lighter-weight pipeline for lead generation:
-- Model: Claude Sonnet (`claude-sonnet-4-20250514`) instead of Opus
+- Model: Claude Opus 4.5 (upgraded from Sonnet for better quality, only +$0.01)
 - Research: Tavily only (no DataForSEO)
-- Output: 3 sections (Executive Summary with Flywheel, Your Situation, Competitive Landscape)
-- Locked sections shown as upsell: Channel Strategy, Stop Doing, Start Doing, This Week, 30-Day Roadmap, Metrics Dashboard, Content Templates
+- Output: 4 sections (Executive Summary, Your Situation, Competitive Landscape, Channel Strategy)
+- Locked sections shown as upsell: Stop Doing, Start Doing, This Week, 30-Day Roadmap, Metrics Dashboard, Content Templates
 - No RAG/user history
-- Cost: ~$0.04/run
 - Rate limit: 1 per email (normalized for Gmail aliases)
 - Polling: Recursive setTimeout every 2s until complete
+
+**Free Run Cost (Opus 4.5):**
+| Component | Calculation | Cost |
+|-----------|-------------|------|
+| Claude Opus input | ~1,150 tokens × $5/MTok | $0.006 |
+| Claude Opus output | ~630 tokens × $25/MTok | $0.016 |
+| Tavily | 3 searches × 2 credits × $0.008 | $0.048 |
+| **Total** | | **~$0.07** |
 
 Files: `runFreePipeline()` in pipeline.ts, `generateMiniStrategy()` in generate.ts
 Routes: `POST /api/free-audit`, `GET /api/free-audit/[id]`
 Page: `/free-results/[id]` with auto-polling and upsell UI
+
+### First Impressions Pipeline
+Internal tool for quick URL-based analysis (deep research, no form):
+- Model: Claude Opus 4.5 (noticeably better quality than Sonnet)
+- Research: Tavily extract + 4 basic searches (competitors, reviews, social, news)
+- Output: Sharp first impressions for social sharing
+
+**First Impressions Cost:**
+| Component | Calculation | Cost |
+|-----------|-------------|------|
+| Tavily extract | 1 URL basic | ~$0.002 |
+| Tavily searches | 4 basic × 1 credit × $0.008 | $0.032 |
+| Claude Opus input | ~1,500 tokens × $5/MTok | $0.008 |
+| Claude Opus output | ~1,000 tokens × $25/MTok | $0.025 |
+| **Total** | | **~$0.07** |
+
+Files: `runFirstImpressionsPipeline()` in pipeline.ts, `generateFirstImpressions()` in generate.ts
+Routes: `POST /api/first-impressions`, `GET /api/first-impressions/[id]`
 
 ### Test Scripts
 ```bash
@@ -368,15 +410,29 @@ src/
 
 ## Tech Reference
 
-### Claude Opus 4.5
-- Model: `claude-opus-4-5-20251101`
-- Pricing: $15/1M input, $75/1M output
-- **Do not change model without approval**
+### Claude Models
+| Model | ID | Input | Output |
+|-------|-----|-------|--------|
+| Opus 4.5 (all pipelines) | `claude-opus-4-5-20251101` | $5/MTok | $25/MTok |
+
+**Do not change models without approval**
 
 ### Tavily
 - Web search API for competitive research
-- Free tier: 1,000 searches/month
+- Pricing: $0.008/credit, advanced search = 2 credits
+- We run 3 searches per run = 6 credits = $0.048
 - Use `search_depth: 'advanced'` for better results
+
+### DataForSEO
+Only called when competitor URLs provided. Endpoints by focus area:
+
+| Endpoint | Price |
+|----------|-------|
+| `dataforseo_labs/domain_metrics_by_categories/live` | $0.10 |
+| `dataforseo_labs/ranked_keywords/live` | $0.01 |
+| `dataforseo_labs/competitors_domain/live` | $0.01 |
+| `backlinks/summary/live` | $0.02 |
+| `backlinks/referring_domains/live` | $0.02 |
 
 ### OpenAI (Embeddings)
 - Model: `text-embedding-3-small` (1536 dimensions)

@@ -13,7 +13,7 @@ Users who clicked $9.99 but didn't complete Stripe checkout were lost. We had no
 3. **Cart abandonment webhook** - When `checkout.session.expired` fires:
    - Check if user already has free audit (send recovery email if so)
    - Create free audit with `source: 'abandoned_checkout'`
-   - Run free pipeline (Sonnet + Tavily)
+   - Run free pipeline (Opus + Tavily)
    - Send "We saved something for you" email with free results
 
 ### Technical Details
@@ -33,7 +33,7 @@ Users who clicked $9.99 but didn't complete Stripe checkout were lost. We had no
 - `src/lib/ai/pipeline.ts` - conditional email based on source
 
 ### Cost Impact
-- ~$0.05 per abandoned checkout (Sonnet + Tavily)
+- ~$0.07 per abandoned checkout (Opus + Tavily)
 - Potential $9.99 recovery per user
 
 ---
@@ -57,7 +57,7 @@ This gives users enough to see we know their specific business/channels - the pr
 - Updated upsell text to exclude Channel Strategy from "what you'll get"
 
 ### Cost Impact
-- Free run: ~$0.04 → ~$0.05-0.06
+- Free run: ~$0.07 (Opus + Tavily)
 - Still acceptable for lead generation
 
 ---

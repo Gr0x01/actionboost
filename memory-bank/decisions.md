@@ -92,19 +92,13 @@ Key architectural and product decisions. Reference this when you need to underst
 
 | Aspect | Sonnet 4 | Opus 4.5 |
 |--------|----------|----------|
-| Cost/run | ~$0.05 | ~$0.25-0.50 |
-| Format adherence | Excellent | Excellent |
-| ICE scoring | Good | Good |
 | Competitive analysis | Solid but surface-level | Deeper, more nuanced |
 | Recommendations | "By the book" | More creative/unexpected |
 | Speed | Faster | Slower |
 
-**Conclusion**: Sonnet is 5x cheaper but Opus's nuanced analysis justifies the cost at $9.99 pricing. The depth of insight is the product's core value - can't commoditize that.
+**Conclusion**: Opus's nuanced analysis justifies the marginal cost increase. The depth of insight is the product's core value.
 
-**Potential future use for Sonnet**:
-- Free mini-audit tier (already using)
-- Quick re-analysis or follow-up questions
-- High-volume/lower-margin tiers if introduced
+**Update (Jan 21, 2026)**: Upgraded ALL pipelines to Opus 4.5 - paid runs, free mini-audits, and First Impressions. Cost difference is minimal (~$0.01 more for free runs) but quality improvement is noticeable.
 
 **Constraint**: Do NOT change the model name without explicit user approval. This is documented in CLAUDE.md as a critical rule.
 
