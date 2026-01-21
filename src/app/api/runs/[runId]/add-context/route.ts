@@ -163,6 +163,7 @@ export async function POST(
       parent_run_id: runId,
       status: "pending",
       user_id: userId,
+      source: "refinement",
       refinements_used: 0, // New run starts fresh (parent tracks count)
     })
     .select("id")

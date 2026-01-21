@@ -22,6 +22,14 @@ export function PHProvider({ children, cookieless = false }: PHProviderProps) {
           process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
         capture_pageview: true,
         capture_pageleave: true,
+        // Session recording: don't mask form inputs (we want to see URLs, product descriptions)
+        // Passwords are still masked by default browser behavior
+        session_recording: {
+          maskAllInputs: false,
+          maskInputOptions: {
+            password: true, // Always mask password fields
+          },
+        },
         // GDPR: cookieless mode for EU users, cookies for everyone else
         ...(cookieless && { persistence: "memory" }),
       });

@@ -166,6 +166,7 @@ export async function POST(request: NextRequest) {
         input: input as unknown as Json,
         status: "pending",
         user_id: userId,
+        source: "promo",
       })
       .select("id")
       .single();

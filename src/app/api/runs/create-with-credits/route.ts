@@ -108,6 +108,7 @@ export async function POST(request: NextRequest) {
         input: input as unknown as Json,
         status: "pending",
         user_id: publicUser.id,
+        source: "credits",
       })
       .select("id")
       .single();

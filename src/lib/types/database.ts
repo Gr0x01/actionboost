@@ -158,6 +158,7 @@ export type Database = {
           parent_run_id: string | null
           refinements_used: number | null
           share_slug: string | null
+          source: string | null
           stage: string | null
           status: string | null
           stripe_session_id: string | null
@@ -175,6 +176,7 @@ export type Database = {
           parent_run_id?: string | null
           refinements_used?: number | null
           share_slug?: string | null
+          source?: string | null
           stage?: string | null
           status?: string | null
           stripe_session_id?: string | null
@@ -192,6 +194,7 @@ export type Database = {
           parent_run_id?: string | null
           refinements_used?: number | null
           share_slug?: string | null
+          source?: string | null
           stage?: string | null
           status?: string | null
           stripe_session_id?: string | null
@@ -343,6 +346,7 @@ export type FirstImpression = Tables<"first_impressions">
 export type RunStatus = "pending" | "processing" | "complete" | "failed"
 export type PipelineStage = "researching" | "loading_history" | "generating" | "finalizing"
 export type CreditSource = "stripe" | "code" | "manual"
+export type RunSource = "stripe" | "credits" | "promo" | "refinement"
 export type ChunkType = "product" | "traction" | "tactic" | "insight" | "recommendation"
 export type SourceType = "run_input" | "run_output" | "delta_update"
 

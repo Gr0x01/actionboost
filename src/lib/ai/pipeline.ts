@@ -10,9 +10,10 @@ import {
   sendFreeAuditUpsellEmail,
   sendAbandonedCheckoutEmail,
 } from '@/lib/email/resend'
+import { trackServerEvent, identifyUser } from '@/lib/analytics'
 import type { RunInput, PipelineResult, ResearchContext, UserHistoryContext } from './types'
 import type { UserContext } from '@/lib/types/context'
-import { MAX_CONTEXT_LENGTH, type PipelineStage } from '@/lib/types/database'
+import { MAX_CONTEXT_LENGTH, type PipelineStage, type RunSource } from '@/lib/types/database'
 
 // Validate critical env vars at module load
 const REQUIRED_ENV_VARS = ['ANTHROPIC_API_KEY', 'TAVILY_API'] as const
@@ -31,6 +32,47 @@ async function getEmailForUser(userId: string): Promise<string | null> {
   const supabase = createServiceClient()
   const { data } = await supabase.from('users').select('email').eq('id', userId).single()
   return data?.email || null
+}
+
+/**
+ * Update PostHog user properties with plan counts
+ * Tracks: total_plans, paid_plans, free_plans, promo_plans
+ */
+async function updateUserPlanCounts(userId: string, latestSource: RunSource): Promise<void> {
+  const supabase = createServiceClient()
+
+  // Get user email for identification
+  const { data: user } = await supabase
+    .from('users')
+    .select('email')
+    .eq('id', userId)
+    .single()
+
+  if (!user?.email) return
+
+  // Count runs by source
+  const { data: runs } = await supabase
+    .from('runs')
+    .select('source')
+    .eq('user_id', userId)
+    .eq('status', 'complete')
+
+  if (!runs) return
+
+  const counts = {
+    total_plans: runs.length,
+    paid_plans: runs.filter(r => r.source === 'stripe').length,
+    credit_plans: runs.filter(r => r.source === 'credits').length,
+    promo_plans: runs.filter(r => r.source === 'promo').length,
+    refinement_plans: runs.filter(r => r.source === 'refinement').length,
+  }
+
+  // Update user properties in PostHog
+  identifyUser(userId, user.email, {
+    ...counts,
+    last_plan_source: latestSource,
+    last_plan_at: new Date().toISOString(),
+  })
 }
 
 /**
@@ -206,6 +248,24 @@ export async function runPipeline(runId: string): Promise<PipelineResult> {
         .catch((err) => console.error('[Pipeline] Run ready email failed:', err))
     }
 
+    // Track plan completion with source breakdown (fire-and-forget)
+    const source = (run.source as RunSource) || 'stripe'
+    const distinctId = run.user_id || runId
+    trackServerEvent(distinctId, 'plan_completed', {
+      run_id: runId,
+      source, // stripe, credits, promo, refinement
+      focus_area: input.focusArea,
+      has_competitors: (input.competitorUrls?.length || 0) > 0,
+      is_refinement: source === 'refinement',
+    })
+
+    // Update user properties with plan counts (fire-and-forget)
+    if (run.user_id) {
+      updateUserPlanCounts(run.user_id, source).catch((err) => {
+        console.error('[Pipeline] User plan count update failed:', err)
+      })
+    }
+
     console.log(`[Pipeline] Run ${runId} completed successfully`)
     return { success: true, output, researchContext: research }
   } catch (err) {
@@ -304,11 +364,12 @@ export async function runFreePipeline(
 
     // Send appropriate email based on source (fire-and-forget)
     // Email is stored directly on free_audits table
+    // Also track completion event
     ;(async () => {
       try {
         const { data: audit } = await supabase
           .from('free_audits')
-          .select('email, source')
+          .select('email, source, user_id')
           .eq('id', freeAuditId)
           .single()
         if (audit?.email) {
@@ -320,8 +381,18 @@ export async function runFreePipeline(
             await sendFreeAuditUpsellEmail({ to: audit.email, freeAuditId })
           }
         }
+
+        // Track free audit completion
+        const distinctId = audit?.user_id || freeAuditId
+        const source = audit?.source || 'organic'
+        trackServerEvent(distinctId, 'free_audit_completed', {
+          free_audit_id: freeAuditId,
+          source, // organic or abandoned_checkout
+          focus_area: input.focusArea,
+          has_competitors: (input.competitorUrls?.length || 0) > 0,
+        })
       } catch (err) {
-        console.error('[FreePipeline] Email failed:', err)
+        console.error('[FreePipeline] Email/tracking failed:', err)
       }
     })()
 

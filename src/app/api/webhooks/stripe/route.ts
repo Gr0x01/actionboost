@@ -197,6 +197,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       input: formInput as unknown as Json,
       status: "pending",
       stripe_session_id: session.id,
+      source: "stripe",
     })
     .select("id")
     .single();
