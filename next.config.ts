@@ -44,6 +44,14 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "peerpush.net",
+      },
+    ],
+  },
   async headers() {
     return [
       {

@@ -1,9 +1,5 @@
-"use client";
-
-import { useState } from "react";
-import Link from "next/link";
-import { usePostHog } from "posthog-js/react";
 import { config } from "@/lib/config";
+import { FreeTierButton, PaidTierButton } from "./PricingButtons";
 
 const features = [
   {
@@ -38,33 +34,29 @@ const features = [
   },
 ];
 
+function FeatureIndicator({
+  value,
+  isPaid,
+}: {
+  value: boolean | string;
+  isPaid?: boolean;
+}) {
+  if (value === false) {
+    return (
+      <span className="w-5 h-5 flex items-center justify-center text-foreground/30 font-mono text-sm">
+        —
+      </span>
+    );
+  }
+
+  return (
+    <span className={`w-5 h-5 flex items-center justify-center font-bold ${isPaid ? "text-cta" : "text-foreground"}`}>
+      ✓
+    </span>
+  );
+}
+
 export function Pricing() {
-  const [loading, setLoading] = useState(false);
-  const posthog = usePostHog();
-
-  async function handleBuyCredits() {
-    posthog?.capture("pricing_cta_clicked", { tier: "paid", location: "pricing" });
-    setLoading(true);
-    try {
-      const res = await fetch("/api/checkout/buy-credits", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch (error) {
-      console.error("Checkout error:", error);
-      setLoading(false);
-    }
-  }
-
-  function handleFreeTierClick() {
-    posthog?.capture("pricing_cta_clicked", { tier: "free", location: "pricing" });
-  }
-
   return (
     <section id="pricing" className="relative py-24">
       <div className="mx-auto max-w-7xl px-6">
@@ -105,13 +97,7 @@ export function Pricing() {
               ))}
             </div>
 
-            <Link
-              href="/start?tier=free"
-              onClick={handleFreeTierClick}
-              className="block w-full py-3 px-4 text-center font-bold border-[3px] border-foreground text-foreground hover:bg-foreground hover:text-background transition-colors duration-100"
-            >
-              Try Free
-            </Link>
+            <FreeTierButton />
 
             <p className="mt-4 text-xs text-foreground/60 text-center flex items-center justify-center gap-1.5">
               <span className="text-green-600">✓</span>
@@ -140,13 +126,7 @@ export function Pricing() {
               ))}
             </div>
 
-            <button
-              onClick={handleBuyCredits}
-              disabled={loading}
-              className="w-full py-3 px-4 font-bold bg-cta text-white border-[3px] border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 disabled:opacity-50 disabled:hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0 transition-all duration-100"
-            >
-              {loading ? "Loading..." : "Get My Action Plan"}
-            </button>
+            <PaidTierButton />
 
             <p className="mt-4 text-xs text-foreground/60 text-center flex items-center justify-center gap-1.5">
               <span className="text-green-600">✓</span>
@@ -161,27 +141,5 @@ export function Pricing() {
         </p>
       </div>
     </section>
-  );
-}
-
-function FeatureIndicator({
-  value,
-  isPaid,
-}: {
-  value: boolean | string;
-  isPaid?: boolean;
-}) {
-  if (value === false) {
-    return (
-      <span className="w-5 h-5 flex items-center justify-center text-foreground/30 font-mono text-sm">
-        —
-      </span>
-    );
-  }
-
-  return (
-    <span className={`w-5 h-5 flex items-center justify-center font-bold ${isPaid ? "text-cta" : "text-foreground"}`}>
-      ✓
-    </span>
   );
 }

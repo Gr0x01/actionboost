@@ -1,6 +1,5 @@
-"use client";
-
 import { STUCK_TWEETS, type StuckTweet } from "@/data/stuck-tweets";
+import { Marquee } from "./Marquee";
 
 // X/Twitter-style icons (simplified SVG paths)
 function ReplyIcon({ className }: { className?: string }) {
@@ -52,7 +51,7 @@ function ShareIcon({ className }: { className?: string }) {
 }
 
 function TweetCard({ tweet }: { tweet: StuckTweet }) {
-  // Generate avatar URL using DiceBear API
+  // Generate avatar URL using DiceBear API (below fold, doesn't affect LCP)
   const avatarUrl = `https://api.dicebear.com/7.x/notionists/svg?seed=${tweet.avatarSeed}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
 
   return (
@@ -63,6 +62,9 @@ function TweetCard({ tweet }: { tweet: StuckTweet }) {
         <img
           src={avatarUrl}
           alt=""
+          width={40}
+          height={40}
+          loading="lazy"
           className="w-10 h-10 rounded-full bg-[#2f3336] shrink-0"
         />
 
@@ -92,45 +94,45 @@ function TweetCard({ tweet }: { tweet: StuckTweet }) {
       {/* Engagement row - always at bottom */}
       <div className="flex items-center justify-between mt-3 pl-[52px]">
         {/* Reply */}
-        <button className="group flex items-center gap-1 text-[#536471] hover:text-[#1d9bf0] transition-colors">
-          <div className="p-1.5 rounded-full group-hover:bg-[#1d9bf0]/10 transition-colors">
+        <div className="group flex items-center gap-1 text-[#536471]">
+          <div className="p-1.5 rounded-full">
             <ReplyIcon className="w-[18px] h-[18px]" />
           </div>
           <span className="text-[13px]">{tweet.replies}</span>
-        </button>
+        </div>
 
         {/* Retweet */}
-        <button className="group flex items-center gap-1 text-[#536471] hover:text-[#00ba7c] transition-colors">
-          <div className="p-1.5 rounded-full group-hover:bg-[#00ba7c]/10 transition-colors">
+        <div className="group flex items-center gap-1 text-[#536471]">
+          <div className="p-1.5 rounded-full">
             <RetweetIcon className="w-[18px] h-[18px]" />
           </div>
           <span className="text-[13px]">{tweet.retweets}</span>
-        </button>
+        </div>
 
         {/* Like */}
-        <button className="group flex items-center gap-1 text-[#536471] hover:text-[#f91880] transition-colors">
-          <div className="p-1.5 rounded-full group-hover:bg-[#f91880]/10 transition-colors">
+        <div className="group flex items-center gap-1 text-[#536471]">
+          <div className="p-1.5 rounded-full">
             <HeartIcon className="w-[18px] h-[18px]" />
           </div>
           <span className="text-[13px]">{tweet.likes}</span>
-        </button>
+        </div>
 
         {/* Views */}
-        <button className="group flex items-center gap-1 text-[#536471] hover:text-[#1d9bf0] transition-colors">
-          <div className="p-1.5 rounded-full group-hover:bg-[#1d9bf0]/10 transition-colors">
+        <div className="group flex items-center gap-1 text-[#536471]">
+          <div className="p-1.5 rounded-full">
             <ViewsIcon className="w-[18px] h-[18px]" />
           </div>
           <span className="text-[13px]">{tweet.views}</span>
-        </button>
+        </div>
 
         {/* Bookmark & Share */}
         <div className="flex items-center">
-          <button className="p-1.5 rounded-full text-[#536471] hover:text-[#1d9bf0] hover:bg-[#1d9bf0]/10 transition-colors">
+          <div className="p-1.5 rounded-full text-[#536471]">
             <BookmarkIcon className="w-[18px] h-[18px]" />
-          </button>
-          <button className="p-1.5 rounded-full text-[#536471] hover:text-[#1d9bf0] hover:bg-[#1d9bf0]/10 transition-colors">
+          </div>
+          <div className="p-1.5 rounded-full text-[#536471]">
             <ShareIcon className="w-[18px] h-[18px]" />
-          </button>
+          </div>
         </div>
       </div>
     </div>
@@ -154,21 +156,21 @@ export function ProblemSection() {
         </h2>
       </div>
 
-      {/* Marquee container */}
+      {/* Marquee container - animations pause when off-screen */}
       <div className="marquee-container space-y-4">
         {/* Row 1 - scrolls left */}
-        <div className="flex animate-marquee-left">
+        <Marquee className="flex animate-marquee-left">
           {[...row1Tweets, ...row1Tweets].map((tweet, i) => (
             <TweetCard key={`row1-${tweet.id}-${i}`} tweet={tweet} />
           ))}
-        </div>
+        </Marquee>
 
         {/* Row 2 - scrolls right */}
-        <div className="flex animate-marquee-right">
+        <Marquee className="flex animate-marquee-right">
           {[...row2Tweets, ...row2Tweets].map((tweet, i) => (
             <TweetCard key={`row2-${tweet.id}-${i}`} tweet={tweet} />
           ))}
-        </div>
+        </Marquee>
       </div>
 
       {/* Edge fades */}

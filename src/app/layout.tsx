@@ -13,18 +13,21 @@ const GDPR_COUNTRIES = new Set([
 ]);
 
 const sourceSans = Source_Sans_3({
+  display: "swap",
   variable: "--font-source-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  weight: ["300", "400", "600", "700", "800"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
+  display: "swap",
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500"],
 });
 
 const tienne = Tienne({
+  display: "swap",
   variable: "--font-tienne",
   subsets: ["latin"],
   weight: ["400", "700", "900"],

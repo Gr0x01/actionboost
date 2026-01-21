@@ -1,16 +1,6 @@
-"use client";
+import { FrameworksNav } from "./FrameworksNav";
 
-import { useEffect, useState } from "react";
-
-interface Framework {
-  id: "aarrr" | "ice" | "growth";
-  label: string;
-  title: string;
-  subtitle: string;
-  description: string;
-}
-
-const FRAMEWORKS: Framework[] = [
+const FRAMEWORKS = [
   {
     id: "aarrr",
     label: "The Framework",
@@ -170,7 +160,7 @@ function OutputContent() {
             <span className="font-mono text-xs bg-foreground text-background px-2 py-1 h-fit font-bold">D5-7</span>
             <div>
               <p className="font-semibold text-foreground text-sm">Launch on Indie Hackers</p>
-              <p className="text-foreground/60 text-sm">"We ran our AI growth tool on ourselves" — first paying customers</p>
+              <p className="text-foreground/60 text-sm">&quot;We ran our AI growth tool on ourselves&quot; — first paying customers</p>
             </div>
           </div>
         </div>
@@ -179,67 +169,20 @@ function OutputContent() {
   );
 }
 
+function renderContent(id: string) {
+  switch (id) {
+    case "aarrr":
+      return <AARRRContent />;
+    case "ice":
+      return <ICEContent />;
+    case "growth":
+      return <OutputContent />;
+    default:
+      return null;
+  }
+}
+
 export function FrameworksSection() {
-  const [activeFramework, setActiveFramework] = useState<string>("aarrr");
-
-  // Scroll-spy: track which card is closest to viewport center
-  useEffect(() => {
-    const handleScroll = () => {
-      const viewportCenter = window.innerHeight / 2;
-      let closestId = "aarrr";
-      let closestDistance = Infinity;
-
-      FRAMEWORKS.forEach((framework) => {
-        const element = document.querySelector(`[data-framework="${framework.id}"]`);
-        if (!element) return;
-
-        const rect = element.getBoundingClientRect();
-        const elementCenter = rect.top + rect.height / 2;
-        const distance = Math.abs(elementCenter - viewportCenter);
-
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestId = framework.id;
-        }
-      });
-
-      setActiveFramework(closestId);
-    };
-
-    // Initial check
-    handleScroll();
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const scrollToFramework = (id: string) => {
-    const element = document.querySelector(`[data-framework="${id}"]`);
-    if (element) {
-      const headerOffset = 160;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.scrollY - headerOffset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth",
-      });
-    }
-  };
-
-  const renderContent = (id: string) => {
-    switch (id) {
-      case "aarrr":
-        return <AARRRContent />;
-      case "ice":
-        return <ICEContent />;
-      case "growth":
-        return <OutputContent />;
-      default:
-        return null;
-    }
-  };
-
   return (
     <section id="how-it-works" className="relative py-24 bg-surface">
       <div className="mx-auto max-w-7xl px-6">
@@ -254,44 +197,12 @@ export function FrameworksSection() {
         </div>
 
         <div className="lg:flex lg:gap-16">
-          {/* Sidebar - sticky nav with left border indicator */}
+          {/* Sidebar - sticky nav with left border indicator (client component) */}
           <aside className="hidden lg:block lg:w-72 lg:shrink-0">
-            <nav className="sticky top-36 space-y-4">
-              {FRAMEWORKS.map((framework) => {
-                const isActive = activeFramework === framework.id;
-
-                return (
-                  <button
-                    key={framework.id}
-                    onClick={() => scrollToFramework(framework.id)}
-                    className={`
-                      w-full text-left pl-5 border-l-4 transition-all duration-150
-                      ${isActive
-                        ? "border-cta opacity-100"
-                        : "border-transparent opacity-40 hover:opacity-70 hover:border-foreground/20"}
-                    `}
-                  >
-                    <span
-                      className={`
-                        font-mono text-[10px] uppercase tracking-[0.15em]
-                        ${isActive ? "text-cta font-semibold" : "text-foreground"}
-                      `}
-                    >
-                      {framework.label}
-                    </span>
-                    <h3 className="text-2xl font-black text-foreground mt-1">
-                      {framework.title}
-                    </h3>
-                    <p className="text-sm text-foreground/70 mt-1">
-                      {framework.subtitle}
-                    </p>
-                  </button>
-                );
-              })}
-            </nav>
+            <FrameworksNav frameworks={FRAMEWORKS} />
           </aside>
 
-          {/* Content cards */}
+          {/* Content cards (server rendered) */}
           <div className="flex-1 space-y-24">
             {FRAMEWORKS.map((framework) => (
               <div key={framework.id} data-framework={framework.id}>
