@@ -50,6 +50,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "peerpush.net",
       },
+      {
+        protocol: "https",
+        hostname: "www.uneed.best",
+      },
     ],
   },
   async headers() {

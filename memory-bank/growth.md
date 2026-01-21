@@ -48,12 +48,18 @@ Reference: [Full growth plan](../docs/growth-plan-actionboost.md)
 | Add "Tell Us More" refinements | ✅ 2 free refinements per run |
 | Build First Impressions pipeline | ✅ Internal tool for sharing |
 | X posts (BIP threads) | ✅ Multiple posted |
+| Cold-called @simonbalfe on X | ✅ "good product" - permission to quote |
+| Add testimonials section to landing | ✅ Live - 3 testimonials |
+| Uneed live | ✅ Was pending, now approved |
+| Add Uneed badge to footer | ✅ Live |
 
 ### Wins
 - **PeerPush #2** for today's launches
 - **PeerPush testimonial** from @noahpraduns: "This is exactly what I needed! The competitor analysis feature is incredibly valuable. The 30-day playbook alone is worth the price. Highly recommend!"
 - **BIP thread posted** - Better engagement than general X posting
 - **First Impressions tool** - Can now demo the product without friction
+- **@simonbalfe testimonial** - Cold-called him in BIP thread, he said "good product" and gave permission to quote
+- **Uneed approved** - Now listed, badge added to footer
 
 ### Product Improvements
 - **Free tier extended** - 4 sections now (added Channel Strategy) to prove value before paywall
