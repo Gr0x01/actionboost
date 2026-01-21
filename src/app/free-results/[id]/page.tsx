@@ -265,10 +265,21 @@ function FreeResultsPageContent() {
     return (
       <div className="min-h-screen flex flex-col bg-mesh">
         <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-muted mb-4">Invalid or expired link</p>
-            <a href="/start" className="text-primary hover:underline">Start a new audit →</a>
+        <main className="flex-1 flex items-center justify-center px-4">
+          <div className="border-[3px] border-foreground bg-surface p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] text-center max-w-md">
+            <p className="font-mono text-[10px] tracking-[0.15em] text-foreground/60 uppercase font-semibold mb-2">
+              Link expired
+            </p>
+            <p className="text-foreground font-medium mb-6">
+              This link is no longer valid. Start a fresh audit to get your growth strategy.
+            </p>
+            <a
+              href="/start"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100"
+            >
+              Start a new audit
+              <ArrowRight className="w-4 h-4" />
+            </a>
           </div>
         </main>
         <Footer />
