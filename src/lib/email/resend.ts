@@ -666,6 +666,140 @@ function generateFreeAuditUpsellHtml(data: {
 }
 
 // =============================================================================
+// ABANDONED CHECKOUT EMAIL (Cart Abandonment Recovery)
+// =============================================================================
+
+export interface AbandonedCheckoutEmailData {
+  to: string;
+  freeAuditId: string;
+}
+
+/**
+ * Send cart abandonment recovery email with free audit results.
+ * Sent when a Stripe checkout session expires.
+ * Fire-and-forget: errors are logged but don't throw.
+ */
+export async function sendAbandonedCheckoutEmail(
+  data: AbandonedCheckoutEmailData
+): Promise<void> {
+  try {
+    const { to, freeAuditId } = data;
+    const freeResultsUrl = `${process.env.NEXT_PUBLIC_APP_URL}/free-results/${freeAuditId}`;
+    const upgradeUrl = `${process.env.NEXT_PUBLIC_APP_URL}/start`;
+
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      subject: "We saved something for you",
+      html: generateAbandonedCheckoutHtml({ freeResultsUrl, upgradeUrl }),
+    });
+
+    console.log("[sendAbandonedCheckoutEmail] Sent to:", to);
+  } catch (error) {
+    console.error("[sendAbandonedCheckoutEmail] Failed:", error);
+  }
+}
+
+function generateAbandonedCheckoutHtml(data: {
+  freeResultsUrl: string;
+  upgradeUrl: string;
+}): string {
+  const { freeResultsUrl, upgradeUrl } = data;
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body style="margin: 0; padding: 0; background-color: ${COLORS.cream}; font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: ${COLORS.cream}; padding: 48px 20px;">
+    <tr>
+      <td align="center">
+        <table width="560" cellpadding="0" cellspacing="0" style="max-width: 560px;">
+          <tr>
+            <td>
+              <table cellpadding="0" cellspacing="0" width="100%" style="border-spacing: 0;">
+                <tr>
+                  <td>
+                    <table cellpadding="0" cellspacing="0" width="100%" style="border: 3px solid ${COLORS.foreground}; background-color: #FFFFFF;">
+                      <tr>
+                        <td style="padding: 48px 40px 40px;">
+                          <p style="margin: 0 0 32px; font-family: 'JetBrains Mono', Consolas, Monaco, monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.15em; color: ${COLORS.foreground}; text-transform: uppercase;">
+                            ACTIONBOO.ST
+                          </p>
+                          <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
+                            We saved something for you.
+                          </h1>
+                          <p style="margin: 0 0 24px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
+                            While you were deciding, we went ahead and did a quick analysis of your business. Consider it a preview of what we can do.
+                          </p>
+                          <p style="margin: 0 0 32px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
+                            No strings attached. If you like what you see, the full strategy goes much deeper.
+                          </p>
+
+                          <!-- Primary CTA: View Free Audit -->
+                          <table cellpadding="0" cellspacing="0" style="border-spacing: 0; margin-bottom: 16px;">
+                            <tr>
+                              <td>
+                                <table cellpadding="0" cellspacing="0" style="border: 2px solid ${COLORS.foreground};">
+                                  <tr>
+                                    <td style="background-color: ${COLORS.cta};">
+                                      <a href="${freeResultsUrl}" style="display: inline-block; padding: 16px 32px; color: #FFFFFF; text-decoration: none; font-family: 'Source Sans 3', -apple-system, sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em;">
+                                        View Your Free Audit
+                                      </a>
+                                    </td>
+                                  </tr>
+                                </table>
+                              </td>
+                              <td style="width: 4px; background-color: ${COLORS.foreground};"></td>
+                            </tr>
+                            <tr>
+                              <td style="padding-left: 4px;">
+                                <div style="height: 4px; background-color: ${COLORS.foreground};"></div>
+                              </td>
+                              <td></td>
+                            </tr>
+                          </table>
+
+                          <!-- Secondary link -->
+                          <p style="margin: 0; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 14px; color: ${COLORS.muted};">
+                            Ready for the full picture? <a href="${upgradeUrl}" style="color: ${COLORS.cta}; text-decoration: none; font-weight: 600;">Get your complete strategy for $9.99</a>
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td style="width: 6px; background-color: ${COLORS.foreground}; vertical-align: top;"></td>
+                </tr>
+                <tr>
+                  <td style="padding-left: 6px;">
+                    <div style="height: 6px; background-color: ${COLORS.foreground};"></div>
+                  </td>
+                  <td></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 32px 0; text-align: center;">
+              <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted}; text-transform: uppercase;">
+                <a href="https://actionboo.st" style="color: ${COLORS.muted}; text-decoration: none;">ACTIONBOO.ST</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim();
+}
+
+// =============================================================================
 // FEEDBACK REQUEST EMAIL
 // =============================================================================
 

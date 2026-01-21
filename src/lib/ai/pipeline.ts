@@ -8,6 +8,7 @@ import {
   sendRunReadyEmail,
   sendRunFailedEmail,
   sendFreeAuditUpsellEmail,
+  sendAbandonedCheckoutEmail,
 } from '@/lib/email/resend'
 import type { RunInput, PipelineResult, ResearchContext, UserHistoryContext } from './types'
 import type { UserContext } from '@/lib/types/context'
@@ -301,20 +302,26 @@ export async function runFreePipeline(
       return { success: false, error: `Failed to save output: ${updateError.message}` }
     }
 
-    // Send upsell email (fire-and-forget)
+    // Send appropriate email based on source (fire-and-forget)
     // Email is stored directly on free_audits table
     ;(async () => {
       try {
         const { data: audit } = await supabase
           .from('free_audits')
-          .select('email')
+          .select('email, source')
           .eq('id', freeAuditId)
           .single()
         if (audit?.email) {
-          await sendFreeAuditUpsellEmail({ to: audit.email, freeAuditId })
+          if (audit.source === 'abandoned_checkout') {
+            // Cart abandonment recovery - different messaging
+            await sendAbandonedCheckoutEmail({ to: audit.email, freeAuditId })
+          } else {
+            // Organic free audit - standard upsell
+            await sendFreeAuditUpsellEmail({ to: audit.email, freeAuditId })
+          }
         }
       } catch (err) {
-        console.error('[FreePipeline] Upsell email failed:', err)
+        console.error('[FreePipeline] Email failed:', err)
       }
     })()
 

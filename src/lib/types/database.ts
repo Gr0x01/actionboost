@@ -44,6 +44,7 @@ export type Database = {
           input: Json
           output: string | null
           status: string
+          source: string | null
           created_at: string
           completed_at: string | null
         }
@@ -54,6 +55,7 @@ export type Database = {
           input: Json
           output?: string | null
           status?: string
+          source?: string | null
           created_at?: string
           completed_at?: string | null
         }
@@ -64,6 +66,7 @@ export type Database = {
           input?: Json
           output?: string | null
           status?: string
+          source?: string | null
           created_at?: string
           completed_at?: string | null
         }

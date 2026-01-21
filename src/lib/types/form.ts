@@ -27,6 +27,7 @@ export interface FormInput {
   analyticsSummary: string;
   constraints: string;
   attachments: FileAttachment[];
+  email: string; // Collected before checkout for cart abandonment
 }
 
 export const FOCUS_AREA_OPTIONS: {
@@ -76,6 +77,7 @@ export const INITIAL_FORM_STATE: FormInput = {
   analyticsSummary: "",
   constraints: "",
   attachments: [],
+  email: "",
 };
 
 export const MAX_TOTAL_CHARS = 25000;

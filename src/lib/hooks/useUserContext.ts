@@ -86,6 +86,7 @@ export function useUserContext(): UseUserContextResult {
       analyticsSummary: '',
       constraints: context.constraints || '',
       attachments: [],
+      email: '', // Will be collected in form flow
     }
   }
 

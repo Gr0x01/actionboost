@@ -1,6 +1,68 @@
-# Current: AI Context Limits Relaxed
+# Current: Cart Abandonment Recovery
 
-## Latest Update: Relaxed Restrictive Limits
+## Latest Update: Auto Free Audit for Abandoned Checkouts
+
+**Completed Jan 21, 2026** - Capture email before checkout, send free audit when they abandon.
+
+### The Problem
+Users who clicked $9.99 but didn't complete Stripe checkout were lost. We had no way to follow up because we only collected email at Stripe (after they left).
+
+### Solution
+1. **Email question before checkout** - New form step (optional, skippable) asks "Where should we send your strategy?"
+2. **Pre-fill Stripe checkout** - Email passes to Stripe via `customer_email`
+3. **Cart abandonment webhook** - When `checkout.session.expired` fires:
+   - Check if user already has free audit (send recovery email if so)
+   - Create free audit with `source: 'abandoned_checkout'`
+   - Run free pipeline (Sonnet + Tavily)
+   - Send "We saved something for you" email with free results
+
+### Technical Details
+- New `EmailInput` component (brutalist styling, validation feedback)
+- Email stored in Stripe metadata as `form_email`
+- `free_audits.source` column: `'organic'` vs `'abandoned_checkout'`
+- Pipeline checks source to send appropriate email template
+- Duplicate prevention via normalized email check
+
+### Files Changed
+- `src/lib/types/form.ts` - added email field
+- `src/components/forms/EmailInput.tsx` - new component
+- `src/app/start/page.tsx` - email question (step 7 of 8)
+- `src/app/api/checkout/create-session/route.ts` - customer_email + metadata
+- `src/app/api/webhooks/stripe/route.ts` - expired session handler
+- `src/lib/email/resend.ts` - `sendAbandonedCheckoutEmail()`
+- `src/lib/ai/pipeline.ts` - conditional email based on source
+
+### Cost Impact
+- ~$0.05 per abandoned checkout (Sonnet + Tavily)
+- Potential $9.99 recovery per user
+
+---
+
+## Previous: Free Mini-Audit Extended ✅
+
+**Completed Jan 21, 2026** - Extended free mini-audit to prove value before paywall.
+
+### The Change
+Free mini-audit now shows 4 sections instead of 3:
+1. Executive Summary
+2. Your Situation
+3. Competitive Landscape
+4. **Channel Strategy** (new)
+
+This gives users enough to see we know their specific business/channels - the proof point - without giving away the implementation playbook (Stop/Start Doing, This Week, Roadmap, etc.).
+
+### Technical Details
+- `MINI_MAX_TOKENS`: 2000 → 3000
+- Added Channel Strategy section to `buildMiniSystemPrompt()`
+- Updated upsell text to exclude Channel Strategy from "what you'll get"
+
+### Cost Impact
+- Free run: ~$0.04 → ~$0.05-0.06
+- Still acceptable for lead generation
+
+---
+
+## Previous: Relaxed AI Context Limits ✅
 
 **Completed Jan 21, 2026** - Increased context sent to Claude to improve output quality.
 

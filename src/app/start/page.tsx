@@ -13,6 +13,7 @@ import {
   TextareaInput,
   TractionInput,
   FocusInput,
+  EmailInput,
   CompetitorInput,
   UploadInput,
   CheckoutSection,
@@ -79,6 +80,13 @@ const QUESTIONS = [
     type: "focus" as const,
   },
   {
+    id: "email",
+    question: "Where should we send your strategy?",
+    acknowledgment: null,
+    type: "email" as const,
+    optional: true,
+  },
+  {
     id: "competitors",
     question: "Any competitors I should study?",
     acknowledgment: null,
@@ -102,6 +110,7 @@ const STEP_NAMES: Record<string, string> = {
   tacticsAndResults: "tactics",
   attachments: "uploads",
   focusArea: "focus",
+  email: "email",
   competitors: "competitors",
 };
 
@@ -759,6 +768,16 @@ export default function StartPage() {
                       onBack={currentQuestion > 0 ? goBack : undefined}
                       customChallenge={form.constraints}
                       onCustomChallengeChange={(v) => updateField("constraints", v)}
+                    />
+                  )}
+
+                  {question.type === "email" && (
+                    <EmailInput
+                      value={form.email}
+                      onChange={(v) => updateField("email", v)}
+                      onSubmit={() => goToNext(false)}
+                      onSkip={question.optional ? () => goToNext(true) : undefined}
+                      onBack={currentQuestion > 0 ? goBack : undefined}
                     />
                   )}
 

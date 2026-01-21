@@ -53,7 +53,7 @@ export function CheckoutSection({
   const hasTrackedView = useRef(false);
 
   const [showFreeOption, setShowFreeOption] = useState(false);
-  const [freeEmail, setFreeEmail] = useState("");
+  const [freeEmail, setFreeEmail] = useState(formData?.email || "");
   const [freeSubmitting, setFreeSubmitting] = useState(false);
   const [freeError, setFreeError] = useState<string | null>(null);
   const freeSubmitRef = useRef(false);

@@ -83,6 +83,7 @@ export async function POST(request: NextRequest) {
       form_website: input.websiteUrl || "",
       form_analytics: (input.analyticsSummary || "").slice(0, 500),
       form_constraints: (input.constraints || "").slice(0, 500),
+      form_email: input.email || "", // For cart abandonment recovery
       credits: "1",
       posthog_distinct_id: posthogDistinctId || "",
       // Context delta: if already applied to user, don't duplicate in metadata
@@ -100,6 +101,8 @@ export async function POST(request: NextRequest) {
         },
       ],
       metadata,
+      // Pre-fill email in Stripe checkout if provided
+      customer_email: input.email || undefined,
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/processing/{CHECKOUT_SESSION_ID}?new=1`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/start`,
     });
