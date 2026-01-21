@@ -65,6 +65,14 @@ export function Header() {
           <div className="flex items-center gap-2">
             {!loading && user ? (
               <>
+                {user.email === "gr0x01@pm.me" && (
+                  <Link
+                    href="/first-impressions"
+                    className="hidden sm:flex items-center gap-2 px-3 py-2 text-sm font-bold text-cta hover:text-cta-hover transition-colors"
+                  >
+                    FI
+                  </Link>
+                )}
                 <Link
                   href="/dashboard"
                   className="hidden sm:flex items-center gap-2 px-3 py-2 text-sm font-bold text-foreground/60 hover:text-foreground transition-colors"
