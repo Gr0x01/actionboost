@@ -92,7 +92,7 @@ export function FooterCTAForm() {
     <>
       {/* URL Input - brutalist style */}
       <div className="max-w-lg mx-auto mb-6">
-        <div className="flex border-[3px] border-background bg-foreground">
+        <div className="flex rounded-2xl border-[3px] border-background bg-foreground overflow-hidden">
           <div className="flex items-center gap-3 flex-1 px-4 py-3">
             {favicon ? (
               <img

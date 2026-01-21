@@ -100,7 +100,7 @@ export default function FirstImpressionsPage() {
             <p className="text-foreground/60 mb-6">Page not found</p>
             <a
               href="/"
-              className="inline-flex px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100"
+              className="inline-flex rounded-xl px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100"
             >
               Go home
             </a>
@@ -122,7 +122,7 @@ export default function FirstImpressionsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-lg"
         >
-          <div className="border-[3px] border-foreground bg-surface p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
+          <div className="rounded-2xl border-[3px] border-foreground bg-surface p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
             <p className="font-mono text-[10px] tracking-[0.15em] text-cta uppercase font-semibold mb-2">
               First Impressions
             </p>
@@ -148,7 +148,7 @@ export default function FirstImpressionsPage() {
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="https://example.com"
                   disabled={submitting}
-                  className="w-full px-4 py-3 bg-background border-2 border-foreground text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-cta focus:ring-offset-2 disabled:opacity-50"
+                  className="w-full rounded-xl px-4 py-3 bg-background border-2 border-foreground text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-cta focus:ring-offset-2 disabled:opacity-50"
                 />
               </div>
 
@@ -159,7 +159,7 @@ export default function FirstImpressionsPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
+                className="w-full rounded-xl flex items-center justify-center gap-2 px-6 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
               >
                 {submitting ? (
                   <>

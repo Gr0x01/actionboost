@@ -50,7 +50,7 @@ function BlogPostCard({ post }: { post: BlogPost }) {
   return (
     <Link href={`/blog/${post.slug}`} className="group block">
       <article
-        className={`border-[3px] border-foreground bg-background p-6 lg:p-8 ${
+        className={`rounded-2xl border-[3px] border-foreground bg-background p-6 lg:p-8 ${
           post.featured
             ? "shadow-[6px_6px_0_0_rgba(44,62,80,1)]"
             : "shadow-[4px_4px_0_0_rgba(44,62,80,1)]"
@@ -121,7 +121,7 @@ export default function BlogPage() {
 
           {/* Bottom CTA */}
           <section className="pb-16">
-            <div className="border-[3px] border-foreground bg-background p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] text-center space-y-4">
+            <div className="rounded-2xl border-[3px] border-foreground bg-background p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] text-center space-y-4">
               <p className="font-mono text-xs tracking-[0.15em] text-foreground/60 uppercase">
                 Build your own growth plan
               </p>
@@ -134,7 +134,7 @@ export default function BlogPage() {
               </p>
               <div className="pt-2">
                 <Link href="/start">
-                  <button className="px-8 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
+                  <button className="rounded-xl px-8 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
                     Get Started - {config.singlePrice}
                   </button>
                 </Link>

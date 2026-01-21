@@ -46,7 +46,7 @@ export function HeroForm() {
   return (
     <div className="space-y-4">
       {/* Form - brutalist box with harsh shadow */}
-      <div className="border-[3px] border-foreground bg-background p-6 lg:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
+      <div className="rounded-2xl border-[3px] border-foreground bg-background p-6 lg:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
         <label
           htmlFor="hero-description"
           className="block text-base font-bold text-foreground mb-3"
@@ -61,14 +61,14 @@ export function HeroForm() {
           placeholder="Marketplace for tattoo artists. 500 signups, 3% convert to bookings. Tried Instagram ads, didn't work..."
           disabled={isSubmitting}
           rows={4}
-          className="w-full bg-surface border-2 border-foreground/20 px-4 py-3 text-foreground placeholder:text-foreground/30 text-base leading-relaxed resize-none focus:outline-none focus:border-foreground transition-colors disabled:opacity-50"
+          className="w-full rounded-xl bg-surface border-2 border-foreground/20 px-4 py-3 text-foreground placeholder:text-foreground/30 text-base leading-relaxed resize-none focus:outline-none focus:border-foreground transition-colors disabled:opacity-50"
         />
 
         {/* CTA Button - tactile with press state */}
         <button
           onClick={handleSubmit}
           disabled={!description.trim() || isSubmitting}
-          className="mt-4 w-full flex items-center justify-center gap-2 px-6 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0 transition-all duration-100"
+          className="mt-4 w-full rounded-2xl flex items-center justify-center gap-2 px-6 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0 transition-all duration-100"
         >
           {isSubmitting ? (
             <>
@@ -100,7 +100,7 @@ export function HeroForm() {
         onClick={() => trackCTA("dogfooding_proof")}
         className="group block"
       >
-        <div className="border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
+        <div className="rounded-2xl border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
           <div className="flex items-center justify-between gap-4">
             <div>
               <span className="font-mono text-[10px] tracking-[0.15em] text-cta uppercase font-semibold">

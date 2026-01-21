@@ -151,7 +151,7 @@ export function CheckoutSection({
       {/* Email input for promo code users */}
       {hasValidCode && (
         <div className="max-w-sm mx-auto mb-6 space-y-2">
-          <div className="flex items-center gap-3 border-2 border-foreground/30 bg-background px-4 py-3 focus-within:border-foreground transition-colors">
+          <div className="flex items-center gap-3 rounded-xl border-2 border-foreground/30 bg-background px-4 py-3 focus-within:border-foreground transition-colors">
             <Mail className="w-5 h-5 text-foreground/40" />
             <input
               type="email"
@@ -176,7 +176,7 @@ export function CheckoutSection({
 
       {/* Error message - single location */}
       {externalError && (
-        <div className="max-w-md mx-auto p-4 border-2 border-foreground bg-red-50 shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
+        <div className="max-w-md mx-auto rounded-xl p-4 border-2 border-foreground bg-red-50 shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
           <p className="font-bold text-foreground text-sm">{externalError}</p>
         </div>
       )}
@@ -207,7 +207,7 @@ export function CheckoutSection({
                   posthog?.capture("free_audit_option_clicked");
                   setShowFreeOption(true);
                 }}
-                className="px-5 py-3 text-base font-bold bg-transparent text-foreground border-2 border-foreground/30 transition-all duration-100 hover:border-foreground hover:shadow-[3px_3px_0_0_rgba(44,62,80,0.3)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5"
+                className="rounded-xl px-5 py-3 text-base font-bold bg-transparent text-foreground border-2 border-foreground/30 transition-all duration-100 hover:border-foreground hover:shadow-[3px_3px_0_0_rgba(44,62,80,0.3)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5"
               >
                 Free Preview
               </button>
@@ -224,7 +224,7 @@ export function CheckoutSection({
                 onSubmit();
               }}
               disabled={isSubmitting || (hasValidCode && !canSubmitWithCode)}
-              className={`flex items-center gap-1.5 px-6 py-3 text-base font-bold transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed ${
+              className={`flex items-center gap-1.5 rounded-xl px-6 py-3 text-base font-bold transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed ${
                 hasCredits || hasValidCode
                   ? "bg-green-600 text-white border-2 border-green-600 shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 disabled:hover:shadow-[3px_3px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0"
                   : "bg-cta text-white border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 disabled:hover:shadow-[3px_3px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0"
@@ -263,7 +263,7 @@ export function CheckoutSection({
           <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="max-w-lg mx-auto p-6 border-2 border-foreground/20 bg-background space-y-4"
+              className="max-w-lg mx-auto rounded-xl p-6 border-2 border-foreground/20 bg-background space-y-4"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-cta">
@@ -283,7 +283,7 @@ export function CheckoutSection({
                 Get a condensed 5-section audit to preview our analysis style
               </p>
               <div className="flex gap-2">
-                <div className="flex-1 flex items-center gap-2 border-2 border-foreground/30 bg-background px-4 py-3 focus-within:border-foreground transition-colors">
+                <div className="flex-1 flex items-center gap-2 rounded-xl border-2 border-foreground/30 bg-background px-4 py-3 focus-within:border-foreground transition-colors">
                   <Mail className="w-4 h-4 text-foreground/40" />
                   <input
                     type="email"
@@ -303,7 +303,7 @@ export function CheckoutSection({
                   type="button"
                   onClick={handleFreeAuditSubmit}
                   disabled={!freeEmailValid || freeSubmitting}
-                  className="px-5 py-3 bg-cta text-white text-sm font-bold border-2 border-cta hover:bg-cta-hover transition-colors disabled:opacity-50"
+                  className="rounded-xl px-5 py-3 bg-cta text-white text-sm font-bold border-2 border-cta hover:bg-cta-hover transition-colors disabled:opacity-50"
                 >
                   {freeSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Get It"}
                 </button>
@@ -339,12 +339,12 @@ export function CheckoutSection({
                   onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
                   placeholder="Enter code"
                   autoFocus
-                  className="flex-1 px-3 py-2 border-2 border-foreground/20 bg-background text-sm text-foreground placeholder:text-foreground/30 focus:border-foreground focus:outline-none font-mono tracking-wider"
+                  className="flex-1 rounded-lg px-3 py-2 border-2 border-foreground/20 bg-background text-sm text-foreground placeholder:text-foreground/30 focus:border-foreground focus:outline-none font-mono tracking-wider"
                 />
                 <button
                   onClick={validateCode}
                   disabled={!promoCode.trim() || isValidatingCode}
-                  className="px-4 py-2 bg-foreground text-background text-sm font-bold border-2 border-foreground hover:bg-foreground/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="rounded-lg px-4 py-2 bg-foreground text-background text-sm font-bold border-2 border-foreground hover:bg-foreground/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isValidatingCode ? <Loader2 className="w-4 h-4 animate-spin" /> : "Apply"}
                 </button>
@@ -362,7 +362,7 @@ export function CheckoutSection({
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-bold"
+          className="inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-green-600 text-white font-bold"
         >
           <Check className="w-4 h-4" />
           <span className="text-sm">

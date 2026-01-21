@@ -125,7 +125,7 @@ function OutputContent() {
     <>
       <div className="mb-8">
         <h3 className="text-lg font-bold text-foreground mb-3">Stop Doing</h3>
-        <div className="bg-red-50 border-2 border-red-200 p-4">
+        <div className="rounded-xl bg-red-50 border-2 border-red-200 p-4">
           <p className="font-bold text-red-800 mb-1">Building more features before proving distribution</p>
           <p className="text-red-700/80 text-sm">
             The MVP is complete. Every hour on features is an hour not on distribution. Freeze for 30 days.
@@ -210,7 +210,7 @@ export function FrameworksSection() {
                 </div>
 
                 {/* Content card - brutalist style, NO scroll */}
-                <div className="border-[3px] border-foreground bg-background p-6 lg:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
+                <div className="rounded-2xl border-[3px] border-foreground bg-background p-6 lg:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
                   {renderContent(framework.id)}
                 </div>
               </div>

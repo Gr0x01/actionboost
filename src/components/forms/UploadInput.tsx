@@ -144,7 +144,7 @@ export function UploadInput({ value, onChange, onSubmit, onSkip, onBack }: Uploa
           {value.map((file) => (
             <div
               key={file.id}
-              className="flex items-center gap-3 p-3 border-2 border-foreground/20 bg-background"
+              className="flex items-center gap-3 rounded-xl p-3 border-2 border-foreground/20 bg-background"
             >
               <div className="text-foreground/50">{getFileIcon(file.type)}</div>
               <div className="flex-1 min-w-0">
@@ -170,7 +170,7 @@ export function UploadInput({ value, onChange, onSubmit, onSkip, onBack }: Uploa
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
         >
-          <div className={`border-2 border-dashed p-8 text-center transition-all ${
+          <div className={`rounded-xl border-2 border-dashed p-8 text-center transition-all ${
             isDragging
               ? "border-cta bg-cta/5"
               : "border-foreground/30 hover:border-foreground"
@@ -222,14 +222,14 @@ export function UploadInput({ value, onChange, onSubmit, onSkip, onBack }: Uploa
           {value.length === 0 && (
             <button
               onClick={onSkip}
-              className="px-4 py-2 border-2 border-foreground/30 text-sm font-bold text-foreground/60 hover:border-foreground hover:text-foreground transition-colors"
+              className="rounded-xl px-4 py-2 border-2 border-foreground/30 text-sm font-bold text-foreground/60 hover:border-foreground hover:text-foreground transition-colors"
             >
               Skip
             </button>
           )}
           <button
             onClick={value.length > 0 ? onSubmit : onSkip}
-            className="flex items-center gap-1.5 px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-100"
+            className="flex items-center gap-1.5 rounded-xl px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-100"
           >
             Continue
             <ArrowRight className="w-3.5 h-3.5" />

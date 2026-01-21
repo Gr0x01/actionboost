@@ -22,8 +22,8 @@ export function MagicLinkBanner() {
   if (dismissed || isLoggedIn === null || isLoggedIn) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 max-w-sm bg-surface border-2 border-foreground p-4 shadow-[4px_4px_0_0_rgba(0,0,0,0.8)] flex items-start gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
-      <div className="w-9 h-9 border-2 border-foreground bg-background flex items-center justify-center flex-shrink-0">
+    <div className="fixed bottom-4 right-4 z-50 max-w-sm rounded-xl bg-surface border-2 border-foreground p-4 shadow-[4px_4px_0_0_rgba(0,0,0,0.8)] flex items-start gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+      <div className="w-9 h-9 rounded-lg border-2 border-foreground bg-background flex items-center justify-center flex-shrink-0">
         <Mail className="h-4 w-4 text-foreground" />
       </div>
       <div className="flex-1 min-w-0">

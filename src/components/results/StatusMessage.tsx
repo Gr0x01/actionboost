@@ -54,7 +54,7 @@ export function StatusMessage({
     return (
       <div className="max-w-lg mx-auto text-center py-16 px-6">
         <div className="mb-8">
-          <div className="w-20 h-20 mx-auto border-[3px] border-green-600 bg-green-600 flex items-center justify-center shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
+          <div className="w-20 h-20 mx-auto rounded-xl border-[3px] border-green-600 bg-green-600 flex items-center justify-center shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
             <Check className="w-10 h-10 text-white" />
           </div>
         </div>
@@ -73,7 +73,7 @@ export function StatusMessage({
     return (
       <div className="max-w-lg mx-auto text-center py-16 px-6">
         <div className="mb-8">
-          <div className="w-20 h-20 mx-auto border-[3px] border-red-500 bg-red-500 flex items-center justify-center shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
+          <div className="w-20 h-20 mx-auto rounded-xl border-[3px] border-red-500 bg-red-500 flex items-center justify-center shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
             <X className="w-10 h-10 text-white" />
           </div>
         </div>
@@ -94,13 +94,13 @@ export function StatusMessage({
         <div className="flex items-center justify-center gap-3">
           <Link
             href="/start"
-            className="px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100"
+            className="rounded-xl px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100"
           >
             Try Again
           </Link>
           <a
             href="mailto:team@actionboo.st"
-            className="px-6 py-3 bg-transparent text-foreground font-bold border-2 border-foreground/30 hover:border-foreground transition-colors"
+            className="rounded-xl px-6 py-3 bg-transparent text-foreground font-bold border-2 border-foreground/30 hover:border-foreground transition-colors"
           >
             Contact Support
           </a>
@@ -137,7 +137,7 @@ export function StatusMessage({
       </div>
 
       {/* Rotating Tip Card */}
-      <div className="border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)] text-left">
+      <div className="rounded-2xl border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)] text-left">
         <div
           className={`transition-all duration-200 ${
             tipVisible

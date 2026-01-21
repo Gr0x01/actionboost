@@ -54,7 +54,7 @@ export function CompetitorInput({
           {value.map((url, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-2 px-3 py-1.5 bg-foreground text-background text-sm font-bold"
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 bg-foreground text-background text-sm font-bold"
             >
               {url}
               <button
@@ -69,7 +69,7 @@ export function CompetitorInput({
       )}
 
       {value.length < 3 && (
-        <div className="border-2 border-foreground/30 bg-background px-4 py-3 focus-within:border-foreground transition-colors">
+        <div className="rounded-xl border-2 border-foreground/30 bg-background px-4 py-3 focus-within:border-foreground transition-colors">
           <input
             ref={inputRef}
             type="url"
@@ -109,14 +109,14 @@ export function CompetitorInput({
           {value.length === 0 && (
             <button
               onClick={onSkip}
-              className="px-4 py-2 border-2 border-foreground/30 text-sm font-bold text-foreground/60 hover:border-foreground hover:text-foreground transition-colors"
+              className="rounded-xl px-4 py-2 border-2 border-foreground/30 text-sm font-bold text-foreground/60 hover:border-foreground hover:text-foreground transition-colors"
             >
               Skip
             </button>
           )}
           <button
             onClick={value.length > 0 ? onSubmit : onSkip}
-            className="flex items-center gap-1.5 px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-100"
+            className="flex items-center gap-1.5 rounded-xl px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-100"
           >
             Continue
             <ArrowRight className="w-3.5 h-3.5" />

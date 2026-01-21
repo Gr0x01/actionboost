@@ -31,7 +31,7 @@ function UpsellBanner() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5 }}
-      className="border-[3px] border-foreground bg-surface p-6 shadow-[6px_6px_0_0_rgba(44,62,80,1)] mt-8 mb-8"
+      className="rounded-2xl border-[3px] border-foreground bg-surface p-6 shadow-[6px_6px_0_0_rgba(44,62,80,1)] mt-8 mb-8"
     >
       <div className="flex flex-col md:flex-row md:items-center gap-4">
         <div className="flex-1">
@@ -50,7 +50,7 @@ function UpsellBanner() {
             posthog?.capture("free_audit_upsell_clicked");
             router.push("/start");
           }}
-          className="flex items-center gap-2 px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100 whitespace-nowrap"
+          className="rounded-xl flex items-center gap-2 px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100 whitespace-nowrap"
         >
           Get Full Action Plan — {config.singlePrice}
           <ArrowRight className="w-4 h-4" />
@@ -92,7 +92,7 @@ function UpgradeCTA() {
           posthog?.capture("free_audit_upgrade_clicked");
           router.push("/start");
         }}
-        className="inline-flex items-center gap-2 px-6 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100"
+        className="rounded-xl inline-flex items-center gap-2 px-6 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100"
       >
         Get the Full Playbook — {config.singlePrice}
         <ArrowRight className="w-5 h-5" />
@@ -266,7 +266,7 @@ function FreeResultsPageContent() {
       <div className="min-h-screen flex flex-col bg-mesh">
         <Header />
         <main className="flex-1 flex items-center justify-center px-4">
-          <div className="border-[3px] border-foreground bg-surface p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] text-center max-w-md">
+          <div className="rounded-2xl border-[3px] border-foreground bg-surface p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] text-center max-w-md">
             <p className="font-mono text-[10px] tracking-[0.15em] text-foreground/60 uppercase font-semibold mb-2">
               Link expired
             </p>
@@ -275,7 +275,7 @@ function FreeResultsPageContent() {
             </p>
             <a
               href="/start"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100"
+              className="rounded-xl inline-flex items-center gap-2 px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100"
             >
               Start a new audit
               <ArrowRight className="w-4 h-4" />

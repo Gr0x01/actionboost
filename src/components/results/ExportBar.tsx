@@ -104,7 +104,7 @@ export function ExportBar({
             {/* Tactile ghost buttons */}
             <button
               onClick={handleCopy}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-foreground/70 hover:text-foreground border-2 border-transparent hover:border-foreground/20 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-100"
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-foreground/70 hover:text-foreground border-2 border-transparent hover:border-foreground/20 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-100"
             >
               {copied ? (
                 <>
@@ -121,7 +121,7 @@ export function ExportBar({
 
             <button
               onClick={handlePDF}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-foreground/70 hover:text-foreground border-2 border-transparent hover:border-foreground/20 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-100"
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-foreground/70 hover:text-foreground border-2 border-transparent hover:border-foreground/20 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-100"
             >
               <Download className="h-4 w-4" />
               <span className="hidden sm:inline">PDF</span>
@@ -130,7 +130,7 @@ export function ExportBar({
             {/* Primary action - brutalist button */}
             <button
               onClick={() => setShowShareModal(true)}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-foreground bg-surface border-2 border-foreground shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-100"
+              className="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold text-foreground bg-surface border-2 border-foreground shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-100"
             >
               <Share2 className="h-4 w-4" />
               <span className="hidden sm:inline">Share</span>

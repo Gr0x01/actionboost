@@ -142,7 +142,7 @@ function FullStrategyForm({ url }: { url: string }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3 }}
-      className="border-[3px] border-foreground bg-surface p-6 md:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]"
+      className="rounded-2xl border-[3px] border-foreground bg-surface p-6 md:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]"
     >
       <p className="text-foreground/70 text-sm mb-6">
         Tell us more and get a complete growth strategy with weekly actions, 30-day roadmap, and content templates.
@@ -156,7 +156,7 @@ function FullStrategyForm({ url }: { url: string }) {
             type="text"
             value={form.websiteUrl}
             onChange={(e) => updateField("websiteUrl", e.target.value)}
-            className="w-full px-3 py-2 bg-background border-2 border-foreground/30 text-foreground text-sm focus:outline-none focus:border-cta"
+            className="w-full rounded-lg px-3 py-2 bg-background border-2 border-foreground/30 text-foreground text-sm focus:outline-none focus:border-cta"
           />
         </div>
 
@@ -168,7 +168,7 @@ function FullStrategyForm({ url }: { url: string }) {
             onChange={(e) => updateField("productDescription", e.target.value)}
             placeholder="We help [who] do [what] by [how]..."
             rows={2}
-            className="w-full px-3 py-2 bg-background border-2 border-foreground/30 text-foreground text-sm focus:outline-none focus:border-cta resize-none"
+            className="w-full rounded-lg px-3 py-2 bg-background border-2 border-foreground/30 text-foreground text-sm focus:outline-none focus:border-cta resize-none"
           />
         </div>
 
@@ -180,7 +180,7 @@ function FullStrategyForm({ url }: { url: string }) {
             value={form.currentTraction}
             onChange={(e) => updateField("currentTraction", e.target.value)}
             placeholder="e.g., 500 users, $2k MRR, 10k visitors/mo"
-            className="w-full px-3 py-2 bg-background border-2 border-foreground/30 text-foreground text-sm focus:outline-none focus:border-cta"
+            className="w-full rounded-lg px-3 py-2 bg-background border-2 border-foreground/30 text-foreground text-sm focus:outline-none focus:border-cta"
           />
         </div>
 
@@ -192,7 +192,7 @@ function FullStrategyForm({ url }: { url: string }) {
             onChange={(e) => updateField("tacticsAndResults", e.target.value)}
             placeholder="SEO, content marketing, paid ads... and what's working or not"
             rows={3}
-            className="w-full px-3 py-2 bg-background border-2 border-foreground/30 text-foreground text-sm focus:outline-none focus:border-cta resize-none"
+            className="w-full rounded-lg px-3 py-2 bg-background border-2 border-foreground/30 text-foreground text-sm focus:outline-none focus:border-cta resize-none"
           />
         </div>
 
@@ -215,14 +215,14 @@ function FullStrategyForm({ url }: { url: string }) {
             <button
               type="button"
               onClick={() => setShowFreeOption(true)}
-              className="flex-1 px-5 py-3 text-sm font-bold bg-transparent text-foreground border-2 border-foreground/30 transition-all duration-100 hover:border-foreground hover:shadow-[3px_3px_0_0_rgba(44,62,80,0.3)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5"
+              className="flex-1 rounded-xl px-5 py-3 text-sm font-bold bg-transparent text-foreground border-2 border-foreground/30 transition-all duration-100 hover:border-foreground hover:shadow-[3px_3px_0_0_rgba(44,62,80,0.3)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5"
             >
               Free Preview
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 rounded-xl flex items-center justify-center gap-2 px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 <>
@@ -244,7 +244,7 @@ function FullStrategyForm({ url }: { url: string }) {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-4 border-2 border-foreground/20 bg-background space-y-3"
+            className="rounded-xl p-4 border-2 border-foreground/20 bg-background space-y-3"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-cta">
@@ -264,7 +264,7 @@ function FullStrategyForm({ url }: { url: string }) {
               Get a condensed 5-section audit to preview our analysis
             </p>
             <div className="flex gap-2">
-              <div className="flex-1 flex items-center gap-2 border-2 border-foreground/30 bg-background px-3 py-2 focus-within:border-foreground transition-colors">
+              <div className="flex-1 flex items-center gap-2 rounded-lg border-2 border-foreground/30 bg-background px-3 py-2 focus-within:border-foreground transition-colors">
                 <Mail className="w-4 h-4 text-foreground/40" />
                 <input
                   type="email"
@@ -284,7 +284,7 @@ function FullStrategyForm({ url }: { url: string }) {
                 type="button"
                 onClick={handleFreeSubmit}
                 disabled={!isValidEmail(freeEmail) || freeSubmitting}
-                className="px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta hover:bg-cta-hover transition-colors disabled:opacity-50"
+                className="rounded-lg px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta hover:bg-cta-hover transition-colors disabled:opacity-50"
               >
                 {freeSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Get It"}
               </button>
@@ -407,13 +407,13 @@ export default function FirstImpressionsPage() {
       <div className="min-h-screen flex flex-col bg-mesh">
         <Header />
         <main className="flex-1 flex items-center justify-center px-4">
-          <div className="border-[3px] border-foreground bg-surface p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] text-center max-w-md">
+          <div className="rounded-2xl border-[3px] border-foreground bg-surface p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] text-center max-w-md">
             <p className="text-foreground font-medium mb-4">
               {error || "Something went wrong"}
             </p>
             <a
               href="/"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100"
+              className="inline-flex items-center gap-2 rounded-xl px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100"
             >
               Go home
             </a>
@@ -445,7 +445,7 @@ export default function FirstImpressionsPage() {
         <main className="flex-1 flex items-center justify-center px-4">
           <div className="max-w-lg mx-auto text-center py-16 px-6">
             <div className="mb-8">
-              <div className="w-20 h-20 mx-auto border-[3px] border-red-500 bg-red-500 flex items-center justify-center shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
+              <div className="w-20 h-20 mx-auto rounded-xl border-[3px] border-red-500 bg-red-500 flex items-center justify-center shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
                 <X className="w-10 h-10 text-white" />
               </div>
             </div>
@@ -457,7 +457,7 @@ export default function FirstImpressionsPage() {
             </p>
             <a
               href="/first-impressions"
-              className="px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100"
+              className="rounded-xl px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100"
             >
               Try Again
             </a>
@@ -499,7 +499,7 @@ export default function FirstImpressionsPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="border-[3px] border-foreground bg-surface p-6 md:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]"
+            className="rounded-2xl border-[3px] border-foreground bg-surface p-6 md:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]"
           >
             <div className="prose prose-lg max-w-none text-foreground leading-relaxed prose-headings:font-black prose-headings:text-foreground prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-3 prose-li:my-1 prose-ul:my-2 prose-p:my-3">
               <ReactMarkdown>{impression.output || ""}</ReactMarkdown>

@@ -65,14 +65,14 @@ export default async function GrowthPlanPage() {
       </div>
 
       {/* CTA banner - brutalist box */}
-      <div className="mb-8 border-[3px] border-foreground bg-background p-6 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
+      <div className="rounded-2xl mb-8 border-[3px] border-foreground bg-background p-6 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <p className="font-bold text-foreground">Want an action plan like this for your product?</p>
             <p className="text-sm text-foreground/60">Get AI-powered growth recommendations with live competitive research.</p>
           </div>
           <Link href="/start">
-            <button className="whitespace-nowrap px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
+            <button className="rounded-xl whitespace-nowrap px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
               Get Your Action Plan - {config.singlePrice}
             </button>
           </Link>
@@ -82,7 +82,7 @@ export default async function GrowthPlanPage() {
   );
 
   const bottomCta = (
-    <div className="mt-16 border-[3px] border-foreground bg-background p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] text-center space-y-4">
+    <div className="rounded-2xl mt-16 border-[3px] border-foreground bg-background p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] text-center space-y-4">
       <p className="font-mono text-xs tracking-[0.15em] text-foreground/60 uppercase">
         Your turn
       </p>
@@ -95,12 +95,12 @@ export default async function GrowthPlanPage() {
       </p>
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
         <Link href="/start">
-          <button className="px-8 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
+          <button className="rounded-xl px-8 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
             Get Started - {config.singlePrice}
           </button>
         </Link>
         <Link href="/">
-          <button className="px-8 py-4 bg-transparent text-foreground font-bold text-lg border-2 border-foreground shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
+          <button className="rounded-xl px-8 py-4 bg-transparent text-foreground font-bold text-lg border-2 border-foreground shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
             Learn More
           </button>
         </Link>

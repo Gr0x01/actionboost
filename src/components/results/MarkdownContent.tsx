@@ -148,7 +148,7 @@ export function MarkdownContent({ content, className = "", extended = false }: M
       elements.push(
         <pre
           key={keyIndex++}
-          className={`mb-6 p-4 bg-surface border-2 border-foreground shadow-[4px_4px_0_0_rgba(0,0,0,0.8)] overflow-x-auto ${
+          className={`rounded-xl mb-6 p-4 bg-surface border-2 border-foreground shadow-[4px_4px_0_0_rgba(0,0,0,0.8)] overflow-x-auto ${
             isAsciiDiagram ? "text-center" : ""
           }`}
         >

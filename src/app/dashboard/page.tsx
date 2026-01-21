@@ -28,7 +28,7 @@ function StatusBadge({ status }: { status: string | null }) {
   const Icon = config.icon
 
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 border-2 font-mono text-xs font-bold uppercase tracking-wide ${config.className}`}>
+    <span className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 border-2 font-mono text-xs font-bold uppercase tracking-wide ${config.className}`}>
       <Icon className={`h-3 w-3 ${s === "processing" ? "animate-spin" : ""}`} />
       {config.label}
     </span>
@@ -37,7 +37,7 @@ function StatusBadge({ status }: { status: string | null }) {
 
 function FreeBadge() {
   return (
-    <span className="inline-flex items-center px-2 py-1 border-2 border-violet-800 bg-violet-50 text-violet-800 font-mono text-xs font-bold uppercase tracking-wide">
+    <span className="inline-flex items-center rounded-lg px-2 py-1 border-2 border-violet-800 bg-violet-50 text-violet-800 font-mono text-xs font-bold uppercase tracking-wide">
       Free
     </span>
   )
@@ -141,9 +141,9 @@ export default async function DashboardPage() {
 
           {/* Stats cards - brutalist boxes */}
           <div className="grid grid-cols-2 gap-4 mb-8">
-            <div className="border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
+            <div className="rounded-2xl border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 border-2 border-foreground bg-surface flex items-center justify-center">
+                <div className="w-10 h-10 rounded-lg border-2 border-foreground bg-surface flex items-center justify-center">
                   <FileText className="h-5 w-5 text-foreground" />
                 </div>
                 <div>
@@ -155,9 +155,9 @@ export default async function DashboardPage() {
               </div>
             </div>
 
-            <div className="border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
+            <div className="rounded-2xl border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 border-2 border-foreground bg-cta/10 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-lg border-2 border-foreground bg-cta/10 flex items-center justify-center">
                   <Zap className="h-5 w-5 text-cta" />
                 </div>
                 <div>
@@ -171,14 +171,14 @@ export default async function DashboardPage() {
           </div>
 
           {/* Strategies list - brutalist container */}
-          <div className="border-[3px] border-foreground bg-background shadow-[6px_6px_0_0_rgba(44,62,80,1)] overflow-hidden">
+          <div className="rounded-2xl border-[3px] border-foreground bg-background shadow-[6px_6px_0_0_rgba(44,62,80,1)] overflow-hidden">
             <div className="px-6 py-4 border-b-[3px] border-foreground bg-surface">
               <h2 className="font-bold text-foreground uppercase tracking-wide">Your Action Plans</h2>
             </div>
 
             {strategies.length === 0 ? (
               <div className="p-8 text-center">
-                <div className="w-14 h-14 border-[3px] border-foreground bg-surface flex items-center justify-center mx-auto mb-4">
+                <div className="w-14 h-14 rounded-xl border-[3px] border-foreground bg-surface flex items-center justify-center mx-auto mb-4">
                   <FileText className="h-7 w-7 text-foreground/50" />
                 </div>
                 <p className="text-foreground/60 mb-6 font-medium">No action plans yet</p>

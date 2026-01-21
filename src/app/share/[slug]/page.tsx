@@ -78,7 +78,7 @@ export default async function SharePage({ params }: PageProps) {
   const strategy = parseStrategy(run.output);
 
   const shareBanner = (
-    <div className="border-[3px] border-foreground bg-background p-4 shadow-[4px_4px_0_0_rgba(44,62,80,1)] mb-6">
+    <div className="rounded-2xl border-[3px] border-foreground bg-background p-4 shadow-[4px_4px_0_0_rgba(44,62,80,1)] mb-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           <p className="text-sm text-foreground/70">
@@ -94,7 +94,7 @@ export default async function SharePage({ params }: PageProps) {
           </div>
         </div>
         <Link href="/start">
-          <button className="whitespace-nowrap px-4 py-2 bg-cta text-white font-bold text-sm border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
+          <button className="rounded-lg whitespace-nowrap px-4 py-2 bg-cta text-white font-bold text-sm border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
             Get Your Own Plan
           </button>
         </Link>
@@ -103,7 +103,7 @@ export default async function SharePage({ params }: PageProps) {
   );
 
   const bottomCta = (
-    <div className="mt-16 border-[3px] border-foreground bg-background p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] text-center space-y-4">
+    <div className="rounded-2xl mt-16 border-[3px] border-foreground bg-background p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] text-center space-y-4">
       <p className="font-mono text-xs tracking-[0.15em] text-foreground/60 uppercase">
         Your turn
       </p>
@@ -114,7 +114,7 @@ export default async function SharePage({ params }: PageProps) {
         Actionboo.st uses live competitive research and AI to create actionable strategies for startups and entrepreneurs.
       </p>
       <Link href="/start">
-        <button className="px-8 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
+        <button className="rounded-xl px-8 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
           Get Started - {config.singlePrice}
         </button>
       </Link>

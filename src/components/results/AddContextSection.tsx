@@ -87,7 +87,7 @@ export function AddContextSection({
           onClick={handleExpand}
           className="group w-full text-left"
         >
-          <div className="flex items-center justify-between p-6 border-2 border-foreground/20 hover:border-foreground/40 bg-surface/50 transition-colors duration-200">
+          <div className="flex items-center justify-between rounded-xl p-6 border-2 border-foreground/20 hover:border-foreground/40 bg-surface/50 transition-colors duration-200">
             <div className="flex items-center gap-3">
               <MessageSquarePlus className="h-5 w-5 text-foreground/50 group-hover:text-foreground/70 transition-colors" />
               <div>
@@ -108,7 +108,7 @@ export function AddContextSection({
           </div>
         </button>
       ) : (
-        <div className="border-[3px] border-foreground bg-background shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
+        <div className="rounded-2xl border-[3px] border-foreground bg-background shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b-2 border-foreground/20">
             <div className="flex items-center gap-2">
@@ -138,7 +138,7 @@ export function AddContextSection({
               onChange={(e) => setContext(e.target.value)}
               disabled={state === "submitting"}
               placeholder="e.g., 'We already tried content marketing for 6 months - it didn't work because our audience isn't searching for solutions yet. Also, we have a $5K/month marketing budget you should factor in.'"
-              className="w-full h-32 p-4 text-sm border-2 border-foreground/30 bg-white focus:border-foreground focus:outline-none resize-none font-sans placeholder:text-foreground/30 disabled:opacity-50 disabled:bg-gray-50"
+              className="w-full h-32 rounded-xl p-4 text-sm border-2 border-foreground/30 bg-white focus:border-foreground focus:outline-none resize-none font-sans placeholder:text-foreground/30 disabled:opacity-50 disabled:bg-gray-50"
             />
 
             {/* Character count */}
@@ -171,7 +171,7 @@ export function AddContextSection({
               <button
                 onClick={handleSubmit}
                 disabled={!isValidLength || state === "submitting"}
-                className="flex items-center gap-2 px-6 py-3 text-sm font-bold text-foreground bg-surface border-[3px] border-foreground shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[5px_5px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0"
+                className="flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-bold text-foreground bg-surface border-[3px] border-foreground shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[5px_5px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0"
               >
                 {state === "submitting" ? (
                   <>

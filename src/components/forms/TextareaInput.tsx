@@ -61,7 +61,7 @@ export function TextareaInput({
 
   return (
     <div className="relative">
-      <div className="border-2 border-foreground/30 bg-background px-4 py-4 focus-within:border-foreground transition-colors">
+      <div className="rounded-xl border-2 border-foreground/30 bg-background px-4 py-4 focus-within:border-foreground transition-colors">
         <textarea
           ref={textareaRef}
           value={value}
@@ -96,7 +96,7 @@ export function TextareaInput({
         <button
           onClick={onSubmit}
           disabled={!value.trim() || isOver}
-          className="flex items-center gap-1.5 px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:shadow-[3px_3px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0 transition-all duration-100"
+          className="flex items-center gap-1.5 rounded-xl px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:shadow-[3px_3px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0 transition-all duration-100"
         >
           Continue
           <ArrowRight className="w-3.5 h-3.5" />

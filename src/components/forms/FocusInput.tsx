@@ -72,7 +72,7 @@ export function FocusInput({
           <button
             key={option.value}
             onClick={() => handleSelect(option.value)}
-            className={`flex flex-col items-center gap-2 p-4 border-2 text-center transition-all duration-100 ${
+            className={`flex flex-col items-center gap-2 rounded-xl p-4 border-2 text-center transition-all duration-100 ${
               value === option.value
                 ? "bg-foreground text-background border-foreground"
                 : "bg-background border-foreground/30 text-foreground hover:border-foreground hover:shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5"
@@ -91,7 +91,7 @@ export function FocusInput({
 
       {showCustomInput && (
         <div className="max-w-md mx-auto space-y-4">
-          <div className="border-2 border-foreground/30 bg-background px-4 py-3 focus-within:border-foreground transition-colors">
+          <div className="rounded-xl border-2 border-foreground/30 bg-background px-4 py-3 focus-within:border-foreground transition-colors">
             <input
               ref={inputRef}
               type="text"
@@ -117,7 +117,7 @@ export function FocusInput({
             <button
               onClick={handleCustomSubmit}
               disabled={!localCustom.trim()}
-              className="flex items-center gap-1.5 px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-100"
+              className="flex items-center gap-1.5 rounded-xl px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-100"
             >
               Continue
               <ArrowRight className="w-3.5 h-3.5" />
@@ -142,7 +142,7 @@ export function FocusInput({
           {value && value !== "custom" && (
             <button
               onClick={onSubmit}
-              className="flex items-center gap-1.5 px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-100"
+              className="flex items-center gap-1.5 rounded-xl px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-100"
             >
               Continue
               <ArrowRight className="w-3.5 h-3.5" />

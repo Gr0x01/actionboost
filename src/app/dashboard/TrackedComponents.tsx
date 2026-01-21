@@ -74,7 +74,7 @@ export function TrackedCTAButton({ button, variant = "primary" }: TrackedCTAButt
       onClick={() => {
         posthog?.capture("dashboard_cta_clicked", { button });
       }}
-      className={`inline-flex items-center gap-2 px-6 py-3 font-bold border-2 transition-all duration-100
+      className={`inline-flex items-center gap-2 rounded-xl px-6 py-3 font-bold border-2 transition-all duration-100
         ${isPrimary
           ? "bg-cta text-white border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1"
           : "bg-background text-foreground border-foreground shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1"

@@ -45,7 +45,7 @@ export function Pricing() {
         {/* Pricing cards - side by side, centered */}
         <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto items-stretch">
           {/* Free tier */}
-          <div className="border-[3px] border-foreground/30 bg-background p-6 lg:p-8 flex flex-col">
+          <div className="rounded-2xl border-[3px] border-foreground/30 bg-background p-6 lg:p-8 flex flex-col">
             <div className="mb-6">
               <h3 className="text-2xl font-black text-foreground">Free</h3>
               <p className="text-sm text-foreground/60 mt-1">Mini audit to test the waters</p>
@@ -71,7 +71,7 @@ export function Pricing() {
           </div>
 
           {/* Paid tier */}
-          <div className="border-[3px] border-foreground bg-background p-6 lg:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] flex flex-col">
+          <div className="rounded-2xl border-[3px] border-foreground bg-background p-6 lg:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] flex flex-col">
             <div className="mb-6">
               <h3 className="text-2xl font-black text-foreground">{config.singlePrice}</h3>
               <p className="text-sm text-foreground/60 mt-1">Full action plan with competitor intel</p>

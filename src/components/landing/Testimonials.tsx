@@ -26,7 +26,7 @@ export function Testimonials() {
 
         {/* Featured testimonial - Simon */}
         <div className="max-w-3xl mx-auto mb-12">
-          <div className="border-[3px] border-foreground bg-background p-8 lg:p-10 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
+          <div className="rounded-2xl border-[3px] border-foreground bg-background p-8 lg:p-10 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
             <div className="text-6xl text-cta font-serif leading-none mb-4">&ldquo;</div>
             <blockquote className="text-2xl lg:text-3xl font-light text-foreground leading-relaxed mb-6">
               seems alright actually
@@ -49,7 +49,7 @@ export function Testimonials() {
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className="border-[3px] border-foreground/30 bg-background p-6 flex flex-col"
+              className="rounded-2xl border-[3px] border-foreground/30 bg-background p-6 flex flex-col"
             >
               <blockquote className="text-foreground leading-relaxed flex-1">
                 &ldquo;{testimonial.quote}&rdquo;

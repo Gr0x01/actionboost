@@ -37,7 +37,7 @@ export function TractionInput({ value, onChange, onSubmit, onBack }: TractionInp
           <button
             key={chip}
             onClick={() => handleChipClick(chip)}
-            className={`px-4 py-2 border-2 text-sm font-bold transition-all duration-100 ${
+            className={`rounded-xl px-4 py-2 border-2 text-sm font-bold transition-all duration-100 ${
               value === chip
                 ? "bg-foreground text-background border-foreground"
                 : "bg-background border-foreground/30 text-foreground hover:border-foreground hover:shadow-[2px_2px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5"
@@ -50,7 +50,7 @@ export function TractionInput({ value, onChange, onSubmit, onBack }: TractionInp
 
       <div className="text-center text-foreground/50 text-sm font-mono">or type specifics</div>
 
-      <div className="border-2 border-foreground/30 bg-background px-4 py-3 focus-within:border-foreground transition-colors">
+      <div className="rounded-xl border-2 border-foreground/30 bg-background px-4 py-3 focus-within:border-foreground transition-colors">
         <input
           ref={inputRef}
           type="text"
@@ -77,7 +77,7 @@ export function TractionInput({ value, onChange, onSubmit, onBack }: TractionInp
         {value.trim() && (
           <button
             onClick={onSubmit}
-            className="flex items-center gap-1.5 px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-100"
+            className="flex items-center gap-1.5 rounded-xl px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-100"
           >
             Continue
             <ArrowRight className="w-3.5 h-3.5" />

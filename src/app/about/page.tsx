@@ -60,7 +60,7 @@ export default function AboutPage() {
 
           {/* Founder Card - Brutalist */}
           <section className="mb-12">
-            <div className="border-[3px] border-foreground bg-background p-6 sm:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
+            <div className="rounded-2xl border-[3px] border-foreground bg-background p-6 sm:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
               <div className="flex flex-col sm:flex-row gap-6">
                 <img
                   src="/rbaten.png"
@@ -154,7 +154,7 @@ export default function AboutPage() {
               Experiment Progress
             </h2>
             <div className="grid grid-cols-2 gap-4">
-              <div className="border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
+              <div className="rounded-2xl border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
                 <div className="flex items-center gap-3 mb-2">
                   <Target className="w-5 h-5 text-cta" />
                   <span className="font-mono text-xs tracking-wide text-foreground/60 uppercase">
@@ -164,7 +164,7 @@ export default function AboutPage() {
                 <p className="text-3xl font-black text-foreground">1</p>
               </div>
 
-              <div className="border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
+              <div className="rounded-2xl border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
                 <div className="flex items-center gap-3 mb-2">
                   <TrendingUp className="w-5 h-5 text-cta" />
                   <span className="font-mono text-xs tracking-wide text-foreground/60 uppercase">
@@ -174,7 +174,7 @@ export default function AboutPage() {
                 <p className="text-3xl font-black text-foreground">$0</p>
               </div>
 
-              <div className="border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
+              <div className="rounded-2xl border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
                 <div className="flex items-center gap-3 mb-2">
                   <Users className="w-5 h-5 text-cta" />
                   <span className="font-mono text-xs tracking-wide text-foreground/60 uppercase">
@@ -184,7 +184,7 @@ export default function AboutPage() {
                 <p className="text-lg font-bold text-foreground">Just launched</p>
               </div>
 
-              <div className="border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
+              <div className="rounded-2xl border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
                 <div className="flex items-center gap-3 mb-2">
                   <Zap className="w-5 h-5 text-cta" />
                   <span className="font-mono text-xs tracking-wide text-foreground/60 uppercase">
@@ -202,7 +202,7 @@ export default function AboutPage() {
           {/* CTA - See the Strategy */}
           <section className="mb-12">
             <Link href="/blog/our-growth-plan" className="group block">
-              <div className="border-[3px] border-foreground bg-background p-6 sm:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:shadow-[8px_8px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
+              <div className="rounded-2xl border-[3px] border-foreground bg-background p-6 sm:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:shadow-[8px_8px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
                     <span className="font-mono text-xs tracking-[0.15em] text-cta uppercase font-semibold">
@@ -223,7 +223,7 @@ export default function AboutPage() {
 
           {/* Bottom CTA */}
           <section>
-            <div className="border-[3px] border-foreground bg-background p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] text-center space-y-4">
+            <div className="rounded-2xl border-[3px] border-foreground bg-background p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] text-center space-y-4">
               <p className="font-mono text-xs tracking-[0.15em] text-foreground/60 uppercase">
                 Your turn
               </p>
@@ -236,12 +236,12 @@ export default function AboutPage() {
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
                 <Link href="/start">
-                  <button className="px-8 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
+                  <button className="rounded-xl px-8 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
                     Get My Action Plan — $9.99
                   </button>
                 </Link>
                 <Link href="/">
-                  <button className="px-8 py-4 bg-transparent text-foreground font-bold text-lg border-2 border-foreground shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
+                  <button className="rounded-xl px-8 py-4 bg-transparent text-foreground font-bold text-lg border-2 border-foreground shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
                     See How It Works
                   </button>
                 </Link>

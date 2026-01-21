@@ -21,7 +21,7 @@ export function SectionCard({
   if (variant === "boxed") {
     return (
       <section id={id} className={`scroll-mt-32 ${className}`}>
-        <div className="border-[3px] border-foreground bg-background p-6 lg:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
+        <div className="rounded-2xl border-[3px] border-foreground bg-background p-6 lg:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
           {/* Section title - bold sans */}
           <h2 className="text-xl lg:text-2xl font-bold text-foreground tracking-tight mb-6">
             {title}

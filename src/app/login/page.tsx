@@ -98,7 +98,7 @@ function LoginForm() {
       <main className="flex-1 py-10 sm:py-14 flex items-center justify-center">
         <div className="mx-auto max-w-lg w-full px-4 sm:px-6">
           {/* Brutalist card */}
-          <div className="border-[3px] border-foreground bg-background p-6 sm:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
+          <div className="rounded-2xl border-[3px] border-foreground bg-background p-6 sm:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
             {status === "sent" ? (
               /* Success state */
               <div className="text-center py-4">
@@ -149,7 +149,7 @@ function LoginForm() {
                         setEmail(e.target.value)
                         setError("")
                       }}
-                      className="w-full bg-surface border-2 border-foreground/20 px-4 py-3 text-foreground placeholder:text-foreground/30 text-base focus:outline-none focus:border-foreground transition-colors"
+                      className="w-full rounded-xl bg-surface border-2 border-foreground/20 px-4 py-3 text-foreground placeholder:text-foreground/30 text-base focus:outline-none focus:border-foreground transition-colors"
                       required
                     />
                     {error && (
@@ -163,7 +163,7 @@ function LoginForm() {
                   <button
                     type="submit"
                     disabled={status === "loading"}
-                    className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0 transition-all duration-100"
+                    className="w-full rounded-xl flex items-center justify-center gap-2 px-6 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0 transition-all duration-100"
                   >
                     {status === "loading" ? (
                       <>
@@ -196,14 +196,14 @@ function LoginForm() {
 
           {/* Dev bypass - localhost only */}
           {isDev && (
-            <div className="mt-6 p-4 border-2 border-dashed border-amber-500/50 bg-amber-50/50">
+            <div className="mt-6 rounded-xl p-4 border-2 border-dashed border-amber-500/50 bg-amber-50/50">
               <p className="text-xs font-mono text-amber-700 mb-3 text-center uppercase tracking-wide">
                 Dev Mode Only
               </p>
               <button
                 onClick={handleDevBypass}
                 disabled={status === "dev-loading"}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-amber-500 text-white font-bold text-sm border-2 border-amber-600 shadow-[3px_3px_0_0_rgba(180,83,9,1)] hover:shadow-[4px_4px_0_0_rgba(180,83,9,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 disabled:opacity-50 transition-all duration-100"
+                className="w-full rounded-xl flex items-center justify-center gap-2 px-4 py-3 bg-amber-500 text-white font-bold text-sm border-2 border-amber-600 shadow-[3px_3px_0_0_rgba(180,83,9,1)] hover:shadow-[4px_4px_0_0_rgba(180,83,9,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 disabled:opacity-50 transition-all duration-100"
               >
                 {status === "dev-loading" ? (
                   <>
