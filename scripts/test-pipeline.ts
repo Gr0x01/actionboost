@@ -39,12 +39,14 @@ Building for launch. Feature-complete with:
 - RAG system for returning users
 - Free mini-audit lead magnet`,
 
-  whatYouTried: `- Building the product (feature-complete)
+  tacticsAndResults: `What we've tried:
+- Building the product (feature-complete)
 - Establishing brand voice (blunt optimist, impatient for results, research nerd, allergic to guru culture)
 - Designing landing page with brutalist aesthetic (harsh offset shadows, tactile buttons)
-- Creating free mini-audit as lead magnet (3 sections vs 10, uses Sonnet instead of Opus)`,
+- Creating free mini-audit as lead magnet (3 sections vs 10, uses Sonnet instead of Opus)
 
-  whatsWorking: `- Brand positioning resonates: "The founder friend who's three steps ahead"
+What's working:
+- Brand positioning resonates: "The founder friend who's three steps ahead"
 - Clear enemy: The Growth Advice Industrial Complex (47-page decks, $5K consultants, "build in public" gurus)
 - Strong unit economics: ~$0.50 cost per run, $9.99 price = ~90% margin
 - Form-before-payment flow increases commitment (psychological investment)

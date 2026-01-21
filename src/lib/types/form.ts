@@ -16,8 +16,7 @@ export interface FormInput {
   // Required fields
   productDescription: string;
   currentTraction: string;
-  triedTactics: string;
-  workingOrNot: string;
+  tacticsAndResults: string; // Merged: what tactics tried + how they're going
 
   // Focus area
   focusArea: FocusArea;
@@ -70,8 +69,7 @@ export const FOCUS_AREA_OPTIONS: {
 export const INITIAL_FORM_STATE: FormInput = {
   productDescription: "",
   currentTraction: "",
-  triedTactics: "",
-  workingOrNot: "",
+  tacticsAndResults: "",
   focusArea: "acquisition",
   competitors: ["", "", ""],
   websiteUrl: "",
@@ -89,8 +87,7 @@ export function getTotalCharCount(form: FormInput): number {
   return (
     form.productDescription.length +
     form.currentTraction.length +
-    form.triedTactics.length +
-    form.workingOrNot.length +
+    form.tacticsAndResults.length +
     form.competitors.join("").length +
     form.websiteUrl.length +
     form.analyticsSummary.length +
@@ -112,12 +109,9 @@ export function validateForm(form: FormInput, isReturningUser = false): Record<s
   if (!form.currentTraction.trim()) {
     errors.currentTraction = "Current traction is required";
   }
-  // For returning users, triedTactics and workingOrNot are optional since they've already provided this info
-  if (!isReturningUser && !form.triedTactics.trim()) {
-    errors.triedTactics = "What you've tried is required";
-  }
-  if (!isReturningUser && !form.workingOrNot.trim()) {
-    errors.workingOrNot = "What's working/not is required";
+  // For returning users, tacticsAndResults is optional since they've already provided this info
+  if (!isReturningUser && !form.tacticsAndResults.trim()) {
+    errors.tacticsAndResults = "What you've tried is required";
   }
 
   const totalChars = getTotalCharCount(form);

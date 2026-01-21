@@ -144,11 +144,15 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     ? metadata.form_focus
     : "acquisition";
 
+  // Support both new (form_tactics) and legacy (form_tried + form_working) formats
+  const tacticsAndResults = metadata.form_tactics ||
+    [metadata.form_tried, metadata.form_working].filter(Boolean).join("\n\n") ||
+    "";
+
   const formInput = {
     productDescription: metadata.form_product || "",
     currentTraction: metadata.form_traction || "",
-    whatYouTried: metadata.form_tried || "",
-    whatsWorking: metadata.form_working || "",
+    tacticsAndResults,
     focusArea,
     competitorUrls,
     websiteUrl: metadata.form_website || "",

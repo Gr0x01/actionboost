@@ -20,7 +20,9 @@ export interface UserContext {
     history: TractionSnapshot[]
   }
   tactics?: {
-    tried: string[]
+    history: string[] // Combined: what user tried + results, one entry per run
+    // Legacy fields for backwards compatibility
+    tried?: string[]
     working?: string[]
     notWorking?: string[]
   }
@@ -42,6 +44,8 @@ export interface ContextDelta {
     competitors?: string[]
   }
   tractionDelta?: string
+  tacticsUpdate?: string // New combined field
+  // Legacy fields
   newTactics?: string[]
   workingUpdate?: string
   notWorkingUpdate?: string
@@ -85,12 +89,11 @@ export function getSuggestedQuestions(context: UserContext): string[] {
     questions.push("Has your traction changed since last time?")
   }
 
-  if (context.tactics?.tried && context.tactics.tried.length > 0) {
-    questions.push("Any new tactics you've tried?")
-  }
-
-  if (context.tactics?.working && context.tactics.working.length > 0) {
-    questions.push("Is what was working still working?")
+  if (context.tactics?.history && context.tactics.history.length > 0) {
+    questions.push("Any updates on what's working or not?")
+  } else if (context.tactics?.tried && context.tactics.tried.length > 0) {
+    // Legacy support
+    questions.push("Any updates on what's working or not?")
   }
 
   if (context.constraints) {

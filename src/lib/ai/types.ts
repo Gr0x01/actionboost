@@ -28,8 +28,7 @@ export type RunInput = {
   // Required fields
   productDescription: string
   currentTraction: string
-  whatYouTried: string
-  whatsWorking: string
+  tacticsAndResults: string // Merged: what tactics tried + how they're going
   focusArea: FocusArea
   customFocusArea?: string // Only used when focusArea is 'custom'
 
@@ -39,6 +38,10 @@ export type RunInput = {
   analyticsSummary?: string
   constraints?: string
   attachments?: Attachment[]
+
+  // Legacy fields (for backwards compatibility with old runs)
+  whatYouTried?: string
+  whatsWorking?: string
 }
 
 /**

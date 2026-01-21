@@ -120,18 +120,14 @@ export async function extractAndEmbedRunContext(
     })
   }
 
-  if (input.whatYouTried) {
-    chunks.push({
-      content: `Tactics tried: ${input.whatYouTried}`,
-      chunkType: 'tactic',
-      sourceType: 'run_input',
-      sourceId: runId,
-    })
-  }
+  // Support both new (tacticsAndResults) and legacy (whatYouTried + whatsWorking) fields
+  const tacticsContent = input.tacticsAndResults ||
+    [input.whatYouTried, input.whatsWorking].filter(Boolean).join(' | ') ||
+    ''
 
-  if (input.whatsWorking) {
+  if (tacticsContent) {
     chunks.push({
-      content: `What's working: ${input.whatsWorking}`,
+      content: `Tactics & results: ${tacticsContent}`,
       chunkType: 'tactic',
       sourceType: 'run_input',
       sourceId: runId,

@@ -60,14 +60,23 @@ export function useUserContext(): UseUserContextResult {
   function prefillForm(): FormInput | null {
     if (!context || !hasContext) return null
 
+    // Build tacticsAndResults from new field or legacy fields
+    let tacticsAndResults = ''
+    if (context.tactics?.history && context.tactics.history.length > 0) {
+      // New format: use the most recent history entry
+      tacticsAndResults = context.tactics.history.slice(-1)[0] || ''
+    } else if (context.tactics?.tried || context.tactics?.working) {
+      // Legacy format: combine tried + working
+      tacticsAndResults = [
+        ...(context.tactics?.tried || []),
+        ...(context.tactics?.working || []),
+      ].join('. ') || ''
+    }
+
     return {
       productDescription: context.product?.description || '',
       currentTraction: context.traction?.latest || '',
-      triedTactics: context.tactics?.tried?.join('. ') || '',
-      workingOrNot: [
-        ...(context.tactics?.working || []),
-        ...(context.tactics?.notWorking?.map((t) => `Not working: ${t}`) || []),
-      ].join('. ') || '',
+      tacticsAndResults,
       focusArea: 'acquisition', // User picks fresh each time
       competitors: [
         ...(context.product?.competitors || []),

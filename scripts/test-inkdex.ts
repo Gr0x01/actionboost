@@ -37,7 +37,7 @@ Recent traffic analysis (Jan 9-16, 2026):
 
 Key insight: Google Ads had 93% click loss (181 clicks → 12 users) - likely bot clicks or ad blockers. Reddit users arrived but didn't convert to profile views at all. Free traffic (organic, BetaList) significantly outperformed paid.`,
 
-  whatYouTried: `Paid advertising:
+  tacticsAndResults: `Paid advertising (not working):
 - Google Ads targeting "tattoo artists near me" keywords - terrible ROI ($19.61/profile view)
 - Reddit Ads in r/tattoos and r/tattoo - users arrived but 0% converted to profile views
 - Paused all paid ads to collect organic baseline data
@@ -52,28 +52,16 @@ SEO work:
 - 4,000+ static pages (city, state, country, style browse pages)
 - City guides with editorial content (~1,500-2,000 words each)
 - IndexNow integration for Bing/Yandex
-- Fixed sitemap URL format bug (was generating wrong paths)
-- Submitted India/Pakistan/EU pages to Google Search Console
 
-Community:
-- Posted on r/SideProject, r/tattoos
-- Some engagement but no real conversions`,
-
-  whatsWorking: `Organic search is the clear winner:
+What's working:
 - Google organic: 54 users → 30 profile views (55% conversion)
 - Free traffic converts 10-20x better than paid
 - BetaList listing drove 29 users, 5 profile views (17% conversion)
 
-User feedback insight:
-"It's hard to be in the moment between looking for tattoos vs looking for artists. I think people don't wait till they have a full idea before finding an artist."
-
-This suggests users browsing Reddit ads are in "inspiration mode" not "finding an artist mode."
-
 Technical infrastructure is solid:
 - Search performs well (200ms response time)
 - ML style classifier working (11 styles)
-- International expansion running smoothly (EU, India, Pakistan, Canada, Australia)
-- PostHog analytics capturing user behavior`,
+- International expansion running smoothly (EU, India, Pakistan, Canada, Australia)`,
 
   focusArea: 'acquisition',
 

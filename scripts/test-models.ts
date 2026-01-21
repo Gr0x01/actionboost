@@ -44,11 +44,11 @@ competitive landscape, stop doing recommendations, start doing (ICE prioritized)
   currentTraction: `Pre-launch. Waitlist of ~50 people. No paying customers yet.
 Landing page live at actionboo.st. Product is complete and functional.`,
 
-  whatYouTried: `Built the product. Have promo codes ready for Reddit (REDDIT20),
+  tacticsAndResults: `Built the product. Have promo codes ready for Reddit (REDDIT20),
 Indie Hackers (INDIEHACKERS), and Product Hunt (PRODUCTHUNT).
-Haven't done any marketing yet - waiting for the right launch moment.`,
+Haven't done any marketing yet - waiting for the right launch moment.
 
-  whatsWorking: `Product is complete and works well. Unit economics are strong (~94% margin at $9.99).
+What's working: Product is complete and works well. Unit economics are strong (~94% margin at $9.99).
 The concept resonates when I explain it - "AI that does real research on YOUR competitors, not generic advice."
 RAG system remembers returning users for personalized follow-up strategies.`,
 
@@ -192,6 +192,11 @@ async function runTavilyResearch(input: RunInput): Promise<ResearchContext> {
 // =============================================================================
 
 function buildUserMessage(input: RunInput, research: ResearchContext): string {
+  // Support both new (tacticsAndResults) and legacy (whatYouTried + whatsWorking) fields
+  const tacticsContent = input.tacticsAndResults ||
+    [input.whatYouTried, input.whatsWorking].filter(Boolean).join('\n\n') ||
+    ''
+
   let message = `# Growth Strategy Request
 
 ## Focus Area
@@ -203,11 +208,8 @@ ${input.productDescription}
 ## Current Traction
 ${input.currentTraction}
 
-## What I've Tried
-${input.whatYouTried}
-
-## What's Working
-${input.whatsWorking}
+## What I've Tried & How It's Going
+${tacticsContent}
 `
 
   if (input.websiteUrl) {

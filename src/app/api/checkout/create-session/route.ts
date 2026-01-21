@@ -77,8 +77,7 @@ export async function POST(request: NextRequest) {
     const metadata: Record<string, string> = {
       form_product: input.productDescription.slice(0, 500),
       form_traction: input.currentTraction.slice(0, 500),
-      form_tried: input.triedTactics.slice(0, 500),
-      form_working: input.workingOrNot.slice(0, 500),
+      form_tactics: input.tacticsAndResults.slice(0, 500),
       form_focus: input.focusArea,
       form_competitors: JSON.stringify(input.competitors).slice(0, 500),
       form_website: input.websiteUrl || "",

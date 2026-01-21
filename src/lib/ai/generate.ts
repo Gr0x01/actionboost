@@ -407,6 +407,11 @@ function buildUserMessage(
     ? `Custom: ${input.customFocusArea}`
     : input.focusArea.charAt(0).toUpperCase() + input.focusArea.slice(1)
 
+  // Support both new (tacticsAndResults) and legacy (whatYouTried + whatsWorking) fields
+  const tacticsContent = input.tacticsAndResults ||
+    [input.whatYouTried, input.whatsWorking].filter(Boolean).join('\n\n') ||
+    ''
+
   let message = `# Growth Strategy Request
 
 ## Focus Area
@@ -418,11 +423,8 @@ ${input.productDescription}
 ## Current Traction
 ${input.currentTraction}
 
-## What I've Tried
-${input.whatYouTried}
-
-## What's Working
-${input.whatsWorking}
+## What I've Tried & How It's Going
+${tacticsContent}
 `
 
   // Add user history section for returning users
@@ -764,6 +766,11 @@ ${previousSummary}
     ? `Custom: ${input.customFocusArea}`
     : input.focusArea.charAt(0).toUpperCase() + input.focusArea.slice(1)
 
+  // Support both new (tacticsAndResults) and legacy (whatYouTried + whatsWorking) fields
+  const tacticsContent = input.tacticsAndResults ||
+    [input.whatYouTried, input.whatsWorking].filter(Boolean).join('\n\n') ||
+    ''
+
   message += `# Original Request Context
 
 ## Focus Area
@@ -775,11 +782,8 @@ ${input.productDescription}
 ## Current Traction
 ${input.currentTraction}
 
-## What I've Tried
-${input.whatYouTried}
-
-## What's Working
-${input.whatsWorking}
+## What I've Tried & How It's Going
+${tacticsContent}
 `
 
   // Add user history if available
@@ -891,10 +895,81 @@ function summarizePreviousOutput(output: string): string {
   return summary || 'Previous strategy not available for reference.'
 }
 
+// =============================================================================
+// FIRST IMPRESSIONS GENERATION (URL-only social content)
+// =============================================================================
+
+const FIRST_IMPRESSIONS_MAX_TOKENS = 1500
+
+const FIRST_IMPRESSIONS_PROMPT = `You're a sharp growth strategist giving your first impressions of a startup. Be direct, specific, and genuinely helpful.
+
+Output in markdown with these sections:
+
+### What's Working
+2-3 bullets on what they're doing well. Be specific - quote their copy, reference features.
+
+### Growth Opportunities
+2-3 bullets on gaps or opportunities. Frame as observations, not commands.
+
+### Quick Wins
+2-3 specific, actionable things to test. Be concrete.
+
+### The Bigger Question
+One thought-provoking observation about their market position.
+
+Rules:
+- Be SPECIFIC to their actual website content
+- No generic advice, no emojis
+- If you couldn't access the site, say so`
+
+/**
+ * Generate a quick "first impressions" take for social media posting
+ * Uses actual website content + market context
+ */
+export async function generateFirstImpressions(
+  url: string,
+  websiteContent: string,
+  marketContext: string
+): Promise<string> {
+  const client = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY!,
+  })
+
+  const userMessage = `## Website URL
+${url}
+
+## Actual Website Content
+${websiteContent || 'Could not extract website content. The site may be behind authentication or blocking scrapers.'}
+
+## Market Context (from research)
+${marketContext || 'No additional market research available.'}
+
+Write your first impressions take now. Base it on the ACTUAL website content above, not assumptions.`
+
+  const response = await client.messages.create({
+    model: MINI_MODEL,
+    max_tokens: FIRST_IMPRESSIONS_MAX_TOKENS,
+    system: FIRST_IMPRESSIONS_PROMPT,
+    messages: [{ role: 'user', content: userMessage }],
+  })
+
+  const textContent = response.content.find((block) => block.type === 'text')
+  if (!textContent || textContent.type !== 'text') {
+    throw new Error('No text content in Claude response')
+  }
+
+  return textContent.text
+}
+
 function buildMiniUserMessage(input: RunInput, research: ResearchContext): string {
   const focusLabel = input.focusArea === 'custom' && input.customFocusArea
     ? `Custom: ${input.customFocusArea}`
     : input.focusArea.charAt(0).toUpperCase() + input.focusArea.slice(1)
+
+  // Support both new (tacticsAndResults) and legacy (whatYouTried + whatsWorking) fields
+  const tacticsContent = input.tacticsAndResults ||
+    [input.whatYouTried, input.whatsWorking].filter(Boolean).join('\n\n') ||
+    ''
 
   let message = `# Growth Strategy Request
 
@@ -907,11 +982,8 @@ ${input.productDescription}
 ## Current Traction
 ${input.currentTraction}
 
-## What I've Tried
-${input.whatYouTried}
-
-## What's Working
-${input.whatsWorking}
+## What I've Tried & How It's Going
+${tacticsContent}
 `
 
   if (input.websiteUrl) {

@@ -10,8 +10,7 @@
  * - Website URL: Replace with latest (if provided)
  * - Competitors: Merge arrays, deduplicate
  * - Traction: Append to history (keep last 10 snapshots)
- * - Tactics tried: Append to array (deduplicate)
- * - What's working: Append to array
+ * - Tactics & results: Append to history array (combined field)
  * - Constraints: Replace with latest (if provided)
  */
 
@@ -22,6 +21,19 @@ import type { UserContext, ContextDelta, TractionSnapshot } from '@/lib/types/co
 
 const MAX_TRACTION_HISTORY = 10
 const MAX_TACTICS = 50
+
+/**
+ * Extract tactics from RunInput, supporting both new and legacy fields
+ */
+function getTacticsFromInput(input: RunInput): string[] {
+  // New field takes priority
+  if (input.tacticsAndResults) {
+    return [input.tacticsAndResults]
+  }
+  // Legacy: combine whatYouTried and whatsWorking
+  const parts = [input.whatYouTried, input.whatsWorking].filter(Boolean)
+  return parts.length > 0 ? [parts.join(' | ')] : []
+}
 
 /**
  * Accumulate user context after a run completes
@@ -109,17 +121,16 @@ function mergeRunIntoContext(
       ),
     },
 
-    // Tactics: Accumulate over time
+    // Tactics: Accumulate over time (new: tacticsAndResults, legacy: whatYouTried + whatsWorking)
     tactics: {
-      tried: mergeStringArray(
-        existing.tactics?.tried,
-        input.whatYouTried ? [input.whatYouTried] : []
+      history: mergeStringArray(
+        existing.tactics?.history || existing.tactics?.tried, // Migrate from legacy tried array
+        getTacticsFromInput(input)
       ),
-      working: mergeStringArray(
-        existing.tactics?.working,
-        input.whatsWorking ? [input.whatsWorking] : []
-      ),
-      notWorking: existing.tactics?.notWorking || [],
+      // Keep legacy fields for backwards compatibility with old context data
+      tried: existing.tactics?.tried,
+      working: existing.tactics?.working,
+      notWorking: existing.tactics?.notWorking,
     },
 
     // Constraints: Replace if provided
@@ -169,10 +180,13 @@ export function mergeContextDelta(
 
     // Tactics: Merge new tactics (with limits to prevent unbounded growth)
     tactics: {
-      tried: mergeStringArray(
-        existing.tactics?.tried,
-        delta.newTactics
-      ),
+      history: delta.tacticsUpdate
+        ? mergeStringArray(existing.tactics?.history, [delta.tacticsUpdate])
+        : delta.newTactics // Legacy support
+          ? mergeStringArray(existing.tactics?.history || existing.tactics?.tried, delta.newTactics)
+          : existing.tactics?.history || [],
+      // Keep legacy fields for backwards compatibility
+      tried: existing.tactics?.tried,
       working: delta.workingUpdate
         ? [...(existing.tactics?.working || []), delta.workingUpdate].slice(-MAX_TACTICS)
         : existing.tactics?.working,

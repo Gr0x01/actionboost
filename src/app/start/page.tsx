@@ -60,14 +60,8 @@ const QUESTIONS = [
     type: "traction" as const,
   },
   {
-    id: "triedTactics",
-    question: "What growth tactics have you tried?",
-    acknowledgment: "Noted",
-    type: "textarea" as const,
-  },
-  {
-    id: "workingOrNot",
-    question: "What's working? What's falling flat?",
+    id: "tacticsAndResults",
+    question: "What have you tried, and how's it going?",
     acknowledgment: "This helps a lot",
     type: "textarea" as const,
   },
@@ -105,8 +99,7 @@ const STEP_NAMES: Record<string, string> = {
   websiteUrl: "url",
   productDescription: "product",
   currentTraction: "traction",
-  triedTactics: "tactics",
-  workingOrNot: "results",
+  tacticsAndResults: "tactics",
   attachments: "uploads",
   focusArea: "focus",
   competitors: "competitors",
@@ -300,8 +293,8 @@ export default function StartPage() {
     setForm((prev) => ({
       ...prev,
       focusArea: focusArea as FocusArea,
-      // Append delta to working/not working field for AI context
-      workingOrNot: delta,
+      // Append delta to tactics field for AI context
+      tacticsAndResults: delta,
     }));
     setCheckoutSource("context_update");
     setViewState("checkout");
@@ -742,9 +735,7 @@ export default function StartPage() {
                       placeholder={
                         question.id === "productDescription"
                           ? "We help [who] do [what] by [how]..."
-                          : question.id === "triedTactics"
-                          ? "SEO, social media, ads, content marketing..."
-                          : "What's bringing results? What's not working?"
+                          : "SEO, content marketing, paid ads... and what's working or not"
                       }
                       currentTotal={getTotalCharCount(form)}
                       maxTotal={MAX_TOTAL_CHARS}

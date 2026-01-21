@@ -12,8 +12,7 @@ import { signAuditToken } from "@/lib/auth/audit-token";
 const MAX_FIELD_LENGTHS: Record<string, number> = {
   productDescription: 5000,
   currentTraction: 2000,
-  triedTactics: 2000,
-  workingOrNot: 2000,
+  tacticsAndResults: 3000,
   analyticsSummary: 2000,
   constraints: 1000,
 };
@@ -125,8 +124,7 @@ export async function POST(request: NextRequest) {
     const runInput = {
       productDescription: input.productDescription,
       currentTraction: input.currentTraction,
-      whatYouTried: input.triedTactics,
-      whatsWorking: input.workingOrNot,
+      tacticsAndResults: input.tacticsAndResults,
       focusArea: input.focusArea,
       competitorUrls: input.competitors?.filter(Boolean) || [],
       websiteUrl: input.websiteUrl || "",
