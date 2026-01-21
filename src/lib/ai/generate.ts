@@ -564,12 +564,12 @@ function truncate(text: string, maxLength: number): string {
 // =============================================================================
 
 const MINI_MODEL = 'claude-sonnet-4-20250514'
-const MINI_MAX_TOKENS = 2000
+const MINI_MAX_TOKENS = 3000
 
 /**
  * Generate a mini growth strategy (free tier) using Claude Sonnet
- * Produces 3 sections: Executive Summary, Your Situation, Competitive Landscape
- * Omits: Channel Strategy, Stop/Start Doing, This Week, Roadmap, Metrics, Templates (upsell hook)
+ * Produces 4 sections: Executive Summary, Your Situation, Competitive Landscape, Channel Strategy
+ * Omits: Stop/Start Doing, This Week, Roadmap, Metrics, Templates (upsell hook)
  */
 export async function generateMiniStrategy(
   input: RunInput,
@@ -642,10 +642,14 @@ CONDENSED - 1 paragraph overview:
 - How competitors approach similar challenges
 - Key opportunities competitors are missing
 
+## Channel Strategy
+CONDENSED - Top 4 channels only:
+| Channel | Why It Fits | Effort | Priority |
+1-2 sentences explaining the top recommendation.
+
 ---
 
 **STOP HERE.** Do NOT include these sections (they are part of the full paid version):
-- Channel Strategy
 - Stop Doing
 - Start Doing
 - This Week
@@ -654,7 +658,7 @@ CONDENSED - 1 paragraph overview:
 - Content Templates
 
 End with exactly this text:
-"Want the complete playbook? The full analysis includes Channel Strategy, Stop Doing, Start Doing with ICE scores, This Week actions, your 30-Day Roadmap, Metrics Dashboard, and ready-to-use Content Templates."`
+"Want the complete playbook? The full analysis includes Stop Doing, Start Doing with ICE scores, This Week actions, your 30-Day Roadmap, Metrics Dashboard, and ready-to-use Content Templates."`
 }
 
 // =============================================================================
