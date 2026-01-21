@@ -142,7 +142,9 @@ The founder's primary challenge is getting more users to discover their product.
 
 **Acquisition Tactics to Consider:**
 - Content marketing and SEO opportunities
-- Community building and engagement
+- Answer Engine Optimization (AEO) for AI search visibility
+- Dark social seeding (Slack, Discord, WhatsApp communities)
+- Community-led growth and user-generated advocacy
 - Paid acquisition efficiency
 - Partnership and integration opportunities
 - Viral and referral mechanisms
