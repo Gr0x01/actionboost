@@ -34,11 +34,11 @@ export function Pricing() {
             Pricing
           </p>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-foreground tracking-tight text-balance">
-            Your competitors&apos; traffic data.{" "}
-            <span className="font-black">Tactics ranked by impact.</span>
+            Your competitors already figured something out.{" "}
+            <span className="font-black">Find out what.</span>
           </h2>
           <p className="mt-4 text-lg text-foreground/60 max-w-2xl mx-auto text-balance">
-            Data ChatGPT can&apos;t see. A 30-day roadmap you can actually execute. $9.99, no subscription.
+            This isn&apos;t ChatGPT guessing. It&apos;s research on your actual market. Channels you haven&apos;t tried. Tactics ranked by impact. A 30-day plan you can execute.
           </p>
         </div>
 
@@ -48,7 +48,7 @@ export function Pricing() {
           <div className="rounded-2xl border-[3px] border-foreground/30 bg-background p-6 lg:p-8 flex flex-col">
             <div className="mb-6">
               <h3 className="text-2xl font-black text-foreground">Free</h3>
-              <p className="text-sm text-foreground/60 mt-1">Mini audit to test the waters</p>
+              <p className="text-sm text-foreground/60 mt-1">See if it&apos;s useful before you pay</p>
             </div>
 
             <div className="space-y-2.5 flex-1">
@@ -74,7 +74,7 @@ export function Pricing() {
           <div className="rounded-2xl border-[3px] border-foreground bg-background p-6 lg:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] flex flex-col">
             <div className="mb-6">
               <h3 className="text-2xl font-black text-foreground">{config.singlePrice}</h3>
-              <p className="text-sm text-foreground/60 mt-1">Full action plan with competitor intel</p>
+              <p className="text-sm text-foreground/60 mt-1">The whole plan. Real research. Done.</p>
             </div>
 
             {/* Sample output snippets */}
@@ -90,9 +90,8 @@ export function Pricing() {
 
             <div className="mt-8">
               <PaidTierButton />
-              <p className="mt-4 text-xs text-foreground/60 text-center flex items-center justify-center gap-1.5">
-                <span className="text-green-600">✓</span>
-                7-day money-back guarantee
+              <p className="mt-4 text-xs text-foreground/60 text-center">
+                Not useful? I&apos;ll refund you. Seriously.
               </p>
             </div>
           </div>
@@ -100,7 +99,7 @@ export function Pricing() {
 
         {/* Trust note */}
         <p className="text-sm text-foreground/50 mt-8 font-mono text-center">
-          No subscription. Pay once, get your plan. Not happy? Full refund, no questions asked.
+          One payment. No subscription. If it doesn&apos;t help, full refund.
         </p>
       </div>
     </section>

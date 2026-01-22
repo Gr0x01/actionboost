@@ -1,7 +1,6 @@
 import { Header, Footer } from "@/components/layout";
 import {
   Hero,
-  ProblemSection,
   FrameworksSection,
   Pricing,
   Testimonials,
@@ -15,7 +14,6 @@ export default function Home() {
 
       <main className="flex-1">
         <Hero />
-        <ProblemSection />
         <FrameworksSection />
         <Pricing />
         <Testimonials />
