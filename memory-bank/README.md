@@ -59,7 +59,9 @@ Cost breakdown in `architecture.md`. 3-pack removed — subscription is the upse
 ```bash
 npm run dev          # localhost:3000
 npm run build        # production build
-npm run test:e2e     # Playwright tests
+npm run test:run     # Unit tests (Vitest)
+npm run test:e2e     # E2E tests (Playwright)
+npm run test:all     # Both
 ```
 
 **Env vars needed**: See `.env.example` or architecture.md

@@ -332,6 +332,7 @@ export type Database = {
           context: Json | null
           context_updated_at: string | null
           created_at: string | null
+          credits_used: number
           email: string
           id: string
         }
@@ -340,6 +341,7 @@ export type Database = {
           context?: Json | null
           context_updated_at?: string | null
           created_at?: string | null
+          credits_used?: number
           email: string
           id?: string
         }
@@ -348,6 +350,7 @@ export type Database = {
           context?: Json | null
           context_updated_at?: string | null
           created_at?: string | null
+          credits_used?: number
           email?: string
           id?: string
         }

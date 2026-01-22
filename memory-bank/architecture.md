@@ -493,3 +493,50 @@ RESEND_API_KEY
 **Sender**: `team@actionboo.st`
 
 ---
+
+## Testing
+
+**Status**: ✅ Complete
+
+### Stack
+- **Unit tests**: Vitest (46 tests)
+- **E2E tests**: Playwright (Chromium, Firefox, WebKit)
+- **CI/CD**: GitHub Actions on every PR
+
+### Commands
+```bash
+npm run test:run     # Unit tests
+npm run test:e2e     # E2E tests (starts dev server)
+npm run test:all     # Both
+npm run test         # Vitest watch mode
+```
+
+### Unit Test Files
+```
+src/lib/__tests__/
+├── validation.test.ts   # Email validation (7 tests)
+├── audit-token.test.ts  # Token signing/verification (9 tests)
+├── form.test.ts         # Form validation + edge cases (17 tests)
+└── credits.test.ts      # Credit calculation patterns (13 tests)
+```
+
+### E2E Test Files
+```
+tests/
+├── smoke.spec.ts        # Homepage loads
+├── form-wizard.spec.ts  # Multi-step form navigation
+└── checkout.spec.ts     # Checkout flow + Stripe mock
+```
+
+### CI/CD (`.github/workflows/ci.yml`)
+Runs on every PR to `main`:
+1. **lint-typecheck-build**: ESLint + TypeScript + `npm run build`
+2. **unit-tests**: Vitest
+3. **e2e-tests**: Playwright (Chromium only in CI)
+
+### Config Files
+- `vitest.config.ts` - Vitest configuration
+- `vitest.setup.ts` - Environment mocks
+- `playwright.config.ts` - E2E configuration
+
+---

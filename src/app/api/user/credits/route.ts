@@ -13,10 +13,10 @@ export async function GET() {
 
     const serviceClient = createServiceClient()
 
-    // Get public user
+    // Get public user with credits_used
     const { data: publicUser } = await serviceClient
       .from("users")
-      .select("id")
+      .select("id, credits_used")
       .eq("auth_id", user.id)
       .single()
 
@@ -24,20 +24,14 @@ export async function GET() {
       return NextResponse.json({ credits: 0, loggedIn: true })
     }
 
-    // Get credits
+    // Get total credits from run_credits
     const { data: creditRecords } = await serviceClient
       .from("run_credits")
       .select("credits")
       .eq("user_id", publicUser.id)
 
-    // Get run count
-    const { count: runCount } = await serviceClient
-      .from("runs")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", publicUser.id)
-
     const totalCredits = creditRecords?.reduce((sum, c) => sum + c.credits, 0) ?? 0
-    const usedCredits = runCount ?? 0
+    const usedCredits = publicUser.credits_used ?? 0
     const remainingCredits = Math.max(0, totalCredits - usedCredits)
 
     return NextResponse.json({

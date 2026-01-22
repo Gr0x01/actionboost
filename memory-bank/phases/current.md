@@ -1,6 +1,33 @@
-# Current: Cart Abandonment Recovery
+# Current Phase
 
-## Latest Update: Auto Free Audit for Abandoned Checkouts
+## Latest Update: Testing Infrastructure
+
+**Completed Jan 22, 2026** - Added comprehensive testing + CI/CD.
+
+### What Was Built
+- **Vitest** for unit tests (46 tests across 4 files)
+- **Playwright** E2E tests for form wizard and checkout flows
+- **GitHub Actions** CI running on every PR (lint, type-check, build, tests)
+
+### Bug Fixed
+- **Credit race condition** - Added `credits_used` column to users table with optimistic locking. Prevents double-spending when concurrent requests try to use the same credit.
+
+### Files Added
+- `vitest.config.ts`, `vitest.setup.ts` - Unit test config
+- `src/lib/__tests__/*.test.ts` - Unit tests
+- `tests/form-wizard.spec.ts`, `tests/checkout.spec.ts` - E2E tests
+- `.github/workflows/ci.yml` - CI pipeline
+
+### Commands
+```bash
+npm run test:run   # Unit tests
+npm run test:e2e   # E2E tests
+npm run test:all   # Both
+```
+
+---
+
+## Previous: Cart Abandonment Recovery
 
 **Completed Jan 21, 2026** - Capture email before checkout, send free audit when they abandon.
 

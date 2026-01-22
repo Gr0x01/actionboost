@@ -56,10 +56,10 @@ export async function POST(request: NextRequest) {
 
     const serviceClient = createServiceClient();
 
-    // Get public user
+    // Get public user with credits_used for atomic deduction
     const { data: publicUser } = await serviceClient
       .from("users")
-      .select("id")
+      .select("id, credits_used")
       .eq("auth_id", user.id)
       .single();
 
@@ -117,20 +117,15 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Check credits
+    // Check credits - fetch total from run_credits
     const { data: creditRecords } = await serviceClient
       .from("run_credits")
       .select("credits")
       .eq("user_id", publicUser.id);
 
-    const { count: runCount } = await serviceClient
-      .from("runs")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", publicUser.id);
-
     const totalCredits = creditRecords?.reduce((sum, c) => sum + c.credits, 0) ?? 0;
-    const usedCredits = runCount ?? 0;
-    const remainingCredits = totalCredits - usedCredits;
+    const currentUsed = publicUser.credits_used ?? 0;
+    const remainingCredits = totalCredits - currentUsed;
 
     if (remainingCredits < 1) {
       return NextResponse.json(
@@ -139,7 +134,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create the run (this uses 1 credit by existing)
+    // ATOMIC: Increment credits_used with optimistic lock
+    // This prevents race conditions where two concurrent requests both pass the check
+    const { data: updateResult, error: updateError } = await serviceClient
+      .from("users")
+      .update({ credits_used: currentUsed + 1 })
+      .eq("id", publicUser.id)
+      .eq("credits_used", currentUsed) // Optimistic lock - fails if value changed
+      .select("id");
+
+    if (updateError || !updateResult || updateResult.length === 0) {
+      // Race condition detected - another request used the credit
+      console.log(`[API] Credit race condition detected for user ${publicUser.id}`);
+      return NextResponse.json(
+        { error: "Credit was already used. Please try again." },
+        { status: 409 }
+      );
+    }
+
+    // Credit is now reserved - safe to create run
     const { data: run, error: runError } = await serviceClient
       .from("runs")
       .insert({
@@ -154,8 +167,38 @@ export async function POST(request: NextRequest) {
 
     if (runError || !run) {
       console.error("Failed to create run:", runError);
+
+      // Rollback credit deduction with retry
+      const MAX_ROLLBACK_ATTEMPTS = 3;
+      let rollbackSuccess = false;
+
+      for (let attempt = 1; attempt <= MAX_ROLLBACK_ATTEMPTS; attempt++) {
+        const { error: rollbackError } = await serviceClient
+          .from("users")
+          .update({ credits_used: currentUsed })
+          .eq("id", publicUser.id);
+
+        if (!rollbackError) {
+          rollbackSuccess = true;
+          console.log(`[API] Rolled back credit for user ${publicUser.id} (attempt ${attempt})`);
+          break;
+        }
+
+        console.error(`[API] Rollback attempt ${attempt}/${MAX_ROLLBACK_ATTEMPTS} failed:`, rollbackError);
+
+        // Brief delay before retry (except on last attempt)
+        if (attempt < MAX_ROLLBACK_ATTEMPTS) {
+          await new Promise((resolve) => setTimeout(resolve, 100 * attempt));
+        }
+      }
+
+      if (!rollbackSuccess) {
+        // All retries failed - log critical error for investigation
+        console.error(`[CRITICAL] Failed to rollback credit for user ${publicUser.id} after ${MAX_ROLLBACK_ATTEMPTS} attempts`);
+      }
+
       return NextResponse.json(
-        { error: "Failed to create run" },
+        { error: "Failed to create run. Please try again." },
         { status: 500 }
       );
     }
