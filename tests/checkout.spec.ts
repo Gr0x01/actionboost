@@ -3,45 +3,61 @@ import { test, expect } from "@playwright/test"
 test.describe("Checkout Flow", () => {
   // Helper to fill form and reach checkout
   async function fillFormAndReachCheckout(page: import("@playwright/test").Page) {
-    await page.goto("/start")
+    // Clear localStorage before navigating to ensure clean state
+    await page.goto("/")
     await page.evaluate(() => localStorage.clear())
+    await page.goto("/start")
 
-    // Step 1: Skip website URL
+    // Step 1: Skip website URL - wait for page to fully load first
+    await expect(page.getByText("What's your website?")).toBeVisible()
     await page.getByRole("button", { name: /skip/i }).click()
 
-    // Step 2: Product description
-    await page.getByRole("textbox").fill("A test product for E2E testing")
-    await page.getByRole("button", { name: /next/i }).click()
+    // Step 2: Product description - wait for question to appear first
+    await expect(page.getByText("Tell me about your product")).toBeVisible()
+    const textbox = page.getByRole("textbox")
+    await textbox.fill("A test product for E2E testing")
+    // Verify the value was set and button is enabled
+    await expect(textbox).toHaveValue("A test product for E2E testing")
+    await expect(page.getByRole("button", { name: /continue/i })).toBeEnabled()
+    await page.getByRole("button", { name: /continue/i }).click()
 
-    // Step 3: Traction
+    // Step 3: Traction - wait for question to appear after acknowledgment
+    await expect(page.getByText("What traction")).toBeVisible()
     await page.getByRole("textbox").fill("50 users testing")
-    await page.getByRole("button", { name: /next/i }).click()
+    await expect(page.getByRole("button", { name: /continue/i })).toBeEnabled()
+    await page.getByRole("button", { name: /continue/i }).click()
 
-    // Step 4: Tactics
+    // Step 4: Tactics - wait for question to appear
+    await expect(page.getByText("What have you tried")).toBeVisible()
     await page.getByRole("textbox").fill("Tried some things")
-    await page.getByRole("button", { name: /next/i }).click()
+    await expect(page.getByRole("button", { name: /continue/i })).toBeEnabled()
+    await page.getByRole("button", { name: /continue/i }).click()
 
-    // Step 5: Skip attachments
+    // Step 5: Skip attachments - wait for question first
+    await expect(page.getByText("screenshots or data")).toBeVisible()
     await page.getByRole("button", { name: /skip/i }).click()
 
-    // Step 6: Focus area - click Acquisition
+    // Step 6: Focus area - wait for question, then click Acquisition
+    await expect(page.getByText("Where should we focus")).toBeVisible()
     await page.getByText("Acquisition").click()
 
-    // Step 7: Skip email
+    // Step 7: Skip email - wait for question first
+    await expect(page.getByText("Where should we send")).toBeVisible()
     await page.getByRole("button", { name: /skip/i }).click()
 
-    // Step 8: Skip competitors
+    // Step 8: Skip competitors - wait for question first
+    await expect(page.getByText("competitors")).toBeVisible()
     await page.getByRole("button", { name: /skip/i }).click()
 
     // Should be at checkout
-    await expect(page.getByText("Get Strategy")).toBeVisible()
+    await expect(page.getByText("Ready to")).toBeVisible()
   }
 
   test("displays checkout options after completing form", async ({ page }) => {
     await fillFormAndReachCheckout(page)
 
-    // Should show the main CTA button
-    await expect(page.getByRole("button", { name: /get strategy/i })).toBeVisible()
+    // Should show the main CTA button ($9.99 price)
+    await expect(page.getByRole("button", { name: /\$9\.99/i })).toBeVisible()
   })
 
   test("shows promo code input", async ({ page }) => {
@@ -54,7 +70,7 @@ test.describe("Checkout Flow", () => {
       .catch(() => false)
 
     const hasPromoToggle = await page
-      .getByText(/have a code/i)
+      .getByText(/promo code/i)
       .isVisible()
       .catch(() => false)
 
@@ -65,14 +81,14 @@ test.describe("Checkout Flow", () => {
   test("validates promo code format", async ({ page }) => {
     await fillFormAndReachCheckout(page)
 
-    // If there's a "have a code" toggle, click it
+    // If there's a "promo code" toggle, click it
     const hasPromoToggle = await page
-      .getByText(/have a code/i)
+      .getByText(/promo code/i)
       .isVisible()
       .catch(() => false)
 
     if (hasPromoToggle) {
-      await page.getByText(/have a code/i).click()
+      await page.getByText(/promo code/i).click()
     }
 
     // Enter an invalid code
@@ -83,7 +99,7 @@ test.describe("Checkout Flow", () => {
 
       // Wait for validation response - either error appears or we stay on checkout
       // Use proper waiting instead of arbitrary timeout
-      await expect(page.getByText("Get Strategy")).toBeVisible({ timeout: 5000 })
+      await expect(page.getByText("Ready to")).toBeVisible({ timeout: 5000 })
     }
   })
 
@@ -102,8 +118,8 @@ test.describe("Checkout Flow", () => {
       })
     })
 
-    // Click checkout button
-    await page.getByRole("button", { name: /get strategy/i }).click()
+    // Click checkout button ($9.99 price)
+    await page.getByRole("button", { name: /\$9\.99/i }).click()
 
     // Wait for the API response instead of arbitrary timeout
     const response = await responsePromise

@@ -125,23 +125,8 @@ function StartPageContent() {
   // View state machine
   const [viewState, setViewState] = useState<ViewState>("loading");
 
-  // Form state - lazy init from localStorage
-  const [form, setForm] = useState<FormInput>(() => {
-    if (typeof window === "undefined") return INITIAL_FORM_STATE;
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed && typeof parsed === "object" && typeof parsed.productDescription === "string") {
-          if (!Array.isArray(parsed.attachments)) parsed.attachments = [];
-          return { ...INITIAL_FORM_STATE, ...parsed };
-        }
-      }
-    } catch {
-      // Invalid JSON - use defaults
-    }
-    return INITIAL_FORM_STATE;
-  });
+  // Form state
+  const [form, setForm] = useState<FormInput>(INITIAL_FORM_STATE);
   const [contextDelta, setContextDelta] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -207,7 +192,6 @@ function StartPageContent() {
   // Determine initial view state once context and businesses are loaded
   useEffect(() => {
     if (!isLoadingContext && !isLoadingBusinesses && viewState === "loading") {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- initialization pattern
       setViewState((hasContext || hasBusinesses) ? "welcome_back" : "questions");
     }
   }, [isLoadingContext, isLoadingBusinesses, hasContext, hasBusinesses, viewState]);
@@ -224,7 +208,6 @@ function StartPageContent() {
       !hasAutoSkippedEmail &&
       !showAcknowledgment
     ) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- auto-navigation
       setHasAutoSkippedEmail(true);
       goToNext(true); // Skip this step (true = mark as skipped for analytics)
     }
@@ -248,10 +231,23 @@ function StartPageContent() {
     fetchCredits();
   }, []);
 
-  // Track form start on mount
+  // Load from localStorage and track form start on mount
   useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === "object" && typeof parsed.productDescription === "string") {
+          if (!Array.isArray(parsed.attachments)) parsed.attachments = [];
+          setForm({ ...INITIAL_FORM_STATE, ...parsed });
+        }
+      } catch {
+        // Invalid JSON - use defaults
+      }
+    }
     trackFormStart();
-  }, [trackFormStart]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Save to localStorage
   useEffect(() => {

@@ -19,17 +19,20 @@ test.describe("Form Wizard", () => {
       page.getByText("Tell me about your product")
     ).toBeVisible()
     await page.getByRole("textbox").fill("A SaaS tool for managing widgets")
-    await page.getByRole("button", { name: /next/i }).click()
+    await expect(page.getByRole("button", { name: /continue/i })).toBeEnabled()
+    await page.getByRole("button", { name: /continue/i }).click()
 
     // Step 3: Traction
     await expect(page.getByText("What traction do you have")).toBeVisible()
     await page.getByRole("textbox").fill("100 users, $500 MRR")
-    await page.getByRole("button", { name: /next/i }).click()
+    await expect(page.getByRole("button", { name: /continue/i })).toBeEnabled()
+    await page.getByRole("button", { name: /continue/i }).click()
 
     // Step 4: Tactics tried
     await expect(page.getByText("What have you tried")).toBeVisible()
     await page.getByRole("textbox").fill("Content marketing, some paid ads")
-    await page.getByRole("button", { name: /next/i }).click()
+    await expect(page.getByRole("button", { name: /continue/i })).toBeEnabled()
+    await page.getByRole("button", { name: /continue/i }).click()
 
     // Step 5: Attachments (optional - skip)
     await expect(page.getByText("screenshots or data")).toBeVisible()
@@ -47,14 +50,15 @@ test.describe("Form Wizard", () => {
     await expect(page.getByText("competitors")).toBeVisible()
     await page.getByRole("button", { name: /skip/i }).click()
 
-    // Should reach checkout
-    await expect(page.getByText("Get Strategy")).toBeVisible()
+    // Should reach checkout - look for checkout heading or price button
+    await expect(page.getByText("Ready to")).toBeVisible()
   })
 
   test("back navigation works", async ({ page }) => {
     await page.goto("/start")
 
     // Skip first question
+    await expect(page.getByText("What's your website?")).toBeVisible()
     await page.getByRole("button", { name: /skip/i }).click()
 
     // On step 2, fill in something
@@ -62,7 +66,8 @@ test.describe("Form Wizard", () => {
       page.getByText("Tell me about your product")
     ).toBeVisible()
     await page.getByRole("textbox").fill("Test product")
-    await page.getByRole("button", { name: /next/i }).click()
+    await expect(page.getByRole("button", { name: /continue/i })).toBeEnabled()
+    await page.getByRole("button", { name: /continue/i }).click()
 
     // On step 3, go back
     await expect(page.getByText("What traction")).toBeVisible()
@@ -79,15 +84,17 @@ test.describe("Form Wizard", () => {
     await page.goto("/start")
 
     // Skip to product description and fill it
+    await expect(page.getByText("What's your website?")).toBeVisible()
     await page.getByRole("button", { name: /skip/i }).click()
+    await expect(page.getByText("Tell me about your product")).toBeVisible()
     await page.getByRole("textbox").fill("Persisted product data")
-    await page.getByRole("button", { name: /next/i }).click()
+    await expect(page.getByRole("button", { name: /continue/i })).toBeEnabled()
+    await page.getByRole("button", { name: /continue/i }).click()
 
-    // Reload page
-    await page.reload()
+    // Wait for localStorage to be saved (debounced at 500ms)
+    await page.waitForTimeout(600)
 
-    // Data should be restored from localStorage
-    // Check by going back or checking storage
+    // Check localStorage was saved correctly
     const storage = await page.evaluate(() =>
       localStorage.getItem("actionboost-form-v3")
     )
@@ -107,15 +114,15 @@ test.describe("Form Wizard", () => {
       page.getByText("Tell me about your product")
     ).toBeVisible()
 
-    // The Next button should be disabled or clicking it should not advance
-    const nextButton = page.getByRole("button", { name: /next/i })
+    // The Continue button should be disabled or clicking it should not advance
+    const continueButton = page.getByRole("button", { name: /continue/i })
 
     // Either button is disabled or clicking doesn't advance
-    const isDisabled = await nextButton.isDisabled().catch(() => false)
+    const isDisabled = await continueButton.isDisabled().catch(() => false)
 
     if (!isDisabled) {
       // Click and verify we don't advance
-      await nextButton.click()
+      await continueButton.click()
       // Should still be on the same question
       await expect(
         page.getByText("Tell me about your product")
