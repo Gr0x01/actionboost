@@ -9,6 +9,7 @@ import { trackServerEvent, identifyUser } from "@/lib/analytics";
 import { isValidEmail } from "@/lib/validation";
 import { applyContextDeltaToBusiness } from "@/lib/context/accumulate";
 import { createBusiness, getOrCreateDefaultBusiness, verifyBusinessOwnership } from "@/lib/business";
+import { getSessionUser } from "@/lib/auth/session";
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,7 +27,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Code is required" }, { status: 400 });
     }
 
-    if (!email || typeof email !== "string" || !isValidEmail(email)) {
+    // Get authenticated user's email if logged in (prevents data fragmentation)
+    const sessionUser = await getSessionUser();
+    const emailToUse = sessionUser?.email || email;
+
+    // Only require form email if not authenticated
+    if (!emailToUse || !isValidEmail(emailToUse)) {
       return NextResponse.json({ error: "Valid email is required" }, { status: 400 });
     }
 
@@ -58,6 +64,7 @@ export async function POST(request: NextRequest) {
 
     const supabase = createServiceClient();
     const normalizedCode = code.toUpperCase().trim();
+    const normalizedEmail = emailToUse.toLowerCase().trim();
 
     // Validate and get the code in a single query
     const { data: codeRecord, error: codeError } = await supabase
@@ -112,7 +119,6 @@ export async function POST(request: NextRequest) {
 
     // Get or create user by email (handle race condition with upsert-like pattern)
     let userId: string | null = null;
-    const normalizedEmail = email.toLowerCase().trim();
 
     // Try to insert first, handle unique constraint if user already exists
     const { data: newUser, error: insertError } = await supabase

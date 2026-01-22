@@ -196,6 +196,23 @@ function StartPageContent() {
     }
   }, [isLoadingContext, isLoadingBusinesses, hasContext, hasBusinesses, viewState]);
 
+  // Auto-skip email step for logged-in users (we already have their email)
+  const emailStepIndex = QUESTIONS.findIndex(q => q.id === "email");
+  const [hasAutoSkippedEmail, setHasAutoSkippedEmail] = useState(false);
+  useEffect(() => {
+    if (
+      viewState === "questions" &&
+      currentQuestion === emailStepIndex &&
+      isLoggedIn &&
+      email &&
+      !hasAutoSkippedEmail &&
+      !showAcknowledgment
+    ) {
+      setHasAutoSkippedEmail(true);
+      goToNext(true); // Skip this step (true = mark as skipped for analytics)
+    }
+  }, [currentQuestion, viewState, isLoggedIn, email, emailStepIndex, goToNext, hasAutoSkippedEmail, showAcknowledgment]);
+
   // Fetch user credits on mount
   useEffect(() => {
     async function fetchCredits() {

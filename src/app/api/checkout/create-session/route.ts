@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { FormInput, validateForm } from "@/lib/types/form";
 import { MAX_CONTEXT_LENGTH } from "@/lib/types/database";
 import { applyContextDeltaToUser } from "@/lib/context/accumulate";
+import { getSessionUser } from "@/lib/auth/session";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -46,32 +46,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get authenticated user's email if logged in (prevents data fragmentation)
+    const sessionUser = await getSessionUser();
+    const checkoutEmail = sessionUser?.email || input.email || undefined;
+
     // For returning users with contextDelta, apply it NOW before Stripe checkout
     // This avoids the 500 char Stripe metadata limit entirely
     let contextAppliedToUser = false;
-    if (contextDelta) {
-      const supabase = await createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (user) {
-        // User is authenticated - find their public user ID and apply context
-        const serviceClient = createServiceClient();
-        const { data: publicUser } = await serviceClient
-          .from("users")
-          .select("id")
-          .eq("auth_id", user.id)
-          .single();
-
-        if (publicUser) {
-          const result = await applyContextDeltaToUser(publicUser.id, contextDelta);
-          if (result.success) {
-            contextAppliedToUser = true;
-            console.log(`[Checkout] Applied context delta for user ${publicUser.id} before Stripe checkout`);
-          } else {
-            console.error(`[Checkout] Failed to apply context delta:`, result.error);
-            // Continue anyway - they can still checkout, context just won't be updated
-          }
-        }
+    if (contextDelta && sessionUser?.publicUserId) {
+      const result = await applyContextDeltaToUser(sessionUser.publicUserId, contextDelta);
+      if (result.success) {
+        contextAppliedToUser = true;
+        console.log(`[Checkout] Applied context delta for user ${sessionUser.publicUserId} before Stripe checkout`);
+      } else {
+        console.error(`[Checkout] Failed to apply context delta:`, result.error);
+        // Continue anyway - they can still checkout, context just won't be updated
       }
     }
 
@@ -85,7 +74,7 @@ export async function POST(request: NextRequest) {
       form_website: input.websiteUrl || "",
       form_analytics: (input.analyticsSummary || "").slice(0, 500),
       form_constraints: (input.constraints || "").slice(0, 500),
-      form_email: input.email || "", // For cart abandonment recovery
+      form_email: checkoutEmail || "", // For cart abandonment recovery
       credits: "1",
       posthog_distinct_id: posthogDistinctId || "",
       // Context delta: if already applied to user, don't duplicate in metadata
@@ -106,8 +95,8 @@ export async function POST(request: NextRequest) {
         },
       ],
       metadata,
-      // Pre-fill email in Stripe checkout if provided
-      customer_email: input.email || undefined,
+      // Pre-fill email in Stripe checkout (use auth email if logged in)
+      customer_email: checkoutEmail,
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/processing/{CHECKOUT_SESSION_ID}?new=1`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/start`,
     });
