@@ -104,10 +104,10 @@ export function HeroForm() {
           <div className="flex items-center justify-between gap-4">
             <div>
               <span className="font-mono text-[10px] tracking-[0.15em] text-cta uppercase font-semibold">
-                We eat our own cooking
+                We&apos;re doing this too
               </span>
               <p className="text-base font-bold text-foreground mt-1">
-                See the plan we ran on ourselves →
+                See the plan we&apos;re following right now →
               </p>
             </div>
             <ArrowRight className="w-5 h-5 text-foreground/40 shrink-0 transition-transform group-hover:translate-x-1 group-hover:text-cta" />
