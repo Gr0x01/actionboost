@@ -1,6 +1,16 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy-load Resend client to avoid throwing on import when API key is missing
+let _resend: Resend | null = null;
+function getResend(): Resend | null {
+  if (!process.env.RESEND_API_KEY) {
+    return null;
+  }
+  if (!_resend) {
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 
 const FROM_EMAIL = "Aboost <team@aboo.st>";
 
@@ -29,6 +39,11 @@ export async function sendReceiptEmail(data: ReceiptEmailData): Promise<void> {
     const { to, productName, amount, date } = data;
     const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`;
 
+    const resend = getResend();
+    if (!resend) {
+      console.warn('[Email] RESEND_API_KEY not set, skipping email');
+      return;
+    }
     await resend.emails.send({
       from: FROM_EMAIL,
       to,
@@ -306,6 +321,11 @@ export async function sendRunReadyEmail(data: RunReadyEmailData): Promise<void> 
     const { to, runId } = data;
     const resultsUrl = `${process.env.NEXT_PUBLIC_APP_URL}/results/${runId}`;
 
+    const resend = getResend();
+    if (!resend) {
+      console.warn('[Email] RESEND_API_KEY not set, skipping email');
+      return;
+    }
     await resend.emails.send({
       from: FROM_EMAIL,
       to,
@@ -422,6 +442,11 @@ export async function sendRunFailedEmail(data: RunFailedEmailData): Promise<void
   try {
     const { to } = data;
 
+    const resend = getResend();
+    if (!resend) {
+      console.warn('[Email] RESEND_API_KEY not set, skipping email');
+      return;
+    }
     await resend.emails.send({
       from: FROM_EMAIL,
       to,
@@ -543,6 +568,11 @@ export async function sendFreeAuditUpsellEmail(
     const freeResultsUrl = `${process.env.NEXT_PUBLIC_APP_URL}/free-results/${freeAuditId}`;
     const upgradeUrl = `${process.env.NEXT_PUBLIC_APP_URL}/start`;
 
+    const resend = getResend();
+    if (!resend) {
+      console.warn('[Email] RESEND_API_KEY not set, skipping email');
+      return;
+    }
     await resend.emails.send({
       from: FROM_EMAIL,
       to,
@@ -687,6 +717,11 @@ export async function sendAbandonedCheckoutEmail(
     const freeResultsUrl = `${process.env.NEXT_PUBLIC_APP_URL}/free-results/${freeAuditId}`;
     const upgradeUrl = `${process.env.NEXT_PUBLIC_APP_URL}/start`;
 
+    const resend = getResend();
+    if (!resend) {
+      console.warn('[Email] RESEND_API_KEY not set, skipping email');
+      return;
+    }
     await resend.emails.send({
       from: FROM_EMAIL,
       to,
@@ -821,6 +856,11 @@ export async function sendFeedbackRequestEmail(
     // For MVP, link to mailto. Can replace with feedback form later.
     const feedbackUrl = `mailto:team@aboo.st?subject=Feedback on my growth strategy&body=Run ID: ${runId}%0A%0A`;
 
+    const resend = getResend();
+    if (!resend) {
+      console.warn('[Email] RESEND_API_KEY not set, skipping email');
+      return;
+    }
     await resend.emails.send({
       from: FROM_EMAIL,
       to,

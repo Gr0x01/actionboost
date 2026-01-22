@@ -1,10 +1,44 @@
 import { config } from 'dotenv'
 config({ path: '.env.local' })
+import { runPipeline } from '../src/lib/ai/pipeline'
 import { runResearch } from '../src/lib/ai/research'
 import { generateStrategy } from '../src/lib/ai/generate'
 import type { RunInput, ResearchContext } from '../src/lib/ai/types'
 import * as fs from 'fs'
 import * as path from 'path'
+
+// If run ID is passed as argument, test the agentic pipeline directly
+const runId = process.argv[2]
+if (runId) {
+  console.log(`[Test] Running agentic pipeline for run ${runId}`)
+  console.log('[Test] Environment check:')
+  console.log(`  - ANTHROPIC_API_KEY: ${process.env.ANTHROPIC_API_KEY ? '✓ set' : '✗ missing'}`)
+  console.log(`  - TAVILY_API: ${process.env.TAVILY_API ? '✓ set' : '✗ missing'}`)
+  console.log(`  - SUPABASE_URL: ${process.env.NEXT_PUBLIC_SUPABASE_URL ? '✓ set' : '✗ missing'}`)
+  console.log(`  - SUPABASE_SERVICE_ROLE_KEY: ${process.env.SUPABASE_SERVICE_ROLE_KEY ? '✓ set' : '✗ missing'}`)
+
+  runPipeline(runId)
+    .then((result) => {
+      console.log('\n[Test] Pipeline result:', JSON.stringify({ success: result.success, error: result.error }, null, 2))
+      if (result.success) {
+        console.log(`[Test] ✓ Pipeline completed successfully`)
+        console.log(`[Test] Output length: ${result.output?.length || 0} characters`)
+      } else {
+        console.log(`[Test] ✗ Pipeline failed: ${result.error}`)
+      }
+      process.exit(result.success ? 0 : 1)
+    })
+    .catch((err) => {
+      console.error('[Test] ✗ Pipeline threw error:', err)
+      process.exit(1)
+    })
+} else {
+  // Original test flow (legacy pipeline)
+  main().catch((err) => {
+    console.error('Test failed:', err)
+    process.exit(1)
+  })
+}
 
 // Test input based on Actionboo.st itself (updated from memory-bank)
 const TEST_INPUT: RunInput = {
