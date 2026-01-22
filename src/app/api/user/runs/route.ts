@@ -23,10 +23,10 @@ export async function GET() {
     return NextResponse.json({ runs: [], credits: 0 })
   }
 
-  // Get user's runs
+  // Get user's runs (include source to identify refinements)
   const { data: runs } = await supabase
     .from("runs")
-    .select("id, status, input, created_at, completed_at, share_slug")
+    .select("id, status, input, created_at, completed_at, share_slug, source")
     .eq("user_id", publicUser.id)
     .order("created_at", { ascending: false })
 
@@ -37,7 +37,8 @@ export async function GET() {
     .eq("user_id", publicUser.id)
 
   const totalCredits = credits?.reduce((sum, c) => sum + c.credits, 0) ?? 0
-  const usedCredits = runs?.length ?? 0
+  // Only count runs that explicitly used credits (not stripe payments, promos, or refinements)
+  const usedCredits = runs?.filter(r => r.source === "credits").length ?? 0
   const remainingCredits = Math.max(0, totalCredits - usedCredits)
 
   return NextResponse.json({

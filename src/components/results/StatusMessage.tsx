@@ -1,21 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Check, X, Lightbulb, HelpCircle, Sparkles } from "lucide-react";
 import Link from "next/link";
 import {
-  PIPELINE_STAGES,
   PROCESSING_TIPS,
   TIP_ROTATION_INTERVAL,
   type TipType,
 } from "@/lib/constants/processing-content";
-import type { PipelineStage } from "@/lib/types/database";
 
 type Status = "pending" | "processing" | "complete" | "failed";
 
+interface CompletedStage {
+  text: string;
+  timestamp: number;
+}
+
 interface StatusMessageProps {
   status: Status;
-  stage?: PipelineStage | null;
+  stage?: string | null;
   message?: string;
   submessage?: string;
 }
@@ -28,6 +31,133 @@ export function StatusMessage({
 }: StatusMessageProps) {
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
   const [tipVisible, setTipVisible] = useState(true);
+  const [displayedDataPoints, setDisplayedDataPoints] = useState(0);
+
+  // Combined state to avoid cascading render warnings
+  const [stageTracking, setStageTracking] = useState({
+    seenStages: [] as string[],
+    targetDataPoints: 0
+  });
+  const seenStagesRef = useRef<Set<string>>(new Set()); // For O(1) lookup
+
+  // Stage history and typewriter state
+  const [completedStages, setCompletedStages] = useState<CompletedStage[]>([]);
+  const [displayedText, setDisplayedText] = useState("");
+  const typingStageRef = useRef<string>(""); // The stage we're currently typing
+  const typingIndexRef = useRef<number>(0);  // Current character index
+
+  // Typewriter effect using requestAnimationFrame for smooth, uninterruptible typing
+  useEffect(() => {
+    if (!stage) return;
+
+    // If this is a NEW stage, handle the transition
+    if (stage !== typingStageRef.current) {
+      // Complete previous stage and add to history
+      if (typingStageRef.current) {
+        const completedText = typingStageRef.current;
+        setCompletedStages(prev => {
+          const updated = [...prev, { text: completedText, timestamp: Date.now() }];
+          return updated.slice(-3);
+        });
+      }
+
+      // Start fresh for new stage
+      typingStageRef.current = stage;
+      typingIndexRef.current = 0;
+      setDisplayedText("");
+    }
+
+    // Typing animation loop
+    let animationId: number;
+    let lastTime = 0;
+    const charDelay = 20; // ms per character
+
+    const animate = (time: number) => {
+      // Check if we're still typing this stage
+      if (typingStageRef.current !== stage) return;
+
+      if (time - lastTime >= charDelay) {
+        lastTime = time;
+
+        if (typingIndexRef.current < stage.length) {
+          typingIndexRef.current++;
+          setDisplayedText(stage.slice(0, typingIndexRef.current));
+        }
+      }
+
+      // Continue if not done
+      if (typingIndexRef.current < stage.length) {
+        animationId = requestAnimationFrame(animate);
+      }
+    };
+
+    // Only start animation if we haven't finished typing this stage
+    if (typingIndexRef.current < stage.length) {
+      animationId = requestAnimationFrame(animate);
+    }
+
+    return () => {
+      if (animationId) cancelAnimationFrame(animationId);
+    };
+  }, [stage]);
+
+  // Track unique stages and accumulate estimated data points
+  useEffect(() => {
+    if (stage && !seenStagesRef.current.has(stage)) {
+      seenStagesRef.current.add(stage);
+      const points = estimateDataPoints(stage);
+      // Defer state update to avoid cascading render warnings
+      queueMicrotask(() => {
+        setStageTracking(prev => ({
+          seenStages: [...prev.seenStages, stage],
+          targetDataPoints: prev.targetDataPoints + points
+        }));
+      });
+    }
+  }, [stage]);
+
+  // Animate counter with bursty, discovery-like timing
+  // Pattern: duh duh...........duh duh duh...duh..........duh duh duh duh
+  const [tickTrigger, setTickTrigger] = useState(0);
+  const { seenStages, targetDataPoints } = stageTracking;
+
+  useEffect(() => {
+    if (displayedDataPoints >= targetDataPoints) return;
+
+    const difference = targetDataPoints - displayedDataPoints;
+    const roll = Math.random();
+
+    let delay: number;
+    let increment: number;
+
+    if (roll < 0.15) {
+      // 15% chance: long pause (searching/processing)
+      delay = 400 + Math.random() * 300; // 400-700ms pause
+      increment = 0; // No data this tick, just waiting
+    } else if (roll < 0.35) {
+      // 20% chance: quick burst of data
+      delay = 40 + Math.random() * 30; // 40-70ms (fast)
+      increment = difference > 10 ? 3 : 2; // Find multiple
+    } else if (roll < 0.55) {
+      // 20% chance: medium pause
+      delay = 180 + Math.random() * 120; // 180-300ms
+      increment = 1;
+    } else {
+      // 45% chance: normal tick
+      delay = 80 + Math.random() * 60; // 80-140ms
+      increment = Math.random() > 0.7 ? 2 : 1;
+    }
+
+    const timer = setTimeout(() => {
+      if (increment > 0) {
+        setDisplayedDataPoints(prev => Math.min(prev + increment, targetDataPoints));
+      }
+      // Always tick to keep the loop going during pauses
+      setTickTrigger(t => t + 1);
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [displayedDataPoints, targetDataPoints, tickTrigger]);
 
   // Rotate tips during processing
   useEffect(() => {
@@ -109,35 +239,68 @@ export function StatusMessage({
     );
   }
 
-  // Pending/processing state - enhanced with stages and tips
-  const currentStageIndex = stage
-    ? PIPELINE_STAGES.findIndex((s) => s.key === stage)
-    : 0;
-  const currentStageLabel =
-    PIPELINE_STAGES[currentStageIndex >= 0 ? currentStageIndex : 0]?.label ||
-    "Preparing...";
+  // Pending/processing state - dynamic activity display
   const currentTip = PROCESSING_TIPS[currentTipIndex];
+  const displayStage = stage || "Preparing your strategy...";
 
   return (
     <div className="max-w-lg mx-auto text-center py-16 px-6">
       {/* Headline */}
-      <h1 className="text-2xl sm:text-3xl font-black text-foreground mb-2">
-        {message || "Generating your action plan"}
-        <span className="inline-block w-8 text-left animate-pulse">...</span>
+      <h1 className="text-2xl sm:text-3xl font-black text-foreground mb-8">
+        {message || "Building your action plan"}
       </h1>
 
-      {/* Current stage label */}
-      <p className="text-foreground/60 mb-8">{currentStageLabel}</p>
+      {/* Dynamic Activity Display - Terminal Style */}
+      <div className="rounded-none border-[3px] border-foreground bg-foreground/5 p-6 shadow-[4px_4px_0_0_rgba(44,62,80,1)] text-left mb-6">
+        {/* Completed stages history */}
+        {completedStages.length > 0 && (
+          <div className="space-y-1.5 mb-3">
+            {completedStages.map((completed, idx) => (
+              <div
+                key={completed.timestamp}
+                className="font-mono text-sm text-foreground/40 flex items-center gap-2 transition-opacity duration-500"
+                style={{
+                  opacity: 0.25 + (idx * 0.15), // Older = more faded
+                  animation: "fadeSlideIn 0.3s ease-out",
+                }}
+              >
+                <Check className="w-3 h-3 text-green-500/60 flex-shrink-0" />
+                <span className="truncate">{completed.text}</span>
+              </div>
+            ))}
+          </div>
+        )}
 
-      {/* Stage Progress Bar */}
-      <div className="mb-10">
-        <StageProgressBar
-          currentIndex={currentStageIndex >= 0 ? currentStageIndex : 0}
-        />
+        {/* Current action with typewriter effect */}
+        <div className="font-mono text-sm sm:text-base text-foreground min-h-[1.5rem]">
+          <span className="text-cta font-semibold">&gt;</span>{" "}
+          <span>{displayedText || displayStage}</span>
+          <span className="inline-block w-2 h-4 bg-cta ml-1 animate-[cursor-blink_1s_step-end_infinite]" />
+        </div>
+
+        {/* Divider */}
+        <div className="border-t border-foreground/20 my-4" />
+
+        {/* Data points counter */}
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-2xl font-black text-foreground tabular-nums">
+              {displayedDataPoints}
+            </p>
+            <p className="text-xs text-foreground/60 uppercase tracking-wide font-bold">
+              data points gathered
+            </p>
+          </div>
+          {displayedDataPoints > 0 && seenStages.length > 0 && (
+            <div className="text-right text-xs text-foreground/50">
+              {getSourceTypes(seenStages)}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Rotating Tip Card */}
-      <div className="rounded-2xl border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)] text-left">
+      <div className="rounded-none border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)] text-left">
         <div
           className={`transition-all duration-200 ${
             tipVisible
@@ -162,45 +325,100 @@ export function StatusMessage({
   );
 }
 
-function StageProgressBar({ currentIndex }: { currentIndex: number }) {
-  return (
-    <div className="flex items-center justify-center gap-1 sm:gap-2">
-      {PIPELINE_STAGES.map((stage, index) => (
-        <div key={stage.key} className="flex items-center">
-          {/* Stage dot */}
-          <div className="flex flex-col items-center gap-1.5">
-            <div
-              className={`w-4 h-4 transition-all duration-300 ${
-                index < currentIndex
-                  ? "bg-green-600"
-                  : index === currentIndex
-                  ? "bg-cta animate-[stage-pulse_1.5s_ease-in-out_infinite]"
-                  : "bg-foreground/20"
-              }`}
-            />
-            <span
-              className={`text-[10px] sm:text-xs font-bold uppercase tracking-wide ${
-                index <= currentIndex
-                  ? "text-foreground"
-                  : "text-foreground/40"
-              }`}
-            >
-              {stage.shortLabel}
-            </span>
-          </div>
+/**
+ * Estimate data points gathered based on tool type
+ * Each tool gathers multiple pieces of information
+ */
+function estimateDataPoints(stage: string): number {
+  const lower = stage.toLowerCase();
 
-          {/* Connector line */}
-          {index < PIPELINE_STAGES.length - 1 && (
-            <div
-              className={`w-6 sm:w-10 h-0.5 mx-1 sm:mx-2 ${
-                index < currentIndex ? "bg-green-600" : "bg-foreground/20"
-              }`}
-            />
-          )}
-        </div>
-      ))}
-    </div>
-  );
+  // Search returns ~8 results with title, URL, snippet each
+  if (lower.includes("searching") || lower.includes("researching")) {
+    return 15; // 8 results × ~2 useful fields
+  }
+
+  // Scraping a page yields lots of content sections
+  if (lower.includes("reading") || lower.includes("scrape")) {
+    return 25; // Full page with multiple sections
+  }
+
+  // SEO metrics: traffic, keywords, positions, etc.
+  if (lower.includes("seo") || lower.includes("checking seo")) {
+    return 12; // Traffic + keyword count + position breakdown
+  }
+
+  // Keyword gap analysis returns many keywords
+  if (lower.includes("keyword")) {
+    return 20; // ~15-20 keyword opportunities
+  }
+
+  // Analyzing/preparing stages (including refinement analysis)
+  if (lower.includes("analyzing") || lower.includes("preparing") || lower.includes("feedback")) {
+    return 8;
+  }
+
+  // Loading history (past recommendations, insights)
+  if (lower.includes("loading") || lower.includes("history")) {
+    return 10;
+  }
+
+  // Generating/identifying stages (refinement-specific)
+  if (lower.includes("generating") || lower.includes("identifying") || lower.includes("improve")) {
+    return 12;
+  }
+
+  // Finalizing stages
+  if (lower.includes("finalizing") || lower.includes("refined")) {
+    return 5;
+  }
+
+  // Context reading (refinement-specific)
+  if (lower.includes("context") || lower.includes("original")) {
+    return 15;
+  }
+
+  return 8; // Default for unknown tool types
+}
+
+/**
+ * Extract source types from stage messages for display
+ */
+function getSourceTypes(stages: string[]): string {
+  const types: string[] = [];
+
+  for (const stage of stages) {
+    const lower = stage.toLowerCase();
+    if (lower.includes("reddit") && !types.includes("Reddit")) {
+      types.push("Reddit");
+    } else if (lower.includes("seo") && !types.includes("SEO")) {
+      types.push("SEO");
+    } else if (
+      (lower.includes("competitor") || lower.includes("scrape") || lower.includes("reading")) &&
+      !types.includes("Competitors")
+    ) {
+      types.push("Competitors");
+    } else if (lower.includes("market") && !types.includes("Market data")) {
+      types.push("Market data");
+    } else if (lower.includes("etsy") && !types.includes("Etsy")) {
+      types.push("Etsy");
+    } else if (lower.includes("keyword") && !types.includes("Keywords")) {
+      types.push("Keywords");
+    } else if (
+      (lower.includes("feedback") || lower.includes("context") || lower.includes("original")) &&
+      !types.includes("Your feedback")
+    ) {
+      types.push("Your feedback");
+    } else if (
+      (lower.includes("history") || lower.includes("loading")) &&
+      !types.includes("Past strategies")
+    ) {
+      types.push("Past strategies");
+    }
+  }
+
+  if (types.length === 0) return "";
+  if (types.length <= 2) return types.join(", ");
+  return types.slice(0, 2).join(", ") + "...";
 }
 
 function TipIcon({ type }: { type: TipType }) {

@@ -67,10 +67,10 @@ export async function POST(
 
   const supabase = createServiceClient();
 
-  // Get the original run and verify ownership
+  // Get the current run and verify ownership
   const { data: run, error: fetchError } = await supabase
     .from("runs")
-    .select("id, user_id, status, input, refinements_used")
+    .select("id, user_id, status, input, refinements_used, parent_run_id")
     .eq("id", runId)
     .single();
 
@@ -91,8 +91,41 @@ export async function POST(
     );
   }
 
-  // Check refinement limit (pre-check for fast failure)
-  const currentRefinements = run.refinements_used || 0;
+  // Find the ROOT run (original) - traverse up parent chain
+  // Refinement limits are tracked on the ROOT, not intermediate refinements
+  const MAX_CHAIN_DEPTH = 10;
+  const visitedIds = new Set<string>([runId]);
+  let rootRunId = runId;
+  let rootRefinementsUsed = run.refinements_used || 0;
+  let currentParentId = run.parent_run_id;
+  let depth = 0;
+
+  while (currentParentId && depth < MAX_CHAIN_DEPTH) {
+    if (visitedIds.has(currentParentId)) {
+      console.error("[AddContext] Circular parent chain detected:", currentParentId);
+      break;
+    }
+    visitedIds.add(currentParentId);
+    depth++;
+
+    const { data: parentRun, error: parentError } = await supabase
+      .from("runs")
+      .select("id, refinements_used, parent_run_id")
+      .eq("id", currentParentId)
+      .single();
+
+    if (parentError || !parentRun) {
+      console.error("[AddContext] Failed to find parent run:", currentParentId);
+      break;
+    }
+
+    rootRunId = parentRun.id;
+    rootRefinementsUsed = parentRun.refinements_used || 0;
+    currentParentId = parentRun.parent_run_id;
+  }
+
+  // Check refinement limit on ROOT run (pre-check for fast failure)
+  const currentRefinements = rootRefinementsUsed;
   if (currentRefinements >= MAX_FREE_REFINEMENTS) {
     trackServerEvent(userId, "refinement_limit_reached", {
       run_id: runId,
@@ -108,12 +141,12 @@ export async function POST(
     );
   }
 
-  // ATOMIC: Increment refinements_used with condition check to prevent race condition
+  // ATOMIC: Increment refinements_used on ROOT run with condition check to prevent race condition
   // This ensures only one concurrent request can succeed
   const { data: updatedRun, error: incrementError } = await supabase
     .from("runs")
     .update({ refinements_used: currentRefinements + 1 })
-    .eq("id", runId)
+    .eq("id", rootRunId)
     .eq("refinements_used", currentRefinements) // Optimistic locking - only update if value unchanged
     .select("refinements_used")
     .single();
@@ -122,11 +155,11 @@ export async function POST(
     // Either another request won the race, or the limit was reached
     console.log("Refinement increment failed (likely race condition):", incrementError);
 
-    // Re-fetch to get accurate count for error message
+    // Re-fetch ROOT run to get accurate count for error message
     const { data: freshRun } = await supabase
       .from("runs")
       .select("refinements_used")
-      .eq("id", runId)
+      .eq("id", rootRunId)
       .single();
 
     const actualUsed = freshRun?.refinements_used || MAX_FREE_REFINEMENTS;
@@ -171,11 +204,11 @@ export async function POST(
 
   if (insertError || !newRun) {
     console.error("Failed to create refinement run:", insertError);
-    // Rollback the increment since we couldn't create the run
+    // Rollback the increment on ROOT run since we couldn't create the run
     await supabase
       .from("runs")
       .update({ refinements_used: currentRefinements })
-      .eq("id", runId);
+      .eq("id", rootRunId);
 
     return NextResponse.json(
       { error: "Failed to create refinement" },

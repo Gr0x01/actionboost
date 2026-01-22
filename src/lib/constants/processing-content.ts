@@ -1,18 +1,3 @@
-import type { PipelineStage } from '@/lib/types/database'
-
-export type StageInfo = {
-  key: PipelineStage
-  label: string
-  shortLabel: string
-}
-
-export const PIPELINE_STAGES: StageInfo[] = [
-  { key: 'researching', label: 'Researching your market', shortLabel: 'Research' },
-  { key: 'loading_history', label: 'Loading your history', shortLabel: 'History' },
-  { key: 'generating', label: 'Generating strategy', shortLabel: 'Generate' },
-  { key: 'finalizing', label: 'Finalizing your plan', shortLabel: 'Finalize' },
-]
-
 export type TipType = 'tip' | 'reflection' | 'preview'
 
 export type ProcessingTip = {

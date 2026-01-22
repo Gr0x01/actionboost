@@ -1,6 +1,7 @@
 import { createServiceClient } from '@/lib/supabase/server'
 import { runResearch, runTavilyOnlyResearch } from './research'
-import { generateStrategy, generateMiniStrategy, generateRefinedStrategy, generateFirstImpressions } from './generate'
+import { generateStrategy, generateMiniStrategy, generateFirstImpressions } from './generate'
+import { generateStrategyAgentic, generateAgenticRefinement } from './pipeline-agentic'
 import { tavily } from '@tavily/core'
 import { accumulateBusinessContext, accumulateUserContext } from '@/lib/context/accumulate'
 import { getOrCreateDefaultBusiness } from '@/lib/business'
@@ -25,6 +26,8 @@ function validateEnv(): void {
     throw new Error(`Missing required environment variables: ${missing.join(', ')}`)
   }
 }
+
+// Feature flag for agentic pipeline
 
 /**
  * Get user email from user_id for sending transactional emails
@@ -179,6 +182,15 @@ async function retrieveUserHistory(
  * 6. On Claude error: status → "failed"
  */
 export async function runPipeline(runId: string): Promise<PipelineResult> {
+  // Always use agentic pipeline (V2)
+  console.log(`[Pipeline] Running agentic pipeline for run ${runId}`)
+  return runAgenticPipeline(runId)
+}
+
+/**
+ * LEGACY: Original pipeline (kept for reference, not used)
+ */
+async function _legacyPipeline(runId: string): Promise<PipelineResult> {
   // Fail fast if env vars are missing
   validateEnv()
 
@@ -326,6 +338,143 @@ export async function runPipeline(runId: string): Promise<PipelineResult> {
 }
 
 // =============================================================================
+// AGENTIC PIPELINE (Dynamic tool-calling - V2)
+// =============================================================================
+
+/**
+ * Run the agentic AI pipeline for a given run ID
+ *
+ * This is the V2 pipeline that uses dynamic tool calling instead of
+ * pre-gathered research. The AI decides what data to fetch as it reasons.
+ *
+ * Flow:
+ * 1. Fetch run from DB
+ * 2. Update status → "processing"
+ * 3. Retrieve user history (for returning users)
+ * 4. Generate strategy with Claude + tools (AI fetches data as needed)
+ * 5. Save output, status → "complete"
+ */
+export async function runAgenticPipeline(runId: string): Promise<PipelineResult> {
+  validateEnv()
+
+  const supabase = createServiceClient()
+
+  // 1. Fetch run from DB
+  const { data: run, error: fetchError } = await supabase
+    .from('runs')
+    .select('*')
+    .eq('id', runId)
+    .single()
+
+  if (fetchError || !run) {
+    return { success: false, error: `Run not found: ${fetchError?.message || 'No data'}` }
+  }
+
+  // 2. Update status to processing
+  await supabase.from('runs').update({ status: 'processing', stage: 'Analyzing your situation...' }).eq('id', runId)
+
+  const input = run.input as RunInput
+
+  // Stage update callback - writes to DB for real-time UI updates
+  const onStageUpdate = async (stage: string) => {
+    await supabase.from('runs').update({ stage }).eq('id', runId)
+  }
+
+  // 3. Retrieve business history for RAG (if returning user)
+  await onStageUpdate('Loading your history...')
+  let userHistory: UserHistoryContext | null = null
+  const businessId = run.business_id as string | null
+  if (run.user_id) {
+    try {
+      userHistory = await retrieveUserHistory(run.user_id, input, businessId || undefined)
+    } catch (err) {
+      console.error('[AgenticPipeline] Business history retrieval failed:', err)
+    }
+  }
+
+  // 4. Generate strategy with agentic Claude (AI fetches data as needed)
+  try {
+    console.log(`[AgenticPipeline] Starting agentic generation for run ${runId}`)
+    const output = await generateStrategyAgentic(input, {} as ResearchContext, userHistory, onStageUpdate)
+    console.log(`[AgenticPipeline] Strategy generated: ${output.length} characters`)
+
+    // 5. Save output and mark complete
+    await onStageUpdate('Finalizing your strategy...')
+    const { error: updateError } = await supabase
+      .from('runs')
+      .update({
+        status: 'complete',
+        stage: null,
+        output,
+        completed_at: new Date().toISOString(),
+      })
+      .eq('id', runId)
+
+    if (updateError) {
+      console.error('[AgenticPipeline] Failed to save output:', updateError)
+      return { success: false, error: `Failed to save output: ${updateError.message}` }
+    }
+
+    // Accumulate business context for multi-run support (fire-and-forget)
+    if (run.user_id) {
+      if (businessId) {
+        accumulateBusinessContext(businessId, run.user_id, runId, input, output).catch((err) => {
+          console.error('[AgenticPipeline] Business context accumulation failed:', err)
+        })
+      } else {
+        accumulateUserContext(run.user_id, runId, input, output).catch((err) => {
+          console.error('[AgenticPipeline] Context accumulation failed:', err)
+        })
+      }
+
+      // Send "run ready" email (fire-and-forget)
+      getEmailForUser(run.user_id)
+        .then((email) => {
+          if (email) sendRunReadyEmail({ to: email, runId })
+        })
+        .catch((err) => console.error('[AgenticPipeline] Run ready email failed:', err))
+    }
+
+    // Track plan completion (fire-and-forget)
+    const source = (run.source as RunSource) || 'stripe'
+    const distinctId = run.user_id || runId
+    trackServerEvent(distinctId, 'plan_completed', {
+      run_id: runId,
+      source,
+      focus_area: input.focusArea,
+      has_competitors: (input.competitorUrls?.length || 0) > 0,
+      pipeline_version: 'agentic',
+    })
+
+    // Update user properties with plan counts (fire-and-forget)
+    if (run.user_id) {
+      updateUserPlanCounts(run.user_id, source).catch((err) => {
+        console.error('[AgenticPipeline] User plan count update failed:', err)
+      })
+    }
+
+    console.log(`[AgenticPipeline] Run ${runId} completed successfully`)
+    return { success: true, output }
+  } catch (err) {
+    const errorMsg = err instanceof Error ? err.message : String(err)
+    console.error('[AgenticPipeline] Strategy generation failed:', errorMsg)
+
+    await supabase.from('runs').update({ status: 'failed', stage: null }).eq('id', runId)
+
+    // Send "run failed" email (fire-and-forget)
+    if (run.user_id) {
+      getEmailForUser(run.user_id)
+        .then((email) => {
+          if (email) sendRunFailedEmail({ to: email, runId })
+        })
+        .catch((emailErr) => console.error('[AgenticPipeline] Run failed email failed:', emailErr))
+    }
+
+    return { success: false, error: `Generation failed: ${errorMsg}` }
+  }
+}
+
+// =============================================================================
 // FREE PIPELINE (Mini audit with Sonnet + Tavily only)
 // =============================================================================
 
@@ -456,17 +605,30 @@ export type RefinementPipelineResult = {
 }
 
 /**
- * Run the refinement pipeline for a run with additional context
+ * Run the agentic refinement pipeline for a run with additional context
  *
- * This is similar to the main pipeline but:
- * - Fetches the parent run to get the original output
- * - Passes additional context to Claude
- * - Uses the refinement-specific prompt
+ * This is FASTER than the old approach because:
+ * - NO upfront research - tools are available but only used if needed
+ * - Previous strategy contains all the context Claude needs
+ * - Claude decides if/when to fetch new data based on user's feedback
+ *
+ * Flow:
+ * 1. Fetch refinement run + parent run
+ * 2. Run agentic refinement (Claude has tools, uses them selectively)
+ * 3. Save output
  */
 export async function runRefinementPipeline(runId: string): Promise<RefinementPipelineResult> {
   validateEnv()
 
   const supabase = createServiceClient()
+
+  // Helper to update stage with dynamic messages (for UI display)
+  const onStageUpdate = async (stage: string) => {
+    const { error } = await supabase.from('runs').update({ stage }).eq('id', runId)
+    if (error) {
+      console.warn(`[RefinementPipeline] Failed to update stage for run ${runId}:`, error.message)
+    }
+  }
 
   // 1. Fetch the refinement run
   const { data: run, error: fetchError } = await supabase
@@ -501,63 +663,34 @@ export async function runRefinementPipeline(runId: string): Promise<RefinementPi
   }
 
   // 3. Update status to processing with initial stage
-  const { error: statusError } = await supabase.from('runs').update({ status: 'processing', stage: 'researching' }).eq('id', runId)
-  if (statusError) {
-    console.error('[RefinementPipeline] Failed to update status to processing:', statusError)
-    // Continue anyway - the run will still process
-  }
+  await supabase.from('runs').update({ status: 'processing', stage: 'Analyzing your feedback...' }).eq('id', runId)
 
   const input = run.input as RunInput
   // Defensive validation - limit context even if DB was modified directly
   const additionalContext = (run.additional_context || '').slice(0, MAX_CONTEXT_LENGTH)
-  let research: ResearchContext
 
-  // 4. Run research (with graceful degradation)
+  // 4. Run agentic refinement (Claude has tools, uses them only if needed)
   try {
-    console.log(`[RefinementPipeline] Starting research for run ${runId}`)
-    research = await runResearch(input)
-    console.log(
-      `[RefinementPipeline] Research completed: ${research.competitorInsights.length} competitor insights, ${research.marketTrends.length} trends`
-    )
-  } catch (err) {
-    console.error('[RefinementPipeline] Research failed entirely:', err)
-    research = {
-      competitorInsights: [],
-      marketTrends: [],
-      growthTactics: [],
-      seoMetrics: [],
-      researchCompletedAt: new Date().toISOString(),
-      errors: [`Research failed: ${err instanceof Error ? err.message : String(err)}`],
+    console.log(`[RefinementPipeline] Starting agentic refinement for run ${runId}`)
+
+    const result = await generateAgenticRefinement(input, parentRun.output, additionalContext, onStageUpdate)
+
+    if (!result.success || !result.output) {
+      throw new Error(result.error || 'Agentic refinement failed')
     }
-  }
 
-  // 5. Retrieve business history for RAG (if returning user)
-  await updateStage(runId, 'loading_history')
-  let userHistory: UserHistoryContext | null = null
-  const refinementBusinessId = run.business_id as string | null
-  if (run.user_id) {
-    try {
-      userHistory = await retrieveUserHistory(run.user_id, input, refinementBusinessId || undefined)
-    } catch (err) {
-      console.error('[RefinementPipeline] Business history retrieval failed:', err)
-    }
-  }
+    const toolCallCount = result.toolCalls?.length || 0
+    console.log(`[RefinementPipeline] Refinement completed: ${result.output.length} chars, ${toolCallCount} tool calls`)
+    console.log(`[RefinementPipeline] Timing: ${result.timing?.total}ms total, ${result.timing?.tools}ms tools`)
 
-  // 6. Generate refined strategy with Claude
-  await updateStage(runId, 'generating')
-  try {
-    console.log(`[RefinementPipeline] Starting refined strategy generation with Claude Opus 4.5`)
-    const output = await generateRefinedStrategy(input, research, additionalContext, parentRun.output, userHistory)
-    console.log(`[RefinementPipeline] Refined strategy generated: ${output.length} characters`)
-
-    // 7. Save output and mark complete
-    await updateStage(runId, 'finalizing')
+    // 5. Save output and mark complete
+    await onStageUpdate('Finalizing your refined strategy...')
     const { error: updateError } = await supabase
       .from('runs')
       .update({
         status: 'complete',
         stage: null,
-        output,
+        output: result.output,
         completed_at: new Date().toISOString(),
       })
       .eq('id', runId)
@@ -577,7 +710,7 @@ export async function runRefinementPipeline(runId: string): Promise<RefinementPi
     }
 
     console.log(`[RefinementPipeline] Refinement ${runId} completed successfully`)
-    return { success: true, output }
+    return { success: true, output: result.output }
   } catch (err) {
     const errorMsg = err instanceof Error ? err.message : String(err)
     console.error('[RefinementPipeline] Strategy generation failed:', errorMsg)

@@ -6,13 +6,11 @@ import { usePostHog } from "posthog-js/react";
 import { Header, Footer } from "@/components/layout";
 import { StatusMessage } from "@/components/results";
 
-import type { PipelineStage } from "@/lib/types/database";
-
 type RunStatus = "pending" | "processing" | "complete" | "failed";
 
 interface RunData {
   status: RunStatus;
-  stage?: PipelineStage | null;
+  stage?: string | null;
 }
 
 export default function ProcessingPage() {
@@ -31,7 +29,7 @@ export default function ProcessingPage() {
   const runId = resolvedRunId;
 
   const [status, setStatus] = useState<RunStatus>("pending");
-  const [stage, setStage] = useState<PipelineStage | null>(null);
+  const [stage, setStage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const trackedStart = useRef(false);
   const trackedStatuses = useRef<Set<string>>(new Set());

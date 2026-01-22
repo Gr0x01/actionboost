@@ -90,45 +90,63 @@ auth.users (Supabase Auth)     public.users (our table)
 
 ## AI Pipeline
 
-**Status**: ✅ Complete (Phase 2 + RAG)
+**Status**: ✅ Complete (Agentic + RAG)
 
 ### Files
 ```
 src/lib/ai/
-├── types.ts      # RunInput, ResearchContext, FocusArea, UserHistoryContext
-├── research.ts   # Tavily + DataForSEO with Promise.race timeouts
-├── generate.ts   # Claude Opus 4.5 with inlined prompts + history support
-├── pipeline.ts   # Orchestrator: research → history → generate → accumulate
-└── embeddings.ts # OpenAI embeddings + pgvector search
+├── types.ts           # RunInput, ResearchContext, FocusArea, ToolDefinition
+├── tools.ts           # Tool definitions + executor
+├── pipeline-agentic.ts # Agentic generation with tool calling
+├── research.ts        # Research functions (used by tools)
+├── generate.ts        # System prompts + fallback generation
+├── pipeline.ts        # Orchestrator: agentic → accumulate
+└── embeddings.ts      # OpenAI embeddings + pgvector search
 
 src/lib/context/
 └── accumulate.ts # Merge run data into users.context JSONB
 ```
 
-### Pipeline Flow
+### Pipeline Flow (Agentic)
 ```
-1. Research (Tavily + DataForSEO) - ~6-20s
-   - Parallel Tavily searches (competitor, trends, tactics)
-   - DataForSEO endpoints selected by focus area
-   - Promise.race for proper timeout handling
+1. Agentic Generation (Claude Opus 4.5 + Tools) - ~40-60s
+   - Claude receives user input + system prompt with tool definitions
+   - Claude decides which tools to call based on user's needs
+   - We execute tools in parallel batches (max 3 concurrent)
+   - Results returned as tool_result blocks
+   - Claude continues reasoning, may call more tools
+   - Max 8 tool calls per run (budget enforcement)
+   - Final output: markdown strategy
 
-2. Retrieve User History (RAG) - ~1-2s [NEW]
-   - Fetch users.context JSONB
-   - Vector search user_context_chunks for relevant past recommendations/insights
-   - Build UserHistoryContext with traction timeline, tactics, past advice
+2. Stage Updates (Real-time)
+   - Tool calls extracted for UI progress display
+   - "Searching Reddit for..." → "Analyzing competitor keywords..."
+   - Typewriter effect + bursty data counter
 
-3. Generate (Claude Opus 4.5) - ~100-120s
-   - Inlined prompts in generate.ts (no external files)
-   - Focus-area-specific guidance (AARRR-based)
-   - For returning users: RETURNING_USER_PROMPT + history section in message
-   - ~20k char output, 400+ lines
-
-4. Save & Accumulate
+3. Save & Accumulate
    - Markdown to runs.output
    - Status = "complete"
    - accumulateUserContext() → merge input into users.context
    - extractAndEmbedRunContext() → create embeddings (fire-and-forget)
 ```
+
+### Available Tools
+| Tool | Purpose | Data Source |
+|------|---------|-------------|
+| `web_search` | General web search | Tavily |
+| `scrape_url` | Extract page content | Tavily |
+| `search_seo_keywords` | User's ranked keywords | DataForSEO |
+| `get_domain_seo` | Domain metrics | DataForSEO |
+| `analyze_competitor_keywords` | Keyword gap analysis | DataForSEO |
+| `search_reddit` | Community discussions | Tavily site:reddit |
+
+### Refinement Pipeline
+When users click "Tell Us More" to add context:
+- Same agentic approach but lighter: max 3 tool calls
+- Previous output summarized in context
+- Tools only used if user feedback warrants research
+- "We already tried X" → may search alternatives
+- "Focus more on Y" → usually no tools needed
 
 ### AARRR Focus Areas
 Users select their biggest challenge - each gets tailored guidance AND different DataForSEO depth:

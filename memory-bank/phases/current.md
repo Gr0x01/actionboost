@@ -1,6 +1,101 @@
 # Current Phase
 
-## Latest Update: Testing Infrastructure
+## Latest Update: Agentic Pipeline + Dynamic Processing UI
+
+**Completed Jan 22, 2026** - Major architecture shift to agentic tool-calling pipeline with enhanced processing UI.
+
+### What Was Built
+
+#### 1. Agentic Pipeline (replaces pre-fetch approach)
+
+Claude now uses tool-calling to research dynamically instead of us pre-fetching all data. The AI decides what to look up based on user input.
+
+**Available Tools:**
+- `web_search` - General web search via Tavily
+- `scrape_url` - Extract content from URLs
+- `search_seo_keywords` - User's ranked keywords (DataForSEO)
+- `get_domain_seo` - Domain metrics (DataForSEO)
+- `analyze_competitor_keywords` - Keyword gap analysis (DataForSEO)
+- `search_reddit` - Reddit discussions
+
+**How It Works:**
+```
+1. System prompt + user input → Claude Opus 4.5
+2. Claude decides which tools to call
+3. We execute tools, return results
+4. Claude processes results, may call more tools
+5. Claude outputs final markdown strategy
+6. Max 8 tool calls, parallel batches of 3
+```
+
+**Key Implementation Details:**
+- Tool results sent back as tool_result blocks (required by API)
+- Budget enforcement: All tool_use blocks get responses, over-budget get "skipped" message
+- Stage updates extracted from tool calls for live progress UI
+- ~40-60s total generation time
+
+#### 2. Agentic Refinement
+
+Refinement now uses tools selectively. If user says "we already tried X", Claude can research alternatives. If user says "focus more on Y", Claude may not need any tools.
+
+- Max 3 tool calls for refinement (lighter touch)
+- Previous output summarized in context
+- Same tool_result handling pattern
+
+#### 3. Dynamic Processing UI
+
+StatusMessage component completely overhauled for agent-like feel:
+
+**Typewriter Effect:**
+- Uses `requestAnimationFrame` (survives React re-renders from polling)
+- 20ms per character - fast and smooth
+- Previous stages fade into history with checkmarks (last 3 shown)
+
+**Bursty Data Counter:**
+- Pattern: `duh duh...........duh duh duh...duh..........duh duh duh duh`
+- 15% long pause (400-700ms) - searching moments
+- 20% quick burst (40-70ms) - finds 2-3 at once
+- 20% medium pause (180-300ms) - single find
+- 45% normal tick (80-140ms) - steady discovery
+- `tickTrigger` state keeps loop alive during pauses
+
+### Files Added
+- `src/lib/ai/pipeline-agentic.ts` - Main agentic generation + refinement
+- `src/lib/ai/tools.ts` - Tool definitions and executor
+
+### Files Modified
+- `src/lib/ai/pipeline.ts` - Calls agentic pipeline instead of generate
+- `src/lib/ai/generate.ts` - System prompts updated for tool-calling
+- `src/lib/ai/research.ts` - Research functions now used by tools
+- `src/lib/ai/types.ts` - Tool-related types
+- `src/components/results/StatusMessage.tsx` - Complete UI overhaul
+- `src/app/globals.css` - Added `fadeSlideIn` keyframe
+
+### Architecture Change
+
+**Before (Pre-fetch):**
+```
+Research (parallel) → Generate (single call) → Output
+   20-30s                   90-120s
+```
+
+**After (Agentic):**
+```
+Generate with tools (iterative)
+   Claude calls tool → Execute → Return result → Claude continues
+   ~40-60s total, 8 max tool calls
+```
+
+### Cost Impact
+- Similar total cost (~$0.40-0.60 per run)
+- More efficient: only fetches data Claude actually needs
+- Refinement much cheaper: usually 0-3 tool calls
+
+---
+
+## Previous: Pipeline V2 - Expanded Research Sources
+
+## Previous: Testing Infrastructure
 
 **Completed Jan 22, 2026** - Added comprehensive testing + CI/CD.
 

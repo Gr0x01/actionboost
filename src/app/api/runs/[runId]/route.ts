@@ -48,7 +48,39 @@ export async function GET(
     }
   }
 
-  // Return run without user_id (internal field)
+  // If this is a refinement, find the ROOT run's refinements_used
+  // Includes depth limit and cycle detection for safety
+  const MAX_CHAIN_DEPTH = 10;
+  const visitedIds = new Set<string>([runId]);
+  let rootRefinementsUsed = run.refinements_used;
+  let nextParentId: string | null = run.parent_run_id;
+  let depth = 0;
+
+  while (nextParentId && depth < MAX_CHAIN_DEPTH) {
+    if (visitedIds.has(nextParentId)) {
+      console.error("[RunAPI] Circular parent chain detected:", nextParentId);
+      break;
+    }
+    visitedIds.add(nextParentId);
+    depth++;
+
+    const { data } = await supabase
+      .from("runs")
+      .select("refinements_used, parent_run_id")
+      .eq("id", nextParentId)
+      .single();
+
+    if (!data) break;
+    rootRefinementsUsed = data.refinements_used;
+    nextParentId = data.parent_run_id;
+  }
+
+  // Return run without user_id (internal field), include root's refinement count
   const { user_id: _, ...runData } = run;
-  return NextResponse.json({ run: runData });
+  return NextResponse.json({
+    run: {
+      ...runData,
+      root_refinements_used: rootRefinementsUsed,
+    }
+  });
 }

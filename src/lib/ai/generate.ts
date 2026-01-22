@@ -291,6 +291,27 @@ Analyze through the AARRR lens:
 |--------|---------------|-------------------|
 | ...    | ...           | ...               |
 
+## Your SEO Landscape
+*Only include if user's SEO data is available in the research*
+
+Analyze their current search presence:
+- Current organic visibility and traffic estimates
+- Their strongest keywords and positions
+- **Keyword gaps**: Keywords competitors rank for that they're missing (prioritize by search volume and relevance)
+- Quick win opportunities (keywords they could easily improve)
+
+| Keyword Opportunity | Search Volume | Difficulty | Why It Matters |
+|---------------------|---------------|------------|----------------|
+| ...                 | ...           | ...        | ...            |
+
+## Market Sentiment
+*Only include if Reddit discussions or G2 reviews are available*
+
+What the market is saying:
+- **Community discussions**: Pain points and desires from Reddit/forums
+- **Competitor weaknesses**: What users complain about (opportunity for differentiation)
+- **Unmet needs**: Gaps in the market based on reviews and discussions
+
 ## Competitive Landscape
 Based on research data, present as a table:
 
@@ -299,6 +320,7 @@ Based on research data, present as a table:
 | ...        | ...            | ...            |
 
 Include 2-3 sentences on market trends or opportunities competitors are missing.
+If traffic data is available, note where competitors get their traffic (organic, paid, social, etc.).
 
 ## Channel Strategy
 Prioritize 4-6 acquisition/growth channels for their specific situation:
@@ -489,6 +511,81 @@ ${tacticsContent}
   // Add research context
   message += `\n---\n\n# Research Data (gathered for this analysis)\n`
 
+  // User's own SEO landscape
+  if (research.userSEO && !research.userSEO.error) {
+    message += `\n## Your SEO Position\n`
+    message += `**Domain**: ${research.userSEO.domain}\n`
+    if (research.userSEO.organicTraffic || research.userSEO.organicKeywords) {
+      message += `- **Current Traffic**: ~${research.userSEO.organicTraffic?.toLocaleString() || 'N/A'} monthly organic visits\n`
+      message += `- **Keywords Ranking**: ${research.userSEO.organicKeywords?.toLocaleString() || 'N/A'} keywords\n`
+    }
+    if (research.userSEO.domainRank) {
+      message += `- **Domain Authority**: ${research.userSEO.domainRank}\n`
+    }
+    if (research.userSEO.topRankedKeywords?.length) {
+      message += `- **Your Top Keywords**:\n`
+      for (const k of research.userSEO.topRankedKeywords.slice(0, 10)) {
+        message += `  - "${k.keyword}" - Position #${k.position}, ${k.searchVolume.toLocaleString()} monthly searches\n`
+      }
+    }
+    if (research.userSEO.keywordGaps?.length) {
+      message += `\n### Keyword Gaps (competitors rank, you don't)\n`
+      for (const gap of research.userSEO.keywordGaps.slice(0, 15)) {
+        message += `- "${gap.keyword}" - ${gap.searchVolume.toLocaleString()} searches/mo, ${gap.competitorDomain} ranks #${gap.competitorPosition}\n`
+      }
+    }
+  }
+
+  // Reddit discussions
+  if (research.redditDiscussions?.length) {
+    message += `\n## Reddit Discussions (community sentiment)\n`
+    for (const r of research.redditDiscussions.slice(0, 8)) {
+      message += `- **r/${r.subreddit}**: [${r.title}](${r.url})\n  ${truncate(r.content, 300)}\n\n`
+    }
+  }
+
+  // G2 reviews
+  if (research.g2Reviews?.length) {
+    message += `\n## Competitor Reviews (G2)\n`
+    for (const review of research.g2Reviews) {
+      message += `\n### ${review.productName}\n`
+      message += `- **Rating**: ${review.overallRating}/5 (${review.totalReviews} reviews)\n`
+      if (review.topPraises?.length) {
+        message += `- **What Users Love**: ${review.topPraises.slice(0, 3).join('; ')}\n`
+      }
+      if (review.topComplaints?.length) {
+        message += `- **Common Complaints**: ${review.topComplaints.slice(0, 3).join('; ')}\n`
+      }
+    }
+  }
+
+  // Traffic intelligence
+  if (research.trafficIntel?.length) {
+    message += `\n## Traffic Intelligence\n`
+    for (const intel of research.trafficIntel) {
+      if (intel.error) continue
+      message += `\n### ${intel.domain}\n`
+      if (intel.monthlyVisits) {
+        message += `- **Monthly Visits**: ~${intel.monthlyVisits.toLocaleString()}\n`
+      }
+      if (intel.topTrafficSources?.length) {
+        message += `- **Traffic Sources**: ${intel.topTrafficSources.slice(0, 4).map(s => `${s.source} (${s.percentage.toFixed(1)}%)`).join(', ')}\n`
+      }
+      if (intel.geographyBreakdown?.length) {
+        message += `- **Top Countries**: ${intel.geographyBreakdown.slice(0, 3).map(g => `${g.country} (${g.percentage.toFixed(1)}%)`).join(', ')}\n`
+      }
+    }
+  }
+
+  // ProductHunt launches
+  if (research.productHuntLaunches?.length) {
+    message += `\n## Recent ProductHunt Launches (similar space)\n`
+    for (const launch of research.productHuntLaunches.slice(0, 5)) {
+      message += `- **${launch.name}**: "${launch.tagline}" - ${launch.votesCount} upvotes\n`
+    }
+  }
+
+  // Standard Tavily research
   if (research.competitorInsights.length) {
     message += `\n## Competitor Insights\n`
     for (const r of research.competitorInsights) {
@@ -677,15 +774,48 @@ The user has reviewed their initial strategy and wants adjustments based on addi
 
 **Your task:**
 1. Read their additional context carefully - this contains corrections, clarifications, or new information
-2. Review the summary of your previous strategy below
-3. Generate a COMPLETE new strategy that:
-   - Incorporates their feedback and new context
-   - Keeps recommendations that still apply
-   - Removes or adjusts recommendations that no longer fit
-   - Does NOT simply append to the old strategy - rewrite it properly
+2. Review the FULL previous strategy below - this is your foundation to BUILD UPON
+3. Generate an ENHANCED strategy that:
+   - PRESERVES everything from the previous strategy that still applies (most of it should!)
+   - ADJUSTS specific sections based on the user's feedback
+   - ADDS new recommendations where their feedback reveals gaps
+   - REMOVES only what directly conflicts with the new information
 
-**Tone:** Frame this as "Now that I know more about your situation..." not "I got it wrong before."
-The user is providing information they didn't share initially, or clarifying something. This is collaborative refinement, not error correction.`
+**CRITICAL:** This is ITERATIVE IMPROVEMENT, not a rewrite. The user spent time reading the previous strategy and only wants specific parts updated based on their feedback. Keep 80-90% of the original content and refine the relevant 10-20%.
+
+**Tone:** Frame adjustments as "Now that I know more about your situation..." not "I got it wrong before."
+The user is providing information they didn't share initially, or clarifying something. This is collaborative refinement, not starting over.`
+
+const REFINEMENT_OUTPUT_FORMAT = `## Output Format for Refinements
+
+**IMPORTANT: You are REFINING an existing strategy, not creating a new one.**
+
+For EACH section below:
+1. If the user's feedback DOES NOT relate to this section → **COPY IT EXACTLY from the previous strategy** (word for word)
+2. If the user's feedback DOES relate to this section → **Update it** while preserving any parts that still apply
+
+The user's feedback is NARROW and SPECIFIC. Most sections should be copied unchanged.
+
+### Sections to include (same structure as before):
+- ## Executive Summary (update ONLY if feedback changes the core direction)
+- ## Your Situation (update ONLY if feedback reveals new constraints/context)
+- ## Your SEO Landscape (copy unless feedback is about SEO)
+- ## Market Sentiment (copy unless feedback is about market/competitors)
+- ## Competitive Landscape (copy unless feedback is about competitors)
+- ## Channel Strategy (copy unless feedback is about channels)
+- ## Stop Doing (copy unless feedback says "actually I should keep doing X")
+- ## Start Doing (copy unless feedback changes priorities or adds constraints)
+- ## This Week (update to reflect any changed recommendations)
+- ## Content Ideas (copy unless feedback is about content)
+- ## 30-Day Roadmap (update to reflect any changed recommendations)
+- ## Metrics Dashboard (copy unless feedback changes goals)
+
+**EXAMPLE of correct behavior:**
+- User feedback: "Actually we have a $5k/month budget I didn't mention"
+- Correct: Copy ALL sections except update Channel Strategy and Start Doing to factor in budget
+- Wrong: Rewrite everything from scratch
+
+**COPY SECTIONS VERBATIM when they don't need changes. The user values continuity.**`
 
 /**
  * Generate a refined strategy based on user's additional context
@@ -731,7 +861,7 @@ ${REFINEMENT_PROMPT}
 ${returningUserPrompt}
 ${FOCUS_AREA_PROMPTS[focusArea](customFocus)}
 
-${OUTPUT_FORMAT_PROMPT}`
+${REFINEMENT_OUTPUT_FORMAT}`
 }
 
 function buildRefinementUserMessage(
@@ -741,23 +871,23 @@ function buildRefinementUserMessage(
   previousOutput: string,
   userHistory?: UserHistoryContext | null
 ): string {
-  // Create a summary of the previous output (first 2000 chars of key sections)
-  const previousSummary = summarizePreviousOutput(previousOutput)
+  // Pass the FULL previous output - it's already Opus-generated quality content
+  // No truncation needed, context window is 200k tokens
 
   // Start with the refinement context prominently
   let message = `# Strategy Refinement Request
 
-## Additional Context from User
-**The user has provided this feedback after reviewing their initial strategy:**
+## User's Feedback & Additional Context
+**The user has reviewed their strategy and wants these specific adjustments:**
 
 ${additionalContext}
 
 ---
 
-## Summary of Previous Strategy
-**This is what you recommended before (for reference - do not repeat, but evolve):**
+## Previous Strategy (YOUR FOUNDATION - BUILD UPON THIS)
+**This is your previous strategy. PRESERVE what still applies, only ADJUST what the user's feedback addresses:**
 
-${previousSummary}
+${previousOutput}
 
 ---
 
@@ -866,35 +996,6 @@ ${tacticsContent}
   }
 
   return message
-}
-
-/**
- * Extract key sections from previous output to include as context
- * Keeps it concise to avoid token bloat
- */
-function summarizePreviousOutput(output: string): string {
-  const sections = [
-    'Executive Summary',
-    'Your Situation',
-    'Stop Doing',
-    'Start Doing',
-    'This Week',
-  ]
-
-  let summary = ''
-
-  for (const section of sections) {
-    const regex = new RegExp(`## ${section}\\n([\\s\\S]*?)(?=\\n## |$)`, 'i')
-    const match = output.match(regex)
-    if (match) {
-      const content = match[1].trim()
-      // Take first 800 chars of each section
-      const truncated = content.length > 800 ? content.slice(0, 800) + '...' : content
-      summary += `### ${section}\n${truncated}\n\n`
-    }
-  }
-
-  return summary || 'Previous strategy not available for reference.'
 }
 
 // =============================================================================

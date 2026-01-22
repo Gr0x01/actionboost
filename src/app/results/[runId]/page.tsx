@@ -18,6 +18,7 @@ interface RunData {
   completed_at: string | null;
   refinements_used: number | null;
   parent_run_id: string | null;
+  root_refinements_used: number | null;
 }
 
 function ResultsPageContent() {
@@ -35,6 +36,7 @@ function ResultsPageContent() {
   const [strategy, setStrategy] = useState<ParsedStrategy | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [stage, setStage] = useState<string | null>(null);
   // Track if user is accessing via share link (not the owner)
   const isShareAccess = !!shareSlug;
 
@@ -149,6 +151,11 @@ function ResultsPageContent() {
         if (res.ok) {
           const data = await res.json();
 
+          // Update stage for StatusMessage display
+          if (data.stage) {
+            setStage(data.stage);
+          }
+
           if (data.status === "complete") {
             // Refetch full data
             const fullRes = await fetch(getApiUrl(`/api/runs/${runId}`));
@@ -214,6 +221,7 @@ function ResultsPageContent() {
         <main className="flex-1 flex items-center justify-center">
           <StatusMessage
             status={run.status as "pending" | "processing" | "failed"}
+            stage={stage}
           />
         </main>
         <Footer />
@@ -256,10 +264,10 @@ function ResultsPageContent() {
         >
           <ResultsContent strategy={strategy} />
 
-          {/* Add Context Section - only shown to owners, not share viewers */}
+          {/* Add Context Section - shown to owners, uses ROOT run's refinement count */}
           <AddContextSection
             runId={run.id}
-            refinementsUsed={run.refinements_used ?? 0}
+            refinementsUsed={run.root_refinements_used ?? run.refinements_used ?? 0}
             isOwner={!isShareAccess}
           />
         </ResultsLayout>
