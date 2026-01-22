@@ -42,20 +42,28 @@ type StageCallback = (stage: string) => Promise<void>
 const TOOLS: Anthropic.Tool[] = [
   {
     name: 'search',
-    description: `Web search via Tavily. Use for market research, finding discussions, competitor info, trends.
-Examples:
-- "site:reddit.com [topic]" - Reddit discussions
-- "site:etsy.com [product]" - Etsy listings
-- "site:g2.com [product] reviews" - G2 reviews
-- "[topic] growth tactics 2025" - General market research
-- "site:producthunt.com [category]" - Recent launches
-- "[competitor] vs alternatives" - Competitive analysis`,
+    description: `Web search via Tavily. Search ANYWHERE on the web for market intelligence, discussions, reviews, trends, news.
+
+Use site: prefix to target specific sources:
+- Communities: reddit.com, news.ycombinator.com, quora.com, indiehackers.com, twitter.com, linkedin.com
+- Reviews: g2.com, capterra.com, trustpilot.com, producthunt.com, alternativeto.net
+- Marketplaces: etsy.com, amazon.com, ebay.com, gumroad.com, appsumo.com
+- News/Blogs: techcrunch.com, medium.com, substack.com, forbes.com
+- Video: youtube.com (for comments/discussions)
+- Niche: Any industry-specific forum, community, or publication
+
+Or search without site: for broad results. Be creative - search for:
+- "[product] complaints" or "[product] frustrations"
+- "[competitor] vs [competitor]" comparisons
+- "[industry] trends 2025" or "[topic] best practices"
+- "[persona] workflow" or "how [persona] finds [solution]"
+- "[competitor] pricing" or "[product] alternatives"`,
     input_schema: {
       type: 'object' as const,
       properties: {
         query: {
           type: 'string',
-          description: 'Search query. Use site: prefix to scope to specific sites.',
+          description: 'Search query. Use site: prefix to target specific sources, or search broadly.',
         },
       },
       required: ['query'],
@@ -446,24 +454,21 @@ ${userHistory.pastRecommendations.slice(0, 5).map(r => `- ${r}`).join('\n') || '
 `
     : ''
 
-  return `You are an elite Growth Strategist who has helped scale dozens of startups. You have access to research tools that let you gather real-time data about markets, competitors, and opportunities.
+  return `You are an elite Growth Strategist who has helped scale dozens of startups. You have access to powerful research tools that let you gather real-time data from anywhere on the web.
 
 ## Your Process
 
-1. **Analyze the user's situation** - understand their product, traction, and focus area
-2. **Use tools strategically** - gather data that will inform specific recommendations
-   - Use 'search' to find market discussions, competitor info, community sentiment
-   - Use 'scrape' when you find a promising URL and need full content
-   - Use 'seo' to understand traffic/keyword positions for domains
-   - Use 'keyword_gaps' to find opportunities (only if user provided their URL)
-3. **Synthesize into actionable strategy** - don't just report data, interpret it
+1. **Understand their situation** - product, stage, what they've tried, what's working
+2. **Research what matters** - use tools to gather data that would actually change your recommendations
+3. **Synthesize into strategy** - interpret data, find insights, make specific recommendations
 
-## Tool Usage Guidelines
+## Using Your Tools
 
-- Be strategic: call tools when you need specific information to make recommendations
-- Use site: prefixes in search: "site:reddit.com [topic]", "site:etsy.com [product]"
-- You can call multiple tools in one turn - they run in parallel
-- If a tool fails, work with what you have
+You have: search (web), scrape (full page content), seo (traffic/keywords), keyword_gaps (competitive keywords).
+
+Think about what data would make your strategy more specific and actionable for THIS user. A startup directory needs different research than a B2B SaaS. Pre-launch needs different data than growth stage.
+
+Don't follow a checklist. Research intelligently.
 
 ${historySection}
 
@@ -535,7 +540,7 @@ ${input.tacticsAndResults || 'Not specified'}
     message += `\n## Constraints\n${input.constraints}\n`
   }
 
-  message += `\nAnalyze my situation and use the available tools to gather relevant market data before providing your strategy. Be strategic about which tools you call - focus on data that will inform specific recommendations.`
+  message += `\n---\n\n**IMPORTANT:** Before writing any strategy, use the research tools extensively. Search multiple sources (Reddit, HackerNews, G2, industry blogs, etc.), run SEO analysis on all domains mentioned, and gather real data. Call 5-10+ tools minimum. The more research you do, the more specific and valuable your recommendations will be.`
 
   return message
 }
@@ -640,11 +645,31 @@ export async function generateAgenticStrategy(
 
     // Check if we've hit the hard cap on total tool calls
     if (toolCalls.length >= MAX_TOTAL_TOOL_CALLS) {
-      // Force completion - tell Claude to finish without more tools
-      const textBlock = response.content.find((b) => b.type === 'text')
+      console.log(`[Agentic] Hit MAX_TOTAL_TOOL_CALLS (${MAX_TOTAL_TOOL_CALLS}), forcing final output`)
+
+      // Add current response to messages, then ask Claude to complete WITHOUT tools
+      messages = [
+        ...messages,
+        { role: 'assistant', content: response.content },
+        {
+          role: 'user',
+          content: `You've gathered enough research data. Now write the complete strategy document using the OUTPUT FORMAT specified in your system prompt. Do not request any more tools - use the data you have. Start with "# Growth Strategy" and include all 10 sections.`,
+        },
+      ]
+
+      // One final call WITHOUT tools to force strategy generation
+      const finalResponse = await client.messages.create({
+        model: MODEL,
+        max_tokens: MAX_TOKENS,
+        system: systemPrompt,
+        messages,
+        // No tools - force text completion
+      })
+
+      const textBlock = finalResponse.content.find((b) => b.type === 'text')
       const total = Date.now() - startTime
 
-      console.log(`[Agentic] Hit MAX_TOTAL_TOOL_CALLS (${MAX_TOTAL_TOOL_CALLS}), forcing completion`)
+      console.log(`[Agentic] Completed with ${toolCalls.length} tool calls (forced final output)`)
 
       return {
         success: true,
