@@ -73,11 +73,14 @@ export function Pricing() {
 
         {/* Testimonial */}
         <div className="max-w-xl mx-auto mt-6">
-          <div className="rounded-2xl border-[3px] border-foreground/20 bg-background p-6">
-            <blockquote className="text-foreground leading-relaxed">
-              &ldquo;The competitor analysis feature is incredibly valuable. The 30-day playbook alone is worth the price.&rdquo;
+          <div className="rounded-2xl border-[3px] border-foreground bg-background p-6 shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
+            <blockquote className="text-xl font-medium text-foreground leading-relaxed italic">
+              &quot;The competitor analysis feature is incredibly valuable. The 30-day playbook alone is worth the price.&quot;
             </blockquote>
-            <p className="font-mono text-sm text-foreground/60 mt-3">@noahpraduns</p>
+            <div className="flex items-center gap-2 mt-4">
+              <span className="w-8 h-[3px] bg-cta"></span>
+              <p className="font-mono text-sm text-foreground/70 uppercase tracking-wider">@noahpraduns</p>
+            </div>
           </div>
         </div>
       </div>
