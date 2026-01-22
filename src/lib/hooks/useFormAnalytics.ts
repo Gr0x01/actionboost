@@ -31,7 +31,9 @@ export function useFormAnalytics({
   currentQuestion,
   questionId,
 }: UseFormAnalyticsOptions): UseFormAnalyticsResult {
+  // eslint-disable-next-line react-hooks/purity -- Date.now() for timing is intentional
   const stepStartTime = useRef<number>(Date.now())
+  // eslint-disable-next-line react-hooks/purity -- Date.now() for timing is intentional
   const formStartTime = useRef<number>(Date.now())
   const hasTrackedStart = useRef(false)
 

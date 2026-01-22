@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, ArrowDown, ExternalLink, X, Loader2, Mail, Sparkles } from "lucide-react";
 import ReactMarkdown from "react-markdown";
@@ -411,12 +412,12 @@ export default function FirstImpressionsPage() {
             <p className="text-foreground font-medium mb-4">
               {error || "Something went wrong"}
             </p>
-            <a
+            <Link
               href="/"
               className="inline-flex items-center gap-2 rounded-xl px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100"
             >
               Go home
-            </a>
+            </Link>
           </div>
         </main>
         <Footer />

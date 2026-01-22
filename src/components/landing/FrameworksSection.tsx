@@ -75,7 +75,7 @@ function AARRRContent() {
       </div>
 
       <p className="text-foreground/80 leading-relaxed">
-        <span className="font-bold text-foreground">Primary leak:</span> Referral. Users who love the product aren't sharing it.{" "}
+        <span className="font-bold text-foreground">Primary leak:</span> Referral. Users who love the product aren&apos;t sharing it.{" "}
         <span className="font-bold text-foreground">Secondary leak:</span> Acquisition. Zero organic traffic pipeline.
       </p>
     </>

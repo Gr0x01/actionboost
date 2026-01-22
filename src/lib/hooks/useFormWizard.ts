@@ -43,6 +43,7 @@ export function useFormWizard({
   const [showAcknowledgment, setShowAcknowledgment] = useState(false)
 
   // Internal step timer if not provided externally
+  // eslint-disable-next-line react-hooks/purity -- Date.now() for timing is intentional
   const internalStepStartTime = useRef<number>(Date.now())
   const stepStartTime = stepStartTimeRef || internalStepStartTime
 
@@ -78,6 +79,7 @@ export function useFormWizard({
     }
 
     // Reset step timer for next question
+    // eslint-disable-next-line react-hooks/immutability -- intentional ref update
     stepStartTime.current = Date.now()
 
     if (ack) {

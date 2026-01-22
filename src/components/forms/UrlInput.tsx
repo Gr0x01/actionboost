@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useMemo, useEffect, useRef } from "react";
 import { Globe, ArrowRight, ChevronLeft } from "lucide-react";
 
 interface UrlInputProps {
@@ -13,24 +13,22 @@ interface UrlInputProps {
 
 export function UrlInput({ value, onChange, onSubmit, onSkip, onBack }: UrlInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [favicon, setFavicon] = useState<string | null>(null);
 
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
-  useEffect(() => {
+  const favicon = useMemo(() => {
     if (value && value.includes(".")) {
       try {
         const url = value.startsWith("http") ? value : `https://${value}`;
         const domain = new URL(url).hostname;
-        setFavicon(`https://www.google.com/s2/favicons?domain=${domain}&sz=32`);
+        return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
       } catch {
-        setFavicon(null);
+        return null;
       }
-    } else {
-      setFavicon(null);
     }
+    return null;
   }, [value]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

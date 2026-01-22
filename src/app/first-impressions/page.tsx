@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createBrowserClient } from "@supabase/ssr";
 import { motion } from "framer-motion";
 import { Loader2, Search } from "lucide-react";
@@ -98,12 +99,12 @@ export default function FirstImpressionsPage() {
           <div className="text-center">
             <h1 className="text-6xl font-black text-foreground mb-4">404</h1>
             <p className="text-foreground/60 mb-6">Page not found</p>
-            <a
+            <Link
               href="/"
               className="inline-flex rounded-xl px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100"
             >
               Go home
-            </a>
+            </Link>
           </div>
         </main>
         <Footer />

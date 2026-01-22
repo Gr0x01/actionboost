@@ -100,6 +100,7 @@ export function useFormPrefill({
 
       // Store metadata for context banner
       if (prefill.metadata) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- initialization from localStorage
         setPrefillMetadata(prefill.metadata)
       }
 

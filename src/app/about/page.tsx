@@ -108,7 +108,7 @@ export default function AboutPage() {
                 The Problem I Kept Hitting
               </h2>
               <p className="text-foreground/70 leading-relaxed">
-                While building Inkdex, I tried using LLM's to get growth advice. ChatGPT, Claude,
+                While building Inkdex, I tried using LLMs to get growth advice. ChatGPT, Claude,
                 you name it. Every time, the same generic playbook. &quot;Build in public.&quot;
                 &quot;Try content marketing.&quot; &quot;Engage on Twitter.&quot; Nothing specific to my
                 project or competitors.
@@ -142,7 +142,7 @@ export default function AboutPage() {
                 Actionboo.st generates a growth strategy for itself, and I execute.
               </p>
               <p className="text-foreground/70 leading-relaxed">
-                I'll give regular updates and findings along the way. Real results,
+                I&apos;ll give regular updates and findings along the way. Real results,
                 good or bad. Hopefully good.
               </p>
             </div>

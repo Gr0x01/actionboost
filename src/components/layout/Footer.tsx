@@ -12,7 +12,7 @@ export function Footer() {
               ACTIONBOO.ST
             </span>
             <p className="mt-1 text-sm text-background/50">
-              Growth plans that don't suck.
+              Growth plans that don&apos;t suck.
             </p>
           </div>
 

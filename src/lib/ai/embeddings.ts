@@ -17,6 +17,7 @@ import type { ChunkType, SourceType } from '@/lib/types/database'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let openaiClient: any = null
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function getOpenAIClient(): Promise<any | null> {
   if (!process.env.OPENAI_API_KEY) {
     return null
@@ -237,6 +238,7 @@ export async function searchUserContext(
 
   // Use pgvector similarity search via custom RPC function
   // Cast needed because TypeScript doesn't know about our custom function
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (supabase.rpc as any)('match_user_context_chunks', {
     query_embedding: embedding,
     match_user_id: userId,

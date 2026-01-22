@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
@@ -13,24 +13,20 @@ export function FooterCTAForm() {
   const posthog = usePostHog();
 
   const [url, setUrl] = useState("");
-  const [favicon, setFavicon] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  // Update favicon as user types
-  useEffect(() => {
+  // Derive favicon from URL
+  const favicon = useMemo(() => {
     if (url && url.includes(".")) {
       try {
         const normalized = url.startsWith("http") ? url : `https://${url}`;
         const domain = new URL(normalized).hostname;
-        setFavicon(
-          `https://www.google.com/s2/favicons?domain=${domain}&sz=32`
-        );
+        return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
       } catch {
-        setFavicon(null);
+        return null;
       }
-    } else {
-      setFavicon(null);
     }
+    return null;
   }, [url]);
 
   const handleAnalyze = async () => {

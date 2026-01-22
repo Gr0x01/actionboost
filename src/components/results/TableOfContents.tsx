@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import type { ParsedStrategy } from "@/lib/markdown/parser";
 import { STRATEGY_SECTIONS, type TOCSection } from "@/lib/constants/toc-sections";
 
@@ -64,7 +64,6 @@ export function TableOfContents({
 }: TableOfContentsProps) {
   const [activeSection, setActiveSection] = useState<string>("");
   const [mobileNavVisible, setMobileNavVisible] = useState(true);
-  const [availableSections, setAvailableSections] = useState<TOCSection[]>([]);
   const mobileNavRef = useRef<HTMLDivElement>(null);
   const lastScrollY = useRef(0);
   const keepVisibleUntilScroll = useRef(false);
@@ -73,29 +72,29 @@ export function TableOfContents({
   // Determine which sections to use based on mode
   const baseSections = sections || STRATEGY_SECTIONS;
 
-  // Filter sections based on mode
-  useEffect(() => {
-    let filtered: TOCSection[] = [];
-
+  // Filter sections based on mode (derived state)
+  const availableSections = useMemo(() => {
     if (strategy) {
       // Strategy mode: filter based on strategy fields using the mapping
-      filtered = baseSections.filter((section) => {
+      return baseSections.filter((section) => {
         const strategyKey = SECTION_ID_TO_STRATEGY_KEY[section.id];
         return strategyKey ? !!strategy[strategyKey] : false;
       });
     } else if (sections) {
       // Static mode: filter based on DOM presence
-      filtered = sections.filter((section) => document.getElementById(section.id));
+      return sections.filter((section) => document.getElementById(section.id));
     }
-
-    setAvailableSections(filtered);
-
-    // Set initial active section only once
-    if (filtered.length > 0 && !initialActiveSectionSet.current) {
-      initialActiveSectionSet.current = true;
-      setActiveSection(filtered[0].id);
-    }
+    return [];
   }, [strategy, sections, baseSections]);
+
+  // Set initial active section only once
+  useEffect(() => {
+    if (availableSections.length > 0 && !initialActiveSectionSet.current) {
+      initialActiveSectionSet.current = true;
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- initialization pattern
+      setActiveSection(availableSections[0].id);
+    }
+  }, [availableSections]);
 
   // Scroll spy - watch which section is in view
   useEffect(() => {
