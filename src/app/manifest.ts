@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Actionboo.st",
-    short_name: "Actionboo.st",
+    name: "Aboost",
+    short_name: "Aboost",
     description:
       "AI-powered growth strategy with real competitive research. Not ChatGPT fluff.",
     start_url: "/",

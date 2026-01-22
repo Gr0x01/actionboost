@@ -2,7 +2,7 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const FROM_EMAIL = "Actionboo.st <team@actionboo.st>";
+const FROM_EMAIL = "Aboost <team@aboo.st>";
 
 // Brutalist color palette (matches landing page)
 const COLORS = {
@@ -76,7 +76,7 @@ function generateReceiptHtml(data: {
 
                           <!-- Logo text (mono, uppercase, tracked) -->
                           <p style="margin: 0 0 32px; font-family: 'JetBrains Mono', Consolas, Monaco, monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.15em; color: ${COLORS.foreground}; text-transform: uppercase;">
-                            ACTIONBOO.ST
+                            ABOOST
                           </p>
 
                           <!-- Big headline -->
@@ -167,7 +167,7 @@ function generateReceiptHtml(data: {
           <tr>
             <td style="padding: 32px 0; text-align: center;">
               <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted}; text-transform: uppercase;">
-                <a href="https://actionboo.st" style="color: ${COLORS.muted}; text-decoration: none;">ACTIONBOO.ST</a>
+                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">ABOOST</a>
               </p>
             </td>
           </tr>
@@ -212,7 +212,7 @@ export function generateMagicLinkTemplate(): string {
 
                           <!-- Logo text (mono, uppercase, tracked) -->
                           <p style="margin: 0 0 32px; font-family: 'JetBrains Mono', Consolas, Monaco, monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.15em; color: ${COLORS.foreground}; text-transform: uppercase;">
-                            ACTIONBOO.ST
+                            ABOOST
                           </p>
 
                           <!-- Big headline -->
@@ -274,7 +274,7 @@ export function generateMagicLinkTemplate(): string {
           <tr>
             <td style="padding: 32px 0; text-align: center;">
               <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted}; text-transform: uppercase;">
-                <a href="https://actionboo.st" style="color: ${COLORS.muted}; text-decoration: none;">ACTIONBOO.ST</a>
+                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">ABOOST</a>
               </p>
             </td>
           </tr>
@@ -344,7 +344,7 @@ function generateRunReadyHtml(data: { resultsUrl: string }): string {
                       <tr>
                         <td style="padding: 48px 40px 40px;">
                           <p style="margin: 0 0 32px; font-family: 'JetBrains Mono', Consolas, Monaco, monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.15em; color: ${COLORS.foreground}; text-transform: uppercase;">
-                            ACTIONBOO.ST
+                            ABOOST
                           </p>
                           <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
                             Your growth strategy is ready.
@@ -392,7 +392,7 @@ function generateRunReadyHtml(data: { resultsUrl: string }): string {
           <tr>
             <td style="padding: 32px 0; text-align: center;">
               <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted}; text-transform: uppercase;">
-                <a href="https://actionboo.st" style="color: ${COLORS.muted}; text-decoration: none;">ACTIONBOO.ST</a>
+                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">ABOOST</a>
               </p>
             </td>
           </tr>
@@ -458,7 +458,7 @@ function generateRunFailedHtml(): string {
                       <tr>
                         <td style="padding: 48px 40px 40px;">
                           <p style="margin: 0 0 32px; font-family: 'JetBrains Mono', Consolas, Monaco, monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.15em; color: ${COLORS.foreground}; text-transform: uppercase;">
-                            ACTIONBOO.ST
+                            ABOOST
                           </p>
                           <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
                             We hit a snag.
@@ -475,7 +475,7 @@ function generateRunFailedHtml(): string {
                                 <table cellpadding="0" cellspacing="0" style="border: 2px solid ${COLORS.foreground};">
                                   <tr>
                                     <td style="background-color: ${COLORS.foreground};">
-                                      <a href="mailto:team@actionboo.st" style="display: inline-block; padding: 16px 32px; color: #FFFFFF; text-decoration: none; font-family: 'Source Sans 3', -apple-system, sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em;">
+                                      <a href="mailto:team@aboo.st" style="display: inline-block; padding: 16px 32px; color: #FFFFFF; text-decoration: none; font-family: 'Source Sans 3', -apple-system, sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em;">
                                         Contact Support
                                       </a>
                                     </td>
@@ -509,7 +509,7 @@ function generateRunFailedHtml(): string {
           <tr>
             <td style="padding: 32px 0; text-align: center;">
               <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted}; text-transform: uppercase;">
-                <a href="https://actionboo.st" style="color: ${COLORS.muted}; text-decoration: none;">ACTIONBOO.ST</a>
+                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">ABOOST</a>
               </p>
             </td>
           </tr>
@@ -584,7 +584,7 @@ function generateFreeAuditUpsellHtml(data: {
                       <tr>
                         <td style="padding: 48px 40px 40px;">
                           <p style="margin: 0 0 32px; font-family: 'JetBrains Mono', Consolas, Monaco, monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.15em; color: ${COLORS.foreground}; text-transform: uppercase;">
-                            ACTIONBOO.ST
+                            ABOOST
                           </p>
                           <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
                             Want the full picture?
@@ -652,7 +652,7 @@ function generateFreeAuditUpsellHtml(data: {
           <tr>
             <td style="padding: 32px 0; text-align: center;">
               <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted}; text-transform: uppercase;">
-                <a href="https://actionboo.st" style="color: ${COLORS.muted}; text-decoration: none;">ACTIONBOO.ST</a>
+                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">ABOOST</a>
               </p>
             </td>
           </tr>
@@ -728,7 +728,7 @@ function generateAbandonedCheckoutHtml(data: {
                       <tr>
                         <td style="padding: 48px 40px 40px;">
                           <p style="margin: 0 0 32px; font-family: 'JetBrains Mono', Consolas, Monaco, monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.15em; color: ${COLORS.foreground}; text-transform: uppercase;">
-                            ACTIONBOO.ST
+                            ABOOST
                           </p>
                           <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
                             We saved something for you.
@@ -786,7 +786,7 @@ function generateAbandonedCheckoutHtml(data: {
           <tr>
             <td style="padding: 32px 0; text-align: center;">
               <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted}; text-transform: uppercase;">
-                <a href="https://actionboo.st" style="color: ${COLORS.muted}; text-decoration: none;">ACTIONBOO.ST</a>
+                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">ABOOST</a>
               </p>
             </td>
           </tr>
@@ -819,7 +819,7 @@ export async function sendFeedbackRequestEmail(
     const { to, runId } = data;
     const resultsUrl = `${process.env.NEXT_PUBLIC_APP_URL}/results/${runId}`;
     // For MVP, link to mailto. Can replace with feedback form later.
-    const feedbackUrl = `mailto:team@actionboo.st?subject=Feedback on my growth strategy&body=Run ID: ${runId}%0A%0A`;
+    const feedbackUrl = `mailto:team@aboo.st?subject=Feedback on my growth strategy&body=Run ID: ${runId}%0A%0A`;
 
     await resend.emails.send({
       from: FROM_EMAIL,
@@ -862,7 +862,7 @@ function generateFeedbackRequestHtml(data: {
                       <tr>
                         <td style="padding: 48px 40px 40px;">
                           <p style="margin: 0 0 32px; font-family: 'JetBrains Mono', Consolas, Monaco, monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.15em; color: ${COLORS.foreground}; text-transform: uppercase;">
-                            ACTIONBOO.ST
+                            ABOOST
                           </p>
                           <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
                             How did we do?
@@ -913,7 +913,7 @@ function generateFeedbackRequestHtml(data: {
           <tr>
             <td style="padding: 32px 0; text-align: center;">
               <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted}; text-transform: uppercase;">
-                <a href="https://actionboo.st" style="color: ${COLORS.muted}; text-decoration: none;">ACTIONBOO.ST</a>
+                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">ABOOST</a>
               </p>
             </td>
           </tr>

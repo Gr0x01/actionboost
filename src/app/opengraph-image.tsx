@@ -1,7 +1,8 @@
 import { ImageResponse } from 'next/og'
+import { ABOOST_LOGO_PATHS, ABOOST_LOGO_VIEWBOX } from '@/components/ui'
 
 export const runtime = 'edge'
-export const alt = 'Actionboo.st - AI Action Plan for Founders'
+export const alt = 'Aboost - AI Action Plan for Founders'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -40,40 +41,11 @@ export default async function Image() {
               marginBottom: '32px',
             }}
           >
-            <div
-              style={{
-                width: '72px',
-                height: '72px',
-                background: '#E67E22',
-                border: '3px solid #2C3E50',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginRight: '20px',
-                boxShadow: '4px 4px 0 0 #2C3E50',
-              }}
-            >
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"
-                  fill="white"
-                  stroke="white"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-            <span
-              style={{
-                fontSize: '52px',
-                fontWeight: 900,
-                color: '#2C3E50',
-                letterSpacing: '-0.02em',
-              }}
-            >
-              Actionboo.st
-            </span>
+            <svg width="320" height="58" viewBox={ABOOST_LOGO_VIEWBOX} fill="none">
+              {ABOOST_LOGO_PATHS.map((d, i) => (
+                <path key={i} d={d} fill="#2C3E50" />
+              ))}
+            </svg>
           </div>
 
           {/* Tagline - light/bold contrast */}

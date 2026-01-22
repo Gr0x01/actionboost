@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!impression) {
     return {
-      title: "Not Found | Actionboo.st",
+      title: "Not Found | Aboost",
     };
   }
 
@@ -35,14 +35,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     : `Growth analysis for ${hostname}`;
 
   return {
-    title: `First Impressions: ${hostname} | Actionboo.st`,
+    title: `First Impressions: ${hostname} | Aboost`,
     description,
     openGraph: {
       title: `First Impressions: ${hostname}`,
       description,
       type: "article",
-      siteName: "Actionboo.st",
-      url: `https://actionboo.st/i/${id}`,
+      siteName: "Aboost",
+      url: `https://aboo.st/i/${id}`,
     },
     twitter: {
       card: "summary_large_image",

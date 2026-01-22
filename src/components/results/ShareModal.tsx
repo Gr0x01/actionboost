@@ -102,7 +102,7 @@ export function ShareModal({ runId, shareSlug, onClose }: ShareModalProps) {
               <span className="text-sm font-medium text-foreground">Share on:</span>
               <SocialShareButtons
                 url={shareUrl}
-                text="Check out this AI-generated action plan from Actionboo.st"
+                text="Check out this AI-generated action plan from Aboost"
                 source="share_modal"
               />
             </div>

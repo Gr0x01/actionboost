@@ -34,22 +34,22 @@ const tienne = Tienne({
 });
 
 export const metadata: Metadata = {
-  title: "Actionboo.st - AI Action Plan for Founders",
+  title: "Aboost - AI Action Plan for Founders",
   description:
     "Stuck on growth? Get an AI-powered action plan with real competitive research. Not ChatGPT fluff.",
-  metadataBase: new URL("https://actionboo.st"),
+  metadataBase: new URL("https://aboo.st"),
   openGraph: {
-    title: "Actionboo.st - AI Action Plan for Founders",
+    title: "Aboost - AI Action Plan for Founders",
     description:
       "Stuck on growth? Get an AI-powered action plan with real competitive research. Not ChatGPT fluff.",
-    url: "https://actionboo.st",
-    siteName: "Actionboo.st",
+    url: "https://aboo.st",
+    siteName: "Aboost",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Actionboo.st - AI Action Plan for Founders",
+    title: "Aboost - AI Action Plan for Founders",
     description:
       "Stuck on growth? Get an AI-powered action plan with real competitive research. Not ChatGPT fluff.",
   },

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { createBrowserClient } from "@supabase/ssr";
 import { LayoutDashboard } from "lucide-react";
 import type { User as AuthUser } from "@supabase/supabase-js";
+import { AboostLogo } from "@/components/ui";
 
 export function Header() {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -44,8 +45,8 @@ export function Header() {
       <div className="mx-auto max-w-7xl px-6">
         <div className="flex h-14 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="text-lg font-black tracking-tight text-foreground hover:text-foreground/70 transition-colors">
-            ACTIONBOO.ST
+          <Link href="/" className="hover:opacity-70 transition-opacity">
+            <AboostLogo width={120} height={22} className="text-foreground" />
           </Link>
 
           {/* Nav links - hidden on mobile */}

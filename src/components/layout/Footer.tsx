@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { AboostLogo } from "@/components/ui";
 
 export function Footer() {
   return (
@@ -8,10 +9,8 @@ export function Footer() {
         <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
           {/* Brand */}
           <div>
-            <span className="text-base font-black tracking-tight text-background">
-              ACTIONBOO.ST
-            </span>
-            <p className="mt-1 text-sm text-background/50">
+            <AboostLogo width={100} height={18} className="text-background" />
+            <p className="mt-2 text-sm text-background/50">
               Growth plans that don&apos;t suck.
             </p>
           </div>
@@ -55,7 +54,7 @@ export function Footer() {
           >
             <Image
               src="https://peerpush.net/p/actionboost/badge.png"
-              alt="Actionboo.st on PeerPush"
+              alt="Aboost on PeerPush"
               width={180}
               height={40}
             />
@@ -77,7 +76,7 @@ export function Footer() {
 
         {/* Copyright */}
         <div className="mt-6 pt-6 border-t border-background/20 text-center text-xs text-background/40 font-mono">
-          &copy; {new Date().getFullYear()} Actionboo.st
+          &copy; {new Date().getFullYear()} Aboost
         </div>
       </div>
     </footer>

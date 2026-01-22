@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const run = await getSharedRun(slug);
 
   if (!run || run.status !== "complete") {
-    return { title: "Action Plan Not Found | Actionboo.st" };
+    return { title: "Action Plan Not Found | Aboost" };
   }
 
   // Extract product description for meta
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const productDesc = input?.productDescription?.slice(0, 100) || "Action Plan";
 
   return {
-    title: `${productDesc} | Actionboo.st`,
+    title: `${productDesc} | Aboost`,
     description: "AI-powered action plan for startups and entrepreneurs. Real competitive research, actionable tactics, 30-day roadmap.",
     openGraph: {
       title: `Action Plan: ${productDesc}`,
@@ -82,13 +82,13 @@ export default async function SharePage({ params }: PageProps) {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           <p className="text-sm text-foreground/70">
-            This action plan was created with Actionboo.st
+            This action plan was created with Aboost
           </p>
           <div className="flex items-center gap-2">
             <span className="text-xs text-foreground/30 hidden sm:inline">|</span>
             <SocialShareButtons
-              url={`https://actionboo.st/share/${slug}`}
-              text="Interesting action plan I found on Actionboo.st"
+              url={`https://aboo.st/share/${slug}`}
+              text="Interesting action plan I found on Aboost"
               source="share_page"
             />
           </div>
@@ -111,7 +111,7 @@ export default async function SharePage({ params }: PageProps) {
         Want an action plan for your product?
       </h2>
       <p className="text-foreground/70 max-w-md mx-auto">
-        Actionboo.st uses live competitive research and AI to create actionable strategies for startups and entrepreneurs.
+        Aboost uses live competitive research and AI to create actionable strategies for startups and entrepreneurs.
       </p>
       <Link href="/start">
         <button className="rounded-xl px-8 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">

@@ -229,7 +229,7 @@ export function StatusMessage({
             Try Again
           </Link>
           <a
-            href="mailto:team@actionboo.st"
+            href="mailto:team@aboo.st"
             className="rounded-xl px-6 py-3 bg-transparent text-foreground font-bold border-2 border-foreground/30 hover:border-foreground transition-colors"
           >
             Contact Support

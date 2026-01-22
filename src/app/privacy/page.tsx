@@ -1,8 +1,8 @@
 import { Header, Footer } from "@/components/layout"
 
 export const metadata = {
-  title: "Privacy Policy | Actionboo.st",
-  description: "How Actionboo.st collects, uses, and protects your data.",
+  title: "Privacy Policy | Aboost",
+  description: "How Aboost collects, uses, and protects your data.",
 }
 
 export default function PrivacyPage() {
@@ -24,13 +24,13 @@ export default function PrivacyPage() {
                   Data Controller
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
-                  Actionboo.st is operated from Texas, United States. For privacy inquiries, contact
+                  Aboost is operated from Texas, United States. For privacy inquiries, contact
                   us at{" "}
                   <a
-                    href="mailto:team@actionboo.st"
+                    href="mailto:team@aboo.st"
                     className="text-primary hover:text-primary/80"
                   >
-                    team@actionboo.st
+                    team@aboo.st
                   </a>
                 </p>
               </section>
@@ -40,7 +40,7 @@ export default function PrivacyPage() {
                   What We Collect
                 </h2>
                 <p className="text-sm leading-relaxed text-muted mb-3">
-                  When you use Actionboo.st, we collect:
+                  When you use Aboost, we collect:
                 </p>
                 <ul className="text-sm text-muted space-y-2 list-disc list-inside">
                   <li>
@@ -91,7 +91,7 @@ export default function PrivacyPage() {
                   Third-Party Services
                 </h2>
                 <p className="text-sm text-muted mb-3">
-                  We share data with these services to provide Actionboo.st:
+                  We share data with these services to provide Aboost:
                 </p>
                 <ul className="text-sm text-muted space-y-2 list-disc list-inside">
                   <li>
@@ -205,10 +205,10 @@ export default function PrivacyPage() {
                 <p className="text-sm text-muted leading-relaxed">
                   Questions about privacy? Email us at{" "}
                   <a
-                    href="mailto:team@actionboo.st"
+                    href="mailto:team@aboo.st"
                     className="text-primary hover:text-primary/80"
                   >
-                    team@actionboo.st
+                    team@aboo.st
                   </a>
                 </p>
               </section>

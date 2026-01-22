@@ -22,17 +22,17 @@ function LinkedInIcon({ className }: { className?: string }) {
 }
 
 export const metadata: Metadata = {
-  title: "About | Actionboo.st",
-  description: "Solo dev. Real experiment. Watch Actionboo.st grow itself using its own AI-generated growth strategy.",
+  title: "About | Aboost",
+  description: "Solo dev. Real experiment. Watch Aboost grow itself using its own AI-generated growth strategy.",
   openGraph: {
-    title: "About Actionboo.st - Building in Public",
-    description: "Solo dev. Real experiment. Watch Actionboo.st grow itself using its own AI-generated growth strategy.",
+    title: "About Aboost - Building in Public",
+    description: "Solo dev. Real experiment. Watch Aboost grow itself using its own AI-generated growth strategy.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "About Actionboo.st - Building in Public",
-    description: "Solo dev. Real experiment. Watch Actionboo.st grow itself using its own AI-generated growth strategy.",
+    title: "About Aboost - Building in Public",
+    description: "Solo dev. Real experiment. Watch Aboost grow itself using its own AI-generated growth strategy.",
   },
 };
 
@@ -54,7 +54,7 @@ export default function AboutPage() {
             </h1>
             <p className="text-xl text-foreground/70 leading-relaxed max-w-2xl">
               Can an AI growth strategist grow itself? I&apos;m finding out—publicly.
-              Every recommendation Actionboo.st generates for itself, I follow.
+              Every recommendation Aboost generates for itself, I follow.
             </p>
           </section>
 
@@ -73,8 +73,8 @@ export default function AboutPage() {
                   </h2>
                   <p className="text-foreground/70 leading-relaxed mb-4">
                     Product designer for 10+ years, now a designer digging into code.
-                    Building <a href="https://inkdex.io?ref=actionboost" target="_blank" rel="noopener noreferrer" className="text-cta hover:underline">Inkdex.io</a> (visual tattoo search) and
-                    experimenting with Actionboo.st.
+                    Building <a href="https://inkdex.io?ref=aboost" target="_blank" rel="noopener noreferrer" className="text-cta hover:underline">Inkdex.io</a> (visual tattoo search) and
+                    experimenting with Aboost.
                   </p>
                   <div className="flex items-center gap-4">
                     <a
@@ -139,7 +139,7 @@ export default function AboutPage() {
               <p className="text-foreground/70 leading-relaxed mb-4">
                 I built this as a tool for other founders, startups, and entrpreneurs. But then I realized—how can I
                 prove this works unless I follow its own advice? So that&apos;s what I&apos;m doing.
-                Actionboo.st generates a growth strategy for itself, and I execute.
+                Aboost generates a growth strategy for itself, and I execute.
               </p>
               <p className="text-foreground/70 leading-relaxed">
                 I&apos;ll give regular updates and findings along the way. Real results,
@@ -209,7 +209,7 @@ export default function AboutPage() {
                       Proof of concept
                     </span>
                     <h3 className="text-xl font-bold text-foreground mt-2">
-                      Read the actual strategy Actionboo.st generated for itself
+                      Read the actual strategy Aboost generated for itself
                     </h3>
                     <p className="text-foreground/60 mt-1">
                       Real competitive research. Real recommendations. The same output you&apos;d get.

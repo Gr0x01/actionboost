@@ -1,8 +1,8 @@
 import { Header, Footer } from "@/components/layout"
 
 export const metadata = {
-  title: "Terms of Service | Actionboo.st",
-  description: "Terms and conditions for using Actionboo.st.",
+  title: "Terms of Service | Aboost",
+  description: "Terms and conditions for using Aboost.",
 }
 
 export default function TermsPage() {
@@ -24,7 +24,7 @@ export default function TermsPage() {
                   Service Description
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
-                  Actionboo.st provides AI-powered action plan recommendations for founders and
+                  Aboost provides AI-powered action plan recommendations for founders and
                   businesses. You submit information about your product, and we generate personalized
                   strategic advice using artificial intelligence and competitive research.
                 </p>
@@ -35,7 +35,7 @@ export default function TermsPage() {
                   Eligibility
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
-                  You must be at least 18 years old to use Actionboo.st.
+                  You must be at least 18 years old to use Aboost.
                 </p>
               </section>
 
@@ -64,10 +64,10 @@ export default function TermsPage() {
                   We offer a <strong className="text-foreground">7-day money-back guarantee</strong>.
                   If you&apos;re not satisfied with your action plan, email us at{" "}
                   <a
-                    href="mailto:team@actionboo.st"
+                    href="mailto:team@aboo.st"
                     className="text-primary hover:text-primary/80"
                   >
-                    team@actionboo.st
+                    team@aboo.st
                   </a>{" "}
                   within 7 days of purchase with brief feedback on what didn&apos;t work for you,
                   and we&apos;ll issue a full refund—no questions asked beyond the feedback. This
@@ -80,7 +80,7 @@ export default function TermsPage() {
                   Disclaimer
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
-                  Actionboo.st provides AI-generated strategic recommendations, not professional
+                  Aboost provides AI-generated strategic recommendations, not professional
                   consulting services. The advice is based on the information you provide and
                   publicly available data.
                 </p>
@@ -124,7 +124,7 @@ export default function TermsPage() {
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
                   You own the action plan we generate for you and may use it for any lawful purpose.
-                  The Actionboo.st name, logo, and service remain our property.
+                  The Aboost name, logo, and service remain our property.
                 </p>
               </section>
 
@@ -133,7 +133,7 @@ export default function TermsPage() {
                   Limitation of Liability
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
-                  Actionboo.st is provided &quot;as is&quot; without warranties of any kind. We are
+                  Aboost is provided &quot;as is&quot; without warranties of any kind. We are
                   not liable for any indirect, incidental, or consequential damages arising from
                   your use of the service. Our total liability is limited to the amount you paid
                   for the service.
@@ -145,7 +145,7 @@ export default function TermsPage() {
                   Indemnification
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
-                  You agree to indemnify and hold Actionboo.st harmless from any claims, damages,
+                  You agree to indemnify and hold Aboost harmless from any claims, damages,
                   or expenses arising from your use of the service or violation of these terms.
                 </p>
               </section>
@@ -155,7 +155,7 @@ export default function TermsPage() {
                   Dispute Resolution
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
-                  Before taking legal action, you agree to contact us at team@actionboo.st to
+                  Before taking legal action, you agree to contact us at team@aboo.st to
                   attempt informal resolution. If we cannot resolve the issue within 30 days,
                   either party may pursue legal remedies.
                 </p>
@@ -176,7 +176,7 @@ export default function TermsPage() {
                   Changes to Terms
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
-                  We may update these terms from time to time. Continued use of Actionboo.st after
+                  We may update these terms from time to time. Continued use of Aboost after
                   changes constitutes acceptance of the new terms.
                 </p>
               </section>
@@ -198,10 +198,10 @@ export default function TermsPage() {
                 <p className="text-sm text-muted leading-relaxed">
                   Questions about these terms? Email us at{" "}
                   <a
-                    href="mailto:team@actionboo.st"
+                    href="mailto:team@aboo.st"
                     className="text-primary hover:text-primary/80"
                   >
-                    team@actionboo.st
+                    team@aboo.st
                   </a>
                 </p>
               </section>
