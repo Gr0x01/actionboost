@@ -408,5 +408,20 @@ src/components/forms/
 
 ## What's Next
 
+### Pipeline V2: Competitive Intelligence Upgrade (Priority)
+**Full plan:** `memory-bank/projects/pipeline-v2-plan.md`
+
+Major upgrade transforming Actionboo.st from "AI growth strategist" to "competitive intelligence platform."
+
+**Key changes:**
+- Price: $9.99 → $39
+- 7+ data sources (DataForSEO for user + competitors, Tavily Reddit, Apify G2, SimilarWeb, ProductHunt)
+- Claude tool use for deep dives (max 5 calls)
+- New output sections: SEO Landscape, Keyword Playbook (30-50 keywords), Content Ideas, Market Sentiment
+- Processing time: 2 min → 3-4 min (with progress indicators)
+
+**Why $39:** Confirmed by growth-hacker + brand-guardian subagents. Filters for serious customers, justifies premium positioning, 92-94% margin.
+
+### Later
 - Weekly automated runs (cron job for subscribed users)
 - Google OAuth (optional)
