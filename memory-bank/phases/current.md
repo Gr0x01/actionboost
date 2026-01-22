@@ -1,6 +1,66 @@
 # Current Phase
 
-## Latest Update: Agentic Pipeline + Dynamic Processing UI
+## Latest Update: Results Page Dashboard Redesign
+
+**Completed Jan 22, 2026** - Transformed results page from wall of markdown into dashboard-style UI.
+
+### What Was Built
+
+#### 1. Output Formatter (Haiku Post-Processor)
+
+After Opus generates markdown, Haiku extracts structured JSON for dashboard rendering.
+
+**Architecture:**
+```
+Opus → Markdown → Haiku Formatter → Structured JSON → runs.structured_output
+```
+
+**Cost Impact:** ~$0.006 additional per run (1.2% of Opus cost)
+
+**Files Added:**
+- `src/lib/ai/formatter-types.ts` - Zod schemas for structured output
+- `src/lib/ai/formatter.ts` - Haiku extraction logic with regex fallback
+
+#### 2. Dashboard Components
+
+New component hierarchy (inverted from traditional):
+
+| Position | Component | Purpose |
+|----------|-----------|---------|
+| **Top** | CommandCenter | Week progress + interactive day cards with checkboxes |
+| **2nd** | PriorityCards | Top 3 ICE-scored items with visual breakdown |
+| **3rd** | MetricsSnapshot | AARRR metrics in tile grid |
+| **3rd** | CompetitorSnapshot | Traffic comparison bar chart |
+| **Bottom** | DeepDivesAccordion | All original sections collapsed |
+
+**Files Added:**
+- `src/components/results/dashboard/CommandCenter.tsx`
+- `src/components/results/dashboard/PriorityCards.tsx`
+- `src/components/results/dashboard/MetricsSnapshot.tsx`
+- `src/components/results/dashboard/CompetitorSnapshot.tsx`
+- `src/components/results/dashboard/DeepDivesAccordion.tsx`
+- `src/lib/storage/taskCompletion.ts` - localStorage for task checkboxes
+
+#### 3. Graceful Degradation
+
+Dashboard only renders when `structured_output` is available and has meaningful data. Falls back to traditional layout otherwise.
+
+**Lazy Backfill:** Existing runs without structured_output get extracted async when viewed.
+
+**Files Modified:**
+- `src/lib/ai/pipeline.ts` - Calls formatter after Opus generation
+- `src/app/api/runs/[runId]/route.ts` - Returns structured_output, triggers lazy backfill
+- `src/components/results/ResultsContent.tsx` - Dual-mode rendering (dashboard vs traditional)
+- `src/lib/types/database.ts` - Added structured_output column type
+
+**Database Migration:**
+```sql
+ALTER TABLE runs ADD COLUMN structured_output JSONB;
+```
+
+---
+
+## Previous: Agentic Pipeline + Dynamic Processing UI
 
 **Completed Jan 22, 2026** - Major architecture shift to agentic tool-calling pipeline with enhanced processing UI.
 
