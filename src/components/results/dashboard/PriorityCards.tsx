@@ -1,7 +1,5 @@
 'use client'
 
-import { useState } from 'react'
-import { ChevronDown, ChevronUp } from 'lucide-react'
 import type { PriorityItem } from '@/lib/ai/formatter-types'
 import { MarkdownContent } from '../MarkdownContent'
 
@@ -10,103 +8,74 @@ interface PriorityCardsProps {
 }
 
 /**
- * ICE score visual bar
- */
-function ScoreBar({ label, score, color }: { label: string; score: number; color: string }) {
-  return (
-    <div className="flex items-center gap-2">
-      <span className="text-[10px] uppercase tracking-wider text-foreground/50 w-4">{label}</span>
-      <div className="flex-1 h-1.5 bg-foreground/10 rounded-full overflow-hidden">
-        <div
-          className={`h-full rounded-full ${color}`}
-          style={{ width: `${score * 10}%` }}
-        />
-      </div>
-      <span className="font-mono text-[10px] text-foreground/50 w-4 text-right">{score}</span>
-    </div>
-  )
-}
-
-/**
- * Individual priority card
+ * Individual priority card - Brutalist design with clear visual hierarchy
+ * Structure: Rank (hero) -> Title -> Description -> Score (footer)
  */
 function PriorityCard({ priority, isTop }: { priority: PriorityItem; isTop: boolean }) {
-  const [isExpanded, setIsExpanded] = useState(false)
-
   return (
     <div
       className={`
-        rounded-xl p-6 transition-all duration-150
+        flex flex-col h-full transition-all duration-150 rounded-xl overflow-hidden
         ${isTop
-          ? 'border-[3px] border-cta bg-cta/5 shadow-[4px_4px_0_0_rgba(232,126,4,0.4)]'
-          : 'border border-foreground/15 bg-background shadow-sm'
+          ? 'border-[3px] border-cta bg-gradient-to-br from-cta/8 via-cta/4 to-transparent shadow-[6px_6px_0_0_rgba(232,126,4,0.5)]'
+          : 'border-2 border-foreground/20 bg-background shadow-[4px_4px_0_0_rgba(0,0,0,0.1)]'
         }
       `}
     >
-      {/* Header with ICE badge */}
-      <div className="flex items-start justify-between gap-3 mb-3">
-        <div className="flex-1 min-w-0">
-          {/* Rank badge */}
-          <span className={`
-            inline-block font-mono text-[10px] px-1.5 py-0.5 font-bold mb-2
-            ${isTop ? 'bg-cta text-white' : 'bg-foreground/10 text-foreground/70'}
+      {/* Top section: Rank + Title */}
+      <div className="p-5 pb-4">
+        {/* Rank as hero element */}
+        <div className="flex items-start gap-4 mb-4">
+          <div
+            className={`
+              flex-shrink-0 w-12 h-12 flex items-center justify-center font-mono text-2xl font-black rounded-lg
+              ${isTop
+                ? 'bg-cta text-white shadow-[inset_0_-3px_0_0_rgba(0,0,0,0.2)]'
+                : 'bg-foreground/10 text-foreground/60'
+              }
+            `}
+          >
+            {priority.rank}
+          </div>
+
+          {/* Title */}
+          <h3 className={`
+            flex-1 font-bold leading-tight pt-1
+            ${isTop ? 'text-foreground text-lg' : 'text-foreground/90'}
           `}>
-            #{priority.rank}
-          </span>
-          <h3 className="font-bold text-foreground leading-tight">
             {priority.title}
           </h3>
         </div>
 
-        {/* Large ICE score */}
-        <div className={`
-          font-mono text-2xl font-bold shrink-0
-          ${isTop ? 'text-cta' : 'text-foreground/70'}
+        {/* Description - always visible, this is the WHY */}
+        {priority.description && (
+          <div className={`
+            text-sm leading-relaxed pl-16
+            ${isTop ? 'text-foreground/70' : 'text-foreground/60'}
+          `}>
+            <MarkdownContent
+              content={priority.description}
+              className="[&>p]:mb-0 [&>p:last-child]:mb-0"
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Footer: ICE Score */}
+      <div className={`
+        mt-auto px-5 py-3 border-t flex items-center justify-between
+        ${isTop ? 'border-cta/30 bg-cta/5' : 'border-foreground/10 bg-foreground/[0.02]'}
+      `}>
+        <span className="text-xs font-mono uppercase tracking-wider text-foreground/40">
+          ICE Score
+        </span>
+        <span className={`
+          font-mono text-lg font-bold
+          ${isTop ? 'text-cta' : 'text-foreground/50'}
         `}>
           {priority.iceScore}
-        </div>
+        </span>
       </div>
-
-      {/* ICE breakdown bars */}
-      <div className="space-y-1.5 mb-4">
-        <ScoreBar label="I" score={priority.impact.score} color="bg-emerald-500" />
-        <ScoreBar label="C" score={priority.confidence.score} color="bg-blue-500" />
-        <ScoreBar label="E" score={priority.ease.score} color="bg-amber-500" />
-      </div>
-
-      {/* Expandable description */}
-      {priority.description && (
-        <div>
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="flex items-center gap-1 text-xs text-foreground/50 hover:text-foreground/70 transition-colors"
-          >
-            {isExpanded ? (
-              <>
-                <ChevronUp className="w-3 h-3" />
-                <span>Show less</span>
-              </>
-            ) : (
-              <>
-                <ChevronDown className="w-3 h-3" />
-                <span>Read more</span>
-              </>
-            )}
-          </button>
-
-          {isExpanded && (
-            <div className="mt-3 pt-3 border-t border-foreground/10">
-              <div className="text-sm text-foreground/70 leading-relaxed">
-                <MarkdownContent
-                  content={priority.description}
-                  extended
-                  className="[&>p]:mb-2 [&>p:last-child]:mb-0"
-                />
-              </div>
-            </div>
-          )}
-        </div>
-      )}
     </div>
   )
 }
@@ -121,7 +90,7 @@ export function PriorityCards({ priorities }: PriorityCardsProps) {
 
   return (
     <section className="scroll-mt-32">
-      <div className="mb-4">
+      <div className="mb-5">
         <h2 className="text-xl lg:text-2xl font-bold text-foreground tracking-tight">
           Top Priorities
         </h2>
@@ -130,7 +99,7 @@ export function PriorityCards({ priorities }: PriorityCardsProps) {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {topPriorities.map((priority, index) => (
           <PriorityCard
             key={priority.rank}

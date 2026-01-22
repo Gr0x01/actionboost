@@ -102,7 +102,7 @@ export function CommandCenter({
             <p className="text-foreground/60 text-sm mt-1">
               {isWeek1
                 ? 'Your action plan for the next 7 days'
-                : roadmapWeek?.theme || `Week ${selectedWeek} tasks`}
+                : 'Strategic milestones for this week'}
             </p>
           </div>
 
@@ -148,14 +148,15 @@ export function CommandCenter({
                   key={index}
                   onClick={() => handleToggle(index)}
                   className={`
-                    flex-shrink-0 w-[280px] sm:w-[300px] snap-start
-                    rounded-xl border-2 p-4 text-left
+                    group flex-shrink-0 w-[280px] sm:w-[300px] snap-start
+                    min-h-[140px] flex flex-col rounded-xl
+                    border-2 p-4 text-left
                     transition-all duration-150
                     ${isCompleted
                       ? 'border-cta/50 bg-cta/5'
-                      : 'border-foreground/20 bg-background hover:border-foreground/40'
+                      : 'border-foreground bg-background'
                     }
-                    hover:shadow-[4px_4px_0_0_rgba(44,62,80,0.5)]
+                    ${!isCompleted && 'hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)]'}
                     active:shadow-none active:translate-y-0.5
                   `}
                 >
@@ -185,18 +186,25 @@ export function CommandCenter({
 
                   {/* Action */}
                   <p className={`
-                    font-semibold text-sm leading-snug mb-2 line-clamp-2
+                    font-semibold text-sm leading-snug mb-2 line-clamp-2 flex-1
                     ${isCompleted ? 'text-foreground/60 line-through' : 'text-foreground'}
                   `}>
                     {day.action}
                   </p>
 
-                  {/* Time + metric */}
-                  <div className="flex items-center gap-2 text-xs text-foreground/50">
-                    <span className="font-mono bg-foreground/5 px-1.5 py-0.5 rounded">
-                      {day.timeEstimate}
-                    </span>
-                    <span className="truncate">{day.successMetric}</span>
+                  {/* Time estimate + success metric on hover */}
+                  <div className="mt-auto text-xs text-foreground/50">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono bg-foreground/5 px-1.5 py-0.5 rounded">
+                        {day.timeEstimate}
+                      </span>
+                      <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-foreground/40">
+                        Deliverable ↓
+                      </span>
+                    </div>
+                    <p className="mt-1.5 text-foreground/60 opacity-0 max-h-0 group-hover:opacity-100 group-hover:max-h-20 transition-all duration-200 overflow-hidden">
+                      {day.successMetric}
+                    </p>
                   </div>
                 </button>
               )
@@ -204,47 +212,66 @@ export function CommandCenter({
           </div>
         )}
 
-        {/* Weeks 2-4: Roadmap tasks */}
+        {/* Weeks 2-4: Milestone cards (horizontal scroll like Week 1) */}
         {!isWeek1 && roadmapWeek && (
-          <div className="space-y-2">
-            {roadmapWeek.tasks.map((task, index) => {
-              const isCompleted = completedTasks[index] ?? false
+          <div>
+            {/* Horizontal milestone cards */}
+            <div className="flex gap-3 overflow-x-auto pb-2 -mx-2 px-2 snap-x snap-mandatory scrollbar-hide">
+              {roadmapWeek.tasks.map((task, index) => {
+                const isCompleted = completedTasks[index] ?? false
 
-              return (
-                <button
-                  key={index}
-                  onClick={() => handleToggle(index)}
-                  className={`
-                    w-full flex items-center gap-3 p-4 rounded-xl border-2 text-left
-                    transition-all duration-150
-                    ${isCompleted
-                      ? 'border-cta/50 bg-cta/5'
-                      : 'border-foreground/20 bg-background hover:border-foreground/40'
-                    }
-                  `}
-                >
-                  {/* Checkbox */}
-                  <div className={`
-                    w-6 h-6 rounded-md border-2 flex items-center justify-center shrink-0
-                    transition-colors duration-150
-                    ${isCompleted
-                      ? 'border-cta bg-cta'
-                      : 'border-foreground/30 bg-transparent'
-                    }
-                  `}>
-                    {isCompleted && <Check className="w-4 h-4 text-white" strokeWidth={3} />}
-                  </div>
+                return (
+                  <button
+                    key={index}
+                    onClick={() => handleToggle(index)}
+                    className={`
+                      flex-shrink-0 w-[280px] sm:w-[300px] snap-start
+                      min-h-[140px] flex flex-col rounded-xl
+                      border-2 p-4 text-left
+                      transition-all duration-150
+                      ${isCompleted
+                        ? 'border-cta/50 bg-cta/5'
+                        : 'border-foreground bg-background'
+                      }
+                      ${!isCompleted && 'hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)]'}
+                      active:shadow-none active:translate-y-0.5
+                    `}
+                  >
+                    {/* Milestone badge + checkbox */}
+                    <div className="flex items-center justify-between mb-3">
+                      <span className={`
+                        font-mono text-xs px-2 py-1 font-bold
+                        ${isCompleted
+                          ? 'bg-cta text-white'
+                          : 'bg-foreground text-background'
+                        }
+                      `}>
+                        MILESTONE {index + 1}
+                      </span>
 
-                  {/* Task text */}
-                  <p className={`
-                    font-semibold text-sm leading-snug
-                    ${isCompleted ? 'text-foreground/60 line-through' : 'text-foreground'}
-                  `}>
-                    {task}
-                  </p>
-                </button>
-              )
-            })}
+                      <div className={`
+                        w-6 h-6 rounded-md border-2 flex items-center justify-center
+                        transition-colors duration-150
+                        ${isCompleted
+                          ? 'border-cta bg-cta'
+                          : 'border-foreground/30 bg-transparent'
+                        }
+                      `}>
+                        {isCompleted && <Check className="w-4 h-4 text-white" strokeWidth={3} />}
+                      </div>
+                    </div>
+
+                    {/* Task text */}
+                    <p className={`
+                      font-semibold text-sm leading-snug flex-1
+                      ${isCompleted ? 'text-foreground/50 line-through' : 'text-foreground'}
+                    `}>
+                      {task}
+                    </p>
+                  </button>
+                )
+              })}
+            </div>
           </div>
         )}
 
