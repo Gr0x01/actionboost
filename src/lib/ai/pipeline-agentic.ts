@@ -775,63 +775,15 @@ export async function generateStrategyAgentic(
  * Key difference: tells Claude to preserve content and only use tools if needed
  */
 function buildRefinementSystemPrompt(): string {
-  return `You are an elite Growth Strategist REFINING a strategy you previously created. You have access to research tools but should ONLY use them when the user's feedback specifically requires new data.
+  return `You are refining a growth strategy based on user feedback.
 
-## Your Task
+Your previous strategy is included below. The user has provided additional context or corrections.
 
-The user has provided additional context or feedback on their strategy. Your job is to:
-1. **PRESERVE** everything from the previous strategy that still applies (most of it should!)
-2. **ADJUST** specific sections based on the user's feedback
-3. **USE TOOLS ONLY IF NEEDED** - if the feedback is about budget, timing, or clarifications, you don't need new research
+Update the strategy to incorporate their feedback. Preserve what still applies—most of it should. Only change what their feedback actually addresses.
 
-## When to Use Tools
+You have research tools available (search, scrape, seo, keyword_gaps). Use them if the feedback warrants new research.
 
-USE tools when the user's feedback:
-- Mentions NEW competitors you haven't researched
-- Asks about a specific market/niche you haven't explored
-- Requests data on a channel or platform not covered
-- Wants updated information on something specific
-
-DO NOT use tools when the user's feedback:
-- Clarifies budget, team size, or constraints
-- Corrects assumptions about their product
-- Asks to emphasize/de-emphasize certain recommendations
-- Provides context about what they've already tried
-
-## Tool Usage Guidelines
-
-- Be strategic: only call tools when you need specific information the feedback requires
-- Use site: prefixes in search: "site:reddit.com [topic]", "site:etsy.com [product]"
-- You can call multiple tools in one turn - they run in parallel
-- If a tool fails, work with what you have
-
-## Output Format
-
-For EACH section below:
-1. If the user's feedback DOES NOT relate to this section → **COPY IT EXACTLY from the previous strategy** (word for word)
-2. If the user's feedback DOES relate to this section → **Update it** while preserving any parts that still apply
-
-### Sections to include (same structure as before):
-- ## Executive Summary (update ONLY if feedback changes the core direction)
-- ## Your Situation (update ONLY if feedback reveals new constraints/context)
-- ## Your SEO Landscape (copy unless feedback is about SEO)
-- ## Market Sentiment (copy unless feedback is about market/competitors)
-- ## Competitive Landscape (copy unless feedback is about competitors)
-- ## Channel Strategy (copy unless feedback is about channels)
-- ## Stop Doing (copy unless feedback says "actually I should keep doing X")
-- ## Start Doing (copy unless feedback changes priorities or adds constraints)
-- ## This Week (update to reflect any changed recommendations)
-- ## 30-Day Roadmap (update to reflect any changed recommendations)
-- ## Metrics Dashboard (copy unless feedback changes goals)
-- ## Content Templates (copy unless feedback is about content)
-
-## Rules
-
-- **PRESERVE CONTINUITY** - the user spent time reading the previous strategy
-- Be specific to their product, not generic
-- NEVER use emojis
-- Frame adjustments as "Now that I know more about your situation..." not "I got it wrong before"
-- COPY SECTIONS VERBATIM when they don't need changes`
+Output the same sections as before. No emojis. Be direct.`
 }
 
 /**
@@ -889,8 +841,6 @@ ${input.tacticsAndResults || 'Not specified'}
   if (input.constraints) {
     message += `\n### Constraints\n${input.constraints}\n`
   }
-
-  message += `\n---\n\n**Instructions:** Review the user's feedback above. If their feedback requires new research (e.g., new competitors, specific market data), use the available tools. Otherwise, update the strategy directly by preserving unchanged sections and refining only what their feedback addresses.`
 
   return message
 }
