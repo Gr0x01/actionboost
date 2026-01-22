@@ -5,20 +5,27 @@ interface MetricsSnapshotProps {
 }
 
 /**
- * Get AARRR stage label
+ * Get plain English category label
  */
 function getCategoryLabel(category: string): string {
   const labels: Record<string, string> = {
-    acquisition: 'Acquisition',
-    activation: 'Activation',
-    retention: 'Retention',
-    referral: 'Referral',
-    revenue: 'Revenue',
-    custom: 'Custom',
+    acquisition: 'GROWTH',
+    activation: 'ENGAGE',
+    retention: 'RETAIN',
+    referral: 'REFER',
+    revenue: 'REVENUE',
   }
-  return labels[category] || 'Custom'
+  return labels[category] || 'GOAL'
 }
 
+/**
+ * MetricsSnapshot - Key Metrics in brutalist card grid
+ *
+ * Design: Brutalist Raw - matches Day cards and Priority cards
+ * - Bold borders, offset shadows on hover
+ * - Category badge with solid background (like DAY X badges)
+ * - Grid layout for scannability
+ */
 export function MetricsSnapshot({ metrics }: MetricsSnapshotProps) {
   const displayMetrics = metrics.slice(0, 6)
 
@@ -33,30 +40,31 @@ export function MetricsSnapshot({ metrics }: MetricsSnapshotProps) {
           Key Metrics
         </h2>
         <p className="text-foreground/60 text-sm mt-1">
-          Track these AARRR metrics to measure your progress
+          Track these to measure your progress
         </p>
       </div>
 
-      {/* Cards float directly - no outer container */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      {/* Grid of brutalist cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {displayMetrics.map((metric, index) => (
           <div
             key={`${metric.name}-${index}`}
-            className="group rounded-lg border border-foreground/10 bg-surface p-4
-                       hover:border-foreground/20 hover:shadow-md transition-all duration-200"
+            className="rounded-xl border-2 border-foreground bg-background p-4
+                       hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5
+                       transition-all duration-150"
           >
-            {/* Category - typographic, monochromatic */}
-            <span className="block text-[10px] uppercase tracking-widest font-semibold
-                           text-foreground/50 mb-2">
+            {/* Category badge - solid background like DAY badges */}
+            <span className="inline-block font-mono text-[10px] px-2 py-1 font-bold
+                           bg-foreground text-background mb-3">
               {getCategoryLabel(metric.category)}
             </span>
 
             {/* Metric name */}
-            <p className="font-semibold text-foreground text-sm leading-tight mb-1">
+            <p className="font-semibold text-sm text-foreground leading-snug mb-2">
               {metric.name}
             </p>
 
-            {/* Target value - prominent */}
+            {/* Target - prominent mono */}
             <p className="font-mono text-lg font-bold text-foreground/80">
               {metric.target}
             </p>

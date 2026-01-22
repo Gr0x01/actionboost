@@ -128,6 +128,13 @@ IMPORTANT RULES:
 7. Extract ALL days from the This Week table (typically 7 days)
 8. Extract ALL priorities from Start Doing section (typically 5-8 items)
 
+COMPETITOR EXTRACTION RULES:
+- "traffic" field is ONLY for numeric monthly visitor counts (e.g., "50K/mo", "1.2M/mo")
+- "trafficNumber" is the parsed numeric value (50000, 1200000)
+- If NO numeric traffic data exists, set traffic to "" (empty string) and omit trafficNumber
+- NEVER put positioning/strategy text in the traffic field
+- "positioning" field is for qualitative info: market position, pricing, differentiators, strategy
+
 OUTPUT FORMAT:
 {
   "thisWeek": {
@@ -153,7 +160,8 @@ OUTPUT FORMAT:
     { "name": "...", "target": "...", "category": "acquisition" }
   ],
   "competitors": [
-    { "name": "...", "traffic": "50K/mo", "trafficNumber": 50000, "positioning": "..." }
+    { "name": "Acme Corp", "traffic": "50K/mo", "trafficNumber": 50000, "positioning": "Premium pricing, enterprise focus" },
+    { "name": "Budget Co", "traffic": "", "positioning": "Low-cost leader, mass market appeal" }
   ],
   "currentWeek": 1,
   "roadmapWeeks": [
