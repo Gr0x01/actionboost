@@ -30,6 +30,8 @@ interface StaticTocConfig {
 interface ResultsLayoutProps {
   /** Table of contents configuration - requires either strategy OR sections */
   toc: StrategyTocConfig | StaticTocConfig;
+  /** Hide the table of contents entirely (used for dashboard layout) */
+  hideToc?: boolean;
   /**
    * Optional slots for additional content injection.
    *
@@ -93,6 +95,7 @@ interface ResultsLayoutProps {
  */
 export function ResultsLayout({
   toc,
+  hideToc = false,
   slots = {},
   children,
 }: ResultsLayoutProps) {
@@ -104,14 +107,16 @@ export function ResultsLayout({
       {topBanner}
 
       <div className="mx-auto px-6 pt-6">
-        {/* Mobile TOC - full width horizontal tabs */}
-        <div className="lg:hidden">
-          {beforeToc}
-          <TableOfContents
-            {...toc}
-            variant="mobile"
-          />
-        </div>
+        {/* Mobile TOC - full width horizontal tabs (hidden in dashboard mode) */}
+        {!hideToc && (
+          <div className="lg:hidden">
+            {beforeToc}
+            <TableOfContents
+              {...toc}
+              variant="mobile"
+            />
+          </div>
+        )}
 
         {/* Desktop layout wrapper */}
         <div className="max-w-5xl mx-auto">
@@ -122,15 +127,17 @@ export function ResultsLayout({
           {afterToc}
 
           {/* Sidebar + content flex */}
-          <div className="lg:flex lg:gap-12 py-8">
-            {/* Desktop sidebar */}
-            <div className="hidden lg:block lg:w-[180px] lg:flex-shrink-0">
-              {beforeToc}
-              <TableOfContents
-                {...toc}
-                variant="desktop"
-              />
-            </div>
+          <div className={`py-8 ${!hideToc ? 'lg:flex lg:gap-12' : ''}`}>
+            {/* Desktop sidebar (hidden in dashboard mode) */}
+            {!hideToc && (
+              <div className="hidden lg:block lg:w-[180px] lg:flex-shrink-0">
+                {beforeToc}
+                <TableOfContents
+                  {...toc}
+                  variant="desktop"
+                />
+              </div>
+            )}
 
             {/* Main content - extra padding for shadows on desktop */}
             <div className="flex-1 min-w-0 lg:pr-2 overflow-x-hidden">

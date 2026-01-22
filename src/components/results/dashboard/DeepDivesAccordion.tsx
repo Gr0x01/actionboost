@@ -1,0 +1,178 @@
+'use client'
+
+import { useState } from 'react'
+import { ChevronDown } from 'lucide-react'
+import type { ParsedStrategy } from '@/lib/markdown/parser'
+import { MarkdownContent } from '../MarkdownContent'
+
+interface DeepDivesAccordionProps {
+  strategy: ParsedStrategy
+}
+
+type AccordionSection = {
+  id: string
+  title: string
+  content: string
+}
+
+/**
+ * Get all available sections from parsed strategy for the accordion
+ */
+function getSections(strategy: ParsedStrategy): AccordionSection[] {
+  const sections: AccordionSection[] = []
+
+  // Order matters - this is the deep dive sequence
+  if (strategy.executiveSummary) {
+    sections.push({
+      id: 'executive-summary',
+      title: 'Executive Summary',
+      content: strategy.executiveSummary.content,
+    })
+  }
+
+  if (strategy.currentSituation) {
+    sections.push({
+      id: 'your-situation',
+      title: 'Your Situation',
+      content: strategy.currentSituation.content,
+    })
+  }
+
+  if (strategy.competitiveLandscape) {
+    sections.push({
+      id: 'competitive-landscape',
+      title: 'Competitive Landscape',
+      content: strategy.competitiveLandscape.content,
+    })
+  }
+
+  if (strategy.channelStrategy) {
+    sections.push({
+      id: 'channel-strategy',
+      title: 'Channel Strategy',
+      content: strategy.channelStrategy.content,
+    })
+  }
+
+  if (strategy.stopDoing) {
+    sections.push({
+      id: 'stop-doing',
+      title: 'Stop Doing',
+      content: strategy.stopDoing.content,
+    })
+  }
+
+  if (strategy.startDoing) {
+    sections.push({
+      id: 'start-doing',
+      title: 'Start Doing (Full)',
+      content: strategy.startDoing.content,
+    })
+  }
+
+  if (strategy.thisWeek) {
+    sections.push({
+      id: 'this-week',
+      title: 'This Week (Full)',
+      content: strategy.thisWeek.content,
+    })
+  }
+
+  if (strategy.roadmap) {
+    sections.push({
+      id: '30-day-roadmap',
+      title: '30-Day Roadmap',
+      content: strategy.roadmap.content,
+    })
+  }
+
+  if (strategy.metricsDashboard) {
+    sections.push({
+      id: 'metrics-dashboard',
+      title: 'Metrics Dashboard',
+      content: strategy.metricsDashboard.content,
+    })
+  }
+
+  if (strategy.contentTemplates) {
+    sections.push({
+      id: 'content-templates',
+      title: 'Content Templates',
+      content: strategy.contentTemplates.content,
+    })
+  }
+
+  return sections
+}
+
+export function DeepDivesAccordion({ strategy }: DeepDivesAccordionProps) {
+  const sections = getSections(strategy)
+  const [openSections, setOpenSections] = useState<Set<string>>(new Set())
+
+  const toggleSection = (id: string) => {
+    setOpenSections((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
+    })
+  }
+
+  if (sections.length === 0) {
+    return null
+  }
+
+  return (
+    <section className="scroll-mt-32 max-w-3xl mx-auto">
+      <div className="mb-4">
+        <h2 className="text-xl lg:text-2xl font-bold text-foreground tracking-tight">
+          Deep Dives
+        </h2>
+        <p className="text-foreground/60 text-sm mt-1">
+          Detailed analysis and recommendations
+        </p>
+      </div>
+
+      <div className="border border-foreground/10 rounded-lg overflow-hidden divide-y divide-foreground/10">
+        {sections.map((section) => {
+          const isOpen = openSections.has(section.id)
+
+          return (
+            <div key={section.id} id={section.id}>
+              {/* Accordion header */}
+              <button
+                onClick={() => toggleSection(section.id)}
+                className="w-full flex items-center justify-between p-5 text-left hover:bg-foreground/[0.02] transition-colors"
+              >
+                <span className="font-semibold text-foreground">
+                  {section.title}
+                </span>
+                <ChevronDown
+                  className={`w-5 h-5 text-foreground/50 transition-transform duration-200 ${
+                    isOpen ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+
+              {/* Accordion content */}
+              <div
+                className={`overflow-hidden transition-all duration-300 ease-out ${
+                  isOpen ? 'max-h-[5000px] opacity-100' : 'max-h-0 opacity-0'
+                }`}
+              >
+                <div className="p-4 pt-0 border-t border-foreground/5">
+                  <div className="font-serif text-[17px] leading-[1.75] text-foreground/90">
+                    <MarkdownContent content={section.content} extended />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </section>
+  )
+}

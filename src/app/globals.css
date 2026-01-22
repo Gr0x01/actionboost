@@ -239,6 +239,15 @@ body {
   }
 }
 
+/* Scrollbar hiding utility */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
 /* Gradient backgrounds */
 .bg-gradient-hero {
   background: var(--gradient-hero);

@@ -81,7 +81,7 @@ export function AddContextSection({
   };
 
   return (
-    <div className="mt-16 pt-8 border-t-2 border-foreground/10">
+    <div className="mt-16 pt-8 border-t-2 border-foreground/10 max-w-3xl mx-auto">
       {state === "collapsed" ? (
         <button
           onClick={handleExpand}

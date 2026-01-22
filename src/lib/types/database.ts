@@ -208,6 +208,7 @@ export type Database = {
           stage: string | null
           status: string | null
           stripe_session_id: string | null
+          structured_output: Json | null
           user_id: string | null
         }
         Insert: {
@@ -227,6 +228,7 @@ export type Database = {
           stage?: string | null
           status?: string | null
           stripe_session_id?: string | null
+          structured_output?: Json | null
           user_id?: string | null
         }
         Update: {
@@ -246,6 +248,7 @@ export type Database = {
           stage?: string | null
           status?: string | null
           stripe_session_id?: string | null
+          structured_output?: Json | null
           user_id?: string | null
         }
         Relationships: [
