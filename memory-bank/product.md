@@ -10,6 +10,12 @@ Tell us about your startup. We research your competitors' actual traffic, analyz
 
 ## Brand Voice
 
+### Core Narrative
+
+**"ChatGPT told me Reddit. This said Pinterest. It's working."**
+
+The founder built this to solve their own problem. It worked. Now it's $10.
+
 ### The Personality
 
 **Actionboo.st = the founder friend who's three steps ahead.** Takes your call, gives you brutal truth, wants you to win.
@@ -41,22 +47,38 @@ Tell us about your startup. We research your competitors' actual traffic, analyz
 
 **Words we avoid:** leverage, optimize, scale, transform, journey, solution, cutting-edge, empower, unlock
 
+### Copy Patterns (Jan 2026)
+
+| Element | Pattern | Example |
+|---------|---------|---------|
+| Headlines | Light/black weight contrast | "ChatGPT told me Reddit. **This said Pinterest.**" |
+| Taglines | Mono, uppercase, tracked | `$10 → competitor research → money back if useless` |
+| Subheads | Direct, first person | "I built this to figure out my own marketing." |
+| CTAs | Action-oriented | "Get My Action Plan" |
+| Guarantees | Bold, near CTA | "Didn't help? Full refund." |
+| Trust | Casual, self-aware | "$10 because $5 seemed fake" |
+
 ### Copy Rules
 
-1. **Be specific over vague** — "See where competitors get 40% of their traffic" not "understand your competitive landscape"
-2. **Use active voice** — "We pull your competitors' traffic data" not "Traffic data is analyzed"
-3. **Short sentences** — Punchy. Direct. Easy to scan.
-4. **Acknowledge skepticism** — "You've probably tried 'just post more.' This is different."
-5. **Name the pain** — "Stuck at 100 users" not "looking to scale"
-6. **Use numbers** — "30-day plan" "5 competitors" "$9.99"
-7. **Sound human** — "Look—" "Here's the thing—" "Honestly,"
+1. **Lead with the founder story** — The ChatGPT vs Pinterest discovery is the hook
+2. **Be honest about what it is** — Yes, it uses AI. The difference is the real research data.
+3. **Price + guarantee together** — Removes risk, makes decision easy
+4. **Be specific over vague** — "See where competitors get 40% of their traffic" not "understand your competitive landscape"
+5. **Use active voice** — "We pull your competitors' traffic data" not "Traffic data is analyzed"
+6. **Short sentences** — Punchy. Direct. Easy to scan.
+7. **Acknowledge skepticism** — "You've probably tried 'just post more.' This is different."
+8. **Name the pain** — "Stuck at 100 users" not "looking to scale"
+9. **Use numbers** — "30-day plan" "5 competitors" "$10"
+10. **Sound human** — "Look—" "Here's the thing—" "Honestly,"
 
 ### What NOT to do
 
 - Don't mention what AI model powers it (technical flex for wrong audience)
-- Don't define by what we're NOT ("Not like ChatGPT...") — defensive
+- Don't define by what we're NOT ("Not like ChatGPT...") — defensive positioning
 - Don't use exclamation points — tryhard energy
 - Don't hedge ("might" "could" "potentially") — commit to what we deliver
+- Don't use emojis — doesn't fit brutalist aesthetic
+- Don't list features without outcomes — show transformation, not specs
 
 ---
 

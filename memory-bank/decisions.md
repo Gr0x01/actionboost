@@ -495,3 +495,114 @@ npx tsx scripts/retry-run.ts <runId>
 - Competitor limit: 3 (appropriate for most users)
 - Historical storage: 10 traction snapshots, 50 tactics (already generous)
 - Stripe metadata truncation: 500 chars (just backup, full data in DB)
+
+---
+
+## Brand Voice: Founder-Led Honesty (Jan 22 2026)
+
+**Decision**: Rewrite landing page copy with blunt, founder-led voice based on Chris Do's brand framework.
+
+**Core narrative**: "ChatGPT told me Reddit. This said Pinterest. It's working."
+
+**Why this works**:
+- Acknowledges the AI wrapper comparison honestly ("yes, it's kind of a ChatGPT wrapper BUT...")
+- Leads with founder's real story, not marketing claims
+- The $10 price + money-back guarantee removes risk objection
+- Direct, no corporate fluff
+
+**Chris Do framework applied**:
+- **What** (Look/Feel): Brutalist raw, tactile, orange accent
+- **How** (Tone/Voice): Blunt optimist, impatient for results, quietly confident
+- **Who** (Customer): Founders stuck at 100-1000 users who've tried generic advice
+- **Why** (Value): Real competitor research + actionable plan, not ChatGPT guesses
+
+**Copy patterns established**:
+
+| Element | Pattern | Example |
+|---------|---------|---------|
+| Headlines | Light/black weight contrast | "ChatGPT told me Reddit. **This said Pinterest.**" |
+| Taglines | Mono, uppercase, tracked | `$10 → competitor research → money back if useless` |
+| Subheads | Direct, first person | "I built this to figure out my own marketing." |
+| CTAs | Action-oriented | "Get My Action Plan" |
+| Guarantees | Bold, near CTA | "Didn't help? Full refund." |
+| Trust | Casual, self-aware | "$10 because $5 seemed fake" |
+
+**What to preserve**:
+- The founder story in hero (ChatGPT vs Pinterest)
+- Price + guarantee combo prominent
+- "We're doing this too" dogfooding proof
+- Testimonials with outcome focus, not ironic quotes
+
+**What to avoid**:
+- Defensive positioning ("Not like ChatGPT...")
+- Vague claims ("AI-powered insights")
+- Listing features without outcomes
+- Corporate tone or marketing speak
+
+**Testimonial style**: Minimal bold treatment
+- Italic quote text
+- Small orange bar before attribution
+- Brutalist shadow to match pricing card
+
+---
+
+## Pricing: $9.99 → $39 (Jan 22 2026)
+
+**Decision**: Raise paid tier from $9.99 to $39. Keep free mini-audit at $0.
+
+**Catalyst**: Competitive analysis of BigIdeasDB ($3k/mo in 8 months) and their advice: "Founders who can't spend $39 aren't serious customers."
+
+**Consulted**: growth-hacker + brand-guardian subagents (both unanimously recommended $39)
+
+**Why $39 over $29**:
+- Both under $50 (similar psychology), but $39 signals "premium tool"
+- Higher price = higher engagement (proven in SaaS)
+- Filters for serious founders who will actually use the output
+- Better margin for growth reinvestment
+- Makes the consultant comparison more believable ($150+/hr vs $39)
+
+**Brand guardian insight**: "At $9.99, claiming premium intelligence sounds like BS. At $39, it sounds like a massive deal."
+
+**Growth hacker insight**: "Need only 26 customers at $39 to match 100 at $9.99. You'll get way more than 26."
+
+**Tiered model**:
+| Tier | Price | Cost | Purpose |
+|------|-------|------|---------|
+| Free mini-audit | $0 | ~$0.07 | Lead gen, 4 sections |
+| Full intel | $39 | ~$1.50-2.30 | 12 sections, 7+ data sources |
+
+**Messaging change**:
+- Before: "$10 because $5 seemed fake"
+- After: "$39 because it replaces $500 of research"
+
+**Full plan**: `memory-bank/projects/pipeline-v2-plan.md`
+
+---
+
+## Pipeline V2: Competitive Intelligence Platform (Jan 22 2026)
+
+**Decision**: Expand from 3 Tavily searches to 7+ data sources with Claude tool use.
+
+**Why**: Differentiate from ChatGPT Deep Research. They give information, we give intel + a plan.
+
+**New data sources**:
+- DataForSEO for user's domain (not just competitors)
+- Keyword gaps (domain_intersection)
+- Reddit sentiment (Tavily site:reddit.com)
+- G2 reviews (Apify scraper)
+- Traffic sources (SimilarWeb)
+- ProductHunt launches
+
+**Claude tool use**: Max 5 deep-dive calls for targeted research based on initial findings.
+
+**New output sections**:
+- Your SEO Landscape (rankings, quick wins)
+- Market Sentiment (Reddit, reviews)
+- Keyword Playbook (30-50 keywords)
+- Content Ideas (10 blog titles)
+
+**Cost impact**: ~$0.50 → ~$1.50-2.30 per run
+**Margin at $39**: 92-94%
+**Processing time**: 2 min → 3-4 min (with progress indicators)
+
+**Full plan**: `memory-bank/projects/pipeline-v2-plan.md`
