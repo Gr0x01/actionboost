@@ -161,7 +161,7 @@ export default function AboutPage() {
                     Day
                   </span>
                 </div>
-                <p className="text-3xl font-black text-foreground">1</p>
+                <p className="text-3xl font-black text-foreground">2</p>
               </div>
 
               <div className="rounded-2xl border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
@@ -191,11 +191,11 @@ export default function AboutPage() {
                     Current Focus
                   </span>
                 </div>
-                <p className="text-lg font-bold text-foreground">Launch channels</p>
+                <p className="text-lg font-bold text-foreground">Product polish</p>
               </div>
             </div>
             <p className="mt-4 text-sm text-foreground/50 text-center">
-              Updated Jan 20, 2026 · Real numbers, updated as we go
+              Updated Jan 22, 2026 · Real numbers, updated as we go
             </p>
           </section>
 

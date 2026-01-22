@@ -6,6 +6,7 @@ import { usePostHog } from "posthog-js/react";
 import { Header, Footer, ResultsLayout } from "@/components/layout";
 import { ResultsContent, StatusMessage, ExportBar, MagicLinkBanner, AddContextSection } from "@/components/results";
 import { parseStrategy, type ParsedStrategy } from "@/lib/markdown/parser";
+import type { StructuredOutput } from "@/lib/ai/formatter-types";
 
 type RunStatus = "pending" | "processing" | "complete" | "failed";
 
@@ -19,6 +20,7 @@ interface RunData {
   refinements_used: number | null;
   parent_run_id: string | null;
   root_refinements_used: number | null;
+  structured_output: StructuredOutput | null;
 }
 
 function ResultsPageContent() {
@@ -249,6 +251,11 @@ function ResultsPageContent() {
     />
   );
 
+  // Check if we have dashboard data (same logic as ResultsContent)
+  const hasDashboardData = run.structured_output &&
+    (run.structured_output.thisWeek.days.length > 0 ||
+     run.structured_output.topPriorities.length > 0);
+
   // Success state - render full results
   return (
     <div className="min-h-screen flex flex-col">
@@ -257,12 +264,17 @@ function ResultsPageContent() {
       {strategy && (
         <ResultsLayout
           toc={{ strategy }}
+          hideToc={!!hasDashboardData}
           slots={{
             beforeToc: magicLinkBanner,
             afterToc: exportBar,
           }}
         >
-          <ResultsContent strategy={strategy} />
+          <ResultsContent
+            strategy={strategy}
+            structuredOutput={run.structured_output}
+            runId={run.id}
+          />
 
           {/* Add Context Section - shown to owners, uses ROOT run's refinement count */}
           <AddContextSection

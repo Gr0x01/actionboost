@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import { getAuthenticatedUserId } from "@/lib/auth/session";
 import { getSessionUserId } from "@/lib/auth/session-cookie";
+import { extractStructuredOutput } from "@/lib/ai/formatter";
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -20,10 +21,10 @@ export async function GET(
 
   const supabase = createServiceClient();
 
-  // Fetch the run
+  // Fetch the run (include structured_output)
   const { data: run, error } = await supabase
     .from("runs")
-    .select("id, status, input, output, share_slug, completed_at, created_at, user_id, refinements_used, parent_run_id")
+    .select("id, status, input, output, share_slug, completed_at, created_at, user_id, refinements_used, parent_run_id, structured_output")
     .eq("id", runId)
     .single();
 
@@ -75,11 +76,35 @@ export async function GET(
     nextParentId = data.parent_run_id;
   }
 
+  // Lazy backfill: If run is complete but lacks structured_output, extract async
+  const structuredOutput = run.structured_output;
+  if (run.status === "complete" && run.output && !structuredOutput) {
+    // Fire-and-forget async extraction for lazy backfill
+    // Capture output in a const to satisfy TypeScript
+    const outputToProcess = run.output;
+    (async () => {
+      try {
+        console.log(`[RunAPI] Lazy backfill: extracting structured_output for run ${runId}`);
+        const extracted = await extractStructuredOutput(outputToProcess);
+        if (extracted) {
+          await supabase
+            .from("runs")
+            .update({ structured_output: extracted })
+            .eq("id", runId);
+          console.log(`[RunAPI] Lazy backfill complete for run ${runId}`);
+        }
+      } catch (err) {
+        console.warn(`[RunAPI] Lazy backfill failed for run ${runId}:`, err);
+      }
+    })();
+  }
+
   // Return run without user_id (internal field), include root's refinement count
   const { user_id: _, ...runData } = run;
   return NextResponse.json({
     run: {
       ...runData,
+      structured_output: structuredOutput,
       root_refinements_used: rootRefinementsUsed,
     }
   });
