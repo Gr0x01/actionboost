@@ -1,5 +1,6 @@
 import { config } from "@/lib/config";
-import { FreeTierButton, PaidTierButton } from "./PricingButtons";
+import { PaidTierButton } from "./PricingButtons";
+import Link from "next/link";
 
 // Sample output snippets to show what users actually get
 const paidSamples = [
@@ -17,13 +18,6 @@ const paidSamples = [
   },
 ];
 
-const freeIncludes = [
-  "Executive summary of your situation",
-  "Basic competitive landscape",
-  "Channel strategy overview",
-  "3 quick-win suggestions",
-];
-
 export function Pricing() {
   return (
     <section id="pricing" className="relative py-24">
@@ -38,47 +32,21 @@ export function Pricing() {
             <span className="font-black">Find out what.</span>
           </h2>
           <p className="mt-4 text-lg text-foreground/60 max-w-2xl mx-auto text-balance">
-            This isn&apos;t ChatGPT guessing. It&apos;s research on your actual market. Channels you haven&apos;t tried. Tactics ranked by impact. A 30-day plan you can execute.
+            This isn&apos;t ChatGPT guessing. Real research on your market—channels, tactics, and a 30-day plan you&apos;ll actually follow.
           </p>
         </div>
 
-        {/* Pricing cards - side by side, centered */}
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto items-stretch">
-          {/* Free tier */}
-          <div className="rounded-2xl border-[3px] border-foreground/30 bg-background p-6 lg:p-8 flex flex-col">
-            <div className="mb-6">
-              <h3 className="text-2xl font-black text-foreground">Free</h3>
-              <p className="text-sm text-foreground/60 mt-1">See if it&apos;s useful before you pay</p>
-            </div>
-
-            <div className="space-y-2.5 flex-1">
-              {freeIncludes.map((item) => (
-                <div key={item} className="flex items-start gap-3">
-                  <span className="w-5 h-5 flex items-center justify-center font-bold text-foreground">
-                    ✓
-                  </span>
-                  <span className="text-sm text-foreground">{item}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-8">
-              <FreeTierButton />
-              <p className="mt-4 text-xs text-foreground/50 text-center">
-                No credit card required
-              </p>
-            </div>
-          </div>
-
-          {/* Paid tier */}
-          <div className="rounded-2xl border-[3px] border-foreground bg-background p-6 lg:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] flex flex-col">
-            <div className="mb-6">
-              <h3 className="text-2xl font-black text-foreground">{config.singlePrice}</h3>
-              <p className="text-sm text-foreground/60 mt-1">The whole plan. Real research. Done.</p>
+        {/* Single pricing card - centered */}
+        <div className="max-w-xl mx-auto">
+          <div className="rounded-2xl border-[3px] border-foreground bg-background p-8 lg:p-10 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
+            {/* Price */}
+            <div className="mb-8">
+              <h3 className="text-5xl font-black text-foreground">{config.singlePrice}</h3>
+              <p className="text-foreground/60 mt-2">One payment. No subscription.</p>
             </div>
 
             {/* Sample output snippets */}
-            <div className="space-y-4 flex-1">
+            <div className="space-y-4 mb-8">
               <p className="text-xs font-mono text-foreground/50 uppercase tracking-wider">What you&apos;ll get:</p>
               {paidSamples.map((sample) => (
                 <div key={sample.label} className="border-l-2 border-cta pl-3">
@@ -88,19 +56,30 @@ export function Pricing() {
               ))}
             </div>
 
-            <div className="mt-8">
+            {/* CTA */}
+            <div>
               <PaidTierButton />
-              <p className="mt-4 text-xs text-foreground/60 text-center">
-                Not useful? I&apos;ll refund you. Seriously.
+              <p className="mt-3 text-center font-mono text-sm font-bold text-foreground">
+                Didn&apos;t help? Full refund.
+              </p>
+              <p className="mt-4 text-xs text-foreground/40 text-center">
+                <Link href="/start?free=true" className="underline hover:text-foreground/60 transition-colors">
+                  Need to see a sample first?
+                </Link>
               </p>
             </div>
           </div>
         </div>
 
-        {/* Trust note */}
-        <p className="text-sm text-foreground/50 mt-8 font-mono text-center">
-          One payment. No subscription. If it doesn&apos;t help, full refund.
-        </p>
+        {/* Testimonial */}
+        <div className="max-w-xl mx-auto mt-6">
+          <div className="rounded-2xl border-[3px] border-foreground/20 bg-background p-6">
+            <blockquote className="text-foreground leading-relaxed">
+              &ldquo;The competitor analysis feature is incredibly valuable. The 30-day playbook alone is worth the price.&rdquo;
+            </blockquote>
+            <p className="font-mono text-sm text-foreground/60 mt-3">@noahpraduns</p>
+          </div>
+        </div>
       </div>
     </section>
   );

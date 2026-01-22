@@ -3,7 +3,6 @@ import {
   Hero,
   FrameworksSection,
   Pricing,
-  Testimonials,
   FooterCTA,
 } from "@/components/landing";
 
@@ -16,7 +15,6 @@ export default function Home() {
         <Hero />
         <FrameworksSection />
         <Pricing />
-        <Testimonials />
         <FooterCTA />
       </main>
 
