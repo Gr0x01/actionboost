@@ -4,19 +4,19 @@
 
 ## The Product
 
-**AI growth strategist for startups and entrepreneurs who are stuck.**
+**Your 30-day marketing plan. Real research, not generic advice.**
 
-Not another ChatGPT wrapper. Not generic "have you tried content marketing?" advice.
+Target audience: **Small business owners** — salons, local services, niche e-commerce. People who are stuck on marketing and don't have time to become marketing experts.
 
-**v1 (now)**: One-shot runs. Pay $9.99, paste your situation, get a real strategy built on live competitive research + Claude Opus 4.5 reasoning.
+**v1 (now)**: One-shot runs. Pay $49, tell us about your business, get a real strategy built on live competitive research + Claude Opus 4.5 reasoning. Includes 2 refinements.
 
-**v2 (future)**: Connected growth advisor. Link PostHog/Mixpanel/GA → weekly analysis email → reply to ask questions → $29-49/mo. The real product.
+**v2 (future)**: Connected growth advisor. Link PostHog/Mixpanel/GA → weekly analysis email → reply to ask questions → $29-49/mo.
 
-**The flywheel**: User does $9.99 one-shot, loves it → "Want this every week, automatically?" → $29/mo subscription.
+**The flywheel**: User does $49 one-shot, loves it → "Want this every week, automatically?" → subscription.
 
 **Output format**: Executive Summary → Your Situation → Competitive Landscape → Stop Doing → Start Doing → Quick Wins → 30-Day Roadmap.
 
-**AI persona**: `.claude/agents/growth-hacker.md` - AARRR framework, ICE prioritization, systematic growth thinking.
+**Brand voice**: Friendly, hand-holding, no jargon. "Let's figure it out together" — not intimidating marketing-speak. Explains frameworks in plain English (AARRR → "Finding you, Trying you, Coming back, Telling friends, Paying you").
 
 ## Why It Works
 
@@ -31,7 +31,7 @@ Not another ChatGPT wrapper. Not generic "have you tried content marketing?" adv
 | **Claude Opus 4.5** | Strategy generation | Best reasoning model |
 | **Tavily** | Web search | Real-time competitive intel, recent content, trends |
 | **DataForSEO** | SEO/traffic data | Competitor traffic estimates, keyword gaps |
-| **Stripe** | Payments | $9.99 single run |
+| **Stripe** | Payments | $49 single run |
 | **Supabase** | DB + Auth | Magic links, run storage, credits |
 
 **Model ID**: `claude-opus-4-5-20251101` - DO NOT CHANGE without approval.
@@ -40,12 +40,11 @@ Not another ChatGPT wrapper. Not generic "have you tried content marketing?" adv
 
 | Product | Price | Cost | Margin |
 |---------|-------|------|--------|
-| One-shot (no competitors) | $9.99 | ~$0.18 | 98% |
-| One-shot (3 competitors) | $9.99 | ~$0.66 | 93% |
+| One-shot | $49 | ~$1.50-2.50 | ~95% |
 | Free mini-audit | $0 | ~$0.07 | lead gen |
-| Subscription (v2) | $29/mo | TBD | TBD |
+| Subscription (v2) | $29-49/mo | TBD | TBD |
 
-Cost breakdown in `architecture.md`. 3-pack removed — subscription is the upsell path.
+Cost breakdown in `architecture.md`. Subscription is the upsell path.
 
 ---
 

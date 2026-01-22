@@ -45,39 +45,39 @@ export function HeroForm() {
 
   return (
     <div className="space-y-4">
-      {/* Form - brutalist box with harsh shadow */}
-      <div className="rounded-2xl border-[3px] border-foreground bg-background p-6 lg:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
+      {/* Form - softer card style */}
+      <div className="rounded-2xl border border-border bg-background p-6 lg:p-8 shadow-lg">
         <label
           htmlFor="hero-description"
           className="block text-base font-bold text-foreground mb-3"
         >
-          What are you building?
+          Tell me about your business
         </label>
         <textarea
           id="hero-description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Marketplace for tattoo artists. 500 signups, 3% convert to bookings. Tried Instagram ads, didn't work..."
+          placeholder="I run a salon in Austin. We're good at what we do but struggle to get new clients. Tried Facebook ads once, didn't really work..."
           disabled={isSubmitting}
           rows={4}
-          className="w-full rounded-xl bg-surface border-2 border-foreground/20 px-4 py-3 text-foreground placeholder:text-foreground/30 text-base leading-relaxed resize-none focus:outline-none focus:border-foreground transition-colors disabled:opacity-50"
+          className="w-full rounded-xl bg-surface border border-border px-4 py-3 text-foreground placeholder:text-foreground/40 text-base leading-relaxed resize-none focus:outline-none focus:border-foreground/40 focus:ring-2 focus:ring-cta/20 transition-all disabled:opacity-50"
         />
 
         {/* CTA Button - tactile with press state */}
         <button
           onClick={handleSubmit}
           disabled={!description.trim() || isSubmitting}
-          className="mt-4 w-full rounded-2xl flex items-center justify-center gap-2 px-6 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0 transition-all duration-100"
+          className="mt-4 w-full rounded-xl flex items-center justify-center gap-2 px-6 py-4 bg-cta text-white font-bold text-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 active:shadow-sm active:translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:hover:translate-y-0 transition-all duration-150"
         >
           {isSubmitting ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" />
-              Firing up...
+              Let&apos;s do this...
             </>
           ) : (
             <>
-              Get My Action Plan
+              Tell me about your business
               <ArrowRight className="w-5 h-5" />
             </>
           )}
@@ -89,31 +89,10 @@ export function HeroForm() {
             onClick={() => trackCTA("skip_description")}
             className="hover:text-foreground underline underline-offset-2"
           >
-            or answer detailed questions →
+            or answer a few quick questions →
           </Link>
         </p>
       </div>
-
-      {/* Proof card - same brutalist style */}
-      <Link
-        href="/blog/our-growth-plan"
-        onClick={() => trackCTA("dogfooding_proof")}
-        className="group block"
-      >
-        <div className="rounded-2xl border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <span className="font-mono text-[10px] tracking-[0.15em] text-cta uppercase font-semibold">
-                We&apos;re doing this too
-              </span>
-              <p className="text-base font-bold text-foreground mt-1">
-                See the plan we&apos;re following right now →
-              </p>
-            </div>
-            <ArrowRight className="w-5 h-5 text-foreground/40 shrink-0 transition-transform group-hover:translate-x-1 group-hover:text-cta" />
-          </div>
-        </div>
-      </Link>
     </div>
   );
 }

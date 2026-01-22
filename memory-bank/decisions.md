@@ -4,6 +4,64 @@ Key architectural and product decisions. Reference this when you need to underst
 
 ---
 
+## Target Audience: SMBs, Not Founders (Jan 23 2026)
+
+**Decision**: Pivot from indie hackers/startup founders to small business owners (SMBs).
+
+**Why the change**:
+- "Cheap, just try it" ($9.99) messaging attracted tire-kickers, not buyers
+- Build-in-public content reached founders who could build this themselves
+- Reddit validation: A salon owner and niche e-commerce seller (lip balm for equestrians) both found real value in the output
+- These SMBs can't build their own AI tools — they just want the answer
+
+**New target audience**:
+- Salon owners, local service businesses
+- Niche e-commerce (Etsy sellers, specialty products)
+- Small business owners who are stuck on marketing
+- NOT tech-savvy, NOT on founder Twitter
+
+**What changed**:
+- Price: $9.99 → $49 (serious business expense, not impulse buy)
+- Voice: Snarky founder → Friendly expert ("Let's figure it out together")
+- Frameworks: Keep AARRR/ICE but explain in plain English
+- Design: Brutalist harsh → Light skeuomorphism (softer shadows, warmer)
+- Copy: No jargon, no startup references, SMB examples (salons, not SaaS)
+
+**Homepage copy shift**:
+
+| Element | Before | After |
+|---------|--------|-------|
+| Headline | "ChatGPT told me Reddit" | "Stuck on marketing? Let's figure it out." |
+| Tagline | "$10 → competitor research" | "$49 · Your market researched · Money back if it doesn't help" |
+| Trust | "Built by @rbaten \| Side project" | "No marketing degree needed · No jargon · Works for any business" |
+| Examples | Indie Hackers, Twitter threads | Pinterest for salons, referral programs |
+| CTA | "Get My Action Plan" | "Tell me about your business" |
+
+**Files changed**:
+- `src/components/landing/Hero.tsx`
+- `src/components/landing/HeroForm.tsx`
+- `src/components/landing/FrameworksSection.tsx`
+- `src/components/landing/Pricing.tsx`
+- `src/components/landing/PricingButtons.tsx`
+- `src/components/landing/FooterCTA.tsx`
+- `src/components/landing/FooterCTAForm.tsx`
+- `src/lib/config.ts` (price)
+- `src/app/layout.tsx` (meta tags)
+
+**What to preserve**:
+- AARRR/ICE frameworks (shows expertise)
+- Refinements as core value (SMBs start vague, refine as they see value)
+- Money-back guarantee
+- Real competitor research (the differentiator)
+
+**What to avoid**:
+- Startup jargon (AARRR without explanation, "growth hacking")
+- Build-in-public references
+- Founder Twitter vibes
+- Emojis (absolutely never)
+
+---
+
 ## Visual Style: Brutalist + Tactile Hybrid (Jan 2025)
 
 **Decision**: Brutalist structure with satisfying tactile interactions.

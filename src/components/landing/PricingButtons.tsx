@@ -15,7 +15,7 @@ export function FreeTierButton() {
     <Link
       href="/start?tier=free"
       onClick={handleClick}
-      className="block w-full rounded-2xl py-3 px-4 text-center font-bold border-[3px] border-foreground text-foreground hover:bg-foreground hover:text-background transition-colors duration-100"
+      className="block w-full rounded-xl py-3 px-4 text-center font-bold border-2 border-foreground text-foreground hover:bg-foreground hover:text-background transition-colors duration-150"
     >
       Try Free
     </Link>
@@ -49,9 +49,9 @@ export function PaidTierButton() {
     <button
       onClick={handleBuyCredits}
       disabled={loading}
-      className="w-full rounded-2xl py-3 px-4 font-bold bg-cta text-white border-[3px] border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 disabled:opacity-50 disabled:hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0 transition-all duration-100"
+      className="w-full rounded-xl py-4 px-4 font-bold text-lg bg-cta text-white shadow-md hover:shadow-lg hover:-translate-y-0.5 active:shadow-sm active:translate-y-0.5 disabled:opacity-50 disabled:hover:shadow-md disabled:hover:translate-y-0 transition-all duration-150"
     >
-      {loading ? "Loading..." : "Get My Plan in 5 Minutes"}
+      {loading ? "Setting things up..." : "Tell me about your business"}
     </button>
   );
 }

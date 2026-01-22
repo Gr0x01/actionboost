@@ -86,9 +86,9 @@ export function FooterCTAForm() {
 
   return (
     <>
-      {/* URL Input - brutalist style */}
+      {/* URL Input - softer style */}
       <div className="max-w-lg mx-auto mb-6">
-        <div className="flex rounded-2xl border-[3px] border-background bg-foreground overflow-hidden">
+        <div className="flex rounded-xl border-2 border-background/20 bg-background/10 overflow-hidden backdrop-blur-sm">
           <div className="flex items-center gap-3 flex-1 px-4 py-3">
             {favicon ? (
               <img
@@ -104,24 +104,24 @@ export function FooterCTAForm() {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="yourproduct.com"
+              placeholder="yourbusiness.com"
               disabled={isAnalyzing}
-              className="flex-1 bg-transparent text-base text-background placeholder:text-background/30 outline-none min-w-0"
+              className="flex-1 bg-transparent text-base text-background placeholder:text-background/40 outline-none min-w-0"
             />
           </div>
           <button
             onClick={handleAnalyze}
             disabled={!url.trim() || isAnalyzing}
-            className="shrink-0 flex items-center gap-2 px-6 py-3 bg-cta text-white font-bold border-l-[3px] border-background hover:bg-cta-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-100"
+            className="shrink-0 flex items-center gap-2 px-6 py-3 bg-cta text-white font-bold hover:bg-cta-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
           >
             {isAnalyzing ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Analyzing
+                Let&apos;s go
               </>
             ) : (
               <>
-                Start
+                Let&apos;s do this
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
@@ -130,7 +130,7 @@ export function FooterCTAForm() {
       </div>
 
       {/* Skip link */}
-      <p className="text-sm text-background/40 font-mono">
+      <p className="text-sm text-background/50">
         <Link
           href="/start?source=footer"
           onClick={() =>
@@ -141,7 +141,7 @@ export function FooterCTAForm() {
           }
           className="text-background/60 hover:text-background underline underline-offset-2 transition-colors"
         >
-          No website yet? Start anyway →
+          No website yet? That&apos;s okay, start anyway →
         </Link>
       </p>
     </>

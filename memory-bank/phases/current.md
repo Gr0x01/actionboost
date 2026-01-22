@@ -1,6 +1,54 @@
 # Current Phase
 
-## Latest Update: Results Page Dashboard Redesign
+## Latest Update: SMB Repositioning + Homepage Rewrite
+
+**Completed Jan 23, 2026** - Complete pivot from indie hackers to small business owners.
+
+### Why the Change
+
+The "cheap, just try it" ($9.99) positioning targeting founders wasn't working:
+- Low traffic AND low conversion
+- Build-in-public audience (founders) could build this themselves
+- Reddit validation showed SMBs (salon owner, niche e-commerce) actually found value
+
+### What Changed
+
+**Target Audience**: Indie hackers/founders → Small business owners (salons, local services, niche e-commerce)
+
+**Price**: $9.99 → $49
+
+**Brand Voice**: Snarky founder → Friendly expert ("Let's figure it out together")
+
+**Design**: Brutalist harsh shadows → Light skeuomorphism (softer, warmer)
+
+**Homepage Copy**:
+- Headline: "ChatGPT told me Reddit" → "Stuck on marketing? Let's figure it out."
+- Trust: "@rbaten | Side project" → "No marketing degree needed · No jargon"
+- Frameworks: Explained in plain English (AARRR → "Finding you, Trying you, Coming back...")
+- Examples: Indie Hackers/Twitter → Salons, Pinterest, referral programs
+
+### Files Changed
+
+- `src/components/landing/Hero.tsx` - New headline, subhead, trust badges
+- `src/components/landing/HeroForm.tsx` - Softer style, SMB placeholder
+- `src/components/landing/FrameworksSection.tsx` - Plain-English frameworks
+- `src/components/landing/Pricing.tsx` - $49, feature list with checkmarks
+- `src/components/landing/PricingButtons.tsx` - Softer button style
+- `src/components/landing/FooterCTA.tsx` - New copy
+- `src/components/landing/FooterCTAForm.tsx` - Softer input style
+- `src/lib/config.ts` - singlePrice: "$49"
+- `src/app/layout.tsx` - Updated meta tags
+
+### Key Rules Going Forward
+
+- **No emojis ever**
+- **No startup jargon** without plain-English explanation
+- **Friendly, hand-holding tone** — like a smart friend who knows marketing
+- **SMB examples** (salons, local shops) not SaaS/startups
+
+---
+
+## Previous: Results Page Dashboard Redesign
 
 **Completed Jan 22, 2026** - Transformed results page from wall of markdown into dashboard-style UI.
 
