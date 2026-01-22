@@ -2,6 +2,7 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { runResearch, runTavilyOnlyResearch } from './research'
 import { generateStrategy, generateMiniStrategy, generateFirstImpressions } from './generate'
 import { generateStrategyAgentic, generateAgenticRefinement } from './pipeline-agentic'
+import { extractStructuredOutput } from './formatter'
 import { tavily } from '@tavily/core'
 import { accumulateBusinessContext, accumulateUserContext } from '@/lib/context/accumulate'
 import { getOrCreateDefaultBusiness } from '@/lib/business'
@@ -398,7 +399,20 @@ export async function runAgenticPipeline(runId: string): Promise<PipelineResult>
     const output = await generateStrategyAgentic(input, {} as ResearchContext, userHistory, onStageUpdate)
     console.log(`[AgenticPipeline] Strategy generated: ${output.length} characters`)
 
-    // 5. Save output and mark complete
+    // 5. Extract structured output for dashboard UI (fire-and-forget, graceful degradation)
+    await onStageUpdate('Preparing your dashboard...')
+    let structuredOutput = null
+    try {
+      structuredOutput = await extractStructuredOutput(output)
+      if (structuredOutput) {
+        console.log(`[AgenticPipeline] Structured output extracted successfully`)
+      }
+    } catch (err) {
+      // Don't fail the pipeline if formatter fails
+      console.warn('[AgenticPipeline] Structured output extraction failed:', err)
+    }
+
+    // 6. Save output and mark complete
     await onStageUpdate('Finalizing your strategy...')
     const { error: updateError } = await supabase
       .from('runs')
@@ -406,6 +420,7 @@ export async function runAgenticPipeline(runId: string): Promise<PipelineResult>
         status: 'complete',
         stage: null,
         output,
+        structured_output: structuredOutput,
         completed_at: new Date().toISOString(),
       })
       .eq('id', runId)
@@ -683,7 +698,19 @@ export async function runRefinementPipeline(runId: string): Promise<RefinementPi
     console.log(`[RefinementPipeline] Refinement completed: ${result.output.length} chars, ${toolCallCount} tool calls`)
     console.log(`[RefinementPipeline] Timing: ${result.timing?.total}ms total, ${result.timing?.tools}ms tools`)
 
-    // 5. Save output and mark complete
+    // 5. Extract structured output for dashboard UI
+    await onStageUpdate('Preparing your dashboard...')
+    let structuredOutput = null
+    try {
+      structuredOutput = await extractStructuredOutput(result.output)
+      if (structuredOutput) {
+        console.log(`[RefinementPipeline] Structured output extracted successfully`)
+      }
+    } catch (err) {
+      console.warn('[RefinementPipeline] Structured output extraction failed:', err)
+    }
+
+    // 6. Save output and mark complete
     await onStageUpdate('Finalizing your refined strategy...')
     const { error: updateError } = await supabase
       .from('runs')
@@ -691,6 +718,7 @@ export async function runRefinementPipeline(runId: string): Promise<RefinementPi
         status: 'complete',
         stage: null,
         output: result.output,
+        structured_output: structuredOutput,
         completed_at: new Date().toISOString(),
       })
       .eq('id', runId)
