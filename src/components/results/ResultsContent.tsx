@@ -24,13 +24,15 @@ interface ResultsContentProps {
 }
 
 /**
- * Dashboard layout - used when structured_output is available
+ * Dashboard layout - Redesigned with visual hierarchy
  *
- * Hierarchy (inverted from traditional):
- * 1. Command Center (This Week with checkboxes)
- * 2. Top 3 Priorities
- * 3. Metrics + Competitors
- * 4. Deep Dives Accordion (all original sections)
+ * Key changes from "blob blob blob" version:
+ * 1. Only CommandCenter gets full brutalist box treatment
+ * 2. Priority #1 as hero moment with giant offset rank number
+ * 3. Metrics/Competitors as compact, borderless sections
+ * 4. Asymmetric grid layout creates visual tension
+ * 5. Whisper-quiet section labels (mono, tiny, uppercase)
+ * 6. Increased spacing between major sections (space-y-12)
  */
 function DashboardLayout({
   strategy,
@@ -42,8 +44,8 @@ function DashboardLayout({
   runId: string;
 }) {
   return (
-    <div className="space-y-8">
-      {/* Hero: Command Center (This Week) */}
+    <div className="space-y-12">
+      {/* Hero: Command Center - the ONLY full brutalist box */}
       {structuredOutput.thisWeek.days.length > 0 && (
         <CommandCenter
           runId={runId}
@@ -54,23 +56,31 @@ function DashboardLayout({
         />
       )}
 
-      {/* Top 3 Priorities */}
+      {/* Top Priorities - #1 as hero, #2-3 compact */}
       {structuredOutput.topPriorities.length > 0 && (
         <PriorityCards priorities={structuredOutput.topPriorities} />
       )}
 
-      {/* Metrics + Competitors side by side on desktop */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {structuredOutput.metrics.length > 0 && (
-          <MetricsSnapshot metrics={structuredOutput.metrics} />
-        )}
-        {structuredOutput.competitors.length > 0 && (
-          <CompetitorSnapshot competitors={structuredOutput.competitors} />
-        )}
-      </div>
+      {/* Metrics + Competitors - asymmetric split, no outer boxes */}
+      {(structuredOutput.metrics.length > 0 || structuredOutput.competitors.length > 0) && (
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-12">
+          {structuredOutput.metrics.length > 0 && (
+            <div className="lg:col-span-3">
+              <MetricsSnapshot metrics={structuredOutput.metrics} />
+            </div>
+          )}
+          {structuredOutput.competitors.length > 0 && (
+            <div className="lg:col-span-2">
+              <CompetitorSnapshot competitors={structuredOutput.competitors} />
+            </div>
+          )}
+        </div>
+      )}
 
-      {/* Deep Dives - All original sections in accordion */}
-      <DeepDivesAccordion strategy={strategy} />
+      {/* Deep Dives - minimal, constrained width */}
+      <div className="max-w-3xl">
+        <DeepDivesAccordion strategy={strategy} />
+      </div>
     </div>
   );
 }

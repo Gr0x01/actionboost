@@ -105,6 +105,10 @@ function getSections(strategy: ParsedStrategy): AccordionSection[] {
   return sections
 }
 
+/**
+ * DeepDivesAccordion - Minimal with brutalist left border
+ * No outer box, just the thick left edge and clean divisions
+ */
 export function DeepDivesAccordion({ strategy }: DeepDivesAccordionProps) {
   const sections = getSections(strategy)
   const [openSections, setOpenSections] = useState<Set<string>>(new Set())
@@ -126,17 +130,14 @@ export function DeepDivesAccordion({ strategy }: DeepDivesAccordionProps) {
   }
 
   return (
-    <section className="scroll-mt-32 max-w-3xl mx-auto">
-      <div className="mb-4">
-        <h2 className="text-xl lg:text-2xl font-bold text-foreground tracking-tight">
-          Deep Dives
-        </h2>
-        <p className="text-foreground/60 text-sm mt-1">
-          Detailed analysis and recommendations
-        </p>
-      </div>
+    <section className="scroll-mt-32">
+      {/* Whisper-quiet section label */}
+      <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-4">
+        DEEP DIVES
+      </span>
 
-      <div className="border border-foreground/10 rounded-lg overflow-hidden divide-y divide-foreground/10">
+      {/* Brutalist left border, clean divisions */}
+      <div className="border-l-4 border-foreground divide-y divide-foreground/10">
         {sections.map((section) => {
           const isOpen = openSections.has(section.id)
 
@@ -145,13 +146,13 @@ export function DeepDivesAccordion({ strategy }: DeepDivesAccordionProps) {
               {/* Accordion header */}
               <button
                 onClick={() => toggleSection(section.id)}
-                className="w-full flex items-center justify-between p-5 text-left hover:bg-foreground/[0.02] transition-colors"
+                className="w-full flex items-center justify-between py-4 px-5 text-left hover:bg-foreground/[0.02] transition-colors"
               >
                 <span className="font-semibold text-foreground">
                   {section.title}
                 </span>
                 <ChevronDown
-                  className={`w-5 h-5 text-foreground/50 transition-transform duration-200 ${
+                  className={`w-5 h-5 text-foreground/40 transition-transform duration-200 ${
                     isOpen ? 'rotate-180' : ''
                   }`}
                 />
@@ -163,8 +164,8 @@ export function DeepDivesAccordion({ strategy }: DeepDivesAccordionProps) {
                   isOpen ? 'max-h-[5000px] opacity-100' : 'max-h-0 opacity-0'
                 }`}
               >
-                <div className="p-4 pt-0 border-t border-foreground/5">
-                  <div className="font-serif text-[17px] leading-[1.75] text-foreground/90">
+                <div className="px-5 pb-5 border-t border-foreground/5">
+                  <div className="font-serif text-[17px] leading-[1.75] text-foreground/90 pt-4">
                     <MarkdownContent content={section.content} extended />
                   </div>
                 </div>

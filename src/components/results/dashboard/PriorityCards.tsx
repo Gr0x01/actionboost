@@ -8,71 +8,72 @@ interface PriorityCardsProps {
 }
 
 /**
- * Individual priority card - Brutalist design with clear visual hierarchy
- * Structure: Rank (hero) -> Title -> Description -> Score (footer)
+ * Priority #1 Hero - The "screenshot-worthy" moment
+ * Giant offset rank number with editorial typography
  */
-function PriorityCard({ priority, isTop }: { priority: PriorityItem; isTop: boolean }) {
+function PriorityHero({ priority }: { priority: PriorityItem }) {
   return (
-    <div
-      className={`
-        flex flex-col h-full transition-all duration-150 rounded-xl overflow-hidden
-        ${isTop
-          ? 'border-[3px] border-cta bg-gradient-to-br from-cta/8 via-cta/4 to-transparent shadow-[6px_6px_0_0_rgba(232,126,4,0.5)]'
-          : 'border-2 border-foreground/20 bg-background shadow-[4px_4px_0_0_rgba(0,0,0,0.1)]'
-        }
-      `}
-    >
-      {/* Top section: Rank + Title */}
-      <div className="p-5 pb-4">
-        {/* Rank as hero element */}
-        <div className="flex items-start gap-4 mb-4">
-          <div
-            className={`
-              flex-shrink-0 w-12 h-12 flex items-center justify-center font-mono text-2xl font-black rounded-lg
-              ${isTop
-                ? 'bg-cta text-white shadow-[inset_0_-3px_0_0_rgba(0,0,0,0.2)]'
-                : 'bg-foreground/10 text-foreground/60'
-              }
-            `}
-          >
-            {priority.rank}
-          </div>
+    <div className="relative py-6 lg:py-8">
+      {/* Giant rank number - offset background element */}
+      <span className="absolute -left-2 lg:-left-6 -top-2 font-mono text-[100px] lg:text-[160px] font-black text-cta/10 leading-none select-none pointer-events-none">
+        1
+      </span>
 
-          {/* Title */}
-          <h3 className={`
-            flex-1 font-bold leading-tight pt-1
-            ${isTop ? 'text-foreground text-lg' : 'text-foreground/90'}
-          `}>
-            {priority.title}
-          </h3>
-        </div>
+      {/* Content positioned over */}
+      <div className="relative">
+        <h3 className="text-xl lg:text-2xl font-bold text-foreground max-w-2xl leading-tight">
+          {priority.title}
+        </h3>
 
-        {/* Description - always visible, this is the WHY */}
         {priority.description && (
-          <div className={`
-            text-sm leading-relaxed pl-16
-            ${isTop ? 'text-foreground/70' : 'text-foreground/60'}
-          `}>
+          <div className="mt-3 text-foreground/70 max-w-xl text-base leading-relaxed">
             <MarkdownContent
               content={priority.description}
               className="[&>p]:mb-0 [&>p:last-child]:mb-0"
             />
           </div>
         )}
+
+        <div className="mt-4 flex items-center gap-3">
+          <span className="font-mono text-sm bg-cta/10 text-cta px-3 py-1.5 rounded-full font-semibold">
+            ICE: {priority.iceScore}
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Secondary priority cards - demoted visual treatment
+ * 1px border, no shadow, muted
+ */
+function PrioritySecondary({ priority }: { priority: PriorityItem }) {
+  return (
+    <div className="border border-foreground/15 bg-background p-4 lg:p-5 rounded-lg hover:border-foreground/25 transition-colors">
+      {/* Rank + Title inline */}
+      <div className="flex items-start gap-3">
+        <span className="flex-shrink-0 font-mono text-lg font-bold text-foreground/30">
+          {priority.rank}
+        </span>
+        <div className="flex-1 min-w-0">
+          <h4 className="font-semibold text-foreground leading-snug">
+            {priority.title}
+          </h4>
+          {priority.description && (
+            <p className="mt-1.5 text-sm text-foreground/60 line-clamp-2">
+              {priority.description}
+            </p>
+          )}
+        </div>
       </div>
 
-      {/* Footer: ICE Score */}
-      <div className={`
-        mt-auto px-5 py-3 border-t flex items-center justify-between
-        ${isTop ? 'border-cta/30 bg-cta/5' : 'border-foreground/10 bg-foreground/[0.02]'}
-      `}>
-        <span className="text-xs font-mono uppercase tracking-wider text-foreground/40">
-          ICE Score
+      {/* ICE score - subtle footer */}
+      <div className="mt-3 pt-3 border-t border-foreground/10 flex items-center justify-between">
+        <span className="font-mono text-[10px] uppercase tracking-wider text-foreground/40">
+          ICE
         </span>
-        <span className={`
-          font-mono text-lg font-bold
-          ${isTop ? 'text-cta' : 'text-foreground/50'}
-        `}>
+        <span className="font-mono text-sm font-semibold text-foreground/50">
           {priority.iceScore}
         </span>
       </div>
@@ -81,33 +82,32 @@ function PriorityCard({ priority, isTop }: { priority: PriorityItem; isTop: bool
 }
 
 export function PriorityCards({ priorities }: PriorityCardsProps) {
-  // Only show top 3
   const topPriorities = priorities.slice(0, 3)
 
   if (topPriorities.length === 0) {
     return null
   }
 
+  const [first, ...rest] = topPriorities
+
   return (
     <section className="scroll-mt-32">
-      <div className="mb-5">
-        <h2 className="text-xl lg:text-2xl font-bold text-foreground tracking-tight">
-          Top Priorities
-        </h2>
-        <p className="text-foreground/60 text-sm mt-1">
-          Your highest-impact actions ranked by ICE score
-        </p>
-      </div>
+      {/* Whisper-quiet section label */}
+      <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-6">
+        TOP PRIORITIES
+      </span>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {topPriorities.map((priority, index) => (
-          <PriorityCard
-            key={priority.rank}
-            priority={priority}
-            isTop={index === 0}
-          />
-        ))}
-      </div>
+      {/* Priority #1 as hero */}
+      <PriorityHero priority={first} />
+
+      {/* Priorities #2-3 in compact row */}
+      {rest.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
+          {rest.map((priority) => (
+            <PrioritySecondary key={priority.rank} priority={priority} />
+          ))}
+        </div>
+      )}
     </section>
   )
 }

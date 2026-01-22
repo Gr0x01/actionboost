@@ -19,12 +19,8 @@ function getCategoryLabel(category: string): string {
 }
 
 /**
- * MetricsSnapshot - Key Metrics in brutalist card grid
- *
- * Design: Brutalist Raw - matches Day cards and Priority cards
- * - Bold borders, offset shadows on hover
- * - Category badge with solid background (like DAY X badges)
- * - Grid layout for scannability
+ * MetricsSnapshot - Compact tile strip
+ * No borders, background tint only, horizontal scroll on mobile
  */
 export function MetricsSnapshot({ metrics }: MetricsSnapshotProps) {
   const displayMetrics = metrics.slice(0, 6)
@@ -35,37 +31,30 @@ export function MetricsSnapshot({ metrics }: MetricsSnapshotProps) {
 
   return (
     <section className="scroll-mt-32">
-      <div className="mb-6">
-        <h2 className="text-xl lg:text-2xl font-bold text-foreground tracking-tight">
-          Key Metrics
-        </h2>
-        <p className="text-foreground/60 text-sm mt-1">
-          Track these to measure your progress
-        </p>
-      </div>
+      {/* Whisper-quiet section label */}
+      <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-4">
+        KEY METRICS
+      </span>
 
-      {/* Grid of brutalist cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {/* Horizontal scroll on mobile, 2-col grid on desktop */}
+      <div className="flex gap-3 overflow-x-auto pb-2 lg:grid lg:grid-cols-2 lg:overflow-visible scrollbar-hide">
         {displayMetrics.map((metric, index) => (
           <div
             key={`${metric.name}-${index}`}
-            className="rounded-xl border-2 border-foreground bg-background p-4
-                       hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5
-                       transition-all duration-150"
+            className="shrink-0 w-[160px] lg:w-auto bg-foreground/[0.03] p-4 rounded-lg"
           >
-            {/* Category badge - solid background like DAY badges */}
-            <span className="inline-block font-mono text-[10px] px-2 py-1 font-bold
-                           bg-foreground text-background mb-3">
+            {/* Category label - whisper quiet */}
+            <span className="font-mono text-[9px] tracking-wider text-foreground/40 uppercase">
               {getCategoryLabel(metric.category)}
             </span>
 
             {/* Metric name */}
-            <p className="font-semibold text-sm text-foreground leading-snug mb-2">
+            <p className="font-semibold text-sm text-foreground mt-2 line-clamp-2 leading-snug">
               {metric.name}
             </p>
 
             {/* Target - prominent mono */}
-            <p className="font-mono text-lg font-bold text-foreground/80">
+            <p className="font-mono text-lg font-bold text-foreground/70 mt-1">
               {metric.target}
             </p>
           </div>
