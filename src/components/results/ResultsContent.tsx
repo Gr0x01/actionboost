@@ -1,5 +1,6 @@
 import type { ParsedStrategy } from "@/lib/markdown/parser";
 import type { StructuredOutput } from "@/lib/ai/formatter-types";
+import type { TabType } from "@/lib/storage/visitTracking";
 import { ExecutiveSummary } from "./sections/ExecutiveSummary";
 import { CurrentSituation } from "./sections/CurrentSituation";
 import { CompetitiveLandscape } from "./sections/CompetitiveLandscape";
@@ -9,78 +10,39 @@ import { ThisWeek } from "./sections/ThisWeek";
 import { Roadmap } from "./sections/Roadmap";
 import { SectionCard } from "./SectionCard";
 import { MarkdownContent } from "./MarkdownContent";
-import {
-  CommandCenter,
-  PriorityCards,
-  MetricsSnapshot,
-  CompetitorSnapshot,
-  DeepDivesAccordion,
-} from "./dashboard";
+import { InsightsView } from "./InsightsView";
+import { DashboardView } from "./DashboardView";
 
 interface ResultsContentProps {
   strategy: ParsedStrategy;
   structuredOutput?: StructuredOutput | null;
   runId?: string;
+  /** Active tab - controlled by parent (via useResultsTab hook) */
+  activeTab?: TabType;
 }
 
 /**
- * Dashboard layout - Redesigned with visual hierarchy
- *
- * Key changes from "blob blob blob" version:
- * 1. Only CommandCenter gets full brutalist box treatment
- * 2. Priority #1 as hero moment with giant offset rank number
- * 3. Metrics/Competitors as compact, borderless sections
- * 4. Asymmetric grid layout creates visual tension
- * 5. Whisper-quiet section labels (mono, tiny, uppercase)
- * 6. Increased spacing between major sections (space-y-12)
+ * Dashboard layout - Renders tab content based on activeTab
+ * Tab state is managed by parent via useResultsTab hook
  */
 function DashboardLayout({
   strategy,
   structuredOutput,
   runId,
+  activeTab = 'insights',
 }: {
   strategy: ParsedStrategy;
   structuredOutput: StructuredOutput;
   runId: string;
+  activeTab?: TabType;
 }) {
   return (
-    <div className="space-y-12">
-      {/* Hero: Command Center - the ONLY full brutalist box */}
-      {structuredOutput.thisWeek.days.length > 0 && (
-        <CommandCenter
-          runId={runId}
-          days={structuredOutput.thisWeek.days}
-          totalHours={structuredOutput.thisWeek.totalHours}
-          currentWeek={structuredOutput.currentWeek}
-          roadmapWeeks={structuredOutput.roadmapWeeks}
-        />
+    <div role="tabpanel" id={`${activeTab}-panel`} aria-labelledby={activeTab}>
+      {activeTab === 'insights' ? (
+        <InsightsView strategy={strategy} structuredOutput={structuredOutput} />
+      ) : (
+        <DashboardView runId={runId} structuredOutput={structuredOutput} />
       )}
-
-      {/* Top Priorities - #1 as hero, #2-3 compact */}
-      {structuredOutput.topPriorities.length > 0 && (
-        <PriorityCards priorities={structuredOutput.topPriorities} />
-      )}
-
-      {/* Metrics + Competitors - asymmetric split, no outer boxes */}
-      {(structuredOutput.metrics.length > 0 || structuredOutput.competitors.length > 0) && (
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-12">
-          {structuredOutput.metrics.length > 0 && (
-            <div className="lg:col-span-3">
-              <MetricsSnapshot metrics={structuredOutput.metrics} />
-            </div>
-          )}
-          {structuredOutput.competitors.length > 0 && (
-            <div className="lg:col-span-2">
-              <CompetitorSnapshot competitors={structuredOutput.competitors} />
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Deep Dives - minimal, constrained width */}
-      <div className="max-w-3xl">
-        <DeepDivesAccordion strategy={strategy} />
-      </div>
     </div>
   );
 }
@@ -140,7 +102,7 @@ function TraditionalLayout({ strategy }: { strategy: ParsedStrategy }) {
   );
 }
 
-export function ResultsContent({ strategy, structuredOutput, runId }: ResultsContentProps) {
+export function ResultsContent({ strategy, structuredOutput, runId, activeTab }: ResultsContentProps) {
   // Use dashboard layout if structured_output is available and has meaningful data
   const hasDashboardData = structuredOutput &&
     (structuredOutput.thisWeek.days.length > 0 ||
@@ -152,6 +114,7 @@ export function ResultsContent({ strategy, structuredOutput, runId }: ResultsCon
         strategy={strategy}
         structuredOutput={structuredOutput}
         runId={runId}
+        activeTab={activeTab}
       />
     );
   }

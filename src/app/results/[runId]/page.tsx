@@ -3,10 +3,12 @@
 import { useEffect, useState, useCallback, Suspense, useRef } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
-import { Header, Footer, ResultsLayout } from "@/components/layout";
-import { ResultsContent, StatusMessage, ExportBar, MagicLinkBanner, AddContextSection } from "@/components/results";
+import { Header, Footer } from "@/components/layout";
+import { ResultsContent, StatusMessage, MagicLinkBanner, AddContextSection } from "@/components/results";
+import { ResultsHeader } from "@/components/results/ResultsHeader";
 import { parseStrategy, type ParsedStrategy } from "@/lib/markdown/parser";
 import type { StructuredOutput } from "@/lib/ai/formatter-types";
+import { useResultsTab } from "@/lib/hooks/useResultsTab";
 
 type RunStatus = "pending" | "processing" | "complete" | "failed";
 
@@ -231,25 +233,11 @@ function ResultsPageContent() {
     );
   }
 
-  // Extract product name for PDF title
+  // Extract product name for PDF title and plan display
   const productName =
     typeof run.input === "object" && run.input !== null
-      ? (run.input as { productDescription?: string }).productDescription?.slice(
-          0,
-          50
-        )
+      ? (run.input as { productDescription?: string }).productDescription
       : undefined;
-
-  const magicLinkBanner = isNewCheckout ? <MagicLinkBanner /> : undefined;
-
-  const exportBar = (
-    <ExportBar
-      markdown={run.output || ""}
-      runId={run.id}
-      shareSlug={run.share_slug}
-      productName={productName}
-    />
-  );
 
   // Check if we have dashboard data (same logic as ResultsContent)
   const hasDashboardData = run.structured_output &&
@@ -257,33 +245,118 @@ function ResultsPageContent() {
      run.structured_output.topPriorities.length > 0);
 
   // Success state - render full results
+  // Use DashboardResults for structured output, otherwise use traditional layout
+  if (hasDashboardData && strategy) {
+    return (
+      <DashboardResults
+        run={run}
+        strategy={strategy}
+        productName={productName}
+        isNewCheckout={isNewCheckout}
+        isShareAccess={isShareAccess}
+      />
+    );
+  }
+
+  // Traditional layout for runs without structured output
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1">
+        <div className="mx-auto max-w-4xl px-6 py-8">
+          {isNewCheckout && <MagicLinkBanner />}
+          {strategy && (
+            <>
+              <ResultsContent
+                strategy={strategy}
+                structuredOutput={run.structured_output}
+                runId={run.id}
+              />
+              <AddContextSection
+                runId={run.id}
+                refinementsUsed={run.root_refinements_used ?? run.refinements_used ?? 0}
+                isOwner={!isShareAccess}
+              />
+            </>
+          )}
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+/**
+ * Dashboard Results - Plan-centric view with header and tabs
+ */
+function DashboardResults({
+  run,
+  strategy,
+  productName,
+  isNewCheckout,
+  isShareAccess,
+}: {
+  run: RunData;
+  strategy: ParsedStrategy;
+  productName?: string;
+  isNewCheckout: boolean;
+  isShareAccess: boolean;
+}) {
+  // Tab state management
+  const { activeTab, onTabChange } = useResultsTab({
+    runId: run.id,
+    isNewCheckout,
+  });
+
+  // Plan info for the header
+  const planName = productName || "Your Marketing Plan";
+  const planUpdatedAt = run.completed_at || new Date().toISOString();
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      {strategy && (
-        <ResultsLayout
-          toc={{ strategy }}
-          hideToc={!!hasDashboardData}
-          slots={{
-            beforeToc: magicLinkBanner,
-            afterToc: exportBar,
-          }}
-        >
+      {/* Results Header - sticky below global header */}
+      <ResultsHeader
+        plan={{
+          id: run.id,
+          name: planName,
+          updatedAt: planUpdatedAt,
+        }}
+        activeTab={activeTab}
+        onTabChange={onTabChange}
+        exportProps={{
+          markdown: run.output || "",
+          runId: run.id,
+          shareSlug: run.share_slug,
+          productName: productName?.slice(0, 50),
+        }}
+      />
+
+      {/* Main content */}
+      <main className="flex-1">
+        <div className="mx-auto max-w-5xl px-6 py-8">
+          {/* Magic link banner for new checkouts */}
+          {isNewCheckout && <MagicLinkBanner />}
+
+          {/* Tab content */}
           <ResultsContent
             strategy={strategy}
             structuredOutput={run.structured_output}
             runId={run.id}
+            activeTab={activeTab}
           />
 
-          {/* Add Context Section - shown to owners, uses ROOT run's refinement count */}
-          <AddContextSection
-            runId={run.id}
-            refinementsUsed={run.root_refinements_used ?? run.refinements_used ?? 0}
-            isOwner={!isShareAccess}
-          />
-        </ResultsLayout>
-      )}
+          {/* Add Context Section - shown to owners */}
+          <div className="mt-12">
+            <AddContextSection
+              runId={run.id}
+              refinementsUsed={run.root_refinements_used ?? run.refinements_used ?? 0}
+              isOwner={!isShareAccess}
+            />
+          </div>
+        </div>
+      </main>
 
       <Footer />
     </div>

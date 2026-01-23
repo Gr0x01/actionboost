@@ -8,6 +8,14 @@ export { TableOfContents } from "./TableOfContents";
 export { MagicLinkBanner } from "./MagicLinkBanner";
 export { AddContextSection } from "./AddContextSection";
 
+// New plan-centric components
+export { ResultsHeader } from "./ResultsHeader";
+export { ResultsTabNavigation } from "./ResultsTabNavigation";
+export { PlanSwitcher } from "./PlanSwitcher";
+export { ExportActions } from "./ExportActions";
+export { InsightsView } from "./InsightsView";
+export { DashboardView } from "./DashboardView";
+
 // Section components
 export { ExecutiveSummary } from "./sections/ExecutiveSummary";
 export { CurrentSituation } from "./sections/CurrentSituation";
