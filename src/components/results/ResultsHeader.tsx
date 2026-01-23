@@ -44,15 +44,15 @@ export function ResultsHeader({
   return (
     <div className="sticky top-14 z-40 bg-background border-b border-foreground/10">
       <div className="mx-auto max-w-5xl px-6">
-        {/* Single row: Plan name | Tabs | Actions */}
-        <div className="flex items-center justify-between gap-6">
+        {/* Grid layout: Plan name | Tabs (centered) | Actions */}
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
           {/* Left: Plan Switcher */}
           <div className="py-3">
             <PlanSwitcher currentPlan={plan} otherPlans={otherPlans} />
           </div>
 
-          {/* Center: Tabs - hidden on small screens, stretch to fill height */}
-          <div className="hidden sm:flex flex-1 justify-center self-stretch">
+          {/* Center: Tabs - truly centered via grid */}
+          <div className="hidden sm:flex justify-center self-stretch">
             <ResultsTabNavigation
               activeTab={activeTab}
               onTabChange={onTabChange}
@@ -60,7 +60,7 @@ export function ResultsHeader({
           </div>
 
           {/* Right: Actions */}
-          <div className="py-3">
+          <div className="py-3 flex justify-end">
             <ExportActions {...exportProps} />
           </div>
         </div>

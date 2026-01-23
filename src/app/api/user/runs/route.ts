@@ -23,10 +23,10 @@ export async function GET() {
     return NextResponse.json({ runs: [], credits: 0 })
   }
 
-  // Get user's runs (include source to identify refinements)
+  // Get user's runs (include parent_run_id for chain grouping, source to identify refinements)
   const { data: runs } = await supabase
     .from("runs")
-    .select("id, status, input, created_at, completed_at, share_slug, source")
+    .select("id, status, input, created_at, completed_at, share_slug, source, parent_run_id")
     .eq("user_id", publicUser.id)
     .order("created_at", { ascending: false })
 

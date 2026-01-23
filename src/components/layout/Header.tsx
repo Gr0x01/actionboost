@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createBrowserClient } from "@supabase/ssr";
-import { LayoutDashboard } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import type { User as AuthUser } from "@supabase/supabase-js";
 import { AboostLogo } from "@/components/ui";
+import { UserMenu } from "./UserMenu";
+import { CreditBadge } from "./CreditBadge";
 
 export function Header() {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -43,19 +45,26 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full bg-background border-b-2 border-foreground/20">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="flex h-14 items-center justify-between">
+        {/* Grid layout: Logo | Nav (centered) | Actions */}
+        <div className="grid grid-cols-[1fr_auto_1fr] h-14 items-center">
           {/* Logo */}
-          <Link href="/" className="hover:opacity-70 transition-opacity">
+          <Link href="/" className="hover:opacity-70 transition-opacity justify-self-start">
             <AboostLogo width={120} height={22} className="text-foreground" />
           </Link>
 
-          {/* Nav links - hidden on mobile */}
-          <nav className="hidden md:flex items-center gap-6">
+          {/* Nav links - centered, hidden on mobile, stretch to fill height */}
+          <nav className="hidden md:flex items-stretch gap-6 h-full">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm font-bold text-foreground/60 hover:text-foreground border-b-2 border-transparent hover:border-foreground transition-colors"
+                className="
+                  flex items-center
+                  text-sm font-bold text-foreground/60
+                  border-b-2 border-transparent
+                  hover:text-foreground hover:border-foreground
+                  transition-colors
+                "
               >
                 {link.label}
               </Link>
@@ -63,27 +72,31 @@ export function Header() {
           </nav>
 
           {/* Right side */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3 justify-self-end">
             {!loading && user ? (
               <>
                 {user.email === "gr0x01@pm.me" && (
                   <Link
                     href="/in-action/admin"
-                    className="hidden sm:flex items-center gap-2 px-3 py-2 text-sm font-bold text-cta hover:text-cta-hover transition-colors"
+                    title="Examples (Admin)"
+                    className="hidden sm:flex items-center justify-center w-8 h-8 text-cta hover:text-cta-hover transition-colors"
                   >
-                    Examples
+                    <Sparkles className="h-4 w-4" />
                   </Link>
                 )}
-                <Link
-                  href="/dashboard"
-                  className="hidden sm:flex items-center gap-2 px-3 py-2 text-sm font-bold text-foreground/60 hover:text-foreground transition-colors"
-                >
-                  <LayoutDashboard className="h-4 w-4" />
-                  Dashboard
-                </Link>
+                <CreditBadge />
+                <UserMenu user={user} />
                 <Link
                   href="/start"
-                  className="px-4 py-2 text-sm font-bold bg-cta text-white border-2 border-cta hover:bg-cta-hover transition-colors"
+                  className="
+                    px-4 py-2 text-sm font-bold
+                    bg-cta text-white
+                    border-2 border-cta border-b-[3px] border-b-[#B85D10]
+                    rounded-md
+                    hover:bg-cta-hover hover:-translate-y-0.5
+                    active:translate-y-0.5 active:border-b-2
+                    transition-all duration-100
+                  "
                 >
                   New Plan
                 </Link>
@@ -98,7 +111,15 @@ export function Header() {
                 </Link>
                 <Link
                   href="/start"
-                  className="px-4 py-2 text-sm font-bold bg-cta text-white border-2 border-cta hover:bg-cta-hover transition-colors"
+                  className="
+                    px-4 py-2 text-sm font-bold
+                    bg-cta text-white
+                    border-2 border-cta border-b-[3px] border-b-[#B85D10]
+                    rounded-md
+                    hover:bg-cta-hover hover:-translate-y-0.5
+                    active:translate-y-0.5 active:border-b-2
+                    transition-all duration-100
+                  "
                 >
                   Get Started
                 </Link>
@@ -106,7 +127,15 @@ export function Header() {
             ) : (
               <Link
                 href="/start"
-                className="px-4 py-2 text-sm font-bold bg-cta text-white border-2 border-cta hover:bg-cta-hover transition-colors"
+                className="
+                  px-4 py-2 text-sm font-bold
+                  bg-cta text-white
+                  border-2 border-cta border-b-[3px] border-b-[#B85D10]
+                  rounded-md
+                  hover:bg-cta-hover hover:-translate-y-0.5
+                  active:translate-y-0.5 active:border-b-2
+                  transition-all duration-100
+                "
               >
                 Get Started
               </Link>

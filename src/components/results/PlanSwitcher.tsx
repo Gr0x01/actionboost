@@ -105,7 +105,7 @@ export function PlanSwitcher({ currentPlan, otherPlans = [] }: PlanSwitcherProps
         "
       >
         {/* Plan name */}
-        <h1 className="font-bold text-foreground text-base truncate max-w-[200px] sm:max-w-[320px]">
+        <h1 className="font-bold text-foreground text-base truncate max-w-[160px] sm:max-w-[220px]">
           {displayName}
         </h1>
 

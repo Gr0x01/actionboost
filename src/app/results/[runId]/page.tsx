@@ -286,6 +286,80 @@ function ResultsPageContent() {
   );
 }
 
+interface UserRun {
+  id: string;
+  status: string;
+  input: { productDescription?: string } | null;
+  created_at: string;
+  completed_at: string | null;
+  parent_run_id: string | null;
+}
+
+/**
+ * Get the latest version of each plan chain
+ * - Groups runs by their root (original plan)
+ * - Returns only the most recent run in each chain
+ * - Excludes intermediate refinements
+ */
+function getLatestPlans(runs: UserRun[], currentRunId: string): Plan[] {
+  // Build parent->children map
+  const childrenMap = new Map<string, UserRun[]>();
+  const rootRuns: UserRun[] = [];
+
+  runs.forEach((run) => {
+    if (run.status !== "complete") return;
+
+    if (run.parent_run_id) {
+      const siblings = childrenMap.get(run.parent_run_id) || [];
+      siblings.push(run);
+      childrenMap.set(run.parent_run_id, siblings);
+    } else {
+      rootRuns.push(run);
+    }
+  });
+
+  // For each root, find the latest in its chain
+  const latestPlans: Plan[] = [];
+
+  rootRuns.forEach((root) => {
+    // Walk down the chain to find the leaf (most recent refinement)
+    let current = root;
+    let children = childrenMap.get(current.id);
+
+    while (children && children.length > 0) {
+      // Sort by date, take most recent
+      children.sort((a, b) =>
+        new Date(b.completed_at || b.created_at).getTime() -
+        new Date(a.completed_at || a.created_at).getTime()
+      );
+      current = children[0];
+      children = childrenMap.get(current.id);
+    }
+
+    // Skip if this is the current run
+    if (current.id === currentRunId) return;
+
+    latestPlans.push({
+      id: current.id,
+      name: current.input?.productDescription || "Marketing Plan",
+      updatedAt: current.completed_at || current.created_at,
+    });
+  });
+
+  // Sort by date (newest first)
+  latestPlans.sort((a, b) =>
+    new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+  );
+
+  return latestPlans;
+}
+
+interface Plan {
+  id: string;
+  name: string;
+  updatedAt: string;
+}
+
 /**
  * Dashboard Results - Plan-centric view with header and tabs
  */
@@ -302,11 +376,37 @@ function DashboardResults({
   isNewCheckout: boolean;
   isShareAccess: boolean;
 }) {
+  const [otherPlans, setOtherPlans] = useState<Plan[]>([]);
+
   // Tab state management
   const { activeTab, onTabChange } = useResultsTab({
     runId: run.id,
     isNewCheckout,
   });
+
+  // Fetch user's other runs for the plan switcher
+  useEffect(() => {
+    // Don't fetch for share access (not the owner)
+    if (isShareAccess) return;
+
+    async function fetchUserRuns() {
+      try {
+        const res = await fetch("/api/user/runs");
+        if (!res.ok) return;
+
+        const data = await res.json();
+        const runs = data.runs as UserRun[];
+
+        // Get only the latest version of each plan chain
+        const plans = getLatestPlans(runs, run.id);
+        setOtherPlans(plans);
+      } catch {
+        // Silently fail - dropdown just won't show other plans
+      }
+    }
+
+    fetchUserRuns();
+  }, [run.id, isShareAccess]);
 
   // Plan info for the header
   const planName = productName || "Your Marketing Plan";
@@ -323,6 +423,7 @@ function DashboardResults({
           name: planName,
           updatedAt: planUpdatedAt,
         }}
+        otherPlans={otherPlans}
         activeTab={activeTab}
         onTabChange={onTabChange}
         exportProps={{

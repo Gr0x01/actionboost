@@ -59,7 +59,7 @@ export function ResultsTabNavigation({
             onClick={() => onTabChange(id)}
             className={`
               pb-3
-              font-semibold text-sm
+              font-semibold text-base
               transition-colors duration-150
               ${isActive
                 ? 'text-foreground'
