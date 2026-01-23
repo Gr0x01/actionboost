@@ -4,3 +4,10 @@ export { MetricsSnapshot } from './MetricsSnapshot'
 export { CompetitorSnapshot } from './CompetitorSnapshot'
 export { DeepDivesAccordion } from './DeepDivesAccordion'
 export { PositioningSummary } from './PositioningSummary'
+
+// NEW: Research-backed components (V2)
+export { ResearchSnapshot } from './ResearchSnapshot'
+export { CompetitiveComparison } from './CompetitiveComparison'
+export { KeywordOpportunities } from './KeywordOpportunities'
+export { MarketPulse } from './MarketPulse'
+export { PositioningSummaryV2 } from './PositioningSummaryV2'

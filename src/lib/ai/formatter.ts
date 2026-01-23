@@ -4,6 +4,7 @@ import {
   PartialStructuredOutputSchema,
   FORMATTER_SYSTEM_PROMPT,
   FORMATTER_USER_PROMPT,
+  FORMATTER_USER_PROMPT_WITH_RESEARCH,
   type StructuredOutput,
   type PartialStructuredOutput,
   type DayAction,
@@ -13,19 +14,69 @@ import {
   type RoadmapWeek,
 } from './formatter-types'
 import { parseStartDoing, parseRoadmap } from '@/lib/markdown/parser'
+import type { ResearchData } from './pipeline-agentic'
 
 // Sonnet for reliable extraction (understands intent, not just examples)
 const FORMATTER_MODEL = 'claude-sonnet-4-20250514'
 const FORMATTER_MAX_TOKENS = 4000
-const FORMATTER_TIMEOUT_MS = 30000
+const FORMATTER_TIMEOUT_MS = 60000 // 60s - tested: ~23s for 17k doc
+
+/**
+ * Build research data section for the prompt
+ */
+function formatResearchDataForPrompt(researchData: ResearchData): string {
+  const sections: string[] = []
+
+  if (researchData.searches.length > 0) {
+    sections.push(`## Search Results (${researchData.searches.length} searches performed)`)
+    for (const search of researchData.searches.slice(0, 5)) {
+      sections.push(`Query: "${search.query}"`)
+      for (const result of search.results.slice(0, 3)) {
+        sections.push(`  - ${result.title}: ${result.snippet.slice(0, 150)}...`)
+      }
+    }
+  }
+
+  if (researchData.seoMetrics.length > 0) {
+    sections.push(`\n## SEO Metrics (${researchData.seoMetrics.length} domains analyzed)`)
+    for (const seo of researchData.seoMetrics) {
+      sections.push(`- ${seo.domain}: Traffic=${seo.traffic?.toLocaleString() || 'N/A'}, Keywords=${seo.keywords?.toLocaleString() || 'N/A'}`)
+    }
+  }
+
+  if (researchData.keywordGaps.length > 0) {
+    sections.push(`\n## Keyword Gaps`)
+    for (const gap of researchData.keywordGaps) {
+      sections.push(`Competitor: ${gap.competitor}`)
+      for (const kw of gap.keywords.slice(0, 10)) {
+        sections.push(`  - "${kw.keyword}" (${kw.volume.toLocaleString()}/mo) - ranks #${kw.competitorRank}`)
+      }
+    }
+  }
+
+  if (researchData.scrapes.length > 0) {
+    sections.push(`\n## Pages Analyzed (${researchData.scrapes.length} pages)`)
+    for (const scrape of researchData.scrapes.slice(0, 3)) {
+      sections.push(`- ${scrape.url}: ${scrape.contentSummary.slice(0, 100)}...`)
+    }
+  }
+
+  return sections.join('\n')
+}
 
 /**
  * Extract structured output from markdown using Sonnet
  *
  * Cost: ~$0.04 per run (based on typical ~8000 input tokens, ~2000 output tokens)
  * Latency: ~3-5 seconds
+ *
+ * @param markdown - The strategy markdown to extract from
+ * @param researchData - Optional structured research data from tool calls
  */
-export async function extractStructuredOutput(markdown: string): Promise<StructuredOutput | null> {
+export async function extractStructuredOutput(
+  markdown: string,
+  researchData?: ResearchData
+): Promise<StructuredOutput | null> {
   // Early validation - don't fail hard if key is missing during lazy backfill
   if (!process.env.ANTHROPIC_API_KEY) {
     console.warn('[Formatter] Missing ANTHROPIC_API_KEY, skipping extraction')
@@ -36,8 +87,33 @@ export async function extractStructuredOutput(markdown: string): Promise<Structu
     apiKey: process.env.ANTHROPIC_API_KEY,
   })
 
+  // Build user message with optional research data
+  const hasResearchData = researchData && (
+    researchData.searches.length > 0 ||
+    researchData.seoMetrics.length > 0 ||
+    researchData.keywordGaps.length > 0 ||
+    researchData.scrapes.length > 0
+  )
+
+  // Debug logging for research data
+  console.log(`[Formatter] Research data received:`, {
+    hasResearchData,
+    searches: researchData?.searches.length ?? 0,
+    seoMetrics: researchData?.seoMetrics.length ?? 0,
+    keywordGaps: researchData?.keywordGaps.length ?? 0,
+    scrapes: researchData?.scrapes.length ?? 0,
+  })
+
+  let userContent: string
+  if (hasResearchData) {
+    const researchSection = formatResearchDataForPrompt(researchData!)
+    userContent = FORMATTER_USER_PROMPT_WITH_RESEARCH + markdown + '\n\n---\nRESEARCH DATA:\n\n' + researchSection
+  } else {
+    userContent = FORMATTER_USER_PROMPT + markdown
+  }
+
   try {
-    console.log('[Formatter] Starting Sonnet extraction...')
+    console.log(`[Formatter] Starting Sonnet extraction (with research: ${hasResearchData})...`)
     const startTime = Date.now()
 
     // Use Promise.race for timeout since Anthropic SDK doesn't support AbortSignal
@@ -53,7 +129,7 @@ export async function extractStructuredOutput(markdown: string): Promise<Structu
         messages: [
           {
             role: 'user',
-            content: FORMATTER_USER_PROMPT + markdown,
+            content: userContent,
           },
         ],
       }),
@@ -90,6 +166,16 @@ export async function extractStructuredOutput(markdown: string): Promise<Structu
       console.warn('[Formatter] JSON parse error:', parseErr)
       return extractStructuredOutputFallback(markdown)
     }
+
+    // Debug: Log if new research fields are present in parsed JSON
+    const parsedObj = parsed as Record<string, unknown>
+    console.log(`[Formatter] Parsed JSON has research fields:`, {
+      researchSnapshot: !!parsedObj.researchSnapshot,
+      competitiveComparison: !!parsedObj.competitiveComparison,
+      keywordOpportunities: !!parsedObj.keywordOpportunities,
+      marketQuotes: !!parsedObj.marketQuotes,
+      positioning: !!parsedObj.positioning,
+    })
 
     // Validate with Zod
     const result = StructuredOutputSchema.safeParse(parsed)
@@ -333,5 +419,11 @@ function normalizePartialOutput(partial: PartialStructuredOutput): StructuredOut
     roadmapWeeks: partial.roadmapWeeks || [],
     extractedAt: partial.extractedAt,
     formatterVersion: '1.0',
+    // NEW: Research-backed fields (pass through if present)
+    researchSnapshot: partial.researchSnapshot,
+    competitiveComparison: partial.competitiveComparison,
+    keywordOpportunities: partial.keywordOpportunities,
+    marketQuotes: partial.marketQuotes,
+    positioning: partial.positioning,
   }
 }

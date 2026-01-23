@@ -1,7 +1,7 @@
 import { createServiceClient } from '@/lib/supabase/server'
 import { runResearch, runTavilyOnlyResearch } from './research'
 import { generateStrategy, generateMiniStrategy } from './generate'
-import { generateStrategyAgentic, generateAgenticRefinement } from './pipeline-agentic'
+import { generateStrategyAgentic, generateAgenticRefinement, type ResearchData } from './pipeline-agentic'
 import { extractStructuredOutput } from './formatter'
 import { tavily } from '@tavily/core'
 import { accumulateBusinessContext, accumulateUserContext } from '@/lib/context/accumulate'
@@ -396,14 +396,14 @@ export async function runAgenticPipeline(runId: string): Promise<PipelineResult>
   // 4. Generate strategy with agentic Claude (AI fetches data as needed)
   try {
     console.log(`[AgenticPipeline] Starting agentic generation for run ${runId}`)
-    const output = await generateStrategyAgentic(input, {} as ResearchContext, userHistory, onStageUpdate)
+    const { output, researchData } = await generateStrategyAgentic(input, {} as ResearchContext, userHistory, onStageUpdate)
     console.log(`[AgenticPipeline] Strategy generated: ${output.length} characters`)
 
     // 5. Extract structured output for dashboard UI (fire-and-forget, graceful degradation)
     await onStageUpdate('Preparing your dashboard...')
     let structuredOutput = null
     try {
-      structuredOutput = await extractStructuredOutput(output)
+      structuredOutput = await extractStructuredOutput(output, researchData)
       if (structuredOutput) {
         console.log(`[AgenticPipeline] Structured output extracted successfully`)
       }
@@ -698,11 +698,11 @@ export async function runRefinementPipeline(runId: string): Promise<RefinementPi
     console.log(`[RefinementPipeline] Refinement completed: ${result.output.length} chars, ${toolCallCount} tool calls`)
     console.log(`[RefinementPipeline] Timing: ${result.timing?.total}ms total, ${result.timing?.tools}ms tools`)
 
-    // 5. Extract structured output for dashboard UI
+    // 5. Extract structured output for dashboard UI (pass research data if tools were called)
     await onStageUpdate('Preparing your dashboard...')
     let structuredOutput = null
     try {
-      structuredOutput = await extractStructuredOutput(result.output)
+      structuredOutput = await extractStructuredOutput(result.output, result.researchData)
       if (structuredOutput) {
         console.log(`[RefinementPipeline] Structured output extracted successfully`)
       }

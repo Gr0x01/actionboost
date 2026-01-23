@@ -21,10 +21,36 @@ const TOOL_TIMEOUT = 15000
 // TYPES
 // =============================================================================
 
+/**
+ * Structured research data captured from tool calls
+ * Used by formatter to extract insights for the dashboard
+ */
+export type ResearchData = {
+  searches: Array<{
+    query: string
+    results: Array<{ title: string; url: string; snippet: string }>
+  }>
+  seoMetrics: Array<{
+    domain: string
+    traffic: number | null
+    keywords: number | null
+    topPositions?: { pos1: number; pos2_3: number; pos4_10: number }
+  }>
+  keywordGaps: Array<{
+    competitor: string
+    keywords: Array<{ keyword: string; volume: number; competitorRank: number }>
+  }>
+  scrapes: Array<{
+    url: string
+    contentSummary: string
+  }>
+}
+
 export type AgenticResult = {
   success: boolean
   output?: string
   toolCalls?: string[]
+  researchData?: ResearchData
   timing?: {
     total: number
     tools: number
@@ -125,6 +151,19 @@ type ToolInput = {
 }
 
 /**
+ * Structured result from tool execution - contains both the string result
+ * shown to the LLM and structured data for the dashboard
+ */
+type ToolResult = {
+  text: string
+  data?:
+    | { type: 'search'; query: string; results: Array<{ title: string; url: string; snippet: string }> }
+    | { type: 'seo'; domain: string; traffic: number | null; keywords: number | null; topPositions?: { pos1: number; pos2_3: number; pos4_10: number } }
+    | { type: 'keyword_gaps'; competitor: string; keywords: Array<{ keyword: string; volume: number; competitorRank: number }> }
+    | { type: 'scrape'; url: string; contentSummary: string }
+}
+
+/**
  * Execute a promise with timeout
  */
 async function withTimeout<T>(promise: Promise<T>, ms: number, operation: string): Promise<T> {
@@ -195,44 +234,44 @@ async function executeTool(
   name: string,
   input: ToolInput,
   context: { userDomain?: string }
-): Promise<string> {
+): Promise<ToolResult> {
   try {
     switch (name) {
       case 'search':
         if (!input.query || typeof input.query !== 'string') {
-          return 'Error: query is required for search'
+          return { text: 'Error: query is required for search' }
         }
         if (input.query.length > 500) {
-          return 'Error: query too long (max 500 characters)'
+          return { text: 'Error: query too long (max 500 characters)' }
         }
         return await executeSearch(input.query)
       case 'scrape':
         if (!input.url || typeof input.url !== 'string') {
-          return 'Error: url is required for scrape'
+          return { text: 'Error: url is required for scrape' }
         }
         if (!isAllowedUrl(input.url)) {
-          return 'Error: URL not allowed (must be public http/https URL)'
+          return { text: 'Error: URL not allowed (must be public http/https URL)' }
         }
         return await executeScrape(input.url)
       case 'seo':
         if (!input.domain || typeof input.domain !== 'string') {
-          return 'Error: domain is required for seo'
+          return { text: 'Error: domain is required for seo' }
         }
         return await executeSEO(input.domain)
       case 'keyword_gaps':
         if (!input.competitor_domain || typeof input.competitor_domain !== 'string') {
-          return 'Error: competitor_domain is required for keyword_gaps'
+          return { text: 'Error: competitor_domain is required for keyword_gaps' }
         }
         return await executeKeywordGaps(input.competitor_domain, context.userDomain)
       default:
-        return `Unknown tool: ${name}`
+        return { text: `Unknown tool: ${name}` }
     }
   } catch (err) {
-    return `Error: ${err instanceof Error ? err.message : String(err)}`
+    return { text: `Error: ${err instanceof Error ? err.message : String(err)}` }
   }
 }
 
-async function executeSearch(query: string): Promise<string> {
+async function executeSearch(query: string): Promise<ToolResult> {
   const tvly = tavily({ apiKey: process.env.TAVILY_API! })
 
   const response = await withTimeout(
@@ -246,15 +285,32 @@ async function executeSearch(query: string): Promise<string> {
   )
 
   if (!response.results?.length) {
-    return 'No results found.'
+    return { text: 'No results found.' }
   }
 
-  return response.results
+  // Build structured data for dashboard
+  const structuredResults = response.results.map(r => ({
+    title: r.title || '',
+    url: r.url || '',
+    snippet: r.content?.slice(0, 300) || '',
+  }))
+
+  // Build text for LLM
+  const text = response.results
     .map((r, i) => `[${i + 1}] ${r.title}\n    URL: ${r.url}\n    ${r.content?.slice(0, 300)}...`)
     .join('\n\n')
+
+  return {
+    text,
+    data: {
+      type: 'search',
+      query,
+      results: structuredResults,
+    },
+  }
 }
 
-async function executeScrape(url: string): Promise<string> {
+async function executeScrape(url: string): Promise<ToolResult> {
   const apiKey = process.env.SCRAPINGDOG_API_KEY
 
   if (!apiKey) {
@@ -267,11 +323,19 @@ async function executeScrape(url: string): Promise<string> {
         'Scrape (Tavily)'
       )
       if (response.results?.[0]?.rawContent) {
-        return response.results[0].rawContent.slice(0, 5000)
+        const content = response.results[0].rawContent.slice(0, 5000)
+        return {
+          text: content,
+          data: {
+            type: 'scrape',
+            url,
+            contentSummary: content.slice(0, 500),
+          },
+        }
       }
-      return 'Could not extract content from URL.'
+      return { text: 'Could not extract content from URL.' }
     } catch {
-      return 'Could not scrape URL.'
+      return { text: 'Could not scrape URL.' }
     }
   }
 
@@ -285,13 +349,13 @@ async function executeScrape(url: string): Promise<string> {
   )
 
   if (!response.ok) {
-    return `Scrape failed: HTTP ${response.status}`
+    return { text: `Scrape failed: HTTP ${response.status}` }
   }
 
-  const text = await response.text()
+  const rawText = await response.text()
 
   // Basic HTML to text conversion
-  const cleaned = text
+  const cleaned = rawText
     .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
     .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
     .replace(/<[^>]+>/g, ' ')
@@ -299,15 +363,26 @@ async function executeScrape(url: string): Promise<string> {
     .trim()
     .slice(0, 5000)
 
-  return cleaned || 'No content extracted.'
+  if (!cleaned) {
+    return { text: 'No content extracted.' }
+  }
+
+  return {
+    text: cleaned,
+    data: {
+      type: 'scrape',
+      url,
+      contentSummary: cleaned.slice(0, 500),
+    },
+  }
 }
 
-async function executeSEO(domain: string): Promise<string> {
+async function executeSEO(domain: string): Promise<ToolResult> {
   const login = process.env.DATAFORSEO_LOGIN
   const password = process.env.DATAFORSEO_PASSWORD
 
   if (!login || !password) {
-    return 'SEO data not available (DataForSEO not configured).'
+    return { text: 'SEO data not available (DataForSEO not configured).' }
   }
 
   const credentials = Buffer.from(`${login}:${password}`).toString('base64')
@@ -336,35 +411,50 @@ async function executeSEO(domain: string): Promise<string> {
   )
 
   if (!response.ok) {
-    return `SEO lookup failed: HTTP ${response.status}`
+    return { text: `SEO lookup failed: HTTP ${response.status}` }
   }
 
   const data = await response.json()
   const metrics = data?.tasks?.[0]?.result?.[0]?.metrics?.organic
 
   if (!metrics) {
-    return `No SEO data found for ${cleanDomain}. This could mean the domain is new or has minimal organic presence.`
+    return { text: `No SEO data found for ${cleanDomain}. This could mean the domain is new or has minimal organic presence.` }
   }
 
-  return `SEO Metrics for ${cleanDomain}:
+  const text = `SEO Metrics for ${cleanDomain}:
 - Estimated Organic Traffic: ~${metrics.etv?.toLocaleString() || 'N/A'} monthly visits
 - Organic Keywords: ${metrics.count?.toLocaleString() || 'N/A'} ranking keywords
 - Keyword Positions: ${metrics.pos_1 || 0} in #1, ${metrics.pos_2_3 || 0} in #2-3, ${metrics.pos_4_10 || 0} in #4-10`
+
+  return {
+    text,
+    data: {
+      type: 'seo',
+      domain: cleanDomain,
+      traffic: metrics.etv || null,
+      keywords: metrics.count || null,
+      topPositions: {
+        pos1: metrics.pos_1 || 0,
+        pos2_3: metrics.pos_2_3 || 0,
+        pos4_10: metrics.pos_4_10 || 0,
+      },
+    },
+  }
 }
 
 async function executeKeywordGaps(
   competitorDomain: string,
   userDomain?: string
-): Promise<string> {
+): Promise<ToolResult> {
   if (!userDomain) {
-    return 'Cannot analyze keyword gaps - user did not provide their website URL.'
+    return { text: 'Cannot analyze keyword gaps - user did not provide their website URL.' }
   }
 
   const login = process.env.DATAFORSEO_LOGIN
   const password = process.env.DATAFORSEO_PASSWORD
 
   if (!login || !password) {
-    return 'Keyword gap analysis not available (DataForSEO not configured).'
+    return { text: 'Keyword gap analysis not available (DataForSEO not configured).' }
   }
 
   const credentials = Buffer.from(`${login}:${password}`).toString('base64')
@@ -398,14 +488,14 @@ async function executeKeywordGaps(
   )
 
   if (!response.ok) {
-    return `Keyword gap analysis failed: HTTP ${response.status}`
+    return { text: `Keyword gap analysis failed: HTTP ${response.status}` }
   }
 
   const data = await response.json()
   const items = data?.tasks?.[0]?.result?.[0]?.items || []
 
   if (!items.length) {
-    return `No keyword gaps found between ${cleanCompetitor} and ${cleanUser}. This could mean both domains are new or target very different keywords.`
+    return { text: `No keyword gaps found between ${cleanCompetitor} and ${cleanUser}. This could mean both domains are new or target very different keywords.` }
   }
 
   type GapItem = {
@@ -418,6 +508,14 @@ async function executeKeywordGaps(
     }
   }
 
+  // Build structured data for dashboard
+  const structuredKeywords = items.slice(0, 15).map((item: GapItem) => ({
+    keyword: item.keyword_data?.keyword || '',
+    volume: item.keyword_data?.keyword_info?.search_volume || 0,
+    competitorRank: item.first_domain_serp_element?.serp_item?.rank_absolute || 0,
+  }))
+
+  // Build text for LLM
   const gaps = items.slice(0, 15).map((item: GapItem) => {
     const kw = item.keyword_data?.keyword || '?'
     const vol = item.keyword_data?.keyword_info?.search_volume || 0
@@ -425,7 +523,14 @@ async function executeKeywordGaps(
     return `- "${kw}" (${vol.toLocaleString()} searches/mo) - ${cleanCompetitor} ranks #${pos}`
   })
 
-  return `Keyword Gaps (${cleanCompetitor} ranks, you don't):\n${gaps.join('\n')}`
+  return {
+    text: `Keyword Gaps (${cleanCompetitor} ranks, you don't):\n${gaps.join('\n')}`,
+    data: {
+      type: 'keyword_gaps',
+      competitor: cleanCompetitor,
+      keywords: structuredKeywords,
+    },
+  }
 }
 
 // =============================================================================
@@ -450,7 +555,15 @@ Your past recommendations (evolve, don't repeat): ${userHistory.pastRecommendati
 
 Your job: Deliver a growth strategy that's specific to THIS user's product, stage, and constraints—not generic advice.
 
-Use research when it would change your recommendations. Skip it when you already know enough. A pre-revenue founder asking about acquisition needs different research than an established SaaS optimizing retention.
+## Tool Usage Guidelines
+
+Use tools when they would provide actionable data for the strategy:
+- \`search\`: Market discussions, reviews, competitor complaints, industry trends - almost always useful
+- \`scrape\`: Deep-dive on promising search results
+- \`seo\`: Domain traffic/keywords - use when SEO, content marketing, or organic growth is relevant to the focus area
+- \`keyword_gaps\`: Competitive keyword opportunities - use when organic search strategy matters
+
+Don't use SEO tools just because URLs exist. Use them when organic search is part of the strategy.
 
 ${historySection}
 
@@ -562,6 +675,14 @@ export async function generateAgenticStrategy(
   const toolCalls: string[] = []
   let totalToolTime = 0
 
+  // Accumulate structured research data from tool calls
+  const researchData: ResearchData = {
+    searches: [],
+    seoMetrics: [],
+    keywordGaps: [],
+    scrapes: [],
+  }
+
   const updateStage = async (stage: string) => {
     if (onStageUpdate) {
       await onStageUpdate(stage)
@@ -604,6 +725,7 @@ export async function generateAgenticStrategy(
         success: true,
         output: textBlock && textBlock.type === 'text' ? textBlock.text : '',
         toolCalls,
+        researchData,
         timing: {
           total,
           tools: totalToolTime,
@@ -647,6 +769,7 @@ export async function generateAgenticStrategy(
         success: true,
         output: textBlock && textBlock.type === 'text' ? textBlock.text : '',
         toolCalls,
+        researchData,
         timing: {
           total,
           tools: totalToolTime,
@@ -664,6 +787,7 @@ export async function generateAgenticStrategy(
         success: true,
         output: textBlock && textBlock.type === 'text' ? textBlock.text : '',
         toolCalls,
+        researchData,
         timing: {
           total,
           tools: totalToolTime,
@@ -702,8 +826,41 @@ export async function generateAgenticStrategy(
           console.log(`[Agentic] Tool call: ${callDesc}`)
           toolCalls.push(callDesc)
 
-          const result = await executeTool(block.name, toolInput, context)
-          return { id: block.id, result }
+          const toolResult = await executeTool(block.name, toolInput, context)
+
+          // Accumulate structured research data
+          if (toolResult.data) {
+            switch (toolResult.data.type) {
+              case 'search':
+                researchData.searches.push({
+                  query: toolResult.data.query,
+                  results: toolResult.data.results,
+                })
+                break
+              case 'seo':
+                researchData.seoMetrics.push({
+                  domain: toolResult.data.domain,
+                  traffic: toolResult.data.traffic,
+                  keywords: toolResult.data.keywords,
+                  topPositions: toolResult.data.topPositions,
+                })
+                break
+              case 'keyword_gaps':
+                researchData.keywordGaps.push({
+                  competitor: toolResult.data.competitor,
+                  keywords: toolResult.data.keywords,
+                })
+                break
+              case 'scrape':
+                researchData.scrapes.push({
+                  url: toolResult.data.url,
+                  contentSummary: toolResult.data.contentSummary,
+                })
+                break
+            }
+          }
+
+          return { id: block.id, result: toolResult.text }
         })
       )
       allResults.push(...batchResults.filter(r => r.id !== ''))
@@ -732,6 +889,7 @@ export async function generateAgenticStrategy(
     success: false,
     error: 'Max tool call iterations reached.',
     toolCalls,
+    researchData,
     timing: {
       total: Date.now() - startTime,
       tools: totalToolTime,
@@ -745,15 +903,23 @@ export async function generateAgenticStrategy(
 // =============================================================================
 
 /**
+ * Result from agentic strategy generation
+ */
+export type AgenticStrategyResult = {
+  output: string
+  researchData: ResearchData
+}
+
+/**
  * Generate strategy using agentic pipeline
- * Drop-in replacement for generateStrategy from generate.ts
+ * Returns both the markdown output and structured research data for the dashboard
  */
 export async function generateStrategyAgentic(
   input: RunInput,
   _research: ResearchContext, // Ignored - agentic fetches its own data
   userHistory?: UserHistoryContext | null,
   onStageUpdate?: StageCallback
-): Promise<string> {
+): Promise<AgenticStrategyResult> {
   const result = await generateAgenticStrategy(input, userHistory, onStageUpdate)
 
   if (!result.success || !result.output) {
@@ -762,8 +928,12 @@ export async function generateStrategyAgentic(
 
   console.log(`[Agentic] Completed with ${result.toolCalls?.length || 0} tool calls`)
   console.log(`[Agentic] Timing: ${result.timing?.total}ms total, ${result.timing?.tools}ms tools`)
+  console.log(`[Agentic] Research data: ${result.researchData?.searches.length || 0} searches, ${result.researchData?.seoMetrics.length || 0} SEO, ${result.researchData?.keywordGaps.length || 0} keyword gaps`)
 
-  return result.output
+  return {
+    output: result.output,
+    researchData: result.researchData || { searches: [], seoMetrics: [], keywordGaps: [], scrapes: [] },
+  }
 }
 
 // =============================================================================
@@ -868,6 +1038,14 @@ export async function generateAgenticRefinement(
   const toolCalls: string[] = []
   let totalToolTime = 0
 
+  // Accumulate structured research data from tool calls (same as main agentic)
+  const researchData: ResearchData = {
+    searches: [],
+    seoMetrics: [],
+    keywordGaps: [],
+    scrapes: [],
+  }
+
   const updateStage = async (stage: string) => {
     if (onStageUpdate) {
       await onStageUpdate(stage)
@@ -925,6 +1103,7 @@ export async function generateAgenticRefinement(
         success: true,
         output,
         toolCalls,
+        researchData,
         timing: {
           total,
           tools: totalToolTime,
@@ -948,6 +1127,7 @@ export async function generateAgenticRefinement(
         success: true,
         output: textBlock && textBlock.type === 'text' ? textBlock.text : '',
         toolCalls,
+        researchData,
         timing: {
           total,
           tools: totalToolTime,
@@ -964,6 +1144,7 @@ export async function generateAgenticRefinement(
         success: true,
         output: textBlock && textBlock.type === 'text' ? textBlock.text : '',
         toolCalls,
+        researchData,
         timing: {
           total,
           tools: totalToolTime,
@@ -1001,8 +1182,41 @@ export async function generateAgenticRefinement(
           console.log(`[AgenticRefinement] Tool call: ${callDesc}`)
           toolCalls.push(callDesc)
 
-          const result = await executeTool(block.name, toolInput, context)
-          return { id: block.id, result }
+          const toolResult = await executeTool(block.name, toolInput, context)
+
+          // Accumulate structured research data (same as main agentic)
+          if (toolResult.data) {
+            switch (toolResult.data.type) {
+              case 'search':
+                researchData.searches.push({
+                  query: toolResult.data.query,
+                  results: toolResult.data.results,
+                })
+                break
+              case 'seo':
+                researchData.seoMetrics.push({
+                  domain: toolResult.data.domain,
+                  traffic: toolResult.data.traffic,
+                  keywords: toolResult.data.keywords,
+                  topPositions: toolResult.data.topPositions,
+                })
+                break
+              case 'keyword_gaps':
+                researchData.keywordGaps.push({
+                  competitor: toolResult.data.competitor,
+                  keywords: toolResult.data.keywords,
+                })
+                break
+              case 'scrape':
+                researchData.scrapes.push({
+                  url: toolResult.data.url,
+                  contentSummary: toolResult.data.contentSummary,
+                })
+                break
+            }
+          }
+
+          return { id: block.id, result: toolResult.text }
         })
       )
       allResults.push(...batchResults.filter(r => r.id !== ''))
@@ -1031,6 +1245,7 @@ export async function generateAgenticRefinement(
     success: false,
     error: 'Max tool call iterations reached.',
     toolCalls,
+    researchData,
     timing: {
       total: Date.now() - startTime,
       tools: totalToolTime,

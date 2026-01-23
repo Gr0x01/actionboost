@@ -74,10 +74,87 @@ export const RoadmapWeekSchema = z.object({
 
 export type RoadmapWeek = z.infer<typeof RoadmapWeekSchema>
 
+// =============================================================================
+// NEW RESEARCH-BACKED SCHEMAS (V2) - All optional for backward compatibility
+// =============================================================================
+
+/**
+ * Research snapshot - hero stats from tool calls
+ */
+export const ResearchSnapshotSchema = z.object({
+  searchesRun: z.number(),
+  pagesAnalyzed: z.number(),
+  competitorsResearched: z.number(),
+  keywordGapsFound: z.number(),
+})
+
+export type ResearchSnapshot = z.infer<typeof ResearchSnapshotSchema>
+
+/**
+ * Competitive comparison - traffic bar chart data
+ */
+export const CompetitiveComparisonSchema = z.object({
+  domains: z.array(z.object({
+    domain: z.string(),
+    traffic: z.number().nullable(),
+    keywords: z.number().nullable(),
+    isUser: z.boolean().default(false),
+  })),
+})
+
+export type CompetitiveComparison = z.infer<typeof CompetitiveComparisonSchema>
+
+/**
+ * Keyword opportunity from gap analysis
+ */
+export const KeywordOpportunitySchema = z.object({
+  keywords: z.array(z.object({
+    keyword: z.string(),
+    volume: z.number(),
+    competitorRank: z.number(),
+    competitor: z.string(),
+    difficulty: z.enum(['easy', 'medium', 'hard']).optional(),
+  })),
+})
+
+export type KeywordOpportunity = z.infer<typeof KeywordOpportunitySchema>
+
+/**
+ * Market quote from Reddit/community discussions
+ */
+export const MarketQuoteSchema = z.object({
+  quotes: z.array(z.object({
+    text: z.string(),
+    source: z.string(), // e.g., "Reddit r/SaaS"
+    url: z.string().url().optional(), // Validated URL for security
+    sentiment: z.enum(['positive', 'negative', 'neutral']).optional(),
+  })),
+})
+
+export type MarketQuote = z.infer<typeof MarketQuoteSchema>
+
+/**
+ * Positioning data extracted from strategy (replaces regex parsing)
+ */
+export const PositioningDataSchema = z.object({
+  verdict: z.enum(['clear', 'needs-work', 'unclear']).optional(),
+  summary: z.string().optional(),
+  uniqueValue: z.string().optional(),
+  targetSegment: z.string().optional(),
+  competitiveAdvantage: z.string().optional(),
+})
+
+export type PositioningData = z.infer<typeof PositioningDataSchema>
+
+// =============================================================================
+// FULL STRUCTURED OUTPUT SCHEMA
+// =============================================================================
+
 /**
  * Full structured output schema
  */
 export const StructuredOutputSchema = z.object({
+  // Existing fields
   thisWeek: z.object({
     days: z.array(DayActionSchema),
     totalHours: z.number().optional(),
@@ -89,6 +166,13 @@ export const StructuredOutputSchema = z.object({
   roadmapWeeks: z.array(RoadmapWeekSchema),
   extractedAt: z.string(),
   formatterVersion: z.literal('1.0'),
+
+  // NEW: Research-backed fields (all optional for backward compatibility)
+  researchSnapshot: ResearchSnapshotSchema.optional(),
+  competitiveComparison: CompetitiveComparisonSchema.optional(),
+  keywordOpportunities: KeywordOpportunitySchema.optional(),
+  marketQuotes: MarketQuoteSchema.optional(),
+  positioning: PositioningDataSchema.optional(),
 })
 
 export type StructuredOutput = z.infer<typeof StructuredOutputSchema>
@@ -108,6 +192,13 @@ export const PartialStructuredOutputSchema = z.object({
   roadmapWeeks: z.array(RoadmapWeekSchema).optional(),
   extractedAt: z.string(),
   formatterVersion: z.literal('1.0'),
+
+  // NEW: Research-backed fields (all optional)
+  researchSnapshot: ResearchSnapshotSchema.optional(),
+  competitiveComparison: CompetitiveComparisonSchema.optional(),
+  keywordOpportunities: KeywordOpportunitySchema.optional(),
+  marketQuotes: MarketQuoteSchema.optional(),
+  positioning: PositioningDataSchema.optional(),
 })
 
 export type PartialStructuredOutput = z.infer<typeof PartialStructuredOutputSchema>
@@ -116,10 +207,10 @@ export type PartialStructuredOutput = z.infer<typeof PartialStructuredOutputSche
 // EXTRACTION PROMPT - Instructions for Haiku to extract structured data
 // =============================================================================
 
-export const FORMATTER_SYSTEM_PROMPT = `You are a precise data extractor. Your job is to parse markdown strategy documents and extract structured JSON data.
+export const FORMATTER_SYSTEM_PROMPT = `You are a precise data extractor. Your job is to parse markdown strategy documents and extract structured JSON data. You may also receive research data from tool calls to enhance your extraction.
 
 IMPORTANT RULES:
-1. Extract ONLY data that is explicitly present in the markdown
+1. Extract ONLY data that is explicitly present in the markdown or research data
 2. Do not invent or hallucinate any information
 3. If a section is missing or empty, use an empty array []
 4. For traffic numbers, parse things like "50K" as 50000, "1.2M" as 1200000
@@ -134,6 +225,16 @@ COMPETITOR EXTRACTION RULES:
 - If NO numeric traffic data exists, set traffic to "" (empty string) and omit trafficNumber
 - NEVER put positioning/strategy text in the traffic field
 - "positioning" field is for qualitative info: market position, pricing, differentiators, strategy
+
+RESEARCH DATA EXTRACTION (IMPORTANT - include these fields when research data section is provided):
+When a "RESEARCH DATA" section is provided after the strategy document, you MUST extract these additional fields:
+- "researchSnapshot": Count from research data headers (e.g., "12 searches performed" → searchesRun: 12)
+- "competitiveComparison": Build from SEO Metrics section - domains array with traffic/keywords/isUser
+- "keywordOpportunities": Build from Keyword Gaps section - keywords array with keyword/volume/competitorRank/competitor
+- "marketQuotes": Extract notable quotes from search results about the industry/competitors (text, source like "Reddit r/SaaS", sentiment)
+- "positioning": Extract from "Your Situation" section in markdown (verdict: clear/needs-work/unclear, summary, uniqueValue, targetSegment)
+
+If NO research data section is provided, OMIT these 5 fields entirely.
 
 OUTPUT FORMAT:
 {
@@ -171,10 +272,45 @@ OUTPUT FORMAT:
     { "week": 4, "theme": "Expand", "tasks": ["Task 1", "Task 2"] }
   ],
   "extractedAt": "2024-01-22T12:00:00Z",
-  "formatterVersion": "1.0"
+  "formatterVersion": "1.0",
+  "researchSnapshot": {
+    "searchesRun": 12,
+    "pagesAnalyzed": 5,
+    "competitorsResearched": 3,
+    "keywordGapsFound": 45
+  },
+  "competitiveComparison": {
+    "domains": [
+      { "domain": "competitor.com", "traffic": 50000, "keywords": 1200, "isUser": false },
+      { "domain": "usersite.com", "traffic": 5000, "keywords": 150, "isUser": true }
+    ]
+  },
+  "keywordOpportunities": {
+    "keywords": [
+      { "keyword": "best crm for small business", "volume": 2400, "competitorRank": 3, "competitor": "competitor.com" }
+    ]
+  },
+  "marketQuotes": {
+    "quotes": [
+      { "text": "I switched from X to Y and it changed everything", "source": "Reddit r/SaaS", "sentiment": "positive" }
+    ]
+  },
+  "positioning": {
+    "verdict": "needs-work",
+    "summary": "Your positioning is unclear - you're trying to appeal to everyone...",
+    "uniqueValue": "AI-powered automation for small teams",
+    "targetSegment": "Solo founders and small agencies"
+  }
 }`
 
 export const FORMATTER_USER_PROMPT = `Extract structured data from this strategy document. Return ONLY the JSON object, no other text.
+
+---
+STRATEGY DOCUMENT:
+
+`
+
+export const FORMATTER_USER_PROMPT_WITH_RESEARCH = `Extract structured data from this strategy document AND the research data. Return ONLY the JSON object, no other text.
 
 ---
 STRATEGY DOCUMENT:
