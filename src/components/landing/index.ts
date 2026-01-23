@@ -1,4 +1,8 @@
 export { Hero } from "./Hero";
+export { HeroChaos } from "./HeroChaos";
+export { HeroSummaryCard } from "./HeroSummaryCard";
+export { HeroWithExplainer } from "./HeroWithExplainer";
+export { ExplainerSection } from "./ExplainerSection";
 export { ProblemSection } from "./ProblemSection";
 export { FrameworksSection } from "./FrameworksSection";
 export { Pricing } from "./Pricing";
