@@ -86,9 +86,12 @@ export function FooterCTAForm() {
 
   return (
     <>
-      {/* URL Input - softer style */}
+      {/* URL Input - Soft Brutalist on dark */}
       <div className="max-w-lg mx-auto mb-6">
-        <div className="flex rounded-xl border-2 border-background/20 bg-background/10 overflow-hidden backdrop-blur-sm">
+        <div
+          className="flex rounded-xl border-2 border-background/20 bg-background/10 overflow-hidden backdrop-blur-sm"
+          style={{ boxShadow: "4px 4px 0 rgba(255, 255, 255, 0.08)" }}
+        >
           <div className="flex items-center gap-3 flex-1 px-4 py-3">
             {favicon ? (
               <img

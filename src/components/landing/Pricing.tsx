@@ -19,7 +19,10 @@ export function Pricing() {
 
         {/* Single pricing card - centered */}
         <div className="max-w-xl mx-auto">
-          <div className="rounded-2xl border border-border bg-background p-8 lg:p-10 shadow-lg">
+          <div
+            className="rounded-xl border-2 border-foreground/20 bg-white p-8 lg:p-10"
+            style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)" }}
+          >
             {/* Price */}
             <div className="mb-8 text-center">
               <h3 className="text-5xl font-black text-foreground">{config.singlePrice}</h3>
@@ -105,7 +108,10 @@ export function Pricing() {
 
         {/* Testimonial */}
         <div className="max-w-xl mx-auto mt-8">
-          <div className="rounded-2xl border border-border bg-background p-6 shadow-md">
+          <div
+            className="rounded-xl border-2 border-foreground/20 bg-white p-6"
+            style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)" }}
+          >
             <blockquote className="text-lg font-medium text-foreground leading-relaxed italic">
               &quot;The competitor analysis feature is incredibly valuable. The 30-day playbook alone is worth the price.&quot;
             </blockquote>

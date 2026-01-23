@@ -116,7 +116,7 @@ export function HeroWithExplainer() {
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="#pricing"
-              className="inline-flex items-center gap-2 rounded-xl px-8 py-4 bg-cta text-white text-lg font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[5px_5px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-100"
+              className="inline-flex items-center gap-2 rounded-xl px-8 py-4 bg-cta text-white text-lg font-bold border-2 border-cta shadow-[4px_4px_0_rgba(44,62,80,0.4)] hover:shadow-[5px_5px_0_rgba(44,62,80,0.45)] hover:-translate-y-0.5 active:shadow-[2px_2px_0_rgba(44,62,80,0.4)] active:translate-y-0.5 transition-all duration-100"
             >
               Get Your Plan
               <ArrowRight className="w-5 h-5" />
@@ -257,7 +257,7 @@ function ConvergingLogo({
       className="absolute -translate-x-1/2 -translate-y-1/2 will-change-transform"
       style={{ left, top, opacity, scale, rotate }}
     >
-      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white shadow-lg border border-border/50 flex items-center justify-center">
+      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white border-2 border-foreground/15 shadow-[3px_3px_0_rgba(44,62,80,0.08)] flex items-center justify-center">
         <Image
           src={logo.src}
           alt=""
@@ -314,10 +314,10 @@ function ConvergingNoise({
 
   const bgColor =
     card.type === "metric"
-      ? "bg-red-50 border-red-200/50"
+      ? "bg-red-50 border-red-200"
       : card.type === "alert"
-        ? "bg-amber-50 border-amber-200/50"
-        : "bg-white border-border/50";
+        ? "bg-amber-50 border-amber-200"
+        : "bg-white border-foreground/15";
 
   const textColor =
     card.type === "metric"
@@ -332,7 +332,8 @@ function ConvergingNoise({
       style={{ left, top, opacity, scale, rotate }}
     >
       <div
-        className={`px-4 py-2.5 rounded-lg shadow-lg border text-sm font-medium whitespace-nowrap ${bgColor} ${textColor}`}
+        className={`px-4 py-2.5 rounded-lg border-2 text-sm font-medium whitespace-nowrap ${bgColor} ${textColor}`}
+        style={{ boxShadow: "3px 3px 0 rgba(44, 62, 80, 0.08)" }}
       >
         {card.text}
       </div>

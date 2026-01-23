@@ -1,7 +1,6 @@
 import { Header, Footer } from "@/components/layout";
 import {
   HeroWithExplainer,
-  FrameworksSection,
   Pricing,
   FooterCTA,
 } from "@/components/landing";
@@ -13,7 +12,6 @@ export default function Home() {
 
       <main className="flex-1">
         <HeroWithExplainer />
-        <FrameworksSection />
         <Pricing />
         <FooterCTA />
       </main>

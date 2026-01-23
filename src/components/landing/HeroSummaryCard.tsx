@@ -150,8 +150,6 @@ export function HeroSummaryCard({ visible }: HeroSummaryCardProps) {
     prevWeekCompletions.current = { week1: week1Complete, week2: week2Complete };
   }, [week1Complete, week2Complete]);
 
-  const checkedCount = checkedTasks.size;
-
   if (!visible) return null;
 
   return (
@@ -161,50 +159,31 @@ export function HeroSummaryCard({ visible }: HeroSummaryCardProps) {
       animate={{ scale: 1, y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
     >
-      {/* Soft glow - the "clarity" moment */}
-      <motion.div
-        className="absolute -inset-6 -z-10 rounded-3xl blur-2xl"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.5 }}
-        transition={{ delay: 0.2, duration: 0.6 }}
-        style={{
-          background:
-            "radial-gradient(circle, rgba(230, 126, 34, 0.2) 0%, transparent 70%)",
-        }}
-      />
-
       {/* Big confetti burst behind card */}
       <AnimatePresence>
         {showConfetti && <BigConfettiBurst />}
       </AnimatePresence>
 
-      {/* The card - Light Skeuomorphism */}
+      {/* The card - SOFT BRUTALIST */}
       <div
-        className="relative z-10 rounded-2xl overflow-hidden"
+        className="relative z-10 bg-white border-2 border-foreground/20 rounded-xl overflow-hidden"
         style={{
-          background: "linear-gradient(165deg, #ffffff 0%, #FDFBF9 50%, #FAF7F4 100%)",
-          boxShadow: `
-            0 1px 2px rgba(0,0,0,0.04),
-            0 4px 8px rgba(0,0,0,0.04),
-            0 12px 24px rgba(0,0,0,0.06),
-            0 -1px 0 rgba(255,255,255,0.8) inset
-          `,
-          border: "1px solid rgba(0,0,0,0.06)",
+          boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)",
         }}
       >
         {/* Header with business type selector */}
-        <div className="px-6 pt-5 pb-4 border-b border-border/30">
-          {/* Business type tabs */}
-          <div className="flex flex-wrap gap-1.5 mb-4">
+        <div className="px-6 pt-5 pb-4 border-b-2 border-foreground/10">
+          {/* Business type tabs - Soft Brutalist style */}
+          <div className="flex flex-wrap gap-2 mb-4">
             {BUSINESS_KEYS.map((key) => (
               <button
                 key={key}
                 onClick={() => setSelectedType(key)}
                 className={`
-                  px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-150
+                  px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-100
                   ${selectedType === key
-                    ? "bg-foreground text-white"
-                    : "bg-foreground/5 text-foreground/60 hover:bg-foreground/10 hover:text-foreground/80"
+                    ? "bg-foreground text-white shadow-sm"
+                    : "bg-foreground/5 text-foreground/60 border border-foreground/15 hover:border-foreground/30 hover:text-foreground"
                   }
                 `}
               >
@@ -220,18 +199,18 @@ export function HeroSummaryCard({ visible }: HeroSummaryCardProps) {
         {/* Content - horizontal layout on desktop */}
         <div className="p-5">
           {/* Two-column layout for weeks */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Week 1 */}
             <div>
-              <div className="flex items-baseline gap-2 mb-2.5">
-                <span className="text-xs font-mono text-foreground/40 uppercase tracking-wide">
+              <div className="flex items-baseline gap-2 mb-3">
+                <span className="text-xs font-semibold uppercase tracking-wide text-foreground/40">
                   Week 1
                 </span>
-                <span className="text-sm font-semibold text-foreground">
+                <span className="text-sm font-bold text-foreground">
                   Foundation
                 </span>
               </div>
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 {week1Tasks.map(task => (
                   <TaskItem
                     key={task.id}
@@ -246,15 +225,15 @@ export function HeroSummaryCard({ visible }: HeroSummaryCardProps) {
 
             {/* Week 2 */}
             <div>
-              <div className="flex items-baseline gap-2 mb-2.5">
-                <span className="text-xs font-mono text-foreground/40 uppercase tracking-wide">
+              <div className="flex items-baseline gap-2 mb-3">
+                <span className="text-xs font-semibold uppercase tracking-wide text-foreground/40">
                   Week 2
                 </span>
-                <span className="text-sm font-semibold text-foreground">
+                <span className="text-sm font-bold text-foreground">
                   Quick Wins
                 </span>
               </div>
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 {week2Tasks.map(task => (
                   <TaskItem
                     key={task.id}
@@ -265,7 +244,7 @@ export function HeroSummaryCard({ visible }: HeroSummaryCardProps) {
                   </TaskItem>
                 ))}
                 {/* Fade hint inline */}
-                <div className="opacity-30 pt-1">
+                <div className="opacity-40 pt-1">
                   <TaskItem disabled>+ 2 more weeks...</TaskItem>
                 </div>
               </div>
@@ -273,36 +252,36 @@ export function HeroSummaryCard({ visible }: HeroSummaryCardProps) {
           </div>
 
           {/* Bottom row: Insight + Sources */}
-          <div className="mt-4 pt-4 border-t border-border/30 flex flex-col md:flex-row md:items-center gap-4">
-            {/* Competitive Insight */}
-            <div className="flex-1 bg-cta/5 border border-cta/20 rounded-lg px-3 py-2">
-              <p className="text-xs font-medium text-cta/80 uppercase tracking-wide mb-0.5">
+          <div className="mt-5 pt-5 border-t-2 border-foreground/10 flex flex-col md:flex-row md:items-center gap-4">
+            {/* Competitive Insight - Soft Brutalist accent */}
+            <div className="flex-1 bg-cta/10 border-l-4 border-l-cta rounded-r-md px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-cta mb-1">
                 What we found
               </p>
-              <p className="text-sm text-foreground/80 leading-snug">
+              <p className="text-sm font-medium text-foreground leading-snug">
                 {businessData.insight}
               </p>
             </div>
 
             {/* Source icons */}
             <div className="flex items-center gap-2 shrink-0">
-              <span className="text-xs text-foreground/50">Built from:</span>
+              <span className="text-xs font-medium text-foreground/50">Built from:</span>
               {businessData.sources.map((source) => (
                 <div
                   key={source}
-                  className="w-6 h-6 rounded-md bg-white border border-border/30 flex items-center justify-center"
+                  className="w-6 h-6 rounded-md bg-white border-2 border-foreground/10 flex items-center justify-center"
                   title={source}
                 >
                   <Image
                     src={SOURCE_LOGOS[source]}
                     alt=""
-                    width={16}
-                    height={16}
-                    className="w-4 h-4"
+                    width={14}
+                    height={14}
+                    className="w-3.5 h-3.5"
                   />
                 </div>
               ))}
-              <span className="text-xs text-foreground/40">+8</span>
+              <span className="text-xs font-semibold text-foreground/30">+8</span>
             </div>
           </div>
         </div>
@@ -327,29 +306,29 @@ function TaskItem({
       onClick={onClick}
       disabled={disabled}
       className={`
-        flex items-center gap-2.5 text-sm w-full text-left
+        flex items-start gap-3 text-sm w-full text-left
         ${disabled ? "cursor-default" : "cursor-pointer group"}
       `}
     >
       <div
         className={`
-          w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0
-          transition-all duration-150
+          w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5
+          transition-all duration-100
           ${checked
-            ? "bg-cta"
+            ? "bg-cta border-2 border-cta"
             : disabled
-              ? "border border-border/40 bg-transparent rounded-md"
-              : "border-2 border-border/50 bg-white rounded-md group-hover:border-foreground/30"
+              ? "border-2 border-foreground/20 bg-transparent"
+              : "border-2 border-foreground/25 bg-white group-hover:border-foreground/40"
           }
         `}
       >
-        {checked && <Check className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />}
+        {checked && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
       </div>
       <span
         className={`
-          transition-colors duration-150
-          ${checked ? "text-foreground/40 line-through" : "text-foreground"}
-          ${!disabled && !checked ? "group-hover:text-foreground/80" : ""}
+          transition-colors duration-100 leading-snug
+          ${checked ? "text-foreground/40 line-through" : "text-foreground/80"}
+          ${!disabled && !checked ? "group-hover:text-foreground" : ""}
         `}
       >
         {children}
@@ -363,32 +342,20 @@ const CONFETTI_COLORS = ["#E67E22", "#F39C12", "#3498DB", "#9B59B6", "#1ABC9C", 
 
 function BigConfettiBurst() {
   const particles = Array.from({ length: 70 }, (_, i) => {
-    // Burst angle - full 360
     const angle = Math.random() * 360;
-    const distance = 350 + Math.random() * 250; // 3-4x bigger
+    const distance = 350 + Math.random() * 250;
 
-    // Horizontal movement - outward based on angle
-    const midX = Math.cos((angle * Math.PI) / 180) * distance * 0.6;
     const finalX = Math.cos((angle * Math.PI) / 180) * distance;
-
-    // Vertical arc: rise to peak, then fall
-    // Peak height (negative = up) - scaled up
     const peakY = -180 - Math.random() * 200;
-    // Final position - fall below start point
     const finalY = 280 + Math.random() * 150;
 
     const color = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
-
-    // Confetti paper dimensions - slightly larger
     const width = 10 + Math.random() * 12;
     const height = width * (0.4 + Math.random() * 0.4);
-
-    // Tumbling rotation
     const rotateEnd = (Math.random() - 0.5) * 1080;
-
     const delay = Math.random() * 0.12;
 
-    return { midX, finalX, peakY, finalY, color, width, height, rotateEnd, delay };
+    return { finalX, peakY, finalY, color, width, height, rotateEnd, delay };
   });
 
   return (

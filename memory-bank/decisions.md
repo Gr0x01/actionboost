@@ -749,3 +749,74 @@ npx tsx scripts/retry-run.ts <runId>
 **Processing time**: 2 min → 3-4 min (with progress indicators)
 
 **Full plan**: `memory-bank/projects/pipeline-v2-plan.md`
+
+---
+
+## Homepage Flow: Remove FrameworksSection (Jan 23 2026)
+
+**Decision**: Remove FrameworksSection from homepage. Keep component for future use.
+
+**Why**: The narrative was telling the same story twice.
+
+| Section | Emotional Beat | What It Shows |
+|---------|---------------|---------------|
+| Hero | Pain recognition | "You're drowning in noise" |
+| Explainer | Relief / Revelation | Chaos converges into HeroSummaryCard (deliverable preview) |
+| ~~FrameworksSection~~ | ~~???~~ | ~~More output previews (AARRR table, ICE tactics)~~ |
+| Pricing | Decision point | $49, here's what you get |
+| FooterCTA | Final push | Enter your info |
+
+**The problem**: After the scroll animation delivers "chaos becomes clarity" with HeroSummaryCard, FrameworksSection showed... more sample output. The visitor just saw the deliverable. Showing it again in different clothes flattened the emotional arc.
+
+**New flow**: Hero → Explainer → Pricing → FooterCTA
+
+This is tighter. The HeroSummaryCard does the heavy lifting. Visitors who want methodology details can learn it after they buy.
+
+**Component preserved**: `src/components/landing/FrameworksSection.tsx` - Soft Brutalist design with AARRR, ICE, and Action Plan previews. Could be used:
+- On a dedicated "/how-it-works" page
+- For returning users who want to understand methodology
+- As a trust-builder in a different context
+
+**Future option**: If trust-building is needed before pricing, replace with a compact "trust bar" (3 icons, 3 one-liners) rather than a full section with sample outputs.
+
+---
+
+## Visual Style: Soft Brutalist (Jan 23 2026)
+
+**Decision**: Update from Light Skeuomorphism to Soft Brutalist across all components.
+
+**Why the change**: Light Skeuomorphism with rounded-2xl and soft shadows felt too generic SaaS. Needed more visual confidence to match "Confident Friend" brand voice.
+
+**Soft Brutalist formula**:
+```css
+/* SOFT BRUTALIST */
+border: 2px solid rgba(44, 62, 80, 0.2);     /* visible but not harsh */
+box-shadow: 4px 4px 0 rgba(44, 62, 80, 0.1); /* offset shadow, soft */
+border-radius: 12px;                          /* rounded-xl max, NOT rounded-2xl */
+background: white;                            /* solid, no gradients */
+```
+
+**What changed from Light Skeuomorphism**:
+| Element | Light Skeu | Soft Brutalist |
+|---------|------------|----------------|
+| Border radius | rounded-2xl (16px) | rounded-xl (12px) max |
+| Borders | invisible (border-border/50) | visible (border-foreground/20) |
+| Shadows | blur shadows (shadow-lg) | offset shadows (4px 4px 0) |
+| Backgrounds | subtle gradients | solid white |
+
+**Token reference**:
+- Cards: `border-2 border-foreground/20`, `boxShadow: 4px 4px 0 rgba(44,62,80,0.1)`, `rounded-xl`
+- Primary buttons: `shadow-[4px_4px_0_rgba(44,62,80,0.3-0.4)]`
+- Secondary buttons: `shadow-[4px_4px_0_rgba(44,62,80,0.15)]`
+- On dark backgrounds: `rgba(255,255,255,0.08)` for shadows
+
+**Files updated**:
+- Header: `border-b-2 border-foreground/20` (was 3px hard border)
+- HeroWithExplainer: Hero CTA shadow reduced from 100% to 40% opacity
+- HeroSummaryCard: Full Soft Brutalist treatment
+- FrameworksSection: Full Soft Brutalist treatment
+- Pricing: Cards use Soft Brutalist (was rounded-2xl, shadow-lg)
+- PricingButtons: Offset shadows instead of blur shadows
+- FooterCTAForm: Offset shadow on dark background
+
+**Skill updated**: `.claude/skills/frontend-design/SKILL.md` now documents Soft Brutalist as the Boost project standard.

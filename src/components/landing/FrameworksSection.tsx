@@ -48,7 +48,7 @@ function AARRRContent() {
       <div className="overflow-x-auto mb-6">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b-2 border-foreground">
+            <tr className="border-b-2 border-foreground/20">
               <th className="text-left py-2 pr-4 font-bold text-foreground">Stage</th>
               <th className="text-left py-2 pr-4 font-bold text-foreground">Metric</th>
               <th className="text-left py-2 font-bold text-foreground">Status</th>
@@ -103,7 +103,7 @@ function ICEContent() {
       <div className="space-y-6">
         <div className="border-l-4 border-cta pl-4">
           <div className="flex items-baseline gap-3 mb-1">
-            <span className="font-mono text-xs bg-cta text-white px-2 py-0.5 font-bold">ICE: 28</span>
+            <span className="font-mono text-xs bg-cta text-white px-2 py-0.5 rounded font-bold">ICE: 28</span>
             <h4 className="font-bold text-foreground">Publish This Growth Plan as Content</h4>
           </div>
           <p className="text-foreground/70 text-sm leading-relaxed">
@@ -113,7 +113,7 @@ function ICEContent() {
 
         <div className="border-l-4 border-cta/70 pl-4">
           <div className="flex items-baseline gap-3 mb-1">
-            <span className="font-mono text-xs bg-foreground/10 text-foreground px-2 py-0.5 font-bold">ICE: 26</span>
+            <span className="font-mono text-xs bg-foreground/10 text-foreground px-2 py-0.5 rounded font-bold">ICE: 26</span>
             <h4 className="font-bold text-foreground">Launch on Indie Hackers First</h4>
           </div>
           <p className="text-foreground/70 text-sm leading-relaxed">
@@ -123,7 +123,7 @@ function ICEContent() {
 
         <div className="border-l-4 border-foreground/30 pl-4">
           <div className="flex items-baseline gap-3 mb-1">
-            <span className="font-mono text-xs bg-foreground/10 text-foreground px-2 py-0.5 font-bold">ICE: 25</span>
+            <span className="font-mono text-xs bg-foreground/10 text-foreground px-2 py-0.5 rounded font-bold">ICE: 25</span>
             <h4 className="font-bold text-foreground">Build in Public on Twitter/X</h4>
           </div>
           <p className="text-foreground/70 text-sm leading-relaxed">
@@ -141,7 +141,7 @@ function OutputContent() {
     <>
       <div className="mb-8">
         <h3 className="text-lg font-bold text-foreground mb-3">Stop Doing</h3>
-        <div className="bg-red-50 border-2 border-red-200 p-4">
+        <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4">
           <p className="font-bold text-red-800 mb-1">Building more features before proving distribution</p>
           <p className="text-red-700/80 text-sm">
             The MVP is complete. Every hour on features is an hour not on distribution. Freeze for 30 days.
@@ -153,21 +153,21 @@ function OutputContent() {
         <h3 className="text-lg font-bold text-foreground mb-4">Quick Wins (This Week)</h3>
         <div className="space-y-3">
           <div className="flex gap-3">
-            <span className="font-mono text-xs bg-foreground text-background px-2 py-1 h-fit font-bold">D1-2</span>
+            <span className="font-mono text-xs bg-foreground text-background px-2 py-1 h-fit rounded font-bold">D1-2</span>
             <div>
               <p className="font-semibold text-foreground text-sm">Publish this plan</p>
               <p className="text-foreground/60 text-sm">Create /blog/our-growth-plan, share on Twitter with #buildinpublic</p>
             </div>
           </div>
           <div className="flex gap-3">
-            <span className="font-mono text-xs bg-foreground text-background px-2 py-1 h-fit font-bold">D3-4</span>
+            <span className="font-mono text-xs bg-foreground text-background px-2 py-1 h-fit rounded font-bold">D3-4</span>
             <div>
               <p className="font-semibold text-foreground text-sm">Add founder presence</p>
               <p className="text-foreground/60 text-sm">Photo on landing page, update Twitter bio with link</p>
             </div>
           </div>
           <div className="flex gap-3">
-            <span className="font-mono text-xs bg-foreground text-background px-2 py-1 h-fit font-bold">D5-7</span>
+            <span className="font-mono text-xs bg-foreground text-background px-2 py-1 h-fit rounded font-bold">D5-7</span>
             <div>
               <p className="font-semibold text-foreground text-sm">Launch on Indie Hackers</p>
               <p className="text-foreground/60 text-sm">"We ran our AI growth tool on ourselves" — first paying customers</p>
@@ -304,8 +304,11 @@ export function FrameworksSection() {
                   <p className="text-foreground/60 mt-1 text-sm">{framework.subtitle}</p>
                 </div>
 
-                {/* Content card - brutalist style, NO scroll */}
-                <div className="border-[3px] border-foreground bg-background p-6 lg:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
+                {/* Content card - Soft Brutalist style */}
+                <div
+                  className="border-2 border-foreground/20 bg-white rounded-xl p-6 lg:p-8"
+                  style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)" }}
+                >
                   {renderContent(framework.id)}
                 </div>
               </div>
