@@ -267,9 +267,10 @@ export function extractStructuredOutputFallback(markdown: string): StructuredOut
     const metricsMatch = markdown.match(/## Metrics Dashboard\s*([\s\S]*?)(?=##|$)/i)
     const metrics = metricsMatch ? parseMetricsTable(metricsMatch[1]) : []
 
-    // Extract competitors from "Competitive Landscape" section
-    const competitorsMatch = markdown.match(/## Competitive Landscape\s*([\s\S]*?)(?=##|$)/i)
-    const competitors = competitorsMatch ? parseCompetitorsTable(competitorsMatch[1]) : []
+    // Competitors are extracted by the LLM, not regex
+    // The new schema requires actionable insights (weakness, opportunity, stealThis)
+    // which can't be parsed from markdown - LLM must generate them
+    const competitors: CompetitorItem[] = []
 
     // Extract roadmap
     const roadmapMatch = markdown.match(/## 30-Day Roadmap\s*([\s\S]*?)(?=##|$)/i)
@@ -374,52 +375,6 @@ function parseMetricsTable(content: string): MetricItem[] {
   }
 
   return metrics
-}
-
-/**
- * Parse competitors table from Competitive Landscape section
- */
-function parseCompetitorsTable(content: string): CompetitorItem[] {
-  const competitors: CompetitorItem[] = []
-  const lines = content.split('\n')
-
-  for (const line of lines) {
-    // Skip header and divider rows
-    if (line.startsWith('|--') || (line.includes('Competitor') && line.includes('Approach'))) {
-      continue
-    }
-
-    // Parse table row: | Competitor | Their Approach | Your Advantage |
-    const match = line.match(/^\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|/)
-    if (match) {
-      const name = match[1].trim()
-      // Skip if this looks like a header
-      if (name.toLowerCase() === 'competitor') continue
-
-      // Try to extract traffic from the positioning text
-      const positioningText = match[2].trim()
-      const trafficMatch = positioningText.match(/(\d+(?:\.\d+)?)\s*([KMB])?(?:\/mo)?/i)
-
-      let trafficNumber: number | undefined
-      let traffic = ''
-
-      if (trafficMatch) {
-        const num = parseFloat(trafficMatch[1])
-        const multiplier = trafficMatch[2]?.toUpperCase()
-        trafficNumber = num * (multiplier === 'K' ? 1000 : multiplier === 'M' ? 1000000 : multiplier === 'B' ? 1000000000 : 1)
-        traffic = `${trafficMatch[1]}${trafficMatch[2] || ''}/mo`
-      }
-
-      competitors.push({
-        name,
-        traffic: traffic || 'Unknown',
-        trafficNumber,
-        positioning: positioningText,
-      })
-    }
-  }
-
-  return competitors
 }
 
 /**

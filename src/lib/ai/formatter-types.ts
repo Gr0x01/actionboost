@@ -64,12 +64,19 @@ export type MetricItem = z.infer<typeof MetricSchema>
 
 /**
  * Competitor from "Competitive Landscape" section
+ * Enhanced with actionable insights
  */
 export const CompetitorSchema = z.object({
   name: z.string(),
   traffic: z.string(), // Human-readable: "50K/mo", "1.2M/mo"
   trafficNumber: z.number().optional(), // Numeric for sorting/charting
   positioning: z.string(), // How they position themselves
+  /** Their Achilles heel - where do they fail users? Common complaints? */
+  weakness: z.string().optional(),
+  /** How can the user beat this competitor? What angle should they take? */
+  opportunity: z.string().optional(),
+  /** What does this competitor do well that's worth copying? */
+  stealThis: z.string().optional(),
 })
 
 export type CompetitorItem = z.infer<typeof CompetitorSchema>
@@ -249,6 +256,9 @@ COMPETITOR EXTRACTION RULES:
 - If NO numeric traffic data exists, set traffic to "" (empty string) and omit trafficNumber
 - NEVER put positioning/strategy text in the traffic field
 - "positioning" field is for qualitative info: market position, pricing, differentiators, strategy
+- "weakness" (IMPORTANT): Identify their Achilles heel - where do they fail users? Common complaints? What do they do poorly? Be specific and actionable.
+- "opportunity": Based on their weakness, how can the USER beat this competitor? What angle should they take?
+- "stealThis": What does this competitor do WELL that's worth copying? A specific tactic, feature, or approach.
 
 RESEARCH DATA EXTRACTION (IMPORTANT - include these fields when research data section is provided):
 When a "RESEARCH DATA" section is provided after the strategy document, you MUST extract these additional fields:
@@ -316,8 +326,23 @@ OUTPUT FORMAT:
     { "name": "...", "target": "...", "category": "acquisition" }
   ],
   "competitors": [
-    { "name": "Acme Corp", "traffic": "50K/mo", "trafficNumber": 50000, "positioning": "Premium pricing, enterprise focus" },
-    { "name": "Budget Co", "traffic": "", "positioning": "Low-cost leader, mass market appeal" }
+    {
+      "name": "Acme Corp",
+      "traffic": "50K/mo",
+      "trafficNumber": 50000,
+      "positioning": "Premium pricing, enterprise focus",
+      "weakness": "Complex setup, steep learning curve, users complain about support",
+      "opportunity": "Position as the simpler alternative for growing teams",
+      "stealThis": "Their email onboarding sequence converts well"
+    },
+    {
+      "name": "Budget Co",
+      "traffic": "",
+      "positioning": "Low-cost leader, mass market appeal",
+      "weakness": "Limited features, users outgrow it quickly",
+      "opportunity": "Target users who've outgrown Budget Co but can't afford Acme",
+      "stealThis": "Their pricing page clarity - shows value at each tier"
+    }
   ],
   "currentWeek": 1,
   "roadmapWeeks": [
