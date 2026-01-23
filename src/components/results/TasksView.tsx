@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, RotateCcw } from 'lucide-react'
 import { toast } from 'sonner'
@@ -59,12 +59,10 @@ function formatTime(timeEstimate: string): string {
  */
 function StartHereBanner({
   task,
-  taskIndex,
   onComplete,
   onSkip,
 }: {
   task: DayAction
-  taskIndex: number
   onComplete: () => void
   onSkip: () => void
 }) {
@@ -253,10 +251,9 @@ function TaskItem({
           ? 'border border-foreground/10 bg-foreground/[0.02]'
           : isSkipped
             ? 'border border-foreground/10 bg-foreground/[0.02]'
-            : 'border border-foreground/15 bg-white hover:border-foreground/25 hover:shadow-md'
+            : 'border border-foreground/15 bg-white hover:border-foreground/25'
         }
       `}
-      style={!isCompleted && !isSkipped ? { boxShadow: '0 2px 8px rgba(44, 62, 80, 0.06)' } : undefined}
     >
       {/* Checkbox or status indicator */}
       {!isSkipped ? (
@@ -505,7 +502,7 @@ function CompletedSection({
 }
 
 /**
- * WeekPreview - Collapsed preview for future weeks (Soft Brutalist)
+ * WeekPreview - Collapsed preview for future weeks (Strong Brutalist)
  */
 function WeekPreview({
   week,
@@ -518,12 +515,12 @@ function WeekPreview({
 }) {
   return (
     <div
-      className="border border-foreground/10 rounded-lg overflow-hidden bg-foreground/[0.03]"
-      style={{ boxShadow: '0 2px 8px rgba(44, 62, 80, 0.04)' }}
+      className="border-2 border-foreground rounded-md overflow-hidden bg-white"
+      style={{ boxShadow: '4px 4px 0 rgba(44, 62, 80, 0.15)' }}
     >
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between p-4 hover:bg-foreground/[0.06] transition-colors text-left"
+        className="w-full flex items-center justify-between p-4 hover:bg-foreground/[0.03] transition-colors text-left"
       >
         <div className="flex items-baseline gap-3">
           <span className="font-mono text-sm font-bold uppercase tracking-wide text-foreground/50">
@@ -572,11 +569,95 @@ function WeekPreview({
 }
 
 /**
+ * CompletedWeekPreview - Muted card for finished weeks (Soft style)
+ */
+function CompletedWeekPreview({
+  week,
+  completedCount,
+  totalCount,
+  tasks,
+  isExpanded,
+  onToggle,
+  onRevisit,
+}: {
+  week: RoadmapWeek
+  completedCount: number
+  totalCount: number
+  tasks: Array<{ action: string; completed: boolean }>
+  isExpanded: boolean
+  onToggle: () => void
+  onRevisit: () => void
+}) {
+  return (
+    <div className="border border-foreground/15 rounded-md overflow-hidden bg-foreground/[0.02]">
+      <div className="flex items-center justify-between p-4">
+        <button
+          onClick={onToggle}
+          className="flex items-baseline gap-3 hover:opacity-70 transition-opacity text-left"
+        >
+          <span className="font-mono text-sm font-bold uppercase tracking-wide text-foreground/40">
+            Week {week.week}
+          </span>
+          <span className="font-semibold text-lg text-foreground/50">{week.theme}</span>
+        </button>
+
+        <div className="flex items-center gap-4">
+          <span className="font-mono text-sm text-foreground/40">{completedCount}/{totalCount} done</span>
+          <button
+            onClick={onRevisit}
+            className="text-sm text-foreground/40 hover:text-foreground/60 transition-colors"
+          >
+            Revisit
+          </button>
+          <button
+            onClick={onToggle}
+            className="text-foreground/40 hover:text-foreground/60 transition-colors"
+          >
+            <span className={`transition-transform inline-block ${isExpanded ? 'rotate-180' : ''}`}>
+              &#9662;
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="overflow-hidden"
+          >
+            <div className="px-4 pb-4 border-t border-foreground/10">
+              <ul className="mt-3 space-y-3">
+                {tasks.map((task, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start gap-3 text-base"
+                  >
+                    <span className="text-foreground/30 font-mono text-sm mt-0.5">{i + 1}.</span>
+                    <span className={task.completed ? 'text-foreground/40 line-through decoration-foreground/20' : 'text-foreground/50'}>
+                      {task.action}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+/**
  * TasksView - Main component for Tasks tab
  */
 export function TasksView({ runId, structuredOutput }: TasksViewProps) {
   const [taskStates, setTaskStates] = useState<TaskCompletionState>({})
   const [expandedWeeks, setExpandedWeeks] = useState<Set<number>>(new Set())
+  const [expandedCompletedWeeks, setExpandedCompletedWeeks] = useState<Set<number>>(new Set())
 
   // Persist active week in localStorage (SSR-safe)
   const activeWeekKey = `${runId}-active-week`
@@ -657,6 +738,59 @@ export function TasksView({ runId, structuredOutput }: TasksViewProps) {
       }))
     : legacyRoadmapWeeks.filter(w => w.week > activeWeek)
 
+  // Completed weeks for "Done" section (weeks before active week)
+  // Memoized to avoid reading localStorage on every render
+  const completedWeeksData = useMemo(() => {
+    const weeks: Array<{
+      week: RoadmapWeek
+      tasks: Array<{ action: string; completed: boolean }>
+      completedCount: number
+      totalCount: number
+    }> = []
+
+    for (let weekNum = 1; weekNum < activeWeek; weekNum++) {
+      const weekStorageKey = `${runId}-week-${weekNum}`
+      const weekTaskStates = getTaskStates(weekStorageKey)
+
+      let weekData: RoadmapWeek
+      let taskActions: string[]
+
+      if (hasDetailedWeeks) {
+        const detailed = detailedWeeks?.find(w => w.week === weekNum)
+        if (detailed) {
+          weekData = { week: weekNum, theme: detailed.theme, tasks: detailed.days.map(d => d.action) }
+          taskActions = detailed.days.map(d => d.action)
+        } else continue
+      } else {
+        if (weekNum === 1) {
+          weekData = { week: 1, theme: '', tasks: week1Days.map(d => d.action) }
+          taskActions = week1Days.map(d => d.action)
+        } else {
+          const legacy = legacyRoadmapWeeks?.find(w => w.week === weekNum)
+          if (legacy) {
+            weekData = legacy
+            taskActions = legacy.tasks
+          } else continue
+        }
+      }
+
+      const tasks = taskActions.map((action, i) => ({
+        action,
+        completed: weekTaskStates[i] === 'completed',
+      }))
+      const completedCount = tasks.filter(t => t.completed).length
+
+      weeks.push({
+        week: weekData,
+        tasks,
+        completedCount,
+        totalCount: tasks.length,
+      })
+    }
+
+    return weeks
+  }, [activeWeek, runId, hasDetailedWeeks, detailedWeeks, legacyRoadmapWeeks, week1Days])
+
   // Storage key based on active week
   const storageKey = `${runId}-week-${activeWeek}`
 
@@ -729,6 +863,18 @@ export function TasksView({ runId, structuredOutput }: TasksViewProps) {
     })
   }
 
+  const toggleCompletedWeekExpanded = (weekNum: number) => {
+    setExpandedCompletedWeeks(prev => {
+      const next = new Set(prev)
+      if (next.has(weekNum)) {
+        next.delete(weekNum)
+      } else {
+        next.add(weekNum)
+      }
+      return next
+    })
+  }
+
   return (
     <div className="space-y-8">
       {/* Progress bar */}
@@ -750,7 +896,6 @@ export function TasksView({ runId, structuredOutput }: TasksViewProps) {
             <StartHereBanner
               key={nextPendingIndex}
               task={nextTask}
-              taskIndex={nextPendingIndex}
               onComplete={() => handleComplete(nextPendingIndex)}
               onSkip={() => handleSkip(nextPendingIndex)}
             />
@@ -772,6 +917,18 @@ export function TasksView({ runId, structuredOutput }: TasksViewProps) {
             onReset={handleReset}
             excludeIndex={nextPendingIndex}
           />
+
+          {/* Skip to next week option */}
+          {nextWeekNumber && (
+            <div className="mt-6 text-center">
+              <button
+                onClick={handleStartNextWeek}
+                className="text-sm text-foreground/40 hover:text-foreground/60 transition-colors"
+              >
+                Move to Week {nextWeekNumber}
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -802,6 +959,29 @@ export function TasksView({ runId, structuredOutput }: TasksViewProps) {
                 week={week}
                 isExpanded={expandedWeeks.has(week.week)}
                 onToggle={() => toggleWeekExpanded(week.week)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Completed weeks (collapsed) */}
+      {completedWeeksData.length > 0 && (
+        <div className="mt-12">
+          <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-foreground/50 mb-4">
+            Done
+          </h3>
+          <div className="space-y-3">
+            {completedWeeksData.map((data) => (
+              <CompletedWeekPreview
+                key={data.week.week}
+                week={data.week}
+                tasks={data.tasks}
+                completedCount={data.completedCount}
+                totalCount={data.totalCount}
+                isExpanded={expandedCompletedWeeks.has(data.week.week)}
+                onToggle={() => toggleCompletedWeekExpanded(data.week.week)}
+                onRevisit={() => setActiveWeek(data.week.week)}
               />
             ))}
           </div>
