@@ -11,7 +11,7 @@ import { Roadmap } from "./sections/Roadmap";
 import { SectionCard } from "./SectionCard";
 import { MarkdownContent } from "./MarkdownContent";
 import { InsightsView } from "./InsightsView";
-import { DashboardView } from "./DashboardView";
+import { TasksView } from "./TasksView";
 
 interface ResultsContentProps {
   strategy: ParsedStrategy;
@@ -41,7 +41,7 @@ function DashboardLayout({
       {activeTab === 'insights' ? (
         <InsightsView strategy={strategy} structuredOutput={structuredOutput} />
       ) : (
-        <DashboardView runId={runId} structuredOutput={structuredOutput} />
+        <TasksView runId={runId} structuredOutput={structuredOutput} />
       )}
     </div>
   );

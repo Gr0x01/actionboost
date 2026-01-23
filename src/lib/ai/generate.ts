@@ -379,8 +379,8 @@ Be direct but constructive.
 
 Sort by ICE score (highest first).
 
-## This Week
-Day-by-day quick wins for the next 7 days:
+## Week 1: [Theme]
+Day-by-day quick wins for days 1-7:
 
 | Day | Action | Time | Success Metric |
 |-----|--------|------|----------------|
@@ -392,28 +392,46 @@ Day-by-day quick wins for the next 7 days:
 | 6   | ... | ... | ... |
 | 7   | ... | ... | ... |
 
+## Week 2: [Theme]
+Day-by-day actions for days 8-14:
+
+| Day | Action | Time | Success Metric |
+|-----|--------|------|----------------|
+| 8   | [Specific action] | X hr | [How to know it worked] |
+| 9   | ... | ... | ... |
+| 10  | ... | ... | ... |
+| 11  | ... | ... | ... |
+| 12  | ... | ... | ... |
+| 13  | ... | ... | ... |
+| 14  | ... | ... | ... |
+
+## Week 3: [Theme]
+Day-by-day actions for days 15-21:
+
+| Day | Action | Time | Success Metric |
+|-----|--------|------|----------------|
+| 15  | [Specific action] | X hr | [How to know it worked] |
+| 16  | ... | ... | ... |
+| 17  | ... | ... | ... |
+| 18  | ... | ... | ... |
+| 19  | ... | ... | ... |
+| 20  | ... | ... | ... |
+| 21  | ... | ... | ... |
+
+## Week 4: [Theme]
+Day-by-day actions for days 22-28:
+
+| Day | Action | Time | Success Metric |
+|-----|--------|------|----------------|
+| 22  | [Specific action] | X hr | [How to know it worked] |
+| 23  | ... | ... | ... |
+| 24  | ... | ... | ... |
+| 25  | ... | ... | ... |
+| 26  | ... | ... | ... |
+| 27  | ... | ... | ... |
+| 28  | ... | ... | ... |
+
 Be extremely specific (not "improve onboarding" but "add welcome email that triggers 1 hour after signup").
-
-## 30-Day Roadmap
-Week-by-week priorities:
-
-### Week 1: [Theme]
-- [ ] Task 1
-- [ ] Task 2
-- [ ] Task 3
-
-### Week 2: [Theme]
-- [ ] Task 1
-- [ ] Task 2
-- [ ] Task 3
-
-### Week 3: [Theme]
-- [ ] Task 1
-- [ ] Task 2
-
-### Week 4: [Theme]
-- [ ] Task 1
-- [ ] Task 2
 
 ## Metrics Dashboard
 Track progress with AARRR-aligned metrics:
@@ -442,9 +460,8 @@ Make templates specific to their product and situation, not generic.
 
 ## Content Formatting Rules
 
-- **Tables**: Use for comparative data (channels, metrics, competitors). Keep to 4-5 columns max.
+- **Tables**: Use for comparative data (channels, metrics, competitors, weekly actions). Keep to 4-5 columns max.
 - **Code blocks**: ONLY for Content Templates section. Never for explanatory text.
-- **Checkboxes**: Only for 30-Day Roadmap tasks (- [ ] format).
 - **Bold**: Use **bold** for emphasis on key terms and table headers.`
 
 // =============================================================================
@@ -853,9 +870,8 @@ The user's feedback is NARROW and SPECIFIC. Most sections should be copied uncha
 - ## Channel Strategy (copy unless feedback is about channels)
 - ## Stop Doing (copy unless feedback says "actually I should keep doing X")
 - ## Start Doing (copy unless feedback changes priorities or adds constraints)
-- ## This Week (update to reflect any changed recommendations)
+- ## Week 1 through ## Week 4 (update to reflect any changed recommendations)
 - ## Content Ideas (copy unless feedback is about content)
-- ## 30-Day Roadmap (update to reflect any changed recommendations)
 - ## Metrics Dashboard (copy unless feedback changes goals)
 
 **EXAMPLE of correct behavior:**

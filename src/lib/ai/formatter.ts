@@ -8,6 +8,7 @@ import {
   type StructuredOutput,
   type PartialStructuredOutput,
   type DayAction,
+  type DetailedWeek,
   type PriorityItem,
   type MetricItem,
   type CompetitorItem,
@@ -215,9 +216,35 @@ export function extractStructuredOutputFallback(markdown: string): StructuredOut
   try {
     const now = new Date().toISOString()
 
-    // Extract "This Week" section
-    const thisWeekMatch = markdown.match(/## This Week\s*([\s\S]*?)(?=##|$)/i)
-    const thisWeekDays = thisWeekMatch ? parseThisWeekTable(thisWeekMatch[1]) : []
+    // Try new "## Week X:" format first, then fallback to "## This Week"
+    const weekPattern = /## Week (\d+):\s*([^\n]*)\s*([\s\S]*?)(?=## Week \d+:|## [A-Z]|$)/gi
+    const weekMatches = [...markdown.matchAll(weekPattern)]
+
+    const weeks: DetailedWeek[] = []
+
+    if (weekMatches.length > 0) {
+      // New format: extract all weeks
+      for (const match of weekMatches) {
+        const weekNum = parseInt(match[1], 10)
+        const theme = match[2].trim()
+        const content = match[3]
+        const days = parseThisWeekTable(content)
+        if (days.length > 0) {
+          weeks.push({ week: weekNum, theme, days })
+        }
+      }
+    }
+
+    // Get Week 1 data for thisWeek (backward compatibility)
+    const week1 = weeks.find(w => w.week === 1)
+    let thisWeekDays: DayAction[] = week1?.days || []
+
+    // Fallback to legacy "## This Week" if no Week 1 found
+    if (thisWeekDays.length === 0) {
+      const thisWeekMatch = markdown.match(/## This Week\s*([\s\S]*?)(?=##|$)/i)
+      thisWeekDays = thisWeekMatch ? parseThisWeekTable(thisWeekMatch[1]) : []
+    }
+
     const totalHours = thisWeekDays.reduce((sum, day) => {
       const hourMatch = day.timeEstimate.match(/(\d+(?:\.\d+)?)\s*(?:hr|hour)/i)
       return sum + (hourMatch ? parseFloat(hourMatch[1]) : 0)
@@ -266,6 +293,8 @@ export function extractStructuredOutputFallback(markdown: string): StructuredOut
       roadmapWeeks,
       extractedAt: now,
       formatterVersion: '1.0',
+      // Include detailed weeks if we extracted them
+      weeks: weeks.length > 0 ? weeks : undefined,
     }
 
     // Validate even the fallback output
@@ -419,7 +448,9 @@ function normalizePartialOutput(partial: PartialStructuredOutput): StructuredOut
     roadmapWeeks: partial.roadmapWeeks || [],
     extractedAt: partial.extractedAt,
     formatterVersion: '1.0',
-    // NEW: Research-backed fields (pass through if present)
+    // Detailed weeks array
+    weeks: partial.weeks,
+    // Research-backed fields (pass through if present)
     researchSnapshot: partial.researchSnapshot,
     competitiveComparison: partial.competitiveComparison,
     keywordOpportunities: partial.keywordOpportunities,

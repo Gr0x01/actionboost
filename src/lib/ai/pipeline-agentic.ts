@@ -578,8 +578,7 @@ After you have what you need, write the full strategy:
 - Channel Strategy (table + explanations)
 - Stop Doing (3-5 items)
 - Start Doing (5-8 with ICE scores: Impact + Confidence + Ease, each 1-10)
-- This Week (7-day action table)
-- 30-Day Roadmap (weekly themes with checkboxes)
+- Week 1 through Week 4 (each with 7-day action table: Day | Action | Time | Success Metric)
 - Metrics Dashboard (AARRR metrics table)
 - Content Templates (2-3 ready-to-use)
 

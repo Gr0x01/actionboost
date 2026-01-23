@@ -5,16 +5,27 @@ import { z } from 'zod'
 // =============================================================================
 
 /**
- * Day action item for "This Week" section
+ * Day action item for weekly tasks
  */
 export const DayActionSchema = z.object({
-  day: z.number().min(1).max(7),
+  day: z.number().min(1).max(28),
   action: z.string(),
   timeEstimate: z.string(),
   successMetric: z.string(),
 })
 
 export type DayAction = z.infer<typeof DayActionSchema>
+
+/**
+ * Detailed week with theme and day-by-day actions
+ */
+export const DetailedWeekSchema = z.object({
+  week: z.number().min(1).max(4),
+  theme: z.string(),
+  days: z.array(DayActionSchema),
+})
+
+export type DetailedWeek = z.infer<typeof DetailedWeekSchema>
 
 /**
  * ICE-scored priority item from "Start Doing" section
@@ -154,7 +165,7 @@ export type PositioningData = z.infer<typeof PositioningDataSchema>
  * Full structured output schema
  */
 export const StructuredOutputSchema = z.object({
-  // Existing fields
+  // Legacy fields (kept for backward compatibility)
   thisWeek: z.object({
     days: z.array(DayActionSchema),
     totalHours: z.number().optional(),
@@ -167,7 +178,10 @@ export const StructuredOutputSchema = z.object({
   extractedAt: z.string(),
   formatterVersion: z.literal('1.0'),
 
-  // NEW: Research-backed fields (all optional for backward compatibility)
+  // NEW: Detailed weeks array with full task data for all 4 weeks
+  weeks: z.array(DetailedWeekSchema).optional(),
+
+  // Research-backed fields (all optional for backward compatibility)
   researchSnapshot: ResearchSnapshotSchema.optional(),
   competitiveComparison: CompetitiveComparisonSchema.optional(),
   keywordOpportunities: KeywordOpportunitySchema.optional(),
@@ -193,7 +207,10 @@ export const PartialStructuredOutputSchema = z.object({
   extractedAt: z.string(),
   formatterVersion: z.literal('1.0'),
 
-  // NEW: Research-backed fields (all optional)
+  // Detailed weeks array
+  weeks: z.array(DetailedWeekSchema).optional(),
+
+  // Research-backed fields (all optional)
   researchSnapshot: ResearchSnapshotSchema.optional(),
   competitiveComparison: CompetitiveComparisonSchema.optional(),
   keywordOpportunities: KeywordOpportunitySchema.optional(),
@@ -215,9 +232,16 @@ IMPORTANT RULES:
 3. If a section is missing or empty, use an empty array []
 4. For traffic numbers, parse things like "50K" as 50000, "1.2M" as 1200000
 5. Return ONLY valid JSON - no markdown, no explanation, no code blocks
-6. Extract ALL weeks from the 30-Day Roadmap (typically 4 weeks) - do not stop at week 1
-7. Extract ALL days from the This Week table (typically 7 days)
+6. Extract ALL 4 weeks from the Week sections (Week 1, Week 2, Week 3, Week 4)
+7. Extract ALL days from each week's table (7 days per week, 28 total)
 8. Extract ALL priorities from Start Doing section (typically 5-8 items)
+
+WEEK EXTRACTION (CRITICAL):
+- Look for "## Week 1:", "## Week 2:", "## Week 3:", "## Week 4:" sections
+- Each week has a theme in the heading (e.g., "## Week 1: Foundation")
+- Each week has a table with Day | Action | Time | Success Metric columns
+- Extract into the "weeks" array with full detail for all 4 weeks
+- Also populate legacy "thisWeek" with Week 1 data for backward compatibility
 
 COMPETITOR EXTRACTION RULES:
 - "traffic" field is ONLY for numeric monthly visitor counts (e.g., "50K/mo", "1.2M/mo")
@@ -241,11 +265,42 @@ OUTPUT FORMAT:
   "thisWeek": {
     "days": [
       { "day": 1, "action": "...", "timeEstimate": "2 hrs", "successMetric": "..." },
-      { "day": 2, "action": "...", "timeEstimate": "1 hr", "successMetric": "..." },
-      { "day": 3, "action": "...", "timeEstimate": "3 hrs", "successMetric": "..." }
+      { "day": 2, "action": "...", "timeEstimate": "1 hr", "successMetric": "..." }
     ],
     "totalHours": 10
   },
+  "weeks": [
+    {
+      "week": 1,
+      "theme": "Foundation",
+      "days": [
+        { "day": 1, "action": "...", "timeEstimate": "2 hrs", "successMetric": "..." },
+        { "day": 2, "action": "...", "timeEstimate": "1 hr", "successMetric": "..." }
+      ]
+    },
+    {
+      "week": 2,
+      "theme": "Scale",
+      "days": [
+        { "day": 8, "action": "...", "timeEstimate": "2 hrs", "successMetric": "..." },
+        { "day": 9, "action": "...", "timeEstimate": "1 hr", "successMetric": "..." }
+      ]
+    },
+    {
+      "week": 3,
+      "theme": "Optimize",
+      "days": [
+        { "day": 15, "action": "...", "timeEstimate": "2 hrs", "successMetric": "..." }
+      ]
+    },
+    {
+      "week": 4,
+      "theme": "Expand",
+      "days": [
+        { "day": 22, "action": "...", "timeEstimate": "1 hr", "successMetric": "..." }
+      ]
+    }
+  ],
   "topPriorities": [
     {
       "rank": 1,
@@ -266,10 +321,8 @@ OUTPUT FORMAT:
   ],
   "currentWeek": 1,
   "roadmapWeeks": [
-    { "week": 1, "theme": "Foundation", "tasks": ["Task 1", "Task 2", "Task 3"] },
-    { "week": 2, "theme": "Scale", "tasks": ["Task 1", "Task 2"] },
-    { "week": 3, "theme": "Optimize", "tasks": ["Task 1", "Task 2"] },
-    { "week": 4, "theme": "Expand", "tasks": ["Task 1", "Task 2"] }
+    { "week": 1, "theme": "Foundation", "tasks": ["Task 1", "Task 2"] },
+    { "week": 2, "theme": "Scale", "tasks": ["Task 1", "Task 2"] }
   ],
   "extractedAt": "2024-01-22T12:00:00Z",
   "formatterVersion": "1.0",

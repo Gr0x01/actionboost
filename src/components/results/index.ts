@@ -15,6 +15,7 @@ export { PlanSwitcher } from "./PlanSwitcher";
 export { ExportActions } from "./ExportActions";
 export { InsightsView } from "./InsightsView";
 export { DashboardView } from "./DashboardView";
+export { TasksView } from "./TasksView";
 
 // Section components
 export { ExecutiveSummary } from "./sections/ExecutiveSummary";

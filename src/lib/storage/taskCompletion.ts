@@ -2,7 +2,7 @@
  * localStorage helpers for task completion tracking
  *
  * Storage key format: actionboost-tasks-{runId}
- * Value format: { [taskIndex]: boolean }
+ * Value format: { [taskIndex]: TaskStatus }
  *
  * Note: We use task array index as the key (not day number) because
  * multiple tasks can exist on the same day.
@@ -10,12 +10,32 @@
 
 const STORAGE_PREFIX = 'actionboost-tasks-'
 
-export type TaskCompletionState = Record<number, boolean>
+export type TaskStatus = 'pending' | 'completed' | 'skipped'
+
+// Legacy format (boolean) for backward compatibility
+type LegacyTaskState = Record<number, boolean>
+
+// New format with explicit status
+export type TaskCompletionState = Record<number, TaskStatus>
 
 /**
- * Get completed tasks for a run
+ * Migrate legacy boolean format to new status format
  */
-export function getCompletedTasks(runId: string): TaskCompletionState {
+function migrateLegacyState(legacy: LegacyTaskState): TaskCompletionState {
+  const migrated: TaskCompletionState = {}
+  for (const [key, value] of Object.entries(legacy)) {
+    const numKey = Number(key)
+    if (!isNaN(numKey)) {
+      migrated[numKey] = value ? 'completed' : 'pending'
+    }
+  }
+  return migrated
+}
+
+/**
+ * Get task states for a run (handles legacy boolean format migration)
+ */
+export function getTaskStates(runId: string): TaskCompletionState {
   if (typeof window === 'undefined') return {}
 
   try {
@@ -24,17 +44,31 @@ export function getCompletedTasks(runId: string): TaskCompletionState {
 
     const parsed = JSON.parse(stored)
 
-    // Validate the parsed data is an object with boolean values
+    // Validate the parsed data is an object
     if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
       return {}
     }
 
-    // Filter to only valid number keys with boolean values
+    // Check if this is legacy format (boolean values) or new format (string values)
+    const firstValue = Object.values(parsed)[0]
+    if (typeof firstValue === 'boolean') {
+      // Migrate legacy format
+      const migrated = migrateLegacyState(parsed as LegacyTaskState)
+      // Save migrated format back to storage
+      try {
+        localStorage.setItem(`${STORAGE_PREFIX}${runId}`, JSON.stringify(migrated))
+      } catch {
+        // Ignore save errors during migration
+      }
+      return migrated
+    }
+
+    // New format - validate and filter
     const validated: TaskCompletionState = {}
     for (const [key, value] of Object.entries(parsed)) {
       const numKey = Number(key)
-      if (!isNaN(numKey) && typeof value === 'boolean') {
-        validated[numKey] = value
+      if (!isNaN(numKey) && (value === 'pending' || value === 'completed' || value === 'skipped')) {
+        validated[numKey] = value as TaskStatus
       }
     }
 
@@ -45,60 +79,102 @@ export function getCompletedTasks(runId: string): TaskCompletionState {
 }
 
 /**
- * Toggle task completion for a specific task index
+ * @deprecated Use getTaskStates instead
+ */
+export function getCompletedTasks(runId: string): TaskCompletionState {
+  return getTaskStates(runId)
+}
+
+/**
+ * Set task status for a specific task index
+ */
+export function setTaskStatus(runId: string, taskIndex: number, status: TaskStatus): TaskCompletionState {
+  if (typeof window === 'undefined') return {}
+
+  const current = getTaskStates(runId)
+  const updated = {
+    ...current,
+    [taskIndex]: status,
+  }
+
+  try {
+    localStorage.setItem(`${STORAGE_PREFIX}${runId}`, JSON.stringify(updated))
+  } catch (err) {
+    console.warn('[TaskCompletion] Failed to save:', err)
+  }
+
+  return updated
+}
+
+/**
+ * Complete a task
+ */
+export function completeTask(runId: string, taskIndex: number): TaskCompletionState {
+  return setTaskStatus(runId, taskIndex, 'completed')
+}
+
+/**
+ * Skip a task (mark as "not right now")
+ */
+export function skipTask(runId: string, taskIndex: number): TaskCompletionState {
+  return setTaskStatus(runId, taskIndex, 'skipped')
+}
+
+/**
+ * Reset a task back to pending
+ */
+export function resetTask(runId: string, taskIndex: number): TaskCompletionState {
+  return setTaskStatus(runId, taskIndex, 'pending')
+}
+
+/**
+ * Toggle task completion (pending <-> completed)
  */
 export function toggleTaskCompletion(runId: string, taskIndex: number): TaskCompletionState {
   if (typeof window === 'undefined') return {}
 
-  const current = getCompletedTasks(runId)
-  const updated = {
-    ...current,
-    [taskIndex]: !current[taskIndex],
-  }
+  const current = getTaskStates(runId)
+  const currentStatus = current[taskIndex] ?? 'pending'
+  const newStatus: TaskStatus = currentStatus === 'completed' ? 'pending' : 'completed'
 
-  try {
-    localStorage.setItem(`${STORAGE_PREFIX}${runId}`, JSON.stringify(updated))
-  } catch (err) {
-    console.warn('[TaskCompletion] Failed to save:', err)
-  }
-
-  return updated
+  return setTaskStatus(runId, taskIndex, newStatus)
 }
 
 /**
- * Set task completion for a specific task index
+ * @deprecated Use setTaskStatus instead
  */
 export function setTaskCompletion(runId: string, taskIndex: number, completed: boolean): TaskCompletionState {
-  if (typeof window === 'undefined') return {}
-
-  const current = getCompletedTasks(runId)
-  const updated = {
-    ...current,
-    [taskIndex]: completed,
-  }
-
-  try {
-    localStorage.setItem(`${STORAGE_PREFIX}${runId}`, JSON.stringify(updated))
-  } catch (err) {
-    console.warn('[TaskCompletion] Failed to save:', err)
-  }
-
-  return updated
+  return setTaskStatus(runId, taskIndex, completed ? 'completed' : 'pending')
 }
 
 /**
- * Get completion count for a run
+ * Get task counts for a run
+ */
+export function getTaskCounts(runId: string, totalTasks: number): {
+  completed: number
+  skipped: number
+  pending: number
+  total: number
+} {
+  const tasks = getTaskStates(runId)
+  const completed = Object.values(tasks).filter(s => s === 'completed').length
+  const skipped = Object.values(tasks).filter(s => s === 'skipped').length
+  const pending = totalTasks - completed - skipped
+  return { completed, skipped, pending, total: totalTasks }
+}
+
+/**
+ * @deprecated Use getTaskCounts instead
  */
 export function getCompletionCount(runId: string, totalDays: number): { completed: number; total: number } {
-  const tasks = getCompletedTasks(runId)
-  const completed = Object.values(tasks).filter(Boolean).length
-  return { completed, total: totalDays }
+  const { completed, total } = getTaskCounts(runId, totalDays)
+  return { completed, total }
 }
 
 /**
- * Clear all task completions for a run
+ * Clear all task states for a run
  */
-export function clearTaskCompletions(runId: string): void {
+export function clearTaskStates(runId: string): void {
   if (typeof window === 'undefined') return
 
   try {
@@ -106,4 +182,27 @@ export function clearTaskCompletions(runId: string): void {
   } catch (err) {
     console.warn('[TaskCompletion] Failed to clear:', err)
   }
+}
+
+/**
+ * @deprecated Use clearTaskStates instead
+ */
+export function clearTaskCompletions(runId: string): void {
+  clearTaskStates(runId)
+}
+
+/**
+ * Get the index of the next actionable task (first pending task that's not skipped)
+ */
+export function getNextTaskIndex(runId: string, totalTasks: number): number | null {
+  const states = getTaskStates(runId)
+
+  for (let i = 0; i < totalTasks; i++) {
+    const status = states[i] ?? 'pending'
+    if (status === 'pending') {
+      return i
+    }
+  }
+
+  return null // All tasks completed or skipped
 }
