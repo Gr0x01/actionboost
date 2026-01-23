@@ -55,16 +55,11 @@ export function CommandCenter({
 
   return (
     <section className="scroll-mt-32">
-      <div
-        className="rounded-xl bg-white p-6 lg:p-8"
-        style={{
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.06)',
-        }}
-      >
+      <div className="rounded-2xl border-[3px] border-foreground bg-background p-6 lg:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
         {/* Header with week navigation */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               {/* Week navigation - only show if more than 1 week */}
               {totalWeeks > 1 && (
                 <button
@@ -73,19 +68,21 @@ export function CommandCenter({
                     if (prevWeeks.length > 0) setSelectedWeek(Math.max(...prevWeeks))
                   }}
                   disabled={selectedWeek === Math.min(...availableWeeks)}
-                  className="p-2.5 rounded-lg text-foreground/50 hover:text-foreground hover:bg-foreground/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  className="p-1.5 rounded-lg border border-foreground/20 hover:border-foreground/40 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                   aria-label="Previous week"
                 >
-                  <ChevronLeft className="w-5 h-5" />
+                  <ChevronLeft className="w-4 h-4" />
                 </button>
               )}
 
-              <h2 className="text-2xl lg:text-3xl font-bold text-foreground tracking-tight">
-                Week {selectedWeek}
+              <div className="flex items-baseline gap-2">
+                <h2 className="text-2xl lg:text-3xl font-bold text-foreground tracking-tight">
+                  Week {selectedWeek}
+                </h2>
                 {totalWeeks > 1 && (
-                  <span className="text-foreground/30 font-normal text-lg ml-2">of {totalWeeks}</span>
+                  <span className="text-foreground/50 text-sm font-medium">of {totalWeeks}</span>
                 )}
-              </h2>
+              </div>
 
               {totalWeeks > 1 && (
                 <button
@@ -94,40 +91,46 @@ export function CommandCenter({
                     if (nextWeeks.length > 0) setSelectedWeek(Math.min(...nextWeeks))
                   }}
                   disabled={selectedWeek === Math.max(...availableWeeks)}
-                  className="p-2.5 rounded-lg text-foreground/50 hover:text-foreground hover:bg-foreground/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  className="p-1.5 rounded-lg border border-foreground/20 hover:border-foreground/40 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                   aria-label="Next week"
                 >
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-4 h-4" />
                 </button>
               )}
             </div>
 
             <p className="text-foreground/60 text-sm mt-1">
-              {isWeek1 ? "Here's what to focus on" : 'What to tackle this week'}
+              {isWeek1
+                ? 'Your action plan for the next 7 days'
+                : 'Strategic milestones for this week'}
             </p>
           </div>
 
-          {/* Progress summary - stat blocks */}
-          <div className="flex items-center gap-6">
+          {/* Progress summary */}
+          <div className="flex items-center gap-4">
             <div className="text-right">
-              <p className="text-3xl font-bold text-foreground">
-                {completedCount}<span className="text-foreground/30 font-normal">/</span>{totalTasks}
+              <p className="font-mono text-2xl font-bold text-foreground">
+                {completedCount}/{totalTasks}
               </p>
-              <p className="text-foreground/50 text-xs">done</p>
+              <p className="text-foreground/50 text-xs uppercase tracking-wider">
+                Tasks done
+              </p>
             </div>
             {isWeek1 && totalHours && (
-              <div className="text-right">
-                <p className="text-3xl font-bold text-foreground">
-                  {totalHours}<span className="text-foreground/30 font-normal text-lg">h</span>
+              <div className="text-right border-l border-foreground/20 pl-4">
+                <p className="font-mono text-2xl font-bold text-foreground">
+                  {totalHours}h
                 </p>
-                <p className="text-foreground/50 text-xs">this week</p>
+                <p className="text-foreground/50 text-xs uppercase tracking-wider">
+                  Est. time
+                </p>
               </div>
             )}
           </div>
         </div>
 
         {/* Progress bar */}
-        <div className="h-1.5 bg-foreground/[0.06] rounded-full mb-6 overflow-hidden">
+        <div className="h-2 bg-foreground/10 rounded-full mb-6 overflow-hidden">
           <div
             className="h-full bg-cta transition-all duration-300 ease-out rounded-full"
             style={{ width: `${progressPercent}%` }}
@@ -144,41 +147,64 @@ export function CommandCenter({
                 <button
                   key={index}
                   onClick={() => handleToggle(index)}
-                  className="group flex-shrink-0 w-[260px] sm:w-[280px] snap-start flex flex-col rounded-2xl bg-white p-5 text-left transition-all active:scale-[0.98]"
-                  style={{
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04)',
-                  }}
+                  className={`
+                    group flex-shrink-0 w-[280px] sm:w-[300px] snap-start
+                    min-h-[140px] flex flex-col rounded-xl
+                    border-2 p-4 text-left
+                    transition-all duration-150
+                    ${isCompleted
+                      ? 'border-cta/50 bg-cta/5'
+                      : 'border-foreground bg-background'
+                    }
+                    ${!isCompleted && 'hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)]'}
+                    active:shadow-none active:translate-y-0.5
+                  `}
                 >
-                  {/* Day label + checkbox */}
+                  {/* Day badge + checkbox */}
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-medium text-foreground/40 uppercase tracking-wide">
-                      Day {day.day}
+                    <span className={`
+                      font-mono text-xs px-2 py-1 font-bold
+                      ${isCompleted
+                        ? 'bg-cta text-white'
+                        : 'bg-foreground text-background'
+                      }
+                    `}>
+                      DAY {day.day}
                     </span>
 
                     <div className={`
-                      w-6 h-6 rounded-full flex items-center justify-center transition-colors
+                      w-6 h-6 rounded-md border-2 flex items-center justify-center
+                      transition-colors duration-150
                       ${isCompleted
-                        ? 'bg-cta'
-                        : 'bg-foreground/[0.06] group-hover:bg-foreground/10'
+                        ? 'border-cta bg-cta'
+                        : 'border-foreground/30 bg-transparent'
                       }
                     `}>
-                      {isCompleted && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
+                      {isCompleted && <Check className="w-4 h-4 text-white" strokeWidth={3} />}
                     </div>
                   </div>
 
                   {/* Action */}
                   <p className={`
-                    font-semibold text-[15px] leading-snug mb-3 line-clamp-3 flex-1
-                    ${isCompleted ? 'text-foreground/40 line-through' : 'text-foreground'}
+                    font-semibold text-sm leading-snug mb-2 line-clamp-2 flex-1
+                    ${isCompleted ? 'text-foreground/60 line-through' : 'text-foreground'}
                   `}>
                     {day.action}
                   </p>
 
-                  {/* Time estimate */}
-                  <div className="mt-auto">
-                    <span className="text-xs text-foreground/40">
-                      {isCompleted ? 'Done' : `~${day.timeEstimate}`}
-                    </span>
+                  {/* Time estimate + success metric on hover */}
+                  <div className="mt-auto text-xs text-foreground/50">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono bg-foreground/5 px-1.5 py-0.5 rounded">
+                        {day.timeEstimate}
+                      </span>
+                      <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-foreground/40">
+                        Deliverable ↓
+                      </span>
+                    </div>
+                    <p className="mt-1.5 text-foreground/60 opacity-0 max-h-0 group-hover:opacity-100 group-hover:max-h-20 transition-all duration-200 overflow-hidden">
+                      {day.successMetric}
+                    </p>
                   </div>
                 </button>
               )
@@ -188,60 +214,71 @@ export function CommandCenter({
 
         {/* Weeks 2-4: Milestone cards (horizontal scroll like Week 1) */}
         {!isWeek1 && roadmapWeek && (
-          <div className="flex gap-3 overflow-x-auto pb-2 -mx-2 px-2 snap-x snap-mandatory scrollbar-hide">
-            {roadmapWeek.tasks.map((task, index) => {
-              const isCompleted = completedTasks[index] ?? false
+          <div>
+            {/* Horizontal milestone cards */}
+            <div className="flex gap-3 overflow-x-auto pb-2 -mx-2 px-2 snap-x snap-mandatory scrollbar-hide">
+              {roadmapWeek.tasks.map((task, index) => {
+                const isCompleted = completedTasks[index] ?? false
 
-              return (
-                <button
-                  key={index}
-                  onClick={() => handleToggle(index)}
-                  className="group flex-shrink-0 w-[260px] sm:w-[280px] snap-start flex flex-col rounded-2xl bg-white p-5 text-left transition-all active:scale-[0.98]"
-                  style={{
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04)',
-                  }}
-                >
-                  {/* Milestone label + checkbox */}
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-medium text-foreground/40 uppercase tracking-wide">
-                      Milestone {index + 1}
-                    </span>
-
-                    <div className={`
-                      w-6 h-6 rounded-full flex items-center justify-center transition-colors
+                return (
+                  <button
+                    key={index}
+                    onClick={() => handleToggle(index)}
+                    className={`
+                      flex-shrink-0 w-[280px] sm:w-[300px] snap-start
+                      min-h-[140px] flex flex-col rounded-xl
+                      border-2 p-4 text-left
+                      transition-all duration-150
                       ${isCompleted
-                        ? 'bg-cta'
-                        : 'bg-foreground/[0.06] group-hover:bg-foreground/10'
+                        ? 'border-cta/50 bg-cta/5'
+                        : 'border-foreground bg-background'
                       }
-                    `}>
-                      {isCompleted && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
+                      ${!isCompleted && 'hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)]'}
+                      active:shadow-none active:translate-y-0.5
+                    `}
+                  >
+                    {/* Milestone badge + checkbox */}
+                    <div className="flex items-center justify-between mb-3">
+                      <span className={`
+                        font-mono text-xs px-2 py-1 font-bold
+                        ${isCompleted
+                          ? 'bg-cta text-white'
+                          : 'bg-foreground text-background'
+                        }
+                      `}>
+                        MILESTONE {index + 1}
+                      </span>
+
+                      <div className={`
+                        w-6 h-6 rounded-md border-2 flex items-center justify-center
+                        transition-colors duration-150
+                        ${isCompleted
+                          ? 'border-cta bg-cta'
+                          : 'border-foreground/30 bg-transparent'
+                        }
+                      `}>
+                        {isCompleted && <Check className="w-4 h-4 text-white" strokeWidth={3} />}
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Task text */}
-                  <p className={`
-                    font-semibold text-[15px] leading-snug flex-1
-                    ${isCompleted ? 'text-foreground/40 line-through' : 'text-foreground'}
-                  `}>
-                    {task}
-                  </p>
-
-                  {/* Completion indicator */}
-                  {isCompleted && (
-                    <span className="mt-3 text-xs text-foreground/40">Done</span>
-                  )}
-                </button>
-              )
-            })}
+                    {/* Task text */}
+                    <p className={`
+                      font-semibold text-sm leading-snug flex-1
+                      ${isCompleted ? 'text-foreground/50 line-through' : 'text-foreground'}
+                    `}>
+                      {task}
+                    </p>
+                  </button>
+                )
+              })}
+            </div>
           </div>
         )}
 
         {/* Empty state for weeks without data */}
         {!isWeek1 && !roadmapWeek && (
-          <div className="text-center py-12">
-            <p className="text-foreground/40">
-              This week's tasks will appear as you progress.
-            </p>
+          <div className="text-center py-8 text-foreground/50">
+            <p>No tasks defined for Week {selectedWeek} yet.</p>
           </div>
         )}
       </div>

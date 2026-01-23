@@ -1,285 +1,311 @@
-import { FrameworksNav } from "./FrameworksNav";
+"use client";
 
-const FRAMEWORKS = [
+import { useEffect, useState } from "react";
+
+interface Framework {
+  id: "aarrr" | "ice" | "growth";
+  label: string;
+  title: string;
+  subtitle: string;
+  description: string;
+}
+
+const FRAMEWORKS: Framework[] = [
   {
-    id: "leaks",
-    label: "The Analysis",
-    title: "Where You're Losing Customers",
-    subtitle: "Find the leaks in your business",
+    id: "aarrr",
+    label: "The Framework",
+    title: "AARRR",
+    subtitle: "Find where you're leaking growth",
     description:
-      "Every business loses customers somewhere. We find exactly where — and show you how to fix it.",
+      "The pirate metrics framework used by Y Combinator, Reforge, and every serious growth team. We analyze each stage to find where users are dropping off.",
   },
   {
-    id: "competitors",
-    label: "The Research",
-    title: "What Your Competitors Figured Out",
-    subtitle: "Real data, not guesswork",
+    id: "ice",
+    label: "The Prioritization",
+    title: "ICE Scoring",
+    subtitle: "Know exactly where to focus",
     description:
-      "We dig into businesses in your space. Where their traffic comes from. What's actually working for them.",
+      "Every tactic gets scored on Impact, Confidence, and Ease. No more guessing. Just a ranked list of what to do first.",
   },
   {
-    id: "priorities",
-    label: "The Priorities",
-    title: "What to Do First",
-    subtitle: "Ranked by what moves the needle",
+    id: "growth",
+    label: "The Output",
+    title: "Your Action Plan",
+    subtitle: "Real strategy, not generic advice",
     description:
-      "No more guessing. Every tactic scored by impact, confidence, and how easy it is to do. Start at the top.",
-  },
-  {
-    id: "roadmap",
-    label: "The Plan",
-    title: "Your 30-Day Roadmap",
-    subtitle: "Week by week, exactly what to do",
-    description:
-      "Not a list of ideas. Specific actions, specific timelines. A plan you can actually follow.",
+      "Stop Doing, Start Doing, Quick Wins, 30-Day Roadmap. Research on YOUR competitors. A plan you can actually execute.",
   },
 ];
 
-// Customer journey analysis content
-function LeaksContent() {
+// AARRR section content
+function AARRRContent() {
   return (
     <>
       <h3 className="text-lg font-bold text-foreground mb-4">
-        We look at 5 stages of how customers find you and buy from you
+        Your AARRR Funnel Breakdown
       </h3>
 
       <div className="overflow-x-auto mb-6">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b-2 border-foreground/20">
+            <tr className="border-b-2 border-foreground">
               <th className="text-left py-2 pr-4 font-bold text-foreground">Stage</th>
-              <th className="text-left py-2 pr-4 font-bold text-foreground">What it means</th>
-              <th className="text-left py-2 font-bold text-foreground">Example finding</th>
+              <th className="text-left py-2 pr-4 font-bold text-foreground">Metric</th>
+              <th className="text-left py-2 font-bold text-foreground">Status</th>
             </tr>
           </thead>
-          <tbody className="text-sm">
-            <tr className="border-b border-foreground/10">
-              <td className="py-3 pr-4 font-semibold text-foreground">Finding you</td>
-              <td className="py-3 pr-4 text-foreground/70">Are people discovering you exist?</td>
-              <td className="py-3 text-amber-700 italic">&quot;Only 200 visitors/month — need more visibility&quot;</td>
+          <tbody className="font-mono text-sm">
+            <tr className="border-b border-foreground/20">
+              <td className="py-3 pr-4 font-sans font-semibold">Acquisition</td>
+              <td className="py-3 pr-4 text-foreground/70">2,000 visitors/mo</td>
+              <td className="py-3 text-amber-600 font-semibold">Needs work</td>
             </tr>
-            <tr className="border-b border-foreground/10">
-              <td className="py-3 pr-4 font-semibold text-foreground">Trying you</td>
-              <td className="py-3 pr-4 text-foreground/70">Do they take the first step?</td>
-              <td className="py-3 text-green-700 italic">&quot;15% book a consultation — that&apos;s healthy&quot;</td>
+            <tr className="border-b border-foreground/20">
+              <td className="py-3 pr-4 font-sans font-semibold">Activation</td>
+              <td className="py-3 pr-4 text-foreground/70">15% start form</td>
+              <td className="py-3 text-green-600 font-semibold">Healthy</td>
             </tr>
-            <tr className="border-b border-foreground/10">
-              <td className="py-3 pr-4 font-semibold text-foreground">Coming back</td>
-              <td className="py-3 pr-4 text-foreground/70">Do they return after the first visit?</td>
-              <td className="py-3 text-amber-700 italic">&quot;Only 10% rebook — follow-up needed&quot;</td>
+            <tr className="border-b border-foreground/20">
+              <td className="py-3 pr-4 font-sans font-semibold">Retention</td>
+              <td className="py-3 pr-4 text-foreground/70">10% return</td>
+              <td className="py-3 text-amber-600 font-semibold">Needs work</td>
             </tr>
-            <tr className="border-b border-foreground/10">
-              <td className="py-3 pr-4 font-semibold text-foreground">Telling friends</td>
-              <td className="py-3 pr-4 text-foreground/70">Are they spreading the word?</td>
-              <td className="py-3 text-red-700 italic">&quot;No referral program — leaving money on table&quot;</td>
+            <tr className="border-b border-foreground/20">
+              <td className="py-3 pr-4 font-sans font-semibold">Referral</td>
+              <td className="py-3 pr-4 text-foreground/70">5% share rate</td>
+              <td className="py-3 text-red-600 font-semibold">Critical gap</td>
             </tr>
             <tr>
-              <td className="py-3 pr-4 font-semibold text-foreground">Paying you</td>
-              <td className="py-3 pr-4 text-foreground/70">Are you actually making money?</td>
-              <td className="py-3 text-green-700 italic">&quot;Good margins, but low volume&quot;</td>
+              <td className="py-3 pr-4 font-sans font-semibold">Revenue</td>
+              <td className="py-3 pr-4 text-foreground/70">3% conversion</td>
+              <td className="py-3 text-green-600 font-semibold">Healthy</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <p className="text-foreground/80 leading-relaxed bg-surface rounded-lg p-4 border border-border">
-        <span className="font-bold text-foreground">You&apos;ll see exactly where your leak is</span> — whether it&apos;s getting discovered, converting visitors, keeping customers, or getting referrals. Then we show you how to fix it.
-      </p>
-    </>
-  );
-}
-
-// Competitor research content
-function CompetitorsContent() {
-  return (
-    <>
-      <h3 className="text-lg font-bold text-foreground mb-6">
-        Real research on businesses in your space
-      </h3>
-
-      <div className="space-y-4 mb-6">
-        <div className="bg-surface rounded-lg p-4 border border-border">
-          <p className="text-sm text-foreground/60 mb-1">Traffic sources</p>
-          <p className="font-semibold text-foreground">&quot;Your competitor gets 2,300 visitors/month from Pinterest. You&apos;re not on Pinterest.&quot;</p>
-        </div>
-
-        <div className="bg-surface rounded-lg p-4 border border-border">
-          <p className="text-sm text-foreground/60 mb-1">Keywords they rank for</p>
-          <p className="font-semibold text-foreground">&quot;They rank for &apos;best lip balm for runners&apos; — you could own &apos;best lip balm for equestrians&apos;&quot;</p>
-        </div>
-
-        <div className="bg-surface rounded-lg p-4 border border-border">
-          <p className="text-sm text-foreground/60 mb-1">What they&apos;re doing that works</p>
-          <p className="font-semibold text-foreground">&quot;They post 3x/week on Instagram Reels. Their top posts are behind-the-scenes content.&quot;</p>
-        </div>
-      </div>
-
       <p className="text-foreground/80 leading-relaxed">
-        <span className="font-bold text-foreground">Not to copy them.</span> To find the gaps they&apos;re missing and the tactics that actually work in your market.
+        <span className="font-bold text-foreground">Primary leak:</span> Referral. Users who love the product aren't sharing it.{" "}
+        <span className="font-bold text-foreground">Secondary leak:</span> Acquisition. Zero organic traffic pipeline.
       </p>
     </>
   );
 }
 
-// Prioritization content
-function PrioritiesContent() {
-  return (
-    <>
-      <h3 className="text-lg font-bold text-foreground mb-4">
-        Every tactic scored so you know where to start
-      </h3>
-
-      <p className="text-foreground/70 mb-6">
-        We score each recommendation on three things:
-      </p>
-
-      <div className="grid sm:grid-cols-3 gap-4 mb-6">
-        <div className="bg-surface rounded-lg p-4 border border-border text-center">
-          <p className="font-bold text-foreground">Impact</p>
-          <p className="text-sm text-foreground/60">How much will this help?</p>
-        </div>
-        <div className="bg-surface rounded-lg p-4 border border-border text-center">
-          <p className="font-bold text-foreground">Confidence</p>
-          <p className="text-sm text-foreground/60">How sure are we it&apos;ll work for YOU?</p>
-        </div>
-        <div className="bg-surface rounded-lg p-4 border border-border text-center">
-          <p className="font-bold text-foreground">Ease</p>
-          <p className="text-sm text-foreground/60">Can you do this in a weekend?</p>
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        <div className="flex items-center gap-3 bg-cta/10 rounded-lg p-3 border border-cta/20">
-          <span className="font-mono text-xs bg-cta text-white px-2 py-1 rounded font-bold">Score: 28</span>
-          <span className="font-semibold text-foreground">Set up a simple referral program</span>
-        </div>
-        <div className="flex items-center gap-3 bg-surface rounded-lg p-3 border border-border">
-          <span className="font-mono text-xs bg-foreground/10 text-foreground px-2 py-1 rounded font-bold">Score: 24</span>
-          <span className="font-semibold text-foreground">Start posting on Pinterest</span>
-        </div>
-        <div className="flex items-center gap-3 bg-surface rounded-lg p-3 border border-border">
-          <span className="font-mono text-xs bg-foreground/10 text-foreground px-2 py-1 rounded font-bold">Score: 22</span>
-          <span className="font-semibold text-foreground">Add a follow-up email sequence</span>
-        </div>
-      </div>
-
-      <p className="mt-4 text-foreground/70 text-sm">
-        No more guessing. Just start at the top and work your way down.
-      </p>
-    </>
-  );
-}
-
-// Roadmap content
-function RoadmapContent() {
+// ICE section content
+function ICEContent() {
   return (
     <>
       <h3 className="text-lg font-bold text-foreground mb-6">
-        Not a list of ideas. A week-by-week plan.
+        Start Doing (ICE-Prioritized)
       </h3>
 
-      <div className="space-y-4">
-        <div className="flex gap-4">
-          <div className="flex-shrink-0 w-20">
-            <span className="font-mono text-xs bg-foreground text-background px-2 py-1 rounded font-bold">Week 1</span>
+      <div className="space-y-6">
+        <div className="border-l-4 border-cta pl-4">
+          <div className="flex items-baseline gap-3 mb-1">
+            <span className="font-mono text-xs bg-cta text-white px-2 py-0.5 font-bold">ICE: 28</span>
+            <h4 className="font-bold text-foreground">Publish This Growth Plan as Content</h4>
           </div>
-          <div>
-            <p className="font-semibold text-foreground">Set up the foundation</p>
-            <p className="text-foreground/60 text-sm">Create your referral program, set up tracking, prep your first Pinterest boards</p>
-          </div>
+          <p className="text-foreground/70 text-sm leading-relaxed">
+            This document is proof. It demonstrates output quality, growth expertise, and real strategy—not generic advice.
+          </p>
         </div>
 
-        <div className="flex gap-4">
-          <div className="flex-shrink-0 w-20">
-            <span className="font-mono text-xs bg-foreground text-background px-2 py-1 rounded font-bold">Week 2</span>
+        <div className="border-l-4 border-cta/70 pl-4">
+          <div className="flex items-baseline gap-3 mb-1">
+            <span className="font-mono text-xs bg-foreground/10 text-foreground px-2 py-0.5 font-bold">ICE: 26</span>
+            <h4 className="font-bold text-foreground">Launch on Indie Hackers First</h4>
           </div>
-          <div>
-            <p className="font-semibold text-foreground">Launch your first experiment</p>
-            <p className="text-foreground/60 text-sm">Start posting on Pinterest, announce referral program to existing customers</p>
-          </div>
+          <p className="text-foreground/70 text-sm leading-relaxed">
+            IH is the natural habitat for your target user. Unlike Product Hunt (one-day spike), IH builds persistent community presence.
+          </p>
         </div>
 
-        <div className="flex gap-4">
-          <div className="flex-shrink-0 w-20">
-            <span className="font-mono text-xs bg-foreground text-background px-2 py-1 rounded font-bold">Week 3</span>
+        <div className="border-l-4 border-foreground/30 pl-4">
+          <div className="flex items-baseline gap-3 mb-1">
+            <span className="font-mono text-xs bg-foreground/10 text-foreground px-2 py-0.5 font-bold">ICE: 25</span>
+            <h4 className="font-bold text-foreground">Build in Public on Twitter/X</h4>
           </div>
-          <div>
-            <p className="font-semibold text-foreground">Double down on what&apos;s working</p>
-            <p className="text-foreground/60 text-sm">Check which Pinterest posts got traction, make more like those</p>
-          </div>
-        </div>
-
-        <div className="flex gap-4">
-          <div className="flex-shrink-0 w-20">
-            <span className="font-mono text-xs bg-foreground text-background px-2 py-1 rounded font-bold">Week 4</span>
-          </div>
-          <div>
-            <p className="font-semibold text-foreground">Build the system</p>
-            <p className="text-foreground/60 text-sm">Create a content calendar, automate follow-up emails, measure results</p>
-          </div>
+          <p className="text-foreground/70 text-sm leading-relaxed">
+            The #buildinpublic community is 500K+ founders who celebrate transparency. Your pricing and architecture decisions are content.
+          </p>
         </div>
       </div>
-
-      <p className="mt-6 text-foreground/80 leading-relaxed bg-surface rounded-lg p-4 border border-border">
-        <span className="font-bold text-foreground">Specific actions. Specific timelines.</span> Written for your business, not generic advice that works for everyone and no one.
-      </p>
     </>
   );
 }
 
-function renderContent(id: string) {
-  switch (id) {
-    case "leaks":
-      return <LeaksContent />;
-    case "competitors":
-      return <CompetitorsContent />;
-    case "priorities":
-      return <PrioritiesContent />;
-    case "roadmap":
-      return <RoadmapContent />;
-    default:
-      return null;
-  }
+// Output section content
+function OutputContent() {
+  return (
+    <>
+      <div className="mb-8">
+        <h3 className="text-lg font-bold text-foreground mb-3">Stop Doing</h3>
+        <div className="bg-red-50 border-2 border-red-200 p-4">
+          <p className="font-bold text-red-800 mb-1">Building more features before proving distribution</p>
+          <p className="text-red-700/80 text-sm">
+            The MVP is complete. Every hour on features is an hour not on distribution. Freeze for 30 days.
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-lg font-bold text-foreground mb-4">Quick Wins (This Week)</h3>
+        <div className="space-y-3">
+          <div className="flex gap-3">
+            <span className="font-mono text-xs bg-foreground text-background px-2 py-1 h-fit font-bold">D1-2</span>
+            <div>
+              <p className="font-semibold text-foreground text-sm">Publish this plan</p>
+              <p className="text-foreground/60 text-sm">Create /blog/our-growth-plan, share on Twitter with #buildinpublic</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <span className="font-mono text-xs bg-foreground text-background px-2 py-1 h-fit font-bold">D3-4</span>
+            <div>
+              <p className="font-semibold text-foreground text-sm">Add founder presence</p>
+              <p className="text-foreground/60 text-sm">Photo on landing page, update Twitter bio with link</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <span className="font-mono text-xs bg-foreground text-background px-2 py-1 h-fit font-bold">D5-7</span>
+            <div>
+              <p className="font-semibold text-foreground text-sm">Launch on Indie Hackers</p>
+              <p className="text-foreground/60 text-sm">"We ran our AI growth tool on ourselves" — first paying customers</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
 }
 
 export function FrameworksSection() {
+  const [activeFramework, setActiveFramework] = useState<string>("aarrr");
+
+  // Scroll-spy: track which card is closest to viewport center
+  useEffect(() => {
+    const handleScroll = () => {
+      const viewportCenter = window.innerHeight / 2;
+      let closestId = "aarrr";
+      let closestDistance = Infinity;
+
+      FRAMEWORKS.forEach((framework) => {
+        const element = document.querySelector(`[data-framework="${framework.id}"]`);
+        if (!element) return;
+
+        const rect = element.getBoundingClientRect();
+        const elementCenter = rect.top + rect.height / 2;
+        const distance = Math.abs(elementCenter - viewportCenter);
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestId = framework.id;
+        }
+      });
+
+      setActiveFramework(closestId);
+    };
+
+    // Initial check
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToFramework = (id: string) => {
+    const element = document.querySelector(`[data-framework="${id}"]`);
+    if (element) {
+      const headerOffset = 160;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.scrollY - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const renderContent = (id: string) => {
+    switch (id) {
+      case "aarrr":
+        return <AARRRContent />;
+      case "ice":
+        return <ICEContent />;
+      case "growth":
+        return <OutputContent />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <section id="how-it-works" className="relative py-24 bg-surface">
       <div className="mx-auto max-w-7xl px-6">
         {/* Section header */}
         <div className="mb-16">
-          <p className="font-mono text-xs tracking-[0.12em] text-foreground/60 uppercase mb-4">
-            What you&apos;ll get
+          <p className="font-mono text-xs tracking-[0.15em] text-foreground/60 uppercase mb-4">
+            What you get
           </p>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-foreground tracking-tight">
-            Real research on <span className="font-black">YOUR market.</span>
+            Frameworks that <span className="font-black">actually work.</span>
           </h2>
-          <p className="mt-4 text-lg text-foreground/60 max-w-2xl">
-            Not generic advice that works for everyone and no one. Actual data about your competitors, your channels, and what will work for your specific business.
-          </p>
         </div>
 
         <div className="lg:flex lg:gap-16">
           {/* Sidebar - sticky nav with left border indicator */}
           <aside className="hidden lg:block lg:w-72 lg:shrink-0">
-            <FrameworksNav frameworks={FRAMEWORKS} />
+            <nav className="sticky top-36 space-y-4">
+              {FRAMEWORKS.map((framework) => {
+                const isActive = activeFramework === framework.id;
+
+                return (
+                  <button
+                    key={framework.id}
+                    onClick={() => scrollToFramework(framework.id)}
+                    className={`
+                      w-full text-left pl-5 border-l-4 transition-all duration-150
+                      ${isActive
+                        ? "border-cta opacity-100"
+                        : "border-transparent opacity-40 hover:opacity-70 hover:border-foreground/20"}
+                    `}
+                  >
+                    <span
+                      className={`
+                        font-mono text-[10px] uppercase tracking-[0.15em]
+                        ${isActive ? "text-cta font-semibold" : "text-foreground"}
+                      `}
+                    >
+                      {framework.label}
+                    </span>
+                    <h3 className="text-2xl font-black text-foreground mt-1">
+                      {framework.title}
+                    </h3>
+                    <p className="text-sm text-foreground/70 mt-1">
+                      {framework.subtitle}
+                    </p>
+                  </button>
+                );
+              })}
+            </nav>
           </aside>
 
           {/* Content cards */}
-          <div className="flex-1 space-y-16">
+          <div className="flex-1 space-y-24">
             {FRAMEWORKS.map((framework) => (
               <div key={framework.id} data-framework={framework.id}>
                 {/* Mobile header */}
                 <div className="lg:hidden mb-6">
-                  <span className="font-mono text-[10px] text-cta uppercase tracking-[0.12em] font-semibold">
+                  <span className="font-mono text-[10px] text-cta uppercase tracking-[0.15em] font-semibold">
                     {framework.label}
                   </span>
                   <h3 className="text-2xl font-bold text-foreground mt-1">{framework.title}</h3>
                   <p className="text-foreground/60 mt-1 text-sm">{framework.subtitle}</p>
                 </div>
 
-                {/* Content card - softer style */}
-                <div className="rounded-2xl border border-border bg-background p-6 lg:p-8 shadow-md">
+                {/* Content card - brutalist style, NO scroll */}
+                <div className="border-[3px] border-foreground bg-background p-6 lg:p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
                   {renderContent(framework.id)}
                 </div>
               </div>
