@@ -106,12 +106,19 @@ function getSections(strategy: ParsedStrategy): AccordionSection[] {
 }
 
 /**
- * DeepDivesAccordion - Minimal with brutalist left border
- * No outer box, just the thick left edge and clean divisions
+ * DeepDivesAccordion - Full strategy content in expandable sections
+ *
+ * Design:
+ * - Soft Brutalist left border (softer than raw 4px black)
+ * - Sticky headers when expanded for navigation
+ * - "Collapse all" when 2+ sections open
+ * - Gap between sections for breathing room
  */
 export function DeepDivesAccordion({ strategy }: DeepDivesAccordionProps) {
   const sections = getSections(strategy)
   const [openSections, setOpenSections] = useState<Set<string>>(new Set())
+
+  const openCount = openSections.size
 
   const toggleSection = (id: string) => {
     setOpenSections((prev) => {
@@ -125,34 +132,56 @@ export function DeepDivesAccordion({ strategy }: DeepDivesAccordionProps) {
     })
   }
 
+  const collapseAll = () => {
+    setOpenSections(new Set())
+  }
+
   if (sections.length === 0) {
     return null
   }
 
   return (
     <section className="scroll-mt-32">
-      {/* Whisper-quiet section label */}
-      <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-4">
-        DEEP DIVES
-      </span>
+      {/* Header row with label and collapse all */}
+      <div className="flex items-baseline justify-between mb-4">
+        <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40">
+          DEEP DIVES
+        </span>
+        {openCount >= 2 && (
+          <button
+            onClick={collapseAll}
+            className="font-mono text-xs text-foreground/50 hover:text-foreground/80 underline underline-offset-2 transition-colors"
+          >
+            Collapse all
+          </button>
+        )}
+      </div>
 
-      {/* Brutalist left border, clean divisions */}
-      <div className="border-l-4 border-foreground divide-y divide-foreground/10">
+      {/* Accordion sections with gap instead of dividers */}
+      <div className="flex flex-col gap-2">
         {sections.map((section) => {
           const isOpen = openSections.has(section.id)
 
           return (
-            <div key={section.id} id={section.id}>
-              {/* Accordion header */}
+            <div
+              key={section.id}
+              id={section.id}
+              className="border-l-[3px] border-foreground/30 bg-white"
+            >
+              {/* Accordion header - sticky when open */}
               <button
                 onClick={() => toggleSection(section.id)}
-                className="w-full flex items-center justify-between py-4 px-5 text-left hover:bg-foreground/[0.02] transition-colors"
+                className={`w-full flex items-center justify-between py-4 px-5 text-left hover:bg-foreground/[0.02] transition-colors ${
+                  isOpen
+                    ? 'sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-foreground/10'
+                    : ''
+                }`}
               >
                 <span className="font-semibold text-foreground">
                   {section.title}
                 </span>
                 <ChevronDown
-                  className={`w-5 h-5 text-foreground/40 transition-transform duration-200 ${
+                  className={`w-5 h-5 text-foreground/40 transition-transform duration-200 shrink-0 ${
                     isOpen ? 'rotate-180' : ''
                   }`}
                 />
@@ -164,8 +193,8 @@ export function DeepDivesAccordion({ strategy }: DeepDivesAccordionProps) {
                   isOpen ? 'max-h-[5000px] opacity-100' : 'max-h-0 opacity-0'
                 }`}
               >
-                <div className="px-5 pb-5 border-t border-foreground/5">
-                  <div className="font-serif text-[17px] leading-[1.75] text-foreground/90 pt-4">
+                <div className="px-5 pb-6">
+                  <div className="font-serif text-[17px] leading-[1.75] text-foreground/90">
                     <MarkdownContent content={section.content} extended />
                   </div>
                 </div>
