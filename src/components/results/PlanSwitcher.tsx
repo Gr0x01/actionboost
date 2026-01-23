@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
+import { motion, AnimatePresence } from 'framer-motion'
 import { FileText, ChevronDown, Check, Plus } from 'lucide-react'
 
 interface Plan {
@@ -121,81 +122,89 @@ export function PlanSwitcher({ currentPlan, otherPlans = [] }: PlanSwitcherProps
       </button>
 
       {/* Dropdown panel - always available */}
-      {isOpen && (
-        <div className="
-          absolute left-0 top-full mt-2
-          w-[320px] max-h-[300px] overflow-y-auto
-          bg-background
-          border-2 border-foreground/20
-          rounded-lg
-          shadow-[4px_4px_0_rgba(44,62,80,0.1)]
-          z-50
-        ">
-          {/* Current plan - shown as selected */}
-          <div className="px-4 py-3 border-b border-foreground/10 bg-foreground/[0.02]">
-            <div className="flex items-center gap-2">
-              <Check className="w-4 h-4 text-cta flex-shrink-0" />
-              <div className="min-w-0 flex-1">
-                <p className="font-medium text-foreground truncate text-sm">
-                  {formatPlanName(currentPlan.name)}
-                </p>
-                <p className="text-xs text-foreground/40">
-                  {relativeDate}
-                </p>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.15, ease: 'easeOut' }}
+            className="
+              absolute left-0 top-full mt-2
+              w-[320px] max-h-[300px] overflow-y-auto
+              bg-background
+              border-2 border-foreground/20
+              rounded-lg
+              shadow-[4px_4px_0_rgba(44,62,80,0.1)]
+              z-50
+            "
+          >
+            {/* Current plan - shown as selected */}
+            <div className="px-4 py-3 border-b border-foreground/10 bg-foreground/[0.02]">
+              <div className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-cta flex-shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-foreground truncate text-sm">
+                    {formatPlanName(currentPlan.name)}
+                  </p>
+                  <p className="text-xs text-foreground/40">
+                    {relativeDate}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Other plans list - only if there are others */}
-          {otherPlans.length > 0 && (
-            <div className="py-1 border-b border-foreground/10">
-              <div className="px-4 py-1.5">
-                <span className="text-[10px] font-semibold uppercase tracking-wide text-foreground/40">
-                  Other plans
-                </span>
+            {/* Other plans list - only if there are others */}
+            {otherPlans.length > 0 && (
+              <div className="py-1 border-b border-foreground/10">
+                <div className="px-4 py-1.5">
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-foreground/40">
+                    Other plans
+                  </span>
+                </div>
+                {otherPlans.map((plan) => (
+                  <Link
+                    key={plan.id}
+                    href={`/results/${plan.id}`}
+                    onClick={() => setIsOpen(false)}
+                    className="
+                      flex items-center gap-3 px-4 py-2.5
+                      hover:bg-foreground/[0.03]
+                      transition-colors duration-100
+                    "
+                  >
+                    <FileText className="w-4 h-4 text-foreground/30 flex-shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-foreground/80 truncate text-sm">
+                        {formatPlanName(plan.name)}
+                      </p>
+                      <p className="text-xs text-foreground/40">
+                        {formatRelativeDate(plan.updatedAt)}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
               </div>
-              {otherPlans.map((plan) => (
-                <Link
-                  key={plan.id}
-                  href={`/results/${plan.id}`}
-                  onClick={() => setIsOpen(false)}
-                  className="
-                    flex items-center gap-3 px-4 py-2.5
-                    hover:bg-foreground/[0.03]
-                    transition-colors duration-100
-                  "
-                >
-                  <FileText className="w-4 h-4 text-foreground/30 flex-shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-foreground/80 truncate text-sm">
-                      {formatPlanName(plan.name)}
-                    </p>
-                    <p className="text-xs text-foreground/40">
-                      {formatRelativeDate(plan.updatedAt)}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
+            )}
 
-          {/* Footer action */}
-          <div className="px-4 py-3">
-            <Link
-              href="/start"
-              onClick={() => setIsOpen(false)}
-              className="
-                flex items-center gap-2
-                text-sm font-semibold text-cta
-                hover:text-cta/80
-              "
-            >
-              <Plus className="w-4 h-4" />
-              Create new plan
-            </Link>
-          </div>
-        </div>
-      )}
+            {/* Footer action */}
+            <div className="px-4 py-3">
+              <Link
+                href="/start"
+                onClick={() => setIsOpen(false)}
+                className="
+                  flex items-center gap-2
+                  text-sm font-semibold text-cta
+                  hover:text-cta/80
+                "
+              >
+                <Plus className="w-4 h-4" />
+                Create new plan
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
