@@ -1,5 +1,7 @@
 'use client'
 
+import { useState } from 'react'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 import type { PriorityItem } from '@/lib/ai/formatter-types'
 import { MarkdownContent } from '../MarkdownContent'
 
@@ -8,31 +10,61 @@ interface PriorityCardsProps {
 }
 
 /**
- * Priority #1 Hero - Elevated card with overlapping rank badge
- * Soft Brutalist: offset shadow, visible border, bold badge
+ * Single priority card - Soft Brutalist style
+ * All cards equal width, #1 distinguished by styling
  */
-function PriorityHero({ priority }: { priority: PriorityItem }) {
+function PriorityCard({
+  priority,
+  isPrimary,
+  isMuted = false,
+}: {
+  priority: PriorityItem
+  isPrimary: boolean
+  isMuted?: boolean
+}) {
   return (
     <div
-      className="relative border-2 border-foreground/20 bg-background p-5 lg:p-6 rounded-md max-w-xl mx-auto"
-      style={{ boxShadow: '4px 4px 0 rgba(44, 62, 80, 0.1)' }}
+      className={`relative rounded-md h-full flex flex-col ${
+        isPrimary
+          ? 'bg-background border-2 border-foreground/25 p-5'
+          : isMuted
+            ? 'bg-surface border border-foreground/10 p-4'
+            : 'bg-background border border-foreground/15 p-4'
+      }`}
+      style={isPrimary ? { boxShadow: '4px 4px 0 rgba(44, 62, 80, 0.1)' } : undefined}
     >
-      {/* Rank badge - overlapping top-left */}
+      {/* Rank badge */}
       <div
-        className="absolute -top-3 -left-1 bg-cta text-white font-mono text-sm font-bold px-3 py-1 rounded-md"
-        style={{ boxShadow: '2px 2px 0 rgba(44, 62, 80, 0.15)' }}
+        className={`absolute -top-3 -left-1 font-mono font-bold px-3 py-1 rounded-md ${
+          isPrimary
+            ? 'bg-cta text-white text-sm'
+            : 'bg-surface text-foreground/50 text-xs border border-foreground/10'
+        }`}
+        style={isPrimary ? { boxShadow: '2px 2px 0 rgba(44, 62, 80, 0.15)' } : undefined}
       >
-        #1
+        #{priority.rank}
       </div>
 
       {/* Title */}
-      <h3 className="text-lg lg:text-xl font-bold text-foreground leading-snug mt-1">
+      <h3
+        className={`leading-snug mt-1 ${
+          isPrimary
+            ? 'text-lg font-bold text-foreground'
+            : 'text-base font-semibold text-foreground/90'
+        }`}
+      >
         {priority.title}
       </h3>
 
       {/* Description */}
       {priority.description && (
-        <div className="mt-3 text-foreground/70 text-sm lg:text-base leading-relaxed">
+        <div
+          className={`mt-3 leading-relaxed flex-1 ${
+            isPrimary
+              ? 'text-foreground/70 text-sm'
+              : 'text-foreground/60 text-sm line-clamp-2'
+          }`}
+        >
           <MarkdownContent
             content={priority.description}
             className="[&>p]:mb-0 [&>p:last-child]:mb-0"
@@ -40,12 +72,16 @@ function PriorityHero({ priority }: { priority: PriorityItem }) {
         </div>
       )}
 
-      {/* ICE score - footer pattern matching secondary */}
+      {/* ICE score footer - pushed to bottom */}
       <div className="mt-4 pt-3 border-t border-foreground/10 flex items-center justify-between">
         <span className="font-mono text-[10px] uppercase tracking-wider text-foreground/40">
           ICE
         </span>
-        <span className="font-mono text-sm font-semibold text-cta">
+        <span
+          className={`font-mono text-sm font-semibold ${
+            isPrimary ? 'text-cta' : 'text-foreground/50'
+          }`}
+        >
           {priority.iceScore}
         </span>
       </div>
@@ -54,68 +90,78 @@ function PriorityHero({ priority }: { priority: PriorityItem }) {
 }
 
 /**
- * Secondary priority cards - muted version of hero card
- * Same structure, lighter visual weight
+ * PriorityCards - Equal-width grid with progressive disclosure
+ *
+ * Layout:
+ * - All cards equal 1/3 width (3-column grid)
+ * - #1 distinguished by styling (border, shadow, colors)
+ * - Shows first 3, with "Show more" expander for the rest
  */
-function PrioritySecondary({ priority }: { priority: PriorityItem }) {
-  return (
-    <div className="relative border border-foreground/15 bg-background p-4 lg:p-5 rounded-md hover:border-foreground/25 transition-colors">
-      {/* Rank badge - muted version, solid bg */}
-      <div className="absolute -top-2.5 -left-1 bg-surface text-foreground/50 font-mono text-xs font-semibold px-2 py-0.5 rounded border border-foreground/10">
-        #{priority.rank}
-      </div>
-
-      {/* Title */}
-      <h4 className="font-semibold text-foreground leading-snug mt-1">
-        {priority.title}
-      </h4>
-
-      {/* Description */}
-      {priority.description && (
-        <p className="mt-2 text-sm text-foreground/60 line-clamp-2">
-          {priority.description}
-        </p>
-      )}
-
-      {/* ICE score - footer */}
-      <div className="mt-3 pt-3 border-t border-foreground/10 flex items-center justify-between">
-        <span className="font-mono text-[10px] uppercase tracking-wider text-foreground/40">
-          ICE
-        </span>
-        <span className="font-mono text-sm font-semibold text-foreground/50">
-          {priority.iceScore}
-        </span>
-      </div>
-    </div>
-  )
-}
-
 export function PriorityCards({ priorities }: PriorityCardsProps) {
-  const topPriorities = priorities.slice(0, 3)
+  const [expanded, setExpanded] = useState(false)
 
-  if (topPriorities.length === 0) {
+  if (priorities.length === 0) {
     return null
   }
 
-  const [first, ...rest] = topPriorities
+  const INITIAL_COUNT = 3
+  const hasMore = priorities.length > INITIAL_COUNT
+  const initialPriorities = priorities.slice(0, INITIAL_COUNT)
+  const additionalPriorities = priorities.slice(INITIAL_COUNT)
+  const hiddenCount = additionalPriorities.length
 
   return (
     <section className="scroll-mt-32">
-      {/* Whisper-quiet section label */}
+      {/* Section label */}
       <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-6">
-        TOP PRIORITIES
+        KEY PRIORITIES
       </span>
 
-      {/* Priority #1 as hero */}
-      <PriorityHero priority={first} />
+      {/* Priority grid - all equal width */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Always visible first 3 */}
+        {initialPriorities.map((priority, index) => (
+          <div key={priority.rank}>
+            <PriorityCard priority={priority} isPrimary={index === 0} />
+          </div>
+        ))}
 
-      {/* Priorities #2-3 in compact row */}
-      {rest.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
-          {rest.map((priority) => (
-            <PrioritySecondary key={priority.rank} priority={priority} />
-          ))}
-        </div>
+        {/* Additional priorities - animated container */}
+        {hasMore && (
+          <div
+            className={`col-span-full overflow-hidden transition-all duration-300 ease-out ${
+              expanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
+            }`}
+          >
+            {/* Inner grid with padding for badge overflow (top + left) - mt-4 matches gap-4 */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 pt-3 pl-1">
+              {additionalPriorities.map((priority) => (
+                <div key={priority.rank}>
+                  <PriorityCard priority={priority} isPrimary={false} isMuted />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Expand/collapse trigger */}
+      {hasMore && (
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="w-full mt-6 py-3 flex items-center justify-center gap-3 text-foreground/50 hover:text-foreground/70 text-sm font-medium transition-colors group"
+        >
+          <span className="flex-1 h-px bg-foreground/10" />
+          <span className="group-hover:underline">
+            {expanded ? 'Show less' : `Show ${hiddenCount} more priorities`}
+          </span>
+          {expanded ? (
+            <ChevronUp className="w-4 h-4" />
+          ) : (
+            <ChevronDown className="w-4 h-4" />
+          )}
+          <span className="flex-1 h-px bg-foreground/10" />
+        </button>
       )}
     </section>
   )

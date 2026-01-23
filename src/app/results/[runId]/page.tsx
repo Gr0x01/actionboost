@@ -436,7 +436,7 @@ function DashboardResults({
 
       {/* Main content */}
       <main className="flex-1">
-        <div className="mx-auto max-w-5xl px-12 py-16">
+        <div className="mx-auto max-w-5xl px-4 md:px-12 py-8 md:py-16">
           {/* Magic link banner for new checkouts */}
           {isNewCheckout && <MagicLinkBanner />}
 
