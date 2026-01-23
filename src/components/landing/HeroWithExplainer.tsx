@@ -148,13 +148,13 @@ export function HeroWithExplainer() {
           </h2>
         </motion.div>
 
-        {/* The card - convergence target */}
+        {/* The card - convergence target, fades in fast to catch icons */}
         <motion.div
           className="relative z-10 mx-auto max-w-xl px-6"
           style={{
-            opacity: useTransform(scrollYProgress, [0.3, 0.45], [0, 1]),
-            scale: useTransform(scrollYProgress, [0.3, 0.45], [0.9, 1]),
-            y: useTransform(scrollYProgress, [0.3, 0.45], [40, 0]),
+            opacity: useTransform(scrollYProgress, [0.2, 0.3], [0, 1]),
+            scale: useTransform(scrollYProgress, [0.2, 0.35], [0.95, 1]),
+            y: useTransform(scrollYProgress, [0.2, 0.35], [30, 0]),
           }}
         >
           <HeroSummaryCard visible={true} />
@@ -173,9 +173,9 @@ export function HeroWithExplainer() {
         </motion.p>
       </section>
 
-      {/* ===== FLOATING CHAOS LAYER - spans both sections ===== */}
+      {/* ===== FLOATING CHAOS LAYER - spans both sections, BEHIND all content ===== */}
       {!prefersReducedMotion && (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+        <div className="absolute inset-0 z-[5] pointer-events-none overflow-hidden" aria-hidden="true">
           {PLATFORM_LOGOS.map((logo, i) => (
             <ConvergingLogo
               key={logo.name}
@@ -212,21 +212,20 @@ function ConvergingLogo({
   index: number;
 }) {
   const targetX = 50;
-  const targetY = 62;
+  const targetY = 80; // Lower to match card position
 
   // Create curved paths by adding a "swing" midpoint
-  // Elements on the left swing right first, elements on the right swing left
   const isLeftSide = startPos.x < 50;
-  const swingAmount = 15 + (index % 4) * 5; // 15-30% swing
+  const swingAmount = 15 + (index % 4) * 5;
   const midX = isLeftSide
-    ? startPos.x + swingAmount  // Left elements swing right
-    : startPos.x - swingAmount; // Right elements swing left
+    ? startPos.x + swingAmount
+    : startPos.x - swingAmount;
 
-  // Vertical midpoint - some dip down, some rise up first
-  const verticalVariation = (index % 3 - 1) * 8; // -8, 0, or +8
-  const midY = startPos.y + 15 + verticalVariation;
+  // Vertical midpoint
+  const verticalVariation = (index % 3 - 1) * 8;
+  const midY = startPos.y + 18 + verticalVariation;
 
-  // Use 3-point path for curved movement
+  // Converge toward card - card fades in fast to cover icons
   const left = useTransform(
     scrollProgress,
     [0, 0.2, 0.4],
@@ -237,12 +236,13 @@ function ConvergingLogo({
     [0, 0.2, 0.4],
     [`${startPos.y}%`, `${midY}%`, `${targetY}%`]
   );
-  const opacity = useTransform(scrollProgress, [0, 0.25, 0.4], [0.9, 0.9, 0]);
-  const scale = useTransform(scrollProgress, [0, 0.4], [1, 0.2]);
+  // Fade out as they reach the card
+  const opacity = useTransform(scrollProgress, [0, 0.25, 0.4], [0.9, 0.8, 0]);
+  const scale = useTransform(scrollProgress, [0, 0.4], [1, 0.15]);
 
   // Varied rotation speeds
-  const rotateAmount = 120 + (index % 5) * 30; // 120-240 degrees
-  const rotate = useTransform(scrollProgress, [0, 0.4], [0, (index % 2 ? 1 : -1) * rotateAmount]);
+  const rotateAmount = 120 + (index % 5) * 30;
+  const rotate = useTransform(scrollProgress, [0, 0.5], [0, (index % 2 ? 1 : -1) * rotateAmount]);
 
   return (
     <motion.div
@@ -275,19 +275,19 @@ function ConvergingNoise({
   index: number;
 }) {
   const targetX = 50;
-  const targetY = 62;
+  const targetY = 80; // Lower to match card position
 
   // Curved paths - opposite swing direction from logos for variety
   const isLeftSide = startPos.x < 50;
-  const swingAmount = 10 + (index % 3) * 8; // 10-26% swing
-  // Noise cards swing TOWARD center first, then curve back out and in
+  const swingAmount = 10 + (index % 3) * 8;
   const midX = isLeftSide
     ? startPos.x + swingAmount * 1.5
     : startPos.x - swingAmount * 1.5;
 
   const verticalVariation = ((index + 1) % 3 - 1) * 10;
-  const midY = startPos.y + 12 + verticalVariation;
+  const midY = startPos.y + 15 + verticalVariation;
 
+  // Converge toward card - card fades in fast to cover
   const left = useTransform(
     scrollProgress,
     [0, 0.18, 0.4],
@@ -298,11 +298,11 @@ function ConvergingNoise({
     [0, 0.18, 0.4],
     [`${startPos.y}%`, `${midY}%`, `${targetY}%`]
   );
-  const opacity = useTransform(scrollProgress, [0, 0.25, 0.4], [0.85, 0.85, 0]);
-  const scale = useTransform(scrollProgress, [0, 0.4], [1, 0.15]);
+  const opacity = useTransform(scrollProgress, [0, 0.25, 0.4], [0.85, 0.75, 0]);
+  const scale = useTransform(scrollProgress, [0, 0.4], [1, 0.12]);
 
-  const rotateAmount = 60 + (index % 4) * 25; // 60-135 degrees
-  const rotate = useTransform(scrollProgress, [0, 0.4], [0, (index % 2 ? -1 : 1) * rotateAmount]);
+  const rotateAmount = 60 + (index % 4) * 25;
+  const rotate = useTransform(scrollProgress, [0, 0.5], [0, (index % 2 ? -1 : 1) * rotateAmount]);
 
   const bgColor =
     card.type === "metric"
