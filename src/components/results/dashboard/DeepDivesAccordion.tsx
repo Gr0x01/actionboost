@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import type { ParsedStrategy } from '@/lib/markdown/parser'
 import { MarkdownContent } from '../MarkdownContent'
+import { SectionTableOfContents } from './SectionTableOfContents'
 
 interface DeepDivesAccordionProps {
   strategy: ParsedStrategy
@@ -109,7 +110,8 @@ function getSections(strategy: ParsedStrategy): AccordionSection[] {
  * DeepDivesAccordion - Full strategy content in expandable sections
  *
  * Design:
- * - Soft Brutalist left border (softer than raw 4px black)
+ * - Full-width accordion to match other sections
+ * - Two-column layout when expanded: constrained prose + sticky TOC
  * - Sticky headers when expanded for navigation
  * - "Collapse all" when 2+ sections open
  * - Gap between sections for breathing room
@@ -187,15 +189,30 @@ export function DeepDivesAccordion({ strategy }: DeepDivesAccordionProps) {
                 />
               </button>
 
-              {/* Accordion content */}
+              {/* Accordion content - two-column on lg+ */}
               <div
                 className={`overflow-hidden transition-all duration-300 ease-out ${
-                  isOpen ? 'max-h-[5000px] opacity-100' : 'max-h-0 opacity-0'
+                  isOpen ? 'max-h-[10000px] opacity-100' : 'max-h-0 opacity-0'
                 }`}
               >
-                <div className="px-5 pb-6">
-                  <div className="font-serif text-[17px] leading-[1.75] text-foreground/90">
-                    <MarkdownContent content={section.content} extended />
+                <div className="flex gap-8 px-5 pb-6">
+                  {/* Main content - constrained width for readability */}
+                  <article className="flex-1 min-w-0 max-w-prose">
+                    <div className="font-serif text-[17px] leading-[1.75] text-foreground/90">
+                      <MarkdownContent
+                        content={section.content}
+                        extended
+                        idPrefix={section.id}
+                      />
+                    </div>
+                  </article>
+
+                  {/* Right rail - sticky TOC, only on lg+ screens */}
+                  <div className="hidden lg:block flex-shrink-0">
+                    <SectionTableOfContents
+                      content={section.content}
+                      idPrefix={section.id}
+                    />
                   </div>
                 </div>
               </div>

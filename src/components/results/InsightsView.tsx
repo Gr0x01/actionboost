@@ -81,10 +81,8 @@ export function InsightsView({ strategy, structuredOutput }: InsightsViewProps) 
         <MetricsSnapshot metrics={structuredOutput.metrics} />
       )}
 
-      {/* 8. Deep Dives - constrained width for readability */}
-      <div className="max-w-4xl">
-        <DeepDivesAccordion strategy={strategy} />
-      </div>
+      {/* 8. Deep Dives - full width, prose constrained inside */}
+      <DeepDivesAccordion strategy={strategy} />
     </div>
   )
 }

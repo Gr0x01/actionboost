@@ -6,10 +6,12 @@ interface MarkdownContentProps {
   className?: string;
   /** Enable extended markdown features like tables and code blocks */
   extended?: boolean;
+  /** Optional prefix for heading IDs (for uniqueness across sections) */
+  idPrefix?: string;
 }
 
 /** Generate a URL-friendly slug from heading text */
-function slugify(text: string): string {
+export function slugify(text: string): string {
   return text
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, "")
@@ -48,7 +50,7 @@ function parseIceScore(text: string): { impact: number; confidence: number; ease
  * Handles: headers (###), bold (**), italic (*), lists (- or *), numbered lists, paragraphs, horizontal rules
  * Extended mode adds: tables, code blocks, ICE badges
  */
-export function MarkdownContent({ content, className = "", extended = false }: MarkdownContentProps) {
+export function MarkdownContent({ content, className = "", extended = false, idPrefix = "" }: MarkdownContentProps) {
   const lines = content.split("\n");
   const elements: React.ReactNode[] = [];
   let currentList: { type: "ul" | "ol"; items: string[] } | null = null;
@@ -341,7 +343,7 @@ export function MarkdownContent({ content, className = "", extended = false }: M
       flushList();
       flushTable();
       const headingText = trimmed.slice(3);
-      const headingId = slugify(headingText);
+      const headingId = idPrefix ? `${idPrefix}-${slugify(headingText)}` : slugify(headingText);
       elements.push(
         <h2
           key={keyIndex++}
@@ -359,12 +361,15 @@ export function MarkdownContent({ content, className = "", extended = false }: M
     if (trimmed.startsWith("### ")) {
       flushList();
       if (extended) flushTable();
+      const headingText = trimmed.slice(4);
+      const headingId = idPrefix ? `${idPrefix}-${slugify(headingText)}` : slugify(headingText);
       elements.push(
         <h3
           key={keyIndex++}
-          className="text-xl font-semibold text-foreground mt-10 mb-4 font-sans tracking-tight"
+          id={headingId}
+          className="text-xl font-semibold text-foreground mt-10 mb-4 font-sans tracking-tight scroll-mt-32"
         >
-          {trimmed.slice(4)}
+          {headingText}
         </h3>
       );
       continue;
