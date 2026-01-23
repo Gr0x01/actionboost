@@ -7,28 +7,45 @@ import {
   CheckCircle,
   AlertCircle,
   Loader2,
-  Zap,
   FileText,
 } from "lucide-react"
 import { SignOutButton } from "./SignOutButton"
 import { DashboardTracker } from "./DashboardTracker"
 import { TrackedStrategyLink, TrackedFreeAuditLink, TrackedCTAButton } from "./TrackedComponents"
 
+type DashboardState = "empty" | "processing" | "ready"
+
 type RunStatus = "pending" | "processing" | "complete" | "failed"
 
 function StatusBadge({ status }: { status: string | null }) {
   const s = status as RunStatus
   const config = {
-    pending: { icon: Clock, label: "Pending", className: "bg-amber-50 text-amber-800 border-amber-800" },
-    processing: { icon: Loader2, label: "Processing", className: "bg-blue-50 text-blue-800 border-blue-800" },
-    complete: { icon: CheckCircle, label: "Complete", className: "bg-emerald-50 text-emerald-800 border-emerald-800" },
-    failed: { icon: AlertCircle, label: "Failed", className: "bg-red-50 text-red-800 border-red-800" },
-  }[s] ?? { icon: Clock, label: "Unknown", className: "bg-gray-50 text-gray-800 border-gray-800" }
+    pending: {
+      icon: Clock,
+      label: "Waiting",
+      className: "bg-amber-100 text-amber-800 border border-amber-300",
+    },
+    processing: {
+      icon: Loader2,
+      label: "Building...",
+      className: "bg-blue-100 text-blue-800 border border-blue-300",
+    },
+    complete: {
+      icon: CheckCircle,
+      label: "Ready",
+      className: "bg-emerald-100 text-emerald-800 border border-emerald-300",
+    },
+    failed: {
+      icon: AlertCircle,
+      label: "Failed",
+      className: "bg-red-100 text-red-800 border border-red-300",
+    },
+  }[s] ?? { icon: Clock, label: "Unknown", className: "bg-gray-100 text-gray-800 border border-gray-300" }
 
   const Icon = config.icon
 
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 border-2 font-mono text-xs font-bold uppercase tracking-wide ${config.className}`}>
+    <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${config.className}`}>
       <Icon className={`h-3 w-3 ${s === "processing" ? "animate-spin" : ""}`} />
       {config.label}
     </span>
@@ -37,27 +54,135 @@ function StatusBadge({ status }: { status: string | null }) {
 
 function FreeBadge() {
   return (
-    <span className="inline-flex items-center rounded-lg px-2 py-1 border-2 border-violet-800 bg-violet-50 text-violet-800 font-mono text-xs font-bold uppercase tracking-wide">
-      Free
+    <span className="inline-flex items-center rounded-full px-2.5 py-0.5 bg-violet-100 text-violet-800 border border-violet-200 text-xs font-medium">
+      Free preview
     </span>
   )
 }
 
-function formatDate(dateString: string | null) {
+// Plan card with confident styling
+function PlanCard({
+  productName,
+  date,
+  status,
+  isProcessing,
+  isFeatured,
+  badge,
+}: {
+  productName: string
+  date: string
+  status: string | null
+  isProcessing: boolean
+  isFeatured: boolean
+  badge?: React.ReactNode
+}) {
+  if (isFeatured) {
+    // Featured card - confident, solid, the main event
+    return (
+      <div
+        className="rounded-xl border-2 border-cta bg-white p-6 transition-all group-hover:-translate-y-1 group-hover:shadow-[0_8px_30px_rgba(230,126,34,0.25)]"
+        style={{
+          boxShadow: "0 4px 20px rgba(230, 126, 34, 0.15)",
+        }}
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            {/* Ready badge - solid, not gradient */}
+            <div className="flex items-center gap-2 mb-3">
+              <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold bg-emerald-500 text-white">
+                <CheckCircle className="h-3.5 w-3.5" />
+                Ready to view
+              </span>
+              {badge}
+            </div>
+
+            {/* Title */}
+            <h3 className="text-xl font-bold text-foreground font-serif mb-1 group-hover:text-cta transition-colors">
+              {productName}
+            </h3>
+            <p className="text-sm text-foreground/60">{date}</p>
+          </div>
+
+          {/* Action button - solid CTA */}
+          <button
+            className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold bg-cta text-white transition-all group-hover:gap-3 hover:bg-cta/90 active:scale-95"
+            style={{
+              boxShadow: "0 2px 8px rgba(230, 126, 34, 0.3)",
+            }}
+          >
+            View plan
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // Standard card - solid but secondary
+  const isComplete = status === "complete"
+  const isFailed = status === "failed"
+  const showStatusBadge = !isComplete
+
+  return (
+    <div
+      className={`
+        rounded-xl border bg-white p-5 transition-all group-hover:-translate-y-0.5
+        ${isProcessing
+          ? "border-blue-200 bg-blue-50/50"
+          : isFailed
+            ? "border-red-200 bg-red-50/30"
+            : "border-border hover:border-foreground/20 hover:shadow-[0_4px_16px_rgba(44,62,80,0.1)]"
+        }
+      `}
+      style={{
+        boxShadow: "0 2px 8px rgba(44, 62, 80, 0.06)",
+      }}
+    >
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap mb-1">
+            <p className="font-semibold text-foreground group-hover:text-cta transition-colors">
+              {productName}
+            </p>
+            {badge}
+          </div>
+          <p className="text-sm text-foreground/50">{date}</p>
+        </div>
+        <div className="flex items-center gap-3">
+          {showStatusBadge && <StatusBadge status={status} />}
+          <ArrowRight className="h-5 w-5 text-foreground/40 group-hover:text-cta transition-colors" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function formatRelativeDate(dateString: string | null) {
   if (!dateString) return "—"
-  return new Date(dateString).toLocaleDateString("en-US", {
+  const date = new Date(dateString)
+  const now = new Date()
+  const diffMs = now.getTime() - date.getTime()
+  const diffMins = Math.floor(diffMs / (1000 * 60))
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+
+  if (diffMins < 5) return "Just now"
+  if (diffMins < 60) return `${diffMins} minutes ago`
+  if (diffHours < 24) return diffHours === 1 ? "1 hour ago" : `${diffHours} hours ago`
+  if (diffDays < 7) return diffDays === 1 ? "Yesterday" : `${diffDays} days ago`
+
+  return date.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
-    year: "numeric",
   })
 }
 
 function getProductName(input: Record<string, unknown>): string {
   const desc = input?.productDescription as string | undefined
-  if (!desc) return "Action Plan"
-  // Get first 50 chars or first sentence
-  const firstLine = desc.split(/[.\n]/)[0]
-  return firstLine.length > 50 ? firstLine.slice(0, 50) + "..." : firstLine
+  if (!desc) return "Your business"
+  // Get first 40 chars or first sentence, clean up
+  const firstLine = desc.split(/[.\n]/)[0].trim()
+  return firstLine.length > 40 ? firstLine.slice(0, 40) + "..." : firstLine
 }
 
 export default async function DashboardPage() {
@@ -116,6 +241,43 @@ export default async function DashboardPage() {
     remainingCredits = Math.max(0, totalCredits - paidRuns)
   }
 
+  // Determine dashboard state for conditional UI
+  const hasProcessing = strategies.some(s => s.status === "pending" || s.status === "processing")
+  const hasComplete = strategies.some(s => s.status === "complete")
+  const latestStrategy = strategies[0]
+
+  const dashboardState: DashboardState =
+    strategies.length === 0 ? "empty" :
+    hasProcessing && !hasComplete ? "processing" :
+    "ready"
+
+  // Get contextual header copy
+  const getHeaderContent = () => {
+    if (dashboardState === "empty") {
+      return {
+        eyebrow: "Welcome",
+        headline: "Let's build your first plan",
+        subtext: "Tell us about your business and we'll create a 30-day marketing strategy.",
+      }
+    }
+    if (dashboardState === "processing") {
+      const productName = latestStrategy ? getProductName(latestStrategy.input) : "your business"
+      return {
+        eyebrow: "We're on it",
+        headline: `Building your plan for ${productName}`,
+        subtext: "We're researching your competitors right now. Most plans are ready in about 5 minutes.",
+      }
+    }
+    // Ready state
+    return {
+      eyebrow: "Your plan is ready",
+      headline: "Here's what we built for you",
+      subtext: null,
+    }
+  }
+
+  const headerContent = getHeaderContent()
+
   return (
     <div className="min-h-screen flex flex-col bg-surface/30">
       <DashboardTracker stats={{ runs: strategies.length, credits: remainingCredits }} />
@@ -123,108 +285,73 @@ export default async function DashboardPage() {
 
       <main className="flex-1 py-10 sm:py-14">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
-          {/* Header section */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          {/* Header section - contextual based on state */}
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
             <div>
-              <p className="font-mono text-xs tracking-[0.15em] text-foreground/50 uppercase mb-1">
-                Your Account
+              <p className="text-sm font-semibold text-cta mb-1">
+                {headerContent.eyebrow}
               </p>
-              <h1 className="text-3xl font-black text-foreground tracking-tight">
-                Dashboard
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight font-serif">
+                {headerContent.headline}
               </h1>
-              <p className="text-foreground/60 mt-1 text-sm font-mono">
-                {authUser.email}
-              </p>
+              {headerContent.subtext && (
+                <p className="text-foreground/60 mt-2 text-sm max-w-md">
+                  {headerContent.subtext}
+                </p>
+              )}
             </div>
             <SignOutButton />
           </div>
 
-          {/* Stats cards - brutalist boxes */}
-          <div className="grid grid-cols-2 gap-4 mb-8">
-            <div className="rounded-2xl border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg border-2 border-foreground bg-surface flex items-center justify-center">
-                  <FileText className="h-5 w-5 text-foreground" />
-                </div>
-                <div>
-                  <p className="text-3xl font-black text-foreground">{strategies.length}</p>
-                  <p className="text-sm text-foreground/60 font-mono uppercase tracking-wide">
-                    {strategies.length === 1 ? "Plan" : "Plans"}
-                  </p>
-                </div>
+          {/* Plans list */}
+          {strategies.length === 0 ? (
+            /* Empty state - confident, solid */
+            <div className="rounded-xl border-2 border-dashed border-foreground/20 bg-white p-10 text-center">
+              <div className="w-16 h-16 rounded-xl bg-cta/10 border border-cta/20 flex items-center justify-center mx-auto mb-6">
+                <FileText className="h-8 w-8 text-cta" />
               </div>
-            </div>
 
-            <div className="rounded-2xl border-[3px] border-foreground bg-background p-5 shadow-[4px_4px_0_0_rgba(44,62,80,1)]">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg border-2 border-foreground bg-cta/10 flex items-center justify-center">
-                  <Zap className="h-5 w-5 text-cta" />
-                </div>
-                <div>
-                  <p className="text-3xl font-black text-foreground">{remainingCredits}</p>
-                  <p className="text-sm text-foreground/60 font-mono uppercase tracking-wide">
-                    {remainingCredits === 1 ? "Credit" : "Credits"}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+              <h3 className="text-xl font-bold text-foreground mb-2 font-serif">
+                Ready to grow your business?
+              </h3>
+              <p className="text-foreground/60 mb-8 max-w-sm mx-auto">
+                We'll research your competitors and build a 30-day marketing plan just for you.
+              </p>
 
-          {/* Strategies list - brutalist container */}
-          <div className="rounded-2xl border-[3px] border-foreground bg-background shadow-[6px_6px_0_0_rgba(44,62,80,1)] overflow-hidden">
-            <div className="px-6 py-4 border-b-[3px] border-foreground bg-surface">
-              <h2 className="font-bold text-foreground uppercase tracking-wide">Your Action Plans</h2>
+              <TrackedCTAButton button="get_first_strategy" />
             </div>
+          ) : (
+            <div className="space-y-4">
+              {strategies.map((item, index) => {
+                const isReady = item.status === "complete"
+                const isProcessing = item.status === "pending" || item.status === "processing"
+                const isFeatured = index === 0 && isReady // First ready plan is featured
 
-            {strategies.length === 0 ? (
-              <div className="p-8 text-center">
-                <div className="w-14 h-14 rounded-xl border-[3px] border-foreground bg-surface flex items-center justify-center mx-auto mb-4">
-                  <FileText className="h-7 w-7 text-foreground/50" />
-                </div>
-                <p className="text-foreground/60 mb-6 font-medium">No action plans yet</p>
-                <TrackedCTAButton button="get_first_strategy" />
-              </div>
-            ) : (
-              <div className="divide-y-[2px] divide-foreground/20">
-                {strategies.map((item) =>
-                  item.type === "free_audit" ? (
-                    <TrackedFreeAuditLink key={item.id} auditId={item.id} status={item.status}>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <p className="font-bold text-foreground truncate">
-                            {getProductName(item.input)}
-                          </p>
-                          <FreeBadge />
-                        </div>
-                        <p className="text-sm text-foreground/50 mt-1 font-mono">
-                          {formatDate(item.created_at)}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-4 ml-4">
-                        <StatusBadge status={item.status} />
-                        <ArrowRight className="h-5 w-5 text-foreground/40" />
-                      </div>
-                    </TrackedFreeAuditLink>
-                  ) : (
-                    <TrackedStrategyLink key={item.id} runId={item.id} status={item.status}>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-bold text-foreground truncate">
-                          {getProductName(item.input)}
-                        </p>
-                        <p className="text-sm text-foreground/50 mt-1 font-mono">
-                          {formatDate(item.created_at)}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-4 ml-4">
-                        <StatusBadge status={item.status} />
-                        <ArrowRight className="h-5 w-5 text-foreground/40" />
-                      </div>
-                    </TrackedStrategyLink>
-                  )
-                )}
-              </div>
-            )}
-          </div>
+                return item.type === "free_audit" ? (
+                  <TrackedFreeAuditLink key={item.id} auditId={item.id} status={item.status}>
+                    <PlanCard
+                      productName={getProductName(item.input)}
+                      date={formatRelativeDate(item.created_at)}
+                      status={item.status}
+                      isProcessing={isProcessing}
+                      isFeatured={false}
+                      badge={<FreeBadge />}
+                    />
+                  </TrackedFreeAuditLink>
+                ) : (
+                  <TrackedStrategyLink key={item.id} runId={item.id} status={item.status}>
+                    <PlanCard
+                      productName={getProductName(item.input)}
+                      date={formatRelativeDate(item.created_at)}
+                      status={item.status}
+                      isProcessing={isProcessing}
+                      isFeatured={isFeatured}
+                    />
+                  </TrackedStrategyLink>
+                )
+              })}
+            </div>
+          )}
 
           {/* CTA */}
           {strategies.length > 0 && (

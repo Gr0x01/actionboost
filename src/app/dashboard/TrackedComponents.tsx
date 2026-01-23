@@ -22,7 +22,7 @@ export function TrackedStrategyLink({ runId, status, children }: TrackedStrategy
           status: status || "unknown",
         });
       }}
-      className="group flex items-center justify-between px-6 py-4 bg-background hover:bg-surface/80 border-l-4 border-l-transparent hover:border-l-cta transition-all duration-100"
+      className="group block hover:-translate-y-0.5 transition-transform"
     >
       {children}
     </Link>
@@ -47,7 +47,7 @@ export function TrackedFreeAuditLink({ auditId, status, children }: TrackedFreeA
           status: status || "unknown",
         });
       }}
-      className="group flex items-center justify-between px-6 py-4 bg-background hover:bg-surface/80 border-l-4 border-l-transparent hover:border-l-violet-600 transition-all duration-100"
+      className="group block hover:-translate-y-0.5 transition-transform"
     >
       {children}
     </Link>
@@ -63,8 +63,8 @@ export function TrackedCTAButton({ button, variant = "primary" }: TrackedCTAButt
   const posthog = usePostHog();
 
   const label = button === "get_first_strategy"
-    ? "Get your first action plan"
-    : "Generate another plan";
+    ? "Let's get started"
+    : "Start another plan";
 
   const isPrimary = variant === "primary";
 
@@ -74,10 +74,10 @@ export function TrackedCTAButton({ button, variant = "primary" }: TrackedCTAButt
       onClick={() => {
         posthog?.capture("dashboard_cta_clicked", { button });
       }}
-      className={`inline-flex items-center gap-2 rounded-xl px-6 py-3 font-bold border-2 transition-all duration-100
+      className={`inline-flex items-center gap-2 rounded-xl px-6 py-3 font-semibold transition-all duration-150
         ${isPrimary
-          ? "bg-cta text-white border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1"
-          : "bg-background text-foreground border-foreground shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1"
+          ? "bg-cta text-white shadow-[0_4px_14px_rgba(230,126,34,0.35)] hover:shadow-[0_6px_20px_rgba(230,126,34,0.45)] hover:-translate-y-0.5 active:translate-y-0"
+          : "bg-background text-foreground border border-foreground/20 shadow-[0_2px_8px_rgba(44,62,80,0.06)] hover:shadow-[0_4px_12px_rgba(44,62,80,0.1)] hover:-translate-y-0.5 active:translate-y-0"
         }`}
     >
       {label}
