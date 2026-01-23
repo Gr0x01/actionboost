@@ -82,8 +82,9 @@ export function useUserContext(businessId?: string | null): UseUserContextResult
     return {
       productDescription: context.product?.description || '',
       currentTraction: context.traction?.latest || '',
-      tacticsAndResults,
+      tacticsAndResults: tacticsAndResults,
       focusArea: 'acquisition', // User picks fresh each time
+      alternatives: [], // User picks fresh each time
       competitors: [
         ...(context.product?.competitors || []),
         '', '', '',
@@ -91,7 +92,6 @@ export function useUserContext(businessId?: string | null): UseUserContextResult
       websiteUrl: context.product?.websiteUrl || '',
       analyticsSummary: '',
       constraints: context.constraints || '',
-      attachments: [],
       email: '', // Will be collected in form flow
     }
   }

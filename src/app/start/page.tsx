@@ -12,10 +12,10 @@ import {
   UrlInput,
   TextareaInput,
   TractionInput,
+  AlternativesInput,
   FocusInput,
   EmailInput,
   CompetitorInput,
-  UploadInput,
   CheckoutSection,
   WelcomeBack,
   ContextUpdateForm,
@@ -35,12 +35,12 @@ import { usePromoCode } from "@/lib/hooks/usePromoCode";
 import { useFormPrefill, PrefillResult } from "@/lib/hooks/useFormPrefill";
 import { useFormAnalytics } from "@/lib/hooks/useFormAnalytics";
 
-const STORAGE_KEY = "actionboost-form-v3";
+const STORAGE_KEY = "actionboost-form-v4"; // v4: added alternatives, removed attachments
 
 // View states for the form flow
 type ViewState = "loading" | "welcome_back" | "context_update" | "questions" | "checkout";
 
-// Question definitions - buttons first for easier entry
+// Question definitions - chips first for easier entry, then context
 const QUESTIONS: Question[] = [
   {
     id: "currentTraction",
@@ -56,16 +56,16 @@ const QUESTIONS: Question[] = [
   },
   {
     id: "productDescription",
-    question: "Tell me about your product in a sentence or two",
-    acknowledgment: "Interesting product",
+    question: "Tell me about your business and what you've tried for marketing",
+    acknowledgment: "Got it",
     type: "textarea",
   },
   {
-    id: "tacticsAndResults",
-    question: "What have you tried, and how's it going?",
-    acknowledgment: "This helps a lot",
-    type: "textarea",
-    optional: true,
+    id: "alternatives",
+    question: "If they didn't use you, what would they do instead?",
+    acknowledgment: "Helpful context",
+    type: "alternatives",
+    optional: false, // Required for positioning analysis
   },
   {
     id: "websiteUrl",
@@ -79,13 +79,6 @@ const QUESTIONS: Question[] = [
     question: "Any competitors I should study?",
     acknowledgment: null,
     type: "competitors",
-    optional: true,
-  },
-  {
-    id: "attachments",
-    question: "Got any screenshots or data to share?",
-    acknowledgment: null,
-    type: "upload",
     optional: true,
   },
   {
@@ -239,7 +232,7 @@ function StartPageContent() {
       try {
         const parsed = JSON.parse(saved);
         if (parsed && typeof parsed === "object" && typeof parsed.productDescription === "string") {
-          if (!Array.isArray(parsed.attachments)) parsed.attachments = [];
+          if (!Array.isArray(parsed.alternatives)) parsed.alternatives = [];
           setForm({ ...INITIAL_FORM_STATE, ...parsed });
         }
       } catch {
@@ -414,7 +407,7 @@ function StartPageContent() {
     if (id === "competitors") {
       return (value as string[]).filter(Boolean);
     }
-    if (id === "attachments") {
+    if (id === "alternatives") {
       return value as string[];
     }
     return value as string;
@@ -602,13 +595,18 @@ function StartPageContent() {
                       onChange={(v) => updateField(question.id as keyof FormInput, v as never)}
                       onSubmit={() => goToNext(false)}
                       onBack={currentQuestion > 0 ? goBack : undefined}
-                      placeholder={
-                        question.id === "productDescription"
-                          ? "We help [who] do [what] by [how]..."
-                          : "SEO, content marketing, paid ads... and what's working or not"
-                      }
+                      placeholder="We help [who] do [what]... We've tried SEO, social media, etc."
                       currentTotal={getTotalCharCount(form)}
                       maxTotal={MAX_TOTAL_CHARS}
+                    />
+                  )}
+
+                  {question.type === "alternatives" && (
+                    <AlternativesInput
+                      value={form.alternatives}
+                      onChange={(v) => updateField("alternatives", v)}
+                      onSubmit={() => goToNext(false)}
+                      onBack={currentQuestion > 0 ? goBack : undefined}
                     />
                   )}
 
@@ -618,6 +616,7 @@ function StartPageContent() {
                       onChange={(v) => updateField("currentTraction", v)}
                       onSubmit={() => goToNext(false)}
                       onBack={currentQuestion > 0 ? goBack : undefined}
+                      autoFocus
                     />
                   )}
 
@@ -638,16 +637,6 @@ function StartPageContent() {
                       onChange={(v) => updateField("email", v)}
                       onSubmit={() => goToNext(false)}
                       onSkip={question.optional ? () => goToNext(true) : undefined}
-                      onBack={currentQuestion > 0 ? goBack : undefined}
-                    />
-                  )}
-
-                  {question.type === "upload" && (
-                    <UploadInput
-                      value={form.attachments}
-                      onChange={(v) => updateField("attachments", v)}
-                      onSubmit={() => goToNext(false)}
-                      onSkip={() => goToNext(true)}
                       onBack={currentQuestion > 0 ? goBack : undefined}
                     />
                   )}

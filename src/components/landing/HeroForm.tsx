@@ -4,36 +4,33 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ChevronLeft, Loader2 } from "lucide-react";
 import {
   TractionInput,
   FocusInput,
   TextareaInput,
+  AlternativesInput,
   UrlInput,
   CompetitorInput,
-  UploadInput,
   EmailInput,
   CheckoutSection,
 } from "@/components/forms";
 import {
   FormInput,
-  FocusArea,
   INITIAL_FORM_STATE,
   getTotalCharCount,
   MAX_TOTAL_CHARS,
 } from "@/lib/types/form";
 import { usePromoCode } from "@/lib/hooks/usePromoCode";
 
-const STORAGE_KEY = "actionboost-form-v3";
+const STORAGE_KEY = "actionboost-form-v4"; // v4: added alternatives, removed attachments
 
 type Step =
   | "traction"
   | "focus"
   | "product"
-  | "tactics"
+  | "alternatives"
   | "website"
   | "competitors"
-  | "attachments"
   | "email"
   | "checkout";
 
@@ -41,10 +38,9 @@ const STEPS: Step[] = [
   "traction",
   "focus",
   "product",
-  "tactics",
+  "alternatives",
   "website",
   "competitors",
-  "attachments",
   "email",
   "checkout",
 ];
@@ -52,11 +48,10 @@ const STEPS: Step[] = [
 const STEP_CONFIG: Record<Step, { question: string; optional?: boolean }> = {
   traction: { question: "What traction do you have so far?" },
   focus: { question: "Where should we focus?" },
-  product: { question: "Tell me about your product" },
-  tactics: { question: "What have you tried, and how's it going?", optional: true },
+  product: { question: "Tell me about your business and what you've tried" },
+  alternatives: { question: "If they didn't use you, what would they do instead?" },
   website: { question: "What's your website?", optional: true },
   competitors: { question: "Any competitors I should study?", optional: true },
-  attachments: { question: "Got any screenshots or data to share?", optional: true },
   email: { question: "Where should we send your strategy?", optional: true },
   checkout: { question: "" },
 };
@@ -109,7 +104,7 @@ export function HeroForm() {
       try {
         const parsed = JSON.parse(saved);
         if (parsed && typeof parsed === "object") {
-          if (!Array.isArray(parsed.attachments)) parsed.attachments = [];
+          if (!Array.isArray(parsed.alternatives)) parsed.alternatives = [];
           setForm({ ...INITIAL_FORM_STATE, ...parsed });
         }
       } catch {
@@ -280,7 +275,7 @@ export function HeroForm() {
               </motion.div>
             )}
 
-            {/* Product description step */}
+            {/* Product description step (combined with tactics) */}
             {currentStep === "product" && (
               <motion.div
                 key="product"
@@ -297,17 +292,17 @@ export function HeroForm() {
                   onChange={(v) => updateField("productDescription", v)}
                   onSubmit={() => goNext()}
                   onBack={goBack}
-                  placeholder="We help [who] do [what] by [how]..."
+                  placeholder="We help [who] do [what]... We've tried SEO, social media, etc."
                   currentTotal={getTotalCharCount(form)}
                   maxTotal={MAX_TOTAL_CHARS}
                 />
               </motion.div>
             )}
 
-            {/* Tactics step */}
-            {currentStep === "tactics" && (
+            {/* Alternatives step (positioning) */}
+            {currentStep === "alternatives" && (
               <motion.div
-                key="tactics"
+                key="alternatives"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -316,15 +311,11 @@ export function HeroForm() {
                 <h3 className="text-lg font-semibold text-foreground text-center mb-6">
                   {stepConfig.question}
                 </h3>
-                <TextareaInput
-                  value={form.tacticsAndResults}
-                  onChange={(v) => updateField("tacticsAndResults", v)}
+                <AlternativesInput
+                  value={form.alternatives}
+                  onChange={(v) => updateField("alternatives", v)}
                   onSubmit={() => goNext()}
                   onBack={goBack}
-                  onSkip={() => goNext(true)}
-                  placeholder="SEO, content marketing, paid ads... and what's working or not"
-                  currentTotal={getTotalCharCount(form)}
-                  maxTotal={MAX_TOTAL_CHARS}
                 />
               </motion.div>
             )}
@@ -369,28 +360,6 @@ export function HeroForm() {
                     const padded = [...v, "", "", ""].slice(0, 3);
                     updateField("competitors", padded);
                   }}
-                  onSubmit={() => goNext()}
-                  onSkip={() => goNext(true)}
-                  onBack={goBack}
-                />
-              </motion.div>
-            )}
-
-            {/* Attachments step */}
-            {currentStep === "attachments" && (
-              <motion.div
-                key="attachments"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
-              >
-                <h3 className="text-lg font-semibold text-foreground text-center mb-6">
-                  {stepConfig.question}
-                </h3>
-                <UploadInput
-                  value={form.attachments}
-                  onChange={(v) => updateField("attachments", v)}
                   onSubmit={() => goNext()}
                   onSkip={() => goNext(true)}
                   onBack={goBack}

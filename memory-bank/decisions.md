@@ -679,6 +679,49 @@ npx tsx scripts/retry-run.ts <runId>
 
 ---
 
+## Positioning Frameworks: Dunford + Gerhardt (Jan 23 2026)
+
+**Decision**: Add April Dunford and Dave Gerhardt positioning expertise to both the AI pipeline and the growth-hacker subagent.
+
+**Why**:
+- The pipeline was jumping straight to tactics without assessing positioning clarity
+- Unclear positioning makes all tactics less effective
+- SMBs often don't know what their real competitive alternatives are
+
+**What was added**:
+
+### April Dunford's "Obviously Awesome" Framework
+1. **Competitive alternatives** - What would customers do if this didn't exist?
+2. **Unique attributes** - What does this have that alternatives don't?
+3. **Value** - What capability do those attributes enable?
+4. **Target segments** - Who cares most about that value?
+5. **Market category** - What's the best context to frame this value?
+
+### Dave Gerhardt's Brand-First Approach
+- Brand before demand gen (people buy from brands they trust)
+- Content builds trust (educational > promotional)
+- Be human (businesses don't have to be boring)
+- Community compounds (build > rent audiences)
+
+**New form question**: "If they didn't use you, what would they do instead?"
+- Multi-select chips: Wing it, Google it, Ask ChatGPT, Hire an agency, Ask a friend
+- Custom input for specific alternatives
+- REQUIRED field (positioning analysis needs this data)
+
+**New output section**: "Positioning Check" in "Your Situation"
+- What you're competing against (beyond named competitors)
+- What makes you different
+- Who cares most
+- Verdict: Clear / Needs work / Unclear
+
+**Files changed**:
+- `src/lib/ai/generate.ts` - All prompts enhanced with positioning frameworks
+- `src/lib/types/form.ts` - Added `alternatives` field + validation
+- `src/app/start/page.tsx` - New form flow
+- `CLAUDE.md` - Updated growth-hacker subagent
+
+---
+
 ## Pipeline V2: Competitive Intelligence Platform (Jan 22 2026)
 
 **Decision**: Expand from 3 Tavily searches to 7+ data sources with Claude tool use.

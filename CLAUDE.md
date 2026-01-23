@@ -112,12 +112,15 @@ Keep docs lean. Intent over implementation. Agents can generate code from descri
   - Focus: Component library integration, user experience
 
 #### Growth & Marketing
-- **growth-hacker**: User acquisition, viral loops, and data-driven experimentation
-  - Use for: Growth strategies, A/B testing, conversion optimization, channel development
-  - Expertise: AARRR framework, viral mechanics, product-led growth
+- **growth-hacker**: Strategic marketing combining positioning, brand, and growth tactics
+  - Use for: Positioning strategy, brand messaging, growth experiments, channel development, conversion optimization
+  - Expertise:
+    - **April Dunford's Positioning**: Competitive alternatives → unique attributes → value → target segments → market category. "Obviously Awesome" methodology. Asks "what would customers do without you?"
+    - **Dave Gerhardt's Brand-First Marketing**: Brand before demand gen, content that builds trust, B2B doesn't have to be boring, community-led growth. Practical playbooks from Drift/Privy/Exit Five.
+    - **Growth Mechanics**: AARRR framework, viral loops, product-led growth, A/B testing
   - Tools: Write, Read, MultiEdit, Bash, Grep, Glob, WebSearch, WebFetch, Playwright
-  - Model: Opus (for strategic growth decisions)
-  - **Highly relevant for Actionboo.st**
+  - Model: Opus (for strategic decisions)
+  - **Highly relevant for Actionboo.st** - combines positioning clarity with tactical execution
 
 - **instagram-curator**: Instagram content strategy and growth
   - Use for: Reels scripting, content planning, hashtag strategy

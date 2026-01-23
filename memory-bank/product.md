@@ -161,24 +161,29 @@ Subtle "Just want a taste?" option at checkout → 4-section condensed audit →
 
 ## Input Form Fields
 
+### Form Flow (7 steps)
+
+1. **Current traction** (chips) - Pre-launch, <100 users, 100-1K, 1K-10K, 10K+
+2. **Focus area** (chips) - Acquisition, Activation, Retention, Referral, Monetization, Other
+3. **About your business** (textarea) - Combined: What you do + what marketing you've tried
+4. **Competitive alternatives** (multi-select chips + custom) - What do people do instead of using you?
+   - Wing it, Google it, Ask ChatGPT, Hire an agency, Ask a friend, + custom
+5. **Website URL** (optional)
+6. **Competitor URLs** (optional, up to 3)
+7. **Email** (optional, auto-skipped if logged in)
+
 ### Required
-- **Product description** - What does it do? (1-2 sentences)
-- **Current traction** - Users, revenue, traffic, whatever matters
-- **What you've tried** - Channels, tactics, experiments
-- **What's working/not** - Current wins and failures
+- Traction (step 1)
+- Focus area (step 2)
+- Business description (step 3)
+- Competitive alternatives (step 4) - Required for positioning analysis
 
 ### Optional
+- Website URL
 - Competitor URLs (up to 3)
-- Your website URL
-- Analytics summary (paste from GA/PostHog)
-- Constraints (budget, time, skills)
+- Email (for cart abandonment, skipped if logged in)
 
-### Focus Area (radio)
-- Growth & Acquisition (default)
-- Monetization & Conversion
-- Competitive Positioning
-
-**Total character limit**: ~10,000 (keeps API costs predictable)
+**Total character limit**: ~25,000 (keeps API costs predictable)
 
 ---
 

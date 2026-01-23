@@ -26,20 +26,22 @@ export const FOCUS_AREA_LABELS: Record<FocusArea, string> = {
  */
 export type RunInput = {
   // Required fields
-  productDescription: string
+  productDescription: string // Now includes tactics/what they've tried
   currentTraction: string
-  tacticsAndResults: string // Merged: what tactics tried + how they're going
   focusArea: FocusArea
   customFocusArea?: string // Only used when focusArea is 'custom'
+
+  // Positioning
+  alternatives?: string[] // What do people do instead? (competitive alternatives)
 
   // Optional fields
   competitorUrls?: string[]
   websiteUrl?: string
   analyticsSummary?: string
   constraints?: string
-  attachments?: Attachment[]
 
   // Legacy fields (for backwards compatibility with old runs)
+  tacticsAndResults?: string
   whatYouTried?: string
   whatsWorking?: string
 }

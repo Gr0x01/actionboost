@@ -8,7 +8,7 @@ export interface Question {
   id: string
   question: string
   acknowledgment: string | null
-  type: 'url' | 'textarea' | 'traction' | 'focus' | 'email' | 'upload' | 'competitors'
+  type: 'url' | 'textarea' | 'traction' | 'alternatives' | 'focus' | 'email' | 'competitors'
   optional?: boolean
 }
 

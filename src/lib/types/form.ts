@@ -14,9 +14,11 @@ export interface FileAttachment {
 
 export interface FormInput {
   // Required fields
-  productDescription: string;
+  productDescription: string; // Now includes tactics/what they've tried
   currentTraction: string;
-  tacticsAndResults: string; // Merged: what tactics tried + how they're going
+
+  // Positioning
+  alternatives: string[]; // What do people do instead? (competitive alternatives)
 
   // Focus area
   focusArea: FocusArea;
@@ -26,8 +28,10 @@ export interface FormInput {
   websiteUrl: string;
   analyticsSummary: string;
   constraints: string;
-  attachments: FileAttachment[];
   email: string; // Collected before checkout for cart abandonment
+
+  // Legacy field - kept for backwards compatibility with existing runs
+  tacticsAndResults: string;
 }
 
 export const FOCUS_AREA_OPTIONS: {
@@ -70,15 +74,24 @@ export const FOCUS_AREA_OPTIONS: {
 export const INITIAL_FORM_STATE: FormInput = {
   productDescription: "",
   currentTraction: "",
-  tacticsAndResults: "",
+  alternatives: [],
   focusArea: "acquisition",
   competitors: ["", "", ""],
   websiteUrl: "",
   analyticsSummary: "",
   constraints: "",
-  attachments: [],
   email: "",
+  tacticsAndResults: "", // Legacy field
 };
+
+// Chip options for alternatives question
+export const ALTERNATIVES_CHIPS = [
+  { id: "wing-it", label: "Wing it", description: "Trial and error" },
+  { id: "google", label: "Google it", description: "DIY research" },
+  { id: "chatgpt", label: "Ask ChatGPT", description: "Free AI tools" },
+  { id: "agency", label: "Hire an agency", description: "Pay for help" },
+  { id: "friend", label: "Ask a friend", description: "Free advice" },
+] as const;
 
 export const MAX_TOTAL_CHARS = 25000;
 
@@ -89,7 +102,7 @@ export function getTotalCharCount(form: FormInput): number {
   return (
     form.productDescription.length +
     form.currentTraction.length +
-    form.tacticsAndResults.length +
+    form.alternatives.join("").length +
     form.competitors.join("").length +
     form.websiteUrl.length +
     form.analyticsSummary.length +
@@ -115,7 +128,16 @@ export function validateForm(form: FormInput, isReturningUser = false): Record<s
     errors.productDescription = "Product description is required";
   }
 
-  // tacticsAndResults is optional (can be skipped)
+  // alternatives validation (required, array of strings)
+  if (!form.alternatives || !Array.isArray(form.alternatives)) {
+    errors.alternatives = "Please select at least one alternative";
+  } else if (form.alternatives.length === 0) {
+    errors.alternatives = "Please select at least one alternative";
+  } else if (form.alternatives.length > 20) {
+    errors.alternatives = "Maximum 20 alternatives allowed";
+  } else if (form.alternatives.some(a => typeof a !== "string" || a.length > 200)) {
+    errors.alternatives = "Each alternative must be under 200 characters";
+  }
 
   const totalChars = getTotalCharCount(form);
   if (totalChars > MAX_TOTAL_CHARS) {

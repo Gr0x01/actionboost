@@ -1,6 +1,69 @@
 # Current Phase
 
-## Latest Update: Boost in Action Page
+## Latest Update: Positioning Framework + Form Simplification
+
+**Completed Jan 23, 2026** - Added April Dunford/Dave Gerhardt positioning expertise to pipeline and simplified form flow.
+
+### What Was Built
+
+#### 1. Pipeline Prompts Enhanced with Positioning Frameworks
+
+Updated `src/lib/ai/generate.ts` with:
+- **April Dunford's "Obviously Awesome"** positioning methodology (competitive alternatives → unique attributes → value → target segments → market category)
+- **Dave Gerhardt's brand-first thinking** (brand before demand gen, content builds trust, be human, community compounds)
+- New "Positioning Check" subsection in output with verdict: Clear/Needs work/Unclear
+- Competitive Landscape now includes ALL alternatives (DIY, hiring, doing nothing) not just named competitors
+
+#### 2. Form Flow Simplified (8 → 7 steps)
+
+| Old Flow | New Flow |
+|----------|----------|
+| 1. Traction (chips) | 1. Traction (chips) |
+| 2. Focus (chips) | 2. Focus (chips) |
+| 3. Product description | 3. Business + what you've tried (combined) |
+| 4. Tactics tried | 4. **Alternatives** (NEW - positioning chips) |
+| 5. Website | 5. Website |
+| 6. Competitors | 6. Competitors |
+| 7. Attachments | ~~removed~~ |
+| 8. Email | 7. Email |
+
+#### 3. New AlternativesInput Component
+
+Multi-select chip input for competitive alternatives (Dunford's core positioning question):
+- Wing it (trial and error)
+- Google it (DIY research)
+- Ask ChatGPT (free AI tools)
+- Hire an agency (pay for help)
+- Ask a friend (free advice)
+- Custom input for specific alternatives
+
+#### 4. Growth-Hacker Subagent Updated
+
+Updated `CLAUDE.md` subagent with Dunford + Gerhardt expertise for building Actionboo.st itself.
+
+### Files Added
+- `src/components/forms/AlternativesInput.tsx` - Multi-select chip component
+
+### Files Modified
+- `CLAUDE.md` - Updated growth-hacker subagent expertise
+- `src/lib/ai/generate.ts` - Positioning frameworks in prompts, output format
+- `src/lib/ai/types.ts` - Added `alternatives` to RunInput
+- `src/lib/types/form.ts` - Added `alternatives`, ALTERNATIVES_CHIPS, validation
+- `src/lib/hooks/useFormWizard.ts` - Added 'alternatives' question type
+- `src/lib/hooks/useUserContext.ts` - Updated prefillForm
+- `src/app/start/page.tsx` - New question flow, storage key v4
+- `src/components/landing/HeroForm.tsx` - Same flow updates
+- `src/components/forms/index.ts` - Export AlternativesInput
+
+### Key Decisions
+- Alternatives question is REQUIRED (for positioning analysis quality)
+- Storage key bumped to v4 for clean slate with new schema
+- Attachments removed (low usage, high friction)
+- Combined product description + tactics into single question
+
+---
+
+## Previous: Boost in Action Page
 
 **Completed Jan 23, 2026** - Curated examples showcase page at `/in-action`.
 
