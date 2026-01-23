@@ -32,10 +32,12 @@ Key architectural and product decisions. Reference this when you need to underst
 | Element | Before | After |
 |---------|--------|-------|
 | Headline | "ChatGPT told me Reddit" | "Stuck on marketing? Let's figure it out." |
-| Tagline | "$10 → competitor research" | "$49 · Your market researched · Money back if it doesn't help" |
-| Trust | "Built by @rbaten \| Side project" | "No marketing degree needed · No jargon · Works for any business" |
+| Tagline | "$10 → competitor research" | "Money back if it doesn't help. Seriously." |
+| Trust | "Built by @rbaten \| Side project" | "Plan ready in 5 minutes · No jargon · Salons, e-commerce, consultants" |
 | Examples | Indie Hackers, Twitter threads | Pinterest for salons, referral programs |
-| CTA | "Get My Action Plan" | "Tell me about your business" |
+| Hero CTA | "Get My Action Plan" | "Get my 30-day plan" |
+| Pricing CTA | "Tell me about your business" | "Get my plan for $49" |
+| Footer | "Your plan ready in about an hour" | "Your plan ready in 5 minutes" |
 
 **Files changed**:
 - `src/components/landing/Hero.tsx`
@@ -62,61 +64,62 @@ Key architectural and product decisions. Reference this when you need to underst
 
 ---
 
-## Visual Style: Brutalist + Tactile Hybrid (Jan 2025)
+## Visual Style: Light Skeuomorphism (Jan 2026)
 
-**Decision**: Brutalist structure with satisfying tactile interactions.
+**Decision**: Warm, tactile design with soft shadows and friendly interactions.
 
-**Brand vibe**: Snarky, quirky, funny but helpful. A $9.99 kick-in-the-ass tool that helps scrappy founders make money. NOT serious enterprise SaaS. NOT another polished AI landing page.
+**Brand vibe**: Friendly expert helping SMBs figure out marketing. Approachable, not intimidating. Professional but warm. NOT cold SaaS. NOT harsh brutalist.
 
-**Why not editorial**: Editorial/magazine style (big serif type, dramatic whitespace) has been overdone. Every SaaS looks like this now. Doesn't match our irreverent personality.
+**Why the change from Brutalist**: Brutalist worked for snarky founder voice targeting indie hackers. SMB audience (salon owners, local services) needs warmer, more approachable design. Hard edges felt intimidating.
 
-**The hybrid approach**:
-- **Brutalist structure**: Hard edges, no border-radius, harsh offset shadows, high contrast
-- **Tactile feedback**: Buttons lift on hover, squish on press. Fast 100ms transitions. Feels satisfying to click.
+**The approach**:
+- **Soft shadows**: Warm-tinted shadows, not harsh black offsets
+- **Rounded corners**: `rounded-xl`, `rounded-2xl` - friendly, approachable
+- **Tactile feedback**: Buttons lift on hover, squish on press. Fast 100ms transitions.
+- **Warm color palette**: Cream backgrounds, soft borders
 
 **Implementation patterns**:
 ```css
-/* Brutalist card */
-.brutalist-card {
-  border: 3px solid var(--foreground);
+/* Soft card */
+.soft-card {
+  border-radius: 16px;
+  border: 1px solid var(--border);
   background: var(--background);
-  box-shadow: 6px 6px 0 0 rgba(44,62,80,1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 /* Tactile button */
 .tactile-button {
-  box-shadow: 4px 4px 0 0 rgba(44,62,80,1);
-  transition: all 100ms;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 150ms;
 }
 .tactile-button:hover {
   transform: translateY(-2px);
-  box-shadow: 6px 6px 0 0 rgba(44,62,80,1);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 .tactile-button:active {
   transform: translateY(2px);
-  box-shadow: none;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 ```
 
 **Typography**:
-- Headlines: Light/black weight contrast ("Stop guessing. **Start growing.**")
-- Taglines: Mono, uppercase, tracked out (`$9.99 → 30-day growth plan → no fluff`)
+- Headlines: Light/black weight contrast ("Stuck on marketing? **Let's figure it out.**")
+- Taglines: Mono, uppercase, tracked out
 - Body: Source Sans 3, readable
 
 **Colors**:
-- Keep warm cream background (`--background: #FDFCFB`)
-- Keep orange CTA (`--cta: #E67E22`) - it screams, which is good
-- Foreground for borders/shadows (`--foreground: #2C3E50`)
+- Warm cream background (`--background: #FDFCFB`)
+- Soft beige surface (`--surface: #F8F6F3`)
+- Orange CTA (`--cta: #E67E22`)
+- Navy foreground (`--foreground: #2C3E50`)
+- Warm-tinted shadows (`rgba(44, 62, 80, 0.04)`)
 
 **What this affects**:
-- Landing page: Hero, FrameworksSection (done)
-- Results page: Should adopt same brutalist cards for sections
-- Forms: Brutalist inputs with hard borders
-- Any new components
-
-**What to preserve**:
-- Tweet cards in ProblemSection stay rounded (intentional contrast: "lost founders" vs "solid solution")
-- Results page content stays readable (Tienne serif, max-w-prose) - brutalist frames, readable content inside
+- All landing page components
+- Forms: Soft inputs with rounded corners
+- Results page: Dashboard components with soft cards
 
 ---
 
@@ -556,84 +559,123 @@ npx tsx scripts/retry-run.ts <runId>
 
 ---
 
-## Brand Voice: Founder-Led Honesty (Jan 22 2026)
+## Brand Voice: Friendly Expert (Jan 2026)
 
-**Decision**: Rewrite landing page copy with blunt, founder-led voice based on Chris Do's brand framework.
+**Decision**: Warm, hand-holding voice like a smart friend who knows marketing.
 
-**Core narrative**: "ChatGPT told me Reddit. This said Pinterest. It's working."
+**Core narrative**: "Stuck on marketing? Let's figure it out."
 
 **Why this works**:
-- Acknowledges the AI wrapper comparison honestly ("yes, it's kind of a ChatGPT wrapper BUT...")
-- Leads with founder's real story, not marketing claims
-- The $10 price + money-back guarantee removes risk objection
-- Direct, no corporate fluff
+- Acknowledges the user's pain directly (they ARE stuck)
+- Non-intimidating, collaborative tone
+- No jargon, no posturing
+- Money-back guarantee removes risk
 
-**Chris Do framework applied**:
-- **What** (Look/Feel): Brutalist raw, tactile, orange accent
-- **How** (Tone/Voice): Blunt optimist, impatient for results, quietly confident
-- **Who** (Customer): Founders stuck at 100-1000 users who've tried generic advice
-- **Why** (Value): Real competitor research + actionable plan, not ChatGPT guesses
+**Voice framework**:
+- **Tone**: Friendly, helpful, like a smart friend explaining something
+- **Perspective**: First person ("Tell me about your business... I'll research...")
+- **Audience**: SMBs who are stuck, not tech-savvy founders
+- **Value**: Real research on YOUR competitors, not generic advice
 
 **Copy patterns established**:
 
 | Element | Pattern | Example |
 |---------|---------|---------|
-| Headlines | Light/black weight contrast | "ChatGPT told me Reddit. **This said Pinterest.**" |
-| Taglines | Mono, uppercase, tracked | `$10 → competitor research → money back if useless` |
-| Subheads | Direct, first person | "I built this to figure out my own marketing." |
-| CTAs | Action-oriented | "Get My Action Plan" |
-| Guarantees | Bold, near CTA | "Didn't help? Full refund." |
-| Trust | Casual, self-aware | "$10 because $5 seemed fake" |
+| Headlines | Light/black weight contrast | "Stuck on marketing? **Let's figure it out.**" |
+| Taglines | Single value prop, conversational | "Money back if it doesn't help. Seriously." |
+| Subheads | Direct, first person, warm | "Tell me about your business... I'll build you a 30-day plan." |
+| CTAs | Action + outcome | "Get my 30-day plan" |
+| Guarantees | Bold, casual | "Didn't help? Full refund. No questions asked." |
+| Trust | Practical, specific | "Plan ready in 5 minutes · No jargon" |
 
 **What to preserve**:
-- The founder story in hero (ChatGPT vs Pinterest)
-- Price + guarantee combo prominent
-- "We're doing this too" dogfooding proof
-- Testimonials with outcome focus, not ironic quotes
+- First-person voice ("Tell me...", "I'll research...")
+- Money-back guarantee prominent
+- SMB examples (salons, e-commerce, consultants)
+- Speed promise (5 minutes)
 
 **What to avoid**:
-- Defensive positioning ("Not like ChatGPT...")
-- Vague claims ("AI-powered insights")
-- Listing features without outcomes
-- Corporate tone or marketing speak
+- Startup jargon (without plain-English explanation)
+- Founder/indie hacker references
+- Snarky or irreverent tone
+- Emojis (absolutely never)
+- Tech-savvy assumptions
 
-**Testimonial style**: Minimal bold treatment
+**Testimonial style**:
 - Italic quote text
 - Small orange bar before attribution
-- Brutalist shadow to match pricing card
+- Name format (not Twitter handles)
 
 ---
 
-## Pricing: $9.99 → $39 (Jan 22 2026)
+## Pricing: $49 for SMBs (Jan 2026)
 
-**Decision**: Raise paid tier from $9.99 to $39. Keep free mini-audit at $0.
+**Decision**: $49 single payment for full strategy. No subscription required.
 
-**Catalyst**: Competitive analysis of BigIdeasDB ($3k/mo in 8 months) and their advice: "Founders who can't spend $39 aren't serious customers."
-
-**Consulted**: growth-hacker + brand-guardian subagents (both unanimously recommended $39)
-
-**Why $39 over $29**:
-- Both under $50 (similar psychology), but $39 signals "premium tool"
-- Higher price = higher engagement (proven in SaaS)
-- Filters for serious founders who will actually use the output
-- Better margin for growth reinvestment
-- Makes the consultant comparison more believable ($150+/hr vs $39)
-
-**Brand guardian insight**: "At $9.99, claiming premium intelligence sounds like BS. At $39, it sounds like a massive deal."
-
-**Growth hacker insight**: "Need only 26 customers at $39 to match 100 at $9.99. You'll get way more than 26."
+**Why $49**:
+- Below "impulse purchase" threshold for a business expense
+- Below "need to think about it" threshold (~$100+)
+- One-time, not recurring - reduces commitment anxiety for SMBs
+- Money-back guarantee eliminates risk
+- Serious enough to filter tire-kickers
 
 **Tiered model**:
 | Tier | Price | Cost | Purpose |
 |------|-------|------|---------|
 | Free mini-audit | $0 | ~$0.07 | Lead gen, 4 sections |
-| Full intel | $39 | ~$1.50-2.30 | 12 sections, 7+ data sources |
+| Full strategy | $49 | ~$1.50-2.50 | Full research + 30-day plan |
 
-**Messaging change**:
-- Before: "$10 because $5 seemed fake"
-- After: "$39 because it replaces $500 of research"
+**Messaging**:
+- Price: "$49" (simple, prominent)
+- Value: "One payment. No subscription. No account needed."
+- Risk reversal: "Money back if it doesn't help. Seriously."
+- Speed: "Plan ready in 5 minutes"
 
-**Full plan**: `memory-bank/projects/pipeline-v2-plan.md`
+**What's included** (communicated clearly):
+- Full market research
+- Customer journey analysis
+- Prioritized tactics
+- 30-day roadmap
+- 2 refinements included
+
+---
+
+## Example Pages: Raw Output, Not Case Studies (Jan 23 2026)
+
+**Decision**: `/in-action` shows raw Boost outputs, not case-study format with before/after tracking.
+
+**Original plan had**:
+- "What Changed" boxes showing was_doing/now_doing/result
+- Week 1 vs Week 4 outcome markers
+- Case-study framing ("Here's what happened")
+
+**What we built instead**:
+- Simple gallery cards: Industry badge, stage, insight hook, "See full plan →"
+- Detail pages: Just the full Boost output via MarkdownContent
+- No metadata tracking (column exists but unused)
+
+**Why the simplification**:
+1. **Purpose clarity**: We're showing what Boost produces, not tracking ROI
+2. **No consent needed**: Founder creates these from Twitter outreach, not user-submitted
+3. **Quality speaks**: Real Boost outputs are impressive enough without framing
+4. **Simpler admin**: Just paste output + add hook text, no metadata to fill
+
+**How it works**:
+1. Founder finds Twitter users seeking marketing help
+2. Runs Boost on their business (anonymized)
+3. Pastes full output into admin panel
+4. Adds industry, stage, and insight (hook text for cards)
+5. Toggles live when ready
+
+**Database**:
+- `examples` table with: slug, industry, stage, insight, content
+- `metadata` JSONB column exists but unused
+- `is_live` toggle for draft/publish flow
+
+**Files**:
+- `/in-action` - Gallery (SSR, brutalist cards)
+- `/in-action/[slug]` - Detail (SSR, MarkdownContent)
+- `/in-action/admin` - Management (client, localhost or admin email)
 
 ---
 

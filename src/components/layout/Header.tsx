@@ -68,10 +68,10 @@ export function Header() {
               <>
                 {user.email === "gr0x01@pm.me" && (
                   <Link
-                    href="/first-impressions"
+                    href="/in-action/admin"
                     className="hidden sm:flex items-center gap-2 px-3 py-2 text-sm font-bold text-cta hover:text-cta-hover transition-colors"
                   >
-                    FI
+                    Examples
                   </Link>
                 )}
                 <Link

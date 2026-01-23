@@ -9,6 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      examples: {
+        Row: {
+          id: string
+          slug: string
+          industry: string
+          stage: string
+          insight: string
+          content: string
+          metadata: Json | null
+          is_live: boolean
+          published_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          slug: string
+          industry: string
+          stage: string
+          insight: string
+          content: string
+          metadata?: Json | null
+          is_live?: boolean
+          published_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          slug?: string
+          industry?: string
+          stage?: string
+          insight?: string
+          content?: string
+          metadata?: Json | null
+          is_live?: boolean
+          published_at?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
       businesses: {
         Row: {
           id: string
@@ -43,33 +82,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      first_impressions: {
-        Row: {
-          id: string
-          url: string
-          output: string | null
-          status: string
-          created_at: string
-          completed_at: string | null
-        }
-        Insert: {
-          id?: string
-          url: string
-          output?: string | null
-          status?: string
-          created_at?: string
-          completed_at?: string | null
-        }
-        Update: {
-          id?: string
-          url?: string
-          output?: string | null
-          status?: string
-          created_at?: string
-          completed_at?: string | null
-        }
-        Relationships: []
       }
       free_audits: {
         Row: {
@@ -413,7 +425,9 @@ export type Code = Tables<"codes">
 export type UserContextChunk = Tables<"user_context_chunks">
 export type Waitlist = Tables<"waitlist">
 export type FreeAudit = Tables<"free_audits">
-export type FirstImpression = Tables<"first_impressions">
+
+// Example type for /in-action curated showcases
+export type Example = Tables<"examples">
 
 export type RunStatus = "pending" | "processing" | "complete" | "failed"
 export type PipelineStage = "researching" | "loading_history" | "generating" | "finalizing"

@@ -153,6 +153,9 @@ Subtle "Just want a taste?" option at checkout → 4-section condensed audit →
 | `/free-results/[id]` | Mini-audit results with upsell CTAs | No |
 | `/share/[slug]` | Public read-only view of results | No |
 | `/dashboard` | User's past runs, credits remaining | Yes (magic link) |
+| `/in-action` | Curated examples gallery | No |
+| `/in-action/[slug]` | Example detail page (full Boost output) | No |
+| `/in-action/admin` | Add/edit/toggle examples | Localhost or admin email |
 
 ---
 

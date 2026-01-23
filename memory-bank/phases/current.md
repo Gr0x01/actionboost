@@ -1,6 +1,102 @@
 # Current Phase
 
-## Latest Update: SMB Repositioning + Homepage Rewrite
+## Latest Update: Boost in Action Page
+
+**Completed Jan 23, 2026** - Curated examples showcase page at `/in-action`.
+
+### What Was Built
+
+Public gallery showcasing curated Boost examples from Twitter outreach. Shows **raw Boost output** - not case studies with before/after results.
+
+**Purpose**: Founder finds people on Twitter seeking marketing help, runs Boost on their business, displays the raw output as an example of what the product creates.
+
+**URLs:**
+- `/in-action` - Public gallery of live examples
+- `/in-action/[slug]` - Detail page showing full Boost output
+- `/in-action/admin` - Admin page to manage examples (localhost or admin email)
+
+**Database:**
+- `examples` table with: slug, industry, stage, insight (card preview text), content (full Boost output), is_live, published_at
+- Note: `metadata` JSONB column exists but is unused (simplified from original case-study design)
+
+**API Routes:**
+- `GET /api/examples` - List examples (public: live only, admin: all with `?all=true`)
+- `POST /api/examples` - Create example (admin only)
+- `GET /api/examples/[id]` - Get single example by ID or slug
+- `PATCH /api/examples/[id]` - Update example (toggle live, edit fields)
+- `DELETE /api/examples/[id]` - Delete example
+
+**Admin Access:**
+- Localhost always allowed
+- Or logged in as `gr0x01@pm.me`
+
+**Design:** Brutalist Raw - harsh borders, box shadows, mono font labels.
+
+**Card Format (simplified):**
+- Industry badge + Stage badge
+- Insight text (the hook - what appears on gallery cards)
+- "See full plan →" link
+
+**Detail Page:**
+- Breadcrumb navigation
+- Industry/Stage/Example Plan badges
+- Full Boost output rendered via MarkdownContent
+- Bottom CTA: "Get a plan like this for your business."
+
+### Files Added
+- `src/app/in-action/page.tsx` - Public gallery
+- `src/app/in-action/[slug]/page.tsx` - Detail page
+- `src/app/in-action/admin/page.tsx` - Admin management
+- `src/app/api/examples/route.ts` - GET/POST
+- `src/app/api/examples/[id]/route.ts` - GET/PATCH/DELETE
+
+### Files Modified
+- `src/lib/types/database.ts` - Added Example type (uses Tables helper)
+- `src/components/layout/Header.tsx` - Admin link points to `/in-action/admin`
+
+### Key Decision: Raw Output vs Case Studies
+Original plan had case-study format with "What Changed" boxes showing was_doing/now_doing/result/week markers. **Simplified** because:
+- These are example outputs, not tracked case studies
+- We're showing what Boost produces, not proving ROI
+- Founder curates real outputs from Twitter outreach
+- No tracking needed - just showcase the raw quality
+
+### Sunset: first_impressions (FULLY REMOVED)
+Removed all first_impressions code:
+- Deleted `/first-impressions` page
+- Deleted `/i/[id]` routes
+- Deleted `/api/first-impressions` routes
+- Deleted `runFirstImpressionsPipeline()` from pipeline.ts
+- Deleted `generateFirstImpressions()` from generate.ts
+- Deleted `FirstImpression` type and table schema from database.ts
+- Updated Header.tsx admin link to point to `/in-action/admin`
+- Table `first_impressions` remains in Supabase (data archived, not deleted)
+
+---
+
+## Previous: Homepage Copy Refinements
+
+**Completed Jan 23, 2026** - Growth hacker + brand guardian review led to copy refinements.
+
+### Changes Made
+
+| Element | Before | After |
+|---------|--------|-------|
+| Hero tagline | 3 value props crammed | "Money back if it doesn't help. Seriously." |
+| Hero trust badges | "No marketing degree needed" | "Plan ready in 5 minutes · No jargon · Salons, e-commerce, consultants" |
+| Hero CTA button | "Tell me about your business" | "Get my 30-day plan" |
+| Pricing CTA button | "Tell me about your business" | "Get my plan for $49" |
+| Footer headline | "Your plan ready in about an hour" | "Your plan ready in 5 minutes" |
+| Testimonial attribution | "@noahpraduns" | "Noah Praduns" |
+| Pricing section | No security badge | Added "Secure payment by Stripe" |
+
+### What's Next: Design Refinements
+
+Apply Light Skeuomorphism visual style consistently across homepage.
+
+---
+
+## Previous: SMB Repositioning + Homepage Rewrite
 
 **Completed Jan 23, 2026** - Complete pivot from indie hackers to small business owners.
 
