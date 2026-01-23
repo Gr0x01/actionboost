@@ -19,8 +19,10 @@ function getCategoryLabel(category: string): string {
 }
 
 /**
- * MetricsSnapshot - Compact tile strip
- * No borders, background tint only, horizontal scroll on mobile
+ * MetricsSnapshot - Soft Brutalist cards
+ *
+ * Cards with visible borders and offset shadows.
+ * Provides visual variety after typography-led sections.
  */
 export function MetricsSnapshot({ metrics }: MetricsSnapshotProps) {
   const displayMetrics = metrics.slice(0, 6)
@@ -31,30 +33,31 @@ export function MetricsSnapshot({ metrics }: MetricsSnapshotProps) {
 
   return (
     <section className="scroll-mt-32">
-      {/* Whisper-quiet section label */}
-      <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-4">
+      {/* Section label */}
+      <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-6">
         KEY METRICS
       </span>
 
-      {/* Horizontal scroll on mobile, 2-col grid on desktop */}
-      <div className="flex gap-3 overflow-x-auto pb-2 lg:grid lg:grid-cols-2 lg:overflow-visible scrollbar-hide">
+      {/* 2-column card grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {displayMetrics.map((metric, index) => (
           <div
             key={`${metric.name}-${index}`}
-            className="shrink-0 w-[160px] lg:w-auto bg-foreground/[0.03] p-4 rounded-lg"
+            className="bg-white border border-foreground/15 rounded-md p-5"
+            style={{ boxShadow: '3px 3px 0 rgba(44, 62, 80, 0.06)' }}
           >
-            {/* Category label - whisper quiet */}
-            <span className="font-mono text-[9px] tracking-wider text-foreground/40 uppercase">
+            {/* Category label */}
+            <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-foreground/40 block mb-2">
               {getCategoryLabel(metric.category)}
             </span>
 
             {/* Metric name */}
-            <p className="font-semibold text-sm text-foreground mt-2 line-clamp-2 leading-snug">
+            <p className="font-semibold text-base text-foreground mb-2">
               {metric.name}
             </p>
 
-            {/* Target - prominent mono */}
-            <p className="font-mono text-lg font-bold text-foreground/70 mt-1">
+            {/* Target value */}
+            <p className="font-mono text-sm text-foreground/70">
               {metric.target}
             </p>
           </div>
