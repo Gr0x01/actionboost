@@ -1,128 +1,136 @@
+import Link from "next/link";
 import { config } from "@/lib/config";
 import { PaidTierButton } from "./PricingButtons";
-import Link from "next/link";
 
 export function Pricing() {
   return (
-    <section id="pricing" className="relative py-24">
-      <div className="mx-auto max-w-7xl px-6">
+    <section id="pricing" className="relative pt-16 pb-24">
+      {/* Subtle warm gradient continuation */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <div
+          className="absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full blur-[100px]"
+          style={{ background: "radial-gradient(circle, rgba(243, 156, 18, 0.08) 0%, transparent 70%)" }}
+        />
+      </div>
+
+      <div className="relative mx-auto max-w-7xl px-6">
         {/* Section header */}
-        <div className="mb-16 text-center max-w-4xl mx-auto">
+        <div className="mb-12 text-center max-w-4xl mx-auto">
           <p className="font-mono text-xs tracking-[0.12em] text-foreground/60 uppercase mb-4">
-            Pricing
+            Your complete plan
           </p>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-foreground tracking-tight text-balance">
-            Your competitors already figured something out.{" "}
-            <span className="font-black">Find out what.</span>
+            Everything you need.{" "}
+            <span className="font-black">One payment.</span>
           </h2>
         </div>
 
-        {/* Single pricing card - centered */}
-        <div className="max-w-xl mx-auto">
-          <div
-            className="rounded-xl border-2 border-foreground/20 bg-white p-8 lg:p-10"
-            style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)" }}
-          >
-            {/* Price */}
-            <div className="mb-8 text-center">
-              <h3 className="text-5xl font-black text-foreground">{config.singlePrice}</h3>
-              <p className="text-foreground/60 mt-2">One payment. No subscription. No account needed.</p>
-            </div>
+        {/* Desktop: two-column grid, Mobile: single column */}
+        <div className="max-w-4xl mx-auto lg:grid lg:grid-cols-[1fr_320px] lg:gap-8 lg:items-start">
 
-            {/* What's included */}
-            <div className="space-y-3 mb-8">
-              <p className="text-xs font-mono text-foreground/50 uppercase tracking-wider mb-4">What&apos;s included:</p>
-
-              <div className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <div>
-                  <p className="font-semibold text-foreground">Full market research</p>
-                  <p className="text-sm text-foreground/60">Your competitors, their traffic, their keywords</p>
+          {/* Pricing card - left column */}
+          <div className="max-w-md mx-auto lg:max-w-none lg:mx-0">
+            <div
+              className="rounded-xl border-2 border-foreground/20 bg-white p-8 lg:p-10"
+              style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)" }}
+            >
+              {/* Price */}
+              <div className="mb-8 text-center lg:text-left">
+                <div className="flex items-baseline justify-center lg:justify-start gap-2">
+                  <h3 className="text-6xl font-black text-foreground tracking-tight">{config.singlePrice}</h3>
+                  <span className="text-lg text-foreground/50 font-medium">one-time</span>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <div>
-                  <p className="font-semibold text-foreground">Customer journey analysis</p>
-                  <p className="text-sm text-foreground/60">Find where you&apos;re losing customers</p>
-                </div>
+              {/* What's included */}
+              <div className="space-y-3 mb-8">
+                <FeatureItem emphasis>Competitor research &amp; traffic analysis</FeatureItem>
+                <FeatureItem emphasis>Customer journey breakdown</FeatureItem>
+                <FeatureItem emphasis>Prioritized tactics (ranked by impact)</FeatureItem>
+                <FeatureItem emphasis>30-day week-by-week roadmap</FeatureItem>
+                <FeatureItem>2 refinements included</FeatureItem>
               </div>
 
-              <div className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <div>
-                  <p className="font-semibold text-foreground">Prioritized tactics</p>
-                  <p className="text-sm text-foreground/60">Ranked by impact so you know what to do first</p>
-                </div>
+              {/* CTA */}
+              <div>
+                <PaidTierButton />
+                <p className="mt-4 text-center text-sm text-foreground/50">
+                  Didn&apos;t help? <span className="font-bold text-foreground/80">Full refund.</span>
+                </p>
               </div>
-
-              <div className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <div>
-                  <p className="font-semibold text-foreground">30-day roadmap</p>
-                  <p className="text-sm text-foreground/60">Week-by-week plan with specific actions</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <div>
-                  <p className="font-semibold text-foreground">2 refinements included</p>
-                  <p className="text-sm text-foreground/60">Add more context, get a better plan</p>
-                </div>
-              </div>
-            </div>
-
-            {/* CTA */}
-            <div>
-              <PaidTierButton />
-              <p className="mt-3 text-center font-medium text-foreground/70">
-                Didn&apos;t help? <span className="font-bold text-foreground">Full refund.</span> No questions asked.
-              </p>
-              {/* Security badge */}
-              <div className="mt-4 flex items-center justify-center gap-2 text-xs text-foreground/40">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-                <span>Secure payment by Stripe</span>
-              </div>
-              <p className="mt-3 text-xs text-foreground/40 text-center">
-                <Link href="/start?free=true" className="underline hover:text-foreground/60 transition-colors">
-                  Want to see a sample first?
-                </Link>
-              </p>
             </div>
           </div>
-        </div>
 
-        {/* Testimonial */}
-        <div className="max-w-xl mx-auto mt-8">
-          <div
-            className="rounded-xl border-2 border-foreground/20 bg-white p-6"
-            style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)" }}
-          >
-            <blockquote className="text-lg font-medium text-foreground leading-relaxed italic">
-              &quot;The competitor analysis feature is incredibly valuable. The 30-day playbook alone is worth the price.&quot;
-            </blockquote>
-            <div className="flex items-center gap-2 mt-4">
-              <span className="w-8 h-[3px] bg-cta"></span>
-              <p className="font-mono text-sm text-foreground/70 uppercase tracking-wider">Noah Praduns</p>
+          {/* Social proof column - right side on desktop, below on mobile */}
+          <div className="mt-8 space-y-4 max-w-md mx-auto lg:mt-0 lg:max-w-none lg:mx-0">
+
+            {/* In-Action callout + Trust links */}
+            <div
+              className="rounded-xl border-2 border-cta bg-white overflow-hidden"
+              style={{ boxShadow: "4px 4px 0 rgba(230, 126, 34, 0.35)" }}
+            >
+              <Link
+                href="/in-action"
+                className="group flex items-center justify-between px-5 py-5 bg-cta/10 hover:bg-cta/15 transition-all"
+              >
+                <div>
+                  <p className="font-mono text-[10px] text-cta font-bold uppercase tracking-widest mb-1">See the output</p>
+                  <p className="text-foreground font-bold text-base leading-snug">Real plans for salons, cafes,<br className="sm:hidden" /> coaches &amp; more</p>
+                </div>
+                <svg className="w-6 h-6 text-cta group-hover:translate-x-1 transition-transform flex-shrink-0 ml-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+
+              {/* Trust links as footer */}
+              <div className="border-t border-cta/30 px-5 py-2.5">
+                <div className="flex items-center justify-center gap-3 text-xs text-foreground/60">
+                  <Link
+                    href="/start?free=true"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    Try free first
+                  </Link>
+                  <span className="text-foreground/30">·</span>
+                  <Link
+                    href="/blog/our-growth-plan"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    We use our own plan
+                  </Link>
+                </div>
+              </div>
             </div>
+
+            {/* Testimonial */}
+            <div
+              className="rounded-xl border-2 border-foreground/20 bg-white p-5"
+              style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)" }}
+            >
+              <blockquote className="text-lg italic text-foreground leading-relaxed">
+                &ldquo;The competitor analysis alone is worth it. Finally know what to focus on.&rdquo;
+              </blockquote>
+              <p className="mt-3 text-sm font-semibold text-foreground/70">
+                <span className="text-cta">—</span> Noah P.
+              </p>
+            </div>
+
           </div>
         </div>
-
       </div>
     </section>
+  );
+}
+
+function FeatureItem({ children, emphasis = false }: { children: React.ReactNode; emphasis?: boolean }) {
+  return (
+    <div className="flex items-center gap-3">
+      <svg className="w-5 h-5 text-cta flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+      </svg>
+      <span className={emphasis ? "text-[15px] font-medium text-foreground" : "text-sm text-foreground/70"}>
+        {children}
+      </span>
+    </div>
   );
 }
