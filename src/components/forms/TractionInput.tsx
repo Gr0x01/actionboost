@@ -8,16 +8,19 @@ interface TractionInputProps {
   onChange: (v: string) => void;
   onSubmit: () => void;
   onBack?: () => void;
+  autoFocus?: boolean;
 }
 
 const TRACTION_CHIPS = ["Pre-launch", "< 100 users", "100-1K users", "1K-10K users", "10K+ users"];
 
-export function TractionInput({ value, onChange, onSubmit, onBack }: TractionInputProps) {
+export function TractionInput({ value, onChange, onSubmit, onBack, autoFocus = false }: TractionInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    if (autoFocus) {
+      inputRef.current?.focus();
+    }
+  }, [autoFocus]);
 
   const handleChipClick = (chip: string) => {
     onChange(chip);

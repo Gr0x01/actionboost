@@ -1,6 +1,59 @@
 # Current Phase
 
-## Latest Update: Positioning Framework + Form Simplification
+## Latest Update: Dashboard Overhaul - Soft SaaS Aesthetic
+
+**Completed Jan 23, 2026** - Full visual and copy overhaul of dashboards to match new SMB-friendly brand voice.
+
+### Design Direction: Light Skeuomorphism
+
+Moved away from brutalist styling (harsh 3px borders, offset shadows) to soft, friendly SaaS aesthetic for SMB audience.
+
+### Changes Made
+
+#### Visual Updates
+| Element | Before | After |
+|---------|--------|-------|
+| Shadows | `shadow-[6px_6px_0_0_rgba(44,62,80,1)]` | `shadow-[0_4px_20px_rgba(44,62,80,0.06)]` |
+| Borders | `border-[3px] border-foreground` | `border border-foreground/15` or none |
+| Badges | `border-2 rounded-lg font-mono uppercase` | `rounded-full font-medium` soft pills |
+| Labels | `UPPERCASE MONO TRACKED` | Sentence case, sans-serif |
+| Cards | Harsh offset shadows | Soft elevation with gradients |
+| Checkboxes | Square with hard corners | Circular with soft transitions |
+
+#### Copy Updates
+| Element | Before | After |
+|---------|--------|-------|
+| Page title | "Dashboard" | "Your Marketing Plans" |
+| Greeting | "Your Account" | "Welcome back" |
+| Status: Complete | "Complete" | "Ready to view" |
+| Status: Processing | "Processing" | "Building your plan" |
+| Empty state | "No action plans yet" | "Ready to grow your business?" |
+| CTA | "Generate another plan" | "Create another plan" |
+| ICE scores | "ICE: 85" | "Quick win" / "High impact" |
+| Day badges | "DAY 1" | "Day 1" |
+| Time estimate | "2h" | "About 2 hours" |
+| Hover hint | "Deliverable" | "What you'll have done" |
+| AARRR labels | "GROWTH", "ENGAGE" | "Finding you", "Trying you" |
+
+### Files Modified
+- `memory-bank/product.md` - Updated brand voice, pricing ($49), SMB positioning
+- `src/app/dashboard/page.tsx` - Soft styling, warm copy, gradient stats cards
+- `src/app/dashboard/TrackedComponents.tsx` - Soft CTAs, friendly labels
+- `src/components/results/dashboard/CommandCenter.tsx` - Soft cards, friendly copy
+- `src/components/results/dashboard/PriorityCards.tsx` - ICE → plain language labels
+- `src/components/results/dashboard/MetricsSnapshot.tsx` - Friendly AARRR labels
+- `src/components/results/dashboard/CompetitorSnapshot.tsx` - Soft borders, hover states
+
+### Key Design Decisions
+- **No more brutalism** - Full shift to Light Skeuomorphism
+- **Plain language everywhere** - No jargon (ICE, AARRR without explanation)
+- **Sentence case labels** - Friendly, not shouty
+- **Soft elevation** - Shadows suggest depth without harshness
+- **Warm empty states** - Encouraging, not clinical
+
+---
+
+## Previous: Positioning Framework + Form Simplification
 
 **Completed Jan 23, 2026** - Added April Dunford/Dave Gerhardt positioning expertise to pipeline and simplified form flow.
 

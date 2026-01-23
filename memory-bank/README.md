@@ -8,11 +8,11 @@
 
 Target audience: **Small business owners** — salons, local services, niche e-commerce. People who are stuck on marketing and don't have time to become marketing experts.
 
-**v1 (now)**: One-shot runs. Pay $49, tell us about your business, get a real strategy built on live competitive research + Claude Opus 4.5 reasoning. Includes 2 refinements.
+**v1 (now)**: One-shot runs. Pay $29, tell us about your business, get a real strategy built on live competitive research + Claude Opus 4.5 reasoning. Includes 2 refinements + dashboard access.
 
-**v2 (future)**: Connected growth advisor. Link PostHog/Mixpanel/GA → weekly analysis email → reply to ask questions → $29-49/mo.
+**v2 (future)**: Subscription tier. $49/mo for integrations (PostHog/Mixpanel/GA), fresh competitor data, weekly check-ins. Dashboard sells the subscription via grayed-out integration slots.
 
-**The flywheel**: User does $49 one-shot, loves it → "Want this every week, automatically?" → subscription.
+**The flywheel**: User does $29 one-shot → gets dashboard → sees grayed-out integrations → "Connect Google Analytics for weekly insights" → $49/mo subscription.
 
 **Output format**: Executive Summary → Your Situation → Competitive Landscape → Stop Doing → Start Doing → Quick Wins → 30-Day Roadmap.
 
@@ -31,7 +31,7 @@ Target audience: **Small business owners** — salons, local services, niche e-c
 | **Claude Opus 4.5** | Strategy generation | Best reasoning model |
 | **Tavily** | Web search | Real-time competitive intel, recent content, trends |
 | **DataForSEO** | SEO/traffic data | Competitor traffic estimates, keyword gaps |
-| **Stripe** | Payments | $49 single run |
+| **Stripe** | Payments | $29 one-shot, $49/mo subscription |
 | **Supabase** | DB + Auth | Magic links, run storage, credits |
 
 **Model ID**: `claude-opus-4-5-20251101` - DO NOT CHANGE without approval.
@@ -40,11 +40,12 @@ Target audience: **Small business owners** — salons, local services, niche e-c
 
 | Product | Price | Cost | Margin |
 |---------|-------|------|--------|
-| One-shot | $49 | ~$1.50-2.50 | ~95% |
+| One-shot | $29 | ~$1.50-2.50 | ~91% |
 | Free mini-audit | $0 | ~$0.07 | lead gen |
-| Subscription (v2) | $29-49/mo | TBD | TBD |
+| Subscription | $49/mo | TBD | TBD |
+| Annual | ~$400/yr ($33/mo) | TBD | TBD |
 
-Cost breakdown in `architecture.md`. Subscription is the upsell path.
+Cost breakdown in `architecture.md`. Dashboard sells subscription via integration upsells.
 
 ---
 

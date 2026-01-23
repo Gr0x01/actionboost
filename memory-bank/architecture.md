@@ -81,6 +81,11 @@ auth.users (Supabase Auth)     public.users (our table)
 | `/api/waitlist` | POST | Join waitlist (promo-only mode) | No | ✅ |
 | `/api/free-audit` | POST | Create free mini-audit | No | ✅ |
 | `/api/free-audit/[id]` | GET | Get free audit status/output | No | ✅ |
+| `/api/examples` | GET | List examples (public: live only, admin: all) | Optional | ✅ |
+| `/api/examples` | POST | Create example (draft) | Admin | ✅ |
+| `/api/examples/[id]` | GET | Get single example by ID or slug | Public/Admin | ✅ |
+| `/api/examples/[id]` | PATCH | Update example (toggle live, edit) | Admin | ✅ |
+| `/api/examples/[id]` | DELETE | Delete example | Admin | ✅ |
 
 **Auth pattern**: Check user's `auth_id` links to `public.users`, then verify `user_id` matches, OR valid `share_slug` for public access.
 
@@ -218,23 +223,8 @@ Files: `runFreePipeline()` in pipeline.ts, `generateMiniStrategy()` in generate.
 Routes: `POST /api/free-audit`, `GET /api/free-audit/[id]`
 Page: `/free-results/[id]` with auto-polling and upsell UI
 
-### First Impressions Pipeline
-Internal tool for quick URL-based analysis (deep research, no form):
-- Model: Claude Opus 4.5 (noticeably better quality than Sonnet)
-- Research: Tavily extract + 4 basic searches (competitors, reviews, social, news)
-- Output: Sharp first impressions for social sharing
-
-**First Impressions Cost:**
-| Component | Calculation | Cost |
-|-----------|-------------|------|
-| Tavily extract | 1 URL basic | ~$0.002 |
-| Tavily searches | 4 basic × 1 credit × $0.008 | $0.032 |
-| Claude Opus input | ~1,500 tokens × $5/MTok | $0.008 |
-| Claude Opus output | ~1,000 tokens × $25/MTok | $0.025 |
-| **Total** | | **~$0.07** |
-
-Files: `runFirstImpressionsPipeline()` in pipeline.ts, `generateFirstImpressions()` in generate.ts
-Routes: `POST /api/first-impressions`, `GET /api/first-impressions/[id]`
+### First Impressions Pipeline (REMOVED)
+**Sunset Jan 23, 2026** - Replaced by `/in-action` curated examples page. All code removed. Table `first_impressions` remains in database (data archived).
 
 ### Test Scripts
 ```bash
@@ -361,6 +351,7 @@ generateStrategy(input, research, userHistory)
 | `user_context_chunks` | Vector embeddings for RAG | Owner read only |
 | `waitlist` | Email collection for promo-only mode | Service role only |
 | `free_audits` | Free mini-audit runs (1 per email) | Service role only |
+| `examples` | Curated Boost showcases for /in-action | Service role only |
 
 ### Extensions
 | Extension | Purpose |

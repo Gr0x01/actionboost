@@ -2,9 +2,9 @@
 
 ## Value Prop
 
-> "Your competitors' growth playbook, reverse-engineered. $9.99."
+> "Your 30-day marketing plan. Real research, not generic advice. $49."
 
-Tell us about your startup. We research your competitors' actual traffic, analyze your traction, and hand you a 30-day playbook. What to stop. What to start. What to try this week.
+Tell us about your business. We research your competitors, analyze what's working in your space, and hand you a 30-day plan. What to stop. What to start. What to try this week.
 
 ---
 
@@ -12,73 +12,83 @@ Tell us about your startup. We research your competitors' actual traffic, analyz
 
 ### Core Narrative
 
-**"ChatGPT told me Reddit. This said Pinterest. It's working."**
+**"Stuck on marketing? Let's figure it out together."**
 
-The founder built this to solve their own problem. It worked. Now it's $10.
+The friendly marketing expert who does the research for you. Real competitor data, practical recommendations, no jargon.
+
+### Target Audience
+
+**Small business owners** — salons, local services, niche e-commerce. People who are stuck on marketing and don't have time to become marketing experts.
 
 ### The Personality
 
-**Actionboo.st = the founder friend who's three steps ahead.** Takes your call, gives you brutal truth, wants you to win.
+**Actionboo.st = the friendly expert who simplifies marketing.** Hand-holding, patient, explains things in plain English.
 
 **5 traits:**
-1. **Blunt Optimist** — believes you can grow, won't pretend your current approach is working
-2. **Impatient for Results** — hates busywork, wants you shipping by Tuesday
-3. **Research Nerd** — actually pulls data, explains it simply
-4. **Allergic to Guru Culture** — no podcast, no course, just a tool that costs $10
-5. **Quietly Confident** — doesn't need to yell, lets output speak
+1. **Encouraging** — believes you can grow, meets you where you are
+2. **Practical** — focused on what you can actually do this week
+3. **Research-backed** — pulls real data, explains it simply
+4. **No jargon** — explains frameworks in plain English (AARRR → "Finding you, Trying you, Coming back, Telling friends, Paying you")
+5. **Trustworthy** — honest about what works and what doesn't
 
-### The Enemy
+### Competitive Alternatives (Dunford Positioning)
 
-**The Growth Advice Industrial Complex:**
-- 47-page strategy decks that never get implemented
-- "Build in public" gurus who've never built anything
-- $5K consultants who say "focus on SEO"
-- AI chatbots giving the same advice to everyone
+**What would customers do without us?**
+- Wing it (trial and error, hoping something works)
+- Google it (DIY research, overwhelming)
+- Ask ChatGPT (generic advice, not tailored)
+- Hire an agency ($2K-10K/month, overkill)
+- Ask a friend (limited to their experience)
+
+**Our differentiation:** Real research on YOUR business + structured 30-day plan. Not generic. Not expensive. Not overwhelming.
 
 ### Voice Guidelines
 
 | We sound like | We don't sound like |
 |---------------|---------------------|
-| Founder friend 3 steps ahead | Marketing agency |
-| Someone who's done this | LinkedIn influencer |
-| Cuts to the chase | Enterprise SaaS |
+| Friendly marketing expert | Startup bro |
+| Smart friend who knows marketing | LinkedIn influencer |
+| "Let's figure this out together" | "Here's what you're doing wrong" |
+| Hand-holding, patient | Impatient, condescending |
 
-**Words we use:** stop, start, actually, specific, tactics, real, this week, execute, plan
+**Words we use:** plan, together, your business, this week, simple, practical, real, competitors, let's
 
-**Words we avoid:** leverage, optimize, scale, transform, journey, solution, cutting-edge, empower, unlock
+**Words we avoid:** leverage, optimize, scale, transform, journey, solution, cutting-edge, empower, unlock, hack, growth hacking
 
 ### Copy Patterns (Jan 2026)
 
 | Element | Pattern | Example |
 |---------|---------|---------|
-| Headlines | Light/black weight contrast | "ChatGPT told me Reddit. **This said Pinterest.**" |
-| Taglines | Mono, uppercase, tracked | `$10 → competitor research → money back if useless` |
-| Subheads | Direct, first person | "I built this to figure out my own marketing." |
-| CTAs | Action-oriented | "Get My Action Plan" |
-| Guarantees | Bold, near CTA | "Didn't help? Full refund." |
-| Trust | Casual, self-aware | "$10 because $5 seemed fake" |
+| Headlines | Warm, direct | "Stuck on marketing? Let's figure it out." |
+| Subheads | Reassuring | "We'll research your competitors and build a plan just for you." |
+| CTAs | Collaborative | "Get my 30-day plan", "Let's get started" |
+| Guarantees | Clear, near CTA | "Money back if it doesn't help. Seriously." |
+| Trust | Specific examples | "Salons, e-commerce, consultants" |
+| Labels | Sentence case, friendly | "Your marketing plans" not "YOUR ACTION PLANS" |
 
 ### Copy Rules
 
-1. **Lead with the founder story** — The ChatGPT vs Pinterest discovery is the hook
-2. **Be honest about what it is** — Yes, it uses AI. The difference is the real research data.
-3. **Price + guarantee together** — Removes risk, makes decision easy
-4. **Be specific over vague** — "See where competitors get 40% of their traffic" not "understand your competitive landscape"
-5. **Use active voice** — "We pull your competitors' traffic data" not "Traffic data is analyzed"
-6. **Short sentences** — Punchy. Direct. Easy to scan.
-7. **Acknowledge skepticism** — "You've probably tried 'just post more.' This is different."
-8. **Name the pain** — "Stuck at 100 users" not "looking to scale"
-9. **Use numbers** — "30-day plan" "5 competitors" "$10"
-10. **Sound human** — "Look—" "Here's the thing—" "Honestly,"
+1. **Lead with empathy** — Acknowledge they're stuck, not failing
+2. **Be specific over vague** — "See where competitors get their traffic" not "understand your competitive landscape"
+3. **Use active voice** — "We research your competitors" not "Competitor analysis is performed"
+4. **Use "we" and "together"** — Collaborative, not transactional
+5. **Explain jargon** — If you must use a term, define it immediately
+6. **Price + guarantee together** — Removes risk, makes decision easy
+7. **Use sentence case** — Friendly, not shouty
+8. **Sound human** — "Here's what we found" not "Analysis complete"
+9. **Show the outcome** — "A plan you can start tomorrow" not "Comprehensive strategy document"
+10. **Be encouraging** — "Ready to grow?" not "Stop wasting time"
 
 ### What NOT to do
 
-- Don't mention what AI model powers it (technical flex for wrong audience)
-- Don't define by what we're NOT ("Not like ChatGPT...") — defensive positioning
-- Don't use exclamation points — tryhard energy
+- Don't mention what AI model powers it (technical flex, wrong audience)
+- Don't use ALL CAPS labels (shouty, unfriendly)
+- Don't use jargon without explanation (ICE scores, AARRR without context)
+- Don't use exclamation points (tryhard energy)
 - Don't hedge ("might" "could" "potentially") — commit to what we deliver
-- Don't use emojis — doesn't fit brutalist aesthetic
-- Don't list features without outcomes — show transformation, not specs
+- Don't use emojis
+- Don't sound like a startup bro ("crush it", "10x", "hack")
+- Don't be condescending about their current efforts
 
 ---
 
@@ -106,34 +116,35 @@ Subtle "Just want a taste?" option at checkout → 4-section condensed audit →
 ## Landing Page Content
 
 ### Hero
-- Headline: "Growth hacking for people who hate growth hacks."
-- Subhead: We pull your competitors' traffic data, score every tactic by impact, and hand you a 30-day plan. Not vibes. Actual moves, ranked.
-- Trust line: "One payment. No subscription. $9.99."
-- CTA: URL input → /start
+- Headline: "Stuck on marketing? Let's figure it out."
+- Subhead: We research your competitors and build a 30-day plan just for your business. Real data, practical steps.
+- Trust line: "Money back if it doesn't help. Seriously."
+- Trust badges: "Plan ready in 5 minutes. No jargon. Salons, e-commerce, consultants."
+- CTA: "Get my 30-day plan"
 
 ### Pain → Solution Flow
-1. **Acknowledge the pain**: "You've read the blogs. You've tried 'just post consistently.' You're still stuck."
-2. **Show the difference**: "We actually research your competitors. Real traffic data. Real tactics."
-3. **Deliver the outcome**: "What to stop. What to start. What to try this week."
+1. **Acknowledge the pain**: "Marketing feels overwhelming. You've tried different things but nothing seems to stick."
+2. **Show the difference**: "We research what's actually working for businesses like yours."
+3. **Deliver the outcome**: "A clear plan you can start tomorrow. What to focus on, what to skip."
 
 ### What You Get
 - Your competitors' actual traffic sources
 - Channel strategy ranked by effort and impact
-- What to STOP wasting time on
-- What to START doing (prioritized by ICE)
+- What to stop wasting time on
+- What to start doing (prioritized by impact)
 - This week's quick wins (day-by-day)
 - 30-day roadmap built for your stage
-- Metrics dashboard with AARRR targets
+- Key metrics to track your progress
 - Ready-to-use content templates
 
 ### How It Works
-1. Tell us about your startup (10 min)
+1. Tell us about your business
 2. We research your competitors
-3. Get your playbook. Start executing tomorrow.
+3. Get your plan and start tomorrow
 
 ### Pricing
-- $9.99. Once. No subscription. No account needed.
-- Free mini-audit to start (see the gaps before you pay)
+- $49. Once. No subscription.
+- Free preview to start (see the value before you pay)
 
 ### Social Proof
 - Sample output snippet (let quality speak)
@@ -219,16 +230,16 @@ Subtle "Just want a taste?" option at checkout → 4-section condensed audit →
 
 | Product | Price | Credits |
 |---------|-------|---------|
-| Single | $9.99 | 1 |
+| Single | $49 | 1 |
 
-**Per-run cost**: ~$0.50 (Opus + research APIs)
-**Margin**: ~90%
+**Per-run cost**: ~$1.50-2.50 (Opus + research APIs)
+**Margin**: ~95%
 
 ---
 
 ## Output Format
 
-### Full Strategy (10 sections - $9.99)
+### Full Strategy (10 sections - $49)
 1. **Executive Summary** - Core insight + Growth Flywheel (ASCII diagram)
 2. **Your Situation** - AARRR stage analysis, gaps, what's working
 3. **Competitive Landscape** - Tables with competitor data

@@ -334,35 +334,20 @@ Can add more account features later if needed.
 
 ---
 
-## Pricing: Funnel to Subscription
+## Pricing: Funnel to Subscription (SUPERSEDED)
 
-**Decision**: Three-tier funnel for v2.
+**Note**: This section is outdated. See "Pricing: $29 One-Shot + $49/mo Subscription" above for current pricing.
 
+**Original plan** (never shipped):
 ```
-FREE MINI → SINGLE RUN ($X) → SUBSCRIPTION (~$30/mo)
+FREE MINI → SINGLE RUN ($9.99) → SUBSCRIPTION (~$30/mo)
 ```
 
-**v1 (current)**: $9.99 single run only. 3-pack removed.
-
-**v2 (planned)**:
-- **Free mini** - Teaser audit, no competitor research. Captures email, shows value.
-- **Single run** - Full experience at ~$9.99. Proves quality.
-- **Subscription** - ~$30/mo for Growth Board, integrations, periodic analysis, weekly digest.
-- **Credit window** - Subscribe within X days of single run, get credited toward first month.
-
-**Why kill the 3-pack**:
-- Simpler mental model (no pack math)
-- People buying 3 are proto-subscribers anyway
-- Subscription is the real upsell, not bulk credits
-
-**Why credit window**:
-- Removes "I just paid $8" objection to subscribing
-- Makes single run feel lower risk
-- Stripe can handle via coupons or manual credits
-
-**Economics**:
-- Cost per run: ~$0.50 (Claude Opus + research APIs)
-- $30/mo subscription with 2-3x/day analysis = healthy margin at low volume
+**What actually happened**:
+- $9.99 got zero traction (felt like GPT wrapper)
+- Repositioned to SMBs at $49
+- Further refined to $29 one-shot + $49/mo subscription
+- Dashboard sells subscription via integration upsells, not pricing page
 
 ---
 
@@ -608,35 +593,53 @@ npx tsx scripts/retry-run.ts <runId>
 
 ---
 
-## Pricing: $49 for SMBs (Jan 2026)
+## Pricing: $29 One-Shot + $49/mo Subscription (Jan 23 2026)
 
-**Decision**: $49 single payment for full strategy. No subscription required.
+**Decision**: Two separate products at different price points.
 
-**Why $49**:
-- Below "impulse purchase" threshold for a business expense
-- Below "need to think about it" threshold (~$100+)
-- One-time, not recurring - reduces commitment anxiety for SMBs
-- Money-back guarantee eliminates risk
-- Serious enough to filter tire-kickers
+| Product | Price | What You Get |
+|---------|-------|--------------|
+| One-shot | $29 | 1 strategy + 2 refinements + dashboard (static) |
+| Subscription | $49/mo | Integrations + fresh data + weekly check-ins |
+| Annual | ~$400/yr | ~$33/mo equivalent |
 
-**Tiered model**:
-| Tier | Price | Cost | Purpose |
-|------|-------|------|---------|
-| Free mini-audit | $0 | ~$0.07 | Lead gen, 4 sections |
-| Full strategy | $49 | ~$1.50-2.50 | Full research + 30-day plan |
+**Why $29 one-shot** (down from $49):
+- $10 got zero traction - felt like GPT wrapper
+- $25 = instant buy for solo devs
+- $40 = think about it
+- $50+ = hesitation/research mode
+- $29 is the floor where it still feels like "real product"
 
-**Messaging**:
-- Price: "$49" (simple, prominent)
-- Value: "One payment. No subscription. No account needed."
-- Risk reversal: "Money back if it doesn't help. Seriously."
-- Speed: "Plan ready in 5 minutes"
+**Why $49/mo subscription**:
+- Subscription is MORE expensive because it's MORE product
+- No "subscribe and cancel after one month" gaming
+- Clear value separation: one-shot = "I need a plan", subscription = "I need ongoing help"
+- If you subscribe, first strategy included - no separate purchase needed
 
-**What's included** (communicated clearly):
-- Full market research
-- Customer journey analysis
-- Prioritized tactics
-- 30-day roadmap
-- 2 refinements included
+**The conversion funnel**:
+```
+$29 one-shot → dashboard access (forever, static)
+                    ↓
+        User sees grayed-out integrations
+        "Connect Google Analytics for weekly insights"
+                    ↓
+              $49/mo subscription
+```
+
+**Key insight**: Dashboard sells the subscription, not a pricing page. User experiences value first, then sees what else is possible.
+
+**Competitive landscape**:
+- Jasper: $70/mo (content generation, not strategy)
+- Copy.ai: $29/mo (content generation)
+- Agencies: $2000+/mo (out of reach)
+- ChatGPT: Free but generic, no research
+
+**Nobody does what Boost does**: Personalized marketing strategy with live competitive research for SMBs. Content tools exist. Strategy tools for SMBs at this price point don't.
+
+**Previous pricing**:
+- v0: $9.99 → zero traction, felt like garbage
+- v1: $49 → repositioning for SMBs
+- v1.5: $29 → optimized for conversion funnel to subscription
 
 ---
 

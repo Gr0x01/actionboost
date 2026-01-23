@@ -5,6 +5,85 @@ description: Guidelines for creating distinctive, high-quality frontend UI. Use 
 
 # Frontend Design Guidelines (2025-2026)
 
+---
+
+## Boost Project: Soft Brutalist + Friendly Copy
+
+**For this project, use "Soft Brutalist" - bold visual confidence with warm, inviting copy.**
+
+### The Formula
+
+| Layer | Direction |
+|-------|-----------|
+| **Visuals** | Soft brutalist - offset shadows, visible borders, bold type, tactile buttons |
+| **Copy** | Friendly, no jargon, hand-holding - "Let's figure this out together" |
+| **Colors** | Warm palette - keep the existing orange CTA, charcoal text, cream backgrounds |
+
+### What "Soft Brutalist" Means
+
+Take Brutalist Raw (#9 below) and soften it:
+
+```css
+/* BRUTALIST RAW */
+border: 3px solid black;
+box-shadow: 8px 8px 0 black;
+border-radius: 0;
+
+/* SOFT BRUTALIST (Boost) */
+border: 2px solid #2C3E50;
+box-shadow: 4px 4px 0 rgba(44, 62, 80, 0.15);
+border-radius: 6px;
+```
+
+### Key Patterns
+
+**Cards**
+```jsx
+<div className="bg-white border-2 border-foreground/20 rounded-md"
+     style={{ boxShadow: '4px 4px 0 rgba(44, 62, 80, 0.1)' }}>
+```
+
+**Primary Button (Tactile)**
+```jsx
+<button className="bg-cta text-white font-semibold px-6 py-3 rounded-md
+                   border-b-3 border-b-[#B85D10]
+                   hover:-translate-y-0.5 hover:shadow-lg
+                   active:translate-y-0.5 active:border-b-0
+                   transition-all duration-100">
+```
+
+**Labels (Selective Uppercase)**
+```jsx
+// System labels only - day markers, status badges, categories
+<span className="text-xs font-semibold uppercase tracking-wide text-foreground/50">
+  Day 1
+</span>
+
+// Conversational text stays sentence case
+<p className="text-sm text-foreground/70">Ready to view</p>
+```
+
+### Copy Rules
+
+- **Friendly, not corporate** - "Your marketing plans" not "Dashboard"
+- **No jargon without explanation** - AARRR becomes "Finding you, Trying you, Coming back..."
+- **Encouraging empty states** - "Ready to grow your business?" not "No data"
+- **Human time estimates** - "About 2 hours" not "2h"
+
+### What to Avoid
+
+- Super soft shadows (`box-shadow: 0 2px 40px rgba(0,0,0,0.03)`) - too ethereal
+- Large border-radius (`rounded-2xl`, 16px+) - meditation app territory
+- Invisible borders (`border-border/50`) - cards need presence
+- Thin, timid fonts (`font-medium` on headlines) - be bold
+- Generic SaaS softness - if it looks like every other tool, you've gone too far
+
+---
+
+## Generic Design Guidelines (Reference)
+
+For non-Boost projects, pick from the aesthetic directions below.
+
 ## Design Decision Protocol
 
 **Before writing any code, you MUST explicitly choose ONE aesthetic direction from the list below.** State your choice and why it fits the context. This prevents defaulting to the same 2-3 styles.
