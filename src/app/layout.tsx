@@ -34,22 +34,22 @@ const tienne = Tienne({
 });
 
 export const metadata: Metadata = {
-  title: "Actionboost - Your 30-Day Marketing Plan",
+  title: "Boost - Your 30-Day Marketing Plan",
   description:
     "Stuck on marketing? Get a custom 30-day plan with real competitor research. We find what's working in your market and show you exactly what to do.",
   metadataBase: new URL("https://actionboo.st"),
   openGraph: {
-    title: "Actionboost - Your 30-Day Marketing Plan",
+    title: "Boost - Your 30-Day Marketing Plan",
     description:
       "Stuck on marketing? Get a custom 30-day plan with real competitor research. We find what's working in your market and show you exactly what to do.",
     url: "https://actionboo.st",
-    siteName: "Actionboost",
+    siteName: "Boost",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Actionboost - Your 30-Day Marketing Plan",
+    title: "Boost - Your 30-Day Marketing Plan",
     description:
       "Stuck on marketing? Get a custom 30-day plan with real competitor research. We find what's working in your market and show you exactly what to do.",
   },

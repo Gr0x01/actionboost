@@ -1,8 +1,8 @@
 import { Header, Footer } from "@/components/layout"
 
 export const metadata = {
-  title: "Privacy Policy | Aboost",
-  description: "How Aboost collects, uses, and protects your data.",
+  title: "Privacy Policy | Boost",
+  description: "How Boost collects, uses, and protects your data.",
 }
 
 export default function PrivacyPage() {
@@ -24,7 +24,7 @@ export default function PrivacyPage() {
                   Data Controller
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
-                  Aboost is operated from Texas, United States. For privacy inquiries, contact
+                  Boost is operated from Texas, United States. For privacy inquiries, contact
                   us at{" "}
                   <a
                     href="mailto:team@aboo.st"
@@ -40,7 +40,7 @@ export default function PrivacyPage() {
                   What We Collect
                 </h2>
                 <p className="text-sm leading-relaxed text-muted mb-3">
-                  When you use Aboost, we collect:
+                  When you use Boost, we collect:
                 </p>
                 <ul className="text-sm text-muted space-y-2 list-disc list-inside">
                   <li>
@@ -91,7 +91,7 @@ export default function PrivacyPage() {
                   Third-Party Services
                 </h2>
                 <p className="text-sm text-muted mb-3">
-                  We share data with these services to provide Aboost:
+                  We share data with these services to provide Boost:
                 </p>
                 <ul className="text-sm text-muted space-y-2 list-disc list-inside">
                   <li>

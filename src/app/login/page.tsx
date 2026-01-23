@@ -125,7 +125,7 @@ function LoginForm() {
               <>
                 <div className="text-center mb-6">
                   <h1 className="text-xl font-black text-foreground">
-                    Sign in to Aboost
+                    Sign in to Boost
                   </h1>
                   <p className="text-foreground/60 text-base mt-2">
                     View your past action plans and credit balance
@@ -181,7 +181,7 @@ function LoginForm() {
 
                 <div className="mt-6 pt-6 border-t-2 border-foreground/10 text-center">
                   <p className="text-foreground/60 text-sm">
-                    New to Aboost?{" "}
+                    New to Boost?{" "}
                     <Link
                       href="/start"
                       className="text-cta hover:text-cta/80 font-bold underline underline-offset-2"

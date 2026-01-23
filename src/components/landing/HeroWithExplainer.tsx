@@ -37,34 +37,35 @@ const NOISE_CARDS = [
 
 // Starting positions - scattered around hero area (percentages of container)
 // These will be in the top portion where the hero headline is
+// Desktop: pulled inward to frame the content more tightly
 const LOGO_POSITIONS = [
   // Top corners and edges
-  { x: 6, y: 4 },
-  { x: 22, y: 6 },
-  { x: 78, y: 5 },
-  { x: 94, y: 7 },
+  { x: 12, y: 4 },
+  { x: 26, y: 6 },
+  { x: 74, y: 5 },
+  { x: 88, y: 7 },
   // Upper sides
-  { x: 4, y: 16 },
-  { x: 96, y: 14 },
+  { x: 10, y: 16 },
+  { x: 90, y: 14 },
   // Mid sides (around headline level)
-  { x: 5, y: 26 },
-  { x: 95, y: 24 },
+  { x: 8, y: 26 },
+  { x: 92, y: 24 },
   // Lower sides (below headline, above scroll point)
-  { x: 7, y: 36 },
-  { x: 28, y: 38 },
-  { x: 72, y: 37 },
-  { x: 93, y: 35 },
+  { x: 14, y: 36 },
+  { x: 32, y: 38 },
+  { x: 68, y: 37 },
+  { x: 86, y: 35 },
 ];
 
 const NOISE_POSITIONS = [
-  { x: 14, y: 8 },
-  { x: 86, y: 10 },
-  { x: 8, y: 20 },
-  { x: 92, y: 18 },
-  { x: 10, y: 32 },
-  { x: 90, y: 30 },
-  { x: 18, y: 40 },
-  { x: 82, y: 38 },
+  { x: 18, y: 8 },
+  { x: 82, y: 10 },
+  { x: 12, y: 20 },
+  { x: 88, y: 18 },
+  { x: 14, y: 32 },
+  { x: 86, y: 30 },
+  { x: 22, y: 40 },
+  { x: 78, y: 38 },
 ];
 
 export function HeroWithExplainer() {
@@ -99,6 +100,24 @@ export function HeroWithExplainer() {
 
       {/* ===== HERO SECTION ===== */}
       <section className="relative min-h-screen flex flex-col justify-center py-16 lg:py-24">
+
+        {/* Scrim - radial gradient to push icons back behind text */}
+        {/* Mobile: wider and taller to cover more */}
+        <div
+          className="absolute inset-0 z-[6] pointer-events-none md:hidden"
+          aria-hidden="true"
+          style={{
+            background: "radial-gradient(ellipse 100% 75% at 50% 50%, rgba(252, 249, 245, 0.98) 0%, rgba(252, 249, 245, 0.9) 50%, rgba(252, 249, 245, 0) 80%)",
+          }}
+        />
+        {/* Desktop: more subtle, lets icons peek through edges */}
+        <div
+          className="absolute inset-0 z-[6] pointer-events-none hidden md:block"
+          aria-hidden="true"
+          style={{
+            background: "radial-gradient(ellipse 60% 70% at 50% 45%, rgba(252, 249, 245, 0.97) 0%, rgba(252, 249, 245, 0.85) 40%, rgba(252, 249, 245, 0) 70%)",
+          }}
+        />
 
         {/* Hero content - centered */}
         <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">

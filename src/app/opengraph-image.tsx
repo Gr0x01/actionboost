@@ -1,8 +1,8 @@
 import { ImageResponse } from 'next/og'
-import { ABOOST_LOGO_PATHS, ABOOST_LOGO_VIEWBOX } from '@/components/ui'
+import { BOOST_LOGO_PATHS, BOOST_LOGO_VIEWBOX } from '@/components/ui'
 
 export const runtime = 'edge'
-export const alt = 'Aboost - AI Action Plan for Founders'
+export const alt = 'Boost - AI Action Plan for Founders'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -41,8 +41,8 @@ export default async function Image() {
               marginBottom: '32px',
             }}
           >
-            <svg width="320" height="58" viewBox={ABOOST_LOGO_VIEWBOX} fill="none">
-              {ABOOST_LOGO_PATHS.map((d, i) => (
+            <svg width="320" height="75" viewBox={BOOST_LOGO_VIEWBOX} fill="none">
+              {BOOST_LOGO_PATHS.map((d, i) => (
                 <path key={i} d={d} fill="#2C3E50" />
               ))}
             </svg>

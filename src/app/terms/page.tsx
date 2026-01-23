@@ -1,8 +1,8 @@
 import { Header, Footer } from "@/components/layout"
 
 export const metadata = {
-  title: "Terms of Service | Aboost",
-  description: "Terms and conditions for using Aboost.",
+  title: "Terms of Service | Boost",
+  description: "Terms and conditions for using Boost.",
 }
 
 export default function TermsPage() {
@@ -24,7 +24,7 @@ export default function TermsPage() {
                   Service Description
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
-                  Aboost provides AI-powered action plan recommendations for founders and
+                  Boost provides AI-powered action plan recommendations for founders and
                   businesses. You submit information about your product, and we generate personalized
                   strategic advice using artificial intelligence and competitive research.
                 </p>
@@ -35,7 +35,7 @@ export default function TermsPage() {
                   Eligibility
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
-                  You must be at least 18 years old to use Aboost.
+                  You must be at least 18 years old to use Boost.
                 </p>
               </section>
 
@@ -80,7 +80,7 @@ export default function TermsPage() {
                   Disclaimer
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
-                  Aboost provides AI-generated strategic recommendations, not professional
+                  Boost provides AI-generated strategic recommendations, not professional
                   consulting services. The advice is based on the information you provide and
                   publicly available data.
                 </p>
@@ -124,7 +124,7 @@ export default function TermsPage() {
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
                   You own the action plan we generate for you and may use it for any lawful purpose.
-                  The Aboost name, logo, and service remain our property.
+                  The Boost name, logo, and service remain our property.
                 </p>
               </section>
 
@@ -133,7 +133,7 @@ export default function TermsPage() {
                   Limitation of Liability
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
-                  Aboost is provided &quot;as is&quot; without warranties of any kind. We are
+                  Boost is provided &quot;as is&quot; without warranties of any kind. We are
                   not liable for any indirect, incidental, or consequential damages arising from
                   your use of the service. Our total liability is limited to the amount you paid
                   for the service.
@@ -145,7 +145,7 @@ export default function TermsPage() {
                   Indemnification
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
-                  You agree to indemnify and hold Aboost harmless from any claims, damages,
+                  You agree to indemnify and hold Boost harmless from any claims, damages,
                   or expenses arising from your use of the service or violation of these terms.
                 </p>
               </section>
@@ -176,7 +176,7 @@ export default function TermsPage() {
                   Changes to Terms
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
-                  We may update these terms from time to time. Continued use of Aboost after
+                  We may update these terms from time to time. Continued use of Boost after
                   changes constitutes acceptance of the new terms.
                 </p>
               </section>

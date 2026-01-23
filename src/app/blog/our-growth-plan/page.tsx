@@ -9,16 +9,16 @@ import { config } from "@/lib/config";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Our Growth Plan | Aboost",
-  description: "We ran Aboost on itself. Here's the AI-generated action plan for our own product - real competitive research, actionable tactics, and a 30-day roadmap.",
+  title: "Our Growth Plan | Boost",
+  description: "We ran Boost on itself. Here's the AI-generated action plan for our own product - real competitive research, actionable tactics, and a 30-day roadmap.",
   openGraph: {
-    title: "We Ran Aboost on Itself - Our Growth Plan",
+    title: "We Ran Boost on Itself - Our Growth Plan",
     description: "See what happens when an AI growth strategist analyzes its own product. Real action plan, real research, real results.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
-    title: "We Ran Aboost on Itself - Our Growth Plan",
+    title: "We Ran Boost on Itself - Our Growth Plan",
     description: "See what happens when an AI growth strategist analyzes its own product.",
   },
 };
@@ -41,14 +41,14 @@ export default async function GrowthPlanPage() {
       {/* Hero / header area */}
       <div className="pt-12 pb-8 lg:text-center">
         <p className="font-mono text-xs tracking-[0.15em] text-foreground/60 uppercase mb-4">
-          We ran Aboost on itself
+          We ran Boost on itself
         </p>
         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground mb-4">
           Our Growth Plan
         </h1>
         <p className="text-lg text-foreground/70 max-w-xl lg:mx-auto leading-relaxed">
           What happens when an AI growth strategist analyzes its own product?
-          Here&apos;s the <span className="text-foreground font-semibold">real action plan</span> we&apos;re following to grow Aboost.
+          Here&apos;s the <span className="text-foreground font-semibold">real action plan</span> we&apos;re following to grow Boost.
         </p>
         <div className="flex flex-wrap items-center gap-4 mt-6 text-sm lg:justify-center">
           <span className="text-foreground/50">January 2026 · 15 min read</span>
@@ -57,7 +57,7 @@ export default async function GrowthPlanPage() {
             <span className="text-foreground/50">Share:</span>
             <SocialShareButtons
               url="https://aboo.st/blog/our-growth-plan"
-              text="Aboost ran their AI on their own product. Here's the result:"
+              text="Boost ran their AI on their own product. Here's the result:"
               source="blog"
             />
           </div>
@@ -90,7 +90,7 @@ export default async function GrowthPlanPage() {
         Ready to get your own action plan?
       </h2>
       <p className="text-foreground/70 max-w-md mx-auto">
-        Aboost uses live competitive research and Claude Opus to create
+        Boost uses live competitive research and Claude Opus to create
         actionable strategies specifically for your product.
       </p>
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">

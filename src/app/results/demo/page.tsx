@@ -20,7 +20,7 @@ export default async function DemoResultsPage() {
   const demoBanner = (
     <div className="bg-amber-100 border-b-[3px] border-amber-600 px-6 py-3">
       <p className="text-center font-mono text-xs tracking-[0.1em] text-amber-800 uppercase font-semibold">
-        Demo preview — Real output for Aboost
+        Demo preview — Real output for Boost
       </p>
     </div>
   );
@@ -30,7 +30,7 @@ export default async function DemoResultsPage() {
       markdown={markdown}
       runId="demo"
       shareSlug={null}
-      productName="Aboost - AI growth strategist"
+      productName="Boost - AI growth strategist"
     />
   );
 

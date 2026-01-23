@@ -5,11 +5,11 @@ import { Header, Footer } from "@/components/layout";
 import { config } from "@/lib/config";
 
 export const metadata: Metadata = {
-  title: "Blog | Aboost",
+  title: "Blog | Boost",
   description:
     "Startup teardowns, growth tactics, and strategies that actually work. Real research, real results.",
   openGraph: {
-    title: "Blog | Aboost",
+    title: "Blog | Boost",
     description:
       "Startup teardowns, growth tactics, and strategies that actually work.",
     type: "website",
@@ -30,9 +30,9 @@ interface BlogPost {
 const BLOG_POSTS: BlogPost[] = [
   {
     slug: "our-growth-plan",
-    title: "We Ran Aboost on Itself",
+    title: "We Ran Boost on Itself",
     description:
-      "What happens when an AI growth strategist analyzes its own product? Here's the real action plan we're following to grow Aboost.",
+      "What happens when an AI growth strategist analyzes its own product? Here's the real action plan we're following to grow Boost.",
     date: "January 2026",
     readTime: "15 min read",
     category: "meta",
