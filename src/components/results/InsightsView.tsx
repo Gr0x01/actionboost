@@ -67,12 +67,12 @@ export function InsightsView({ strategy, structuredOutput }: InsightsViewProps) 
       )}
 
       {/* 5. Keyword Opportunities (NEW) - keyword gap table */}
-      {keywordOpportunities?.keywords?.length && (
+      {keywordOpportunities?.keywords?.length > 0 && (
         <KeywordOpportunities opportunities={keywordOpportunities} />
       )}
 
       {/* 6. Market Pulse (NEW) - Reddit/community quotes */}
-      {marketQuotes?.quotes?.length && (
+      {marketQuotes?.quotes?.length > 0 && (
         <MarketPulse quotes={marketQuotes} />
       )}
 
