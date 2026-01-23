@@ -11,7 +11,6 @@ import {
   MetricsSnapshot,
   DeepDivesAccordion,
   // NEW: Research-backed components
-  ResearchSnapshot,
   CompetitiveComparison,
   KeywordOpportunities,
   MarketPulse,
@@ -27,19 +26,17 @@ interface InsightsViewProps {
  * InsightsView - "What we found" tab for new users
  *
  * Layout (with graceful fallbacks):
- * 1. ResearchSnapshot (if available) - hero stats
- * 2. PositioningSummaryV2 OR legacy PositioningSummary
- * 3. PriorityCards (existing)
- * 4. CompetitiveComparison OR legacy CompetitorSnapshot
- * 5. KeywordOpportunities (if available)
- * 6. MarketPulse (if available)
- * 7. MetricsSnapshot (existing)
- * 8. DeepDivesAccordion (existing)
+ * 1. PositioningSummaryV2 OR legacy PositioningSummary
+ * 2. PriorityCards (existing)
+ * 3. CompetitiveComparison OR legacy CompetitorSnapshot
+ * 4. KeywordOpportunities (if available)
+ * 5. MarketPulse (if available)
+ * 6. MetricsSnapshot (existing)
+ * 7. DeepDivesAccordion (existing)
  */
 export function InsightsView({ strategy, structuredOutput }: InsightsViewProps) {
   // Destructure optional research-backed data for cleaner conditionals
   const {
-    researchSnapshot,
     positioning,
     competitiveComparison,
     keywordOpportunities,
@@ -47,13 +44,8 @@ export function InsightsView({ strategy, structuredOutput }: InsightsViewProps) 
   } = structuredOutput
 
   return (
-    <div className="space-y-12">
-      {/* 1. Research Snapshot (NEW) - hero stats showing research depth */}
-      {researchSnapshot && (
-        <ResearchSnapshot snapshot={researchSnapshot} />
-      )}
-
-      {/* 2. Positioning - V2 (data-driven) OR legacy (regex-parsed) */}
+    <div className="space-y-24">
+      {/* 1. Positioning - V2 (data-driven) OR legacy (regex-parsed) */}
       {positioning ? (
         <PositioningSummaryV2 positioning={positioning} />
       ) : (

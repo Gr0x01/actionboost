@@ -1,6 +1,5 @@
 'use client'
 
-import { Target, Users, Sparkles, Shield } from 'lucide-react'
 import type { PositioningData } from '@/lib/ai/formatter-types'
 
 interface PositioningSummaryV2Props {
@@ -8,41 +7,45 @@ interface PositioningSummaryV2Props {
 }
 
 /**
- * Get verdict display info
+ * Get verdict display info with editorial styling
  */
-function getVerdictInfo(verdict?: 'clear' | 'needs-work' | 'unclear') {
+function getVerdictStyle(verdict?: 'clear' | 'needs-work' | 'unclear') {
   switch (verdict) {
     case 'clear':
       return {
-        label: 'Strong positioning',
-        color: 'text-green-600 bg-green-50 border-green-200',
-        icon: '✓',
+        word: 'Sharp.',
+        subtitle: 'Your positioning is clear',
+        stripeClass: 'from-emerald-500 via-emerald-500 to-green-400',
       }
     case 'needs-work':
       return {
-        label: 'Room to sharpen',
-        color: 'text-amber-600 bg-amber-50 border-amber-200',
-        icon: '→',
+        word: 'Close.',
+        subtitle: 'Room to sharpen',
+        stripeClass: 'from-cta via-cta to-accent',
       }
     case 'unclear':
       return {
-        label: 'Needs clarity',
-        color: 'text-red-600 bg-red-50 border-red-200',
-        icon: '!',
+        word: 'Fuzzy.',
+        subtitle: 'Needs more clarity',
+        stripeClass: 'from-amber-500 via-amber-500 to-orange-400',
       }
     default:
-      return null
+      return {
+        word: 'Found.',
+        subtitle: 'Your market position',
+        stripeClass: 'from-cta via-cta to-accent',
+      }
   }
 }
 
 /**
- * PositioningSummaryV2 - Data-driven positioning card
+ * PositioningSummaryV2 - The "holy shit, they get me" moment
  *
- * Replaces regex-based extraction with structured data from formatter
- * Soft Brutalist: hero card with accent border, visible structure
+ * Editorial design: Big verdict, hero insight, supporting evidence
+ * Soft Brutalist: offset shadow, accent stripe, bold typography
  */
 export function PositioningSummaryV2({ positioning }: PositioningSummaryV2Props) {
-  const verdictInfo = getVerdictInfo(positioning.verdict)
+  const style = getVerdictStyle(positioning.verdict)
 
   // Don't render if no meaningful data
   if (
@@ -56,99 +59,64 @@ export function PositioningSummaryV2({ positioning }: PositioningSummaryV2Props)
 
   const insights = [
     {
-      icon: Sparkles,
       label: 'What makes you different',
       value: positioning.uniqueValue,
     },
     {
-      icon: Users,
-      label: 'Your target segment',
+      label: 'Who you serve best',
       value: positioning.targetSegment,
     },
     {
-      icon: Shield,
-      label: 'Competitive advantage',
+      label: 'Your edge',
       value: positioning.competitiveAdvantage,
     },
   ].filter((i) => i.value)
 
+  // Only show first two insights (different + serve)
+  const displayInsights = insights.slice(0, 2)
+
   return (
     <section className="scroll-mt-32">
-      <div
-        className="rounded-md border-2 border-foreground/20 bg-background p-6 lg:p-8"
-        style={{ boxShadow: '4px 4px 0 rgba(44, 62, 80, 0.1)' }}
-      >
-        {/* Header */}
-        <div className="flex items-start justify-between gap-4 mb-6">
-          <div>
-            <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-2">
-              YOUR POSITIONING
+      {/* Two-column layout: header + quote left, insights right */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+        {/* Left 2/3 - Header + Hero pull quote */}
+        <div className="lg:col-span-2">
+          {/* Section label */}
+          <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-foreground/40 block mb-2">
+            Your Positioning
+          </span>
+
+          {/* Verdict header */}
+          <div className="flex items-baseline gap-2 flex-wrap mb-6">
+            <span className="text-2xl lg:text-3xl font-bold text-foreground tracking-tight">
+              {style.word}
             </span>
-            <h2 className="text-xl lg:text-2xl font-bold text-foreground">
-              What we found about your market position
-            </h2>
+            <span className="text-base text-foreground/60 font-medium">
+              {style.subtitle}
+            </span>
           </div>
 
-          {/* Verdict badge */}
-          {verdictInfo && (
-            <span
-              className={`shrink-0 px-3 py-1.5 rounded-full text-sm font-semibold border ${verdictInfo.color}`}
-            >
-              <span className="mr-1.5">{verdictInfo.icon}</span>
-              {verdictInfo.label}
-            </span>
+          {/* Hero pull quote */}
+          {positioning.summary && (
+            <p className="text-xl lg:text-2xl font-serif text-foreground leading-relaxed">
+              {positioning.summary}
+            </p>
           )}
         </div>
 
-        {/* Summary quote */}
-        {positioning.summary && (
-          <blockquote className="text-lg lg:text-xl text-foreground/80 leading-relaxed mb-6 pl-4 border-l-4 border-cta">
-            {positioning.summary}
-          </blockquote>
-        )}
-
-        {/* Key insights grid */}
-        {insights.length > 0 && (
-          <div
-            className={`grid gap-4 ${
-              insights.length === 1
-                ? 'grid-cols-1'
-                : insights.length === 2
-                  ? 'grid-cols-1 sm:grid-cols-2'
-                  : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
-            }`}
-          >
-            {insights.map((insight) => (
-              <div
-                key={insight.label}
-                className="flex items-start gap-3 p-4 rounded-md border border-foreground/10 bg-foreground/[0.03]"
-              >
-                <div className="shrink-0 w-8 h-8 rounded-full bg-cta/10 flex items-center justify-center">
-                  <insight.icon className="w-4 h-4 text-cta" />
-                </div>
-                <div>
-                  <span className="font-mono text-[10px] tracking-wider text-foreground/50 uppercase block mb-1">
-                    {insight.label}
-                  </span>
-                  <p className="text-sm text-foreground font-medium">
-                    {insight.value}
-                  </p>
-                </div>
+        {/* Right 1/3 - Supporting insights stacked */}
+        {displayInsights.length > 0 && (
+          <div className="space-y-6 lg:border-l lg:border-foreground/10 lg:pl-8">
+            {displayInsights.map((insight) => (
+              <div key={insight.label}>
+                <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-foreground/50 block mb-1">
+                  {insight.label}
+                </span>
+                <p className="text-sm lg:text-base text-foreground font-medium leading-relaxed">
+                  {insight.value}
+                </p>
               </div>
             ))}
-          </div>
-        )}
-
-        {/* Fallback CTA if no specific insights */}
-        {insights.length === 0 && !positioning.summary && (
-          <div className="flex items-center gap-3 p-4 rounded-md border border-foreground/10 bg-foreground/[0.03]">
-            <div className="shrink-0 w-8 h-8 rounded-full bg-cta/10 flex items-center justify-center">
-              <Target className="w-4 h-4 text-cta" />
-            </div>
-            <p className="text-sm text-foreground/70">
-              Check the &quot;Your Situation&quot; section in Deep Dives below
-              for the full positioning analysis.
-            </p>
           </div>
         )}
       </div>
