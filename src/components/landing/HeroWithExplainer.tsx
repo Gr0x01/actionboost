@@ -7,20 +7,35 @@ import Link from "next/link";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { HeroSummaryCard } from "./HeroSummaryCard";
 
-// Platform logos - the chaos
+// Platform logos - the chaos (24 unique platforms)
 const PLATFORM_LOGOS = [
-  { name: "Google Analytics", src: "/logos/google-analytics.svg" },
+  // Social & Communication
   { name: "Instagram", src: "/logos/instagram.svg" },
   { name: "Facebook", src: "/logos/facebook.svg" },
   { name: "TikTok", src: "/logos/tiktok.svg" },
-  { name: "Pinterest", src: "/logos/pinterest.svg" },
   { name: "LinkedIn", src: "/logos/linkedin.svg" },
-  { name: "Yelp", src: "/logos/yelp.svg" },
-  { name: "Google", src: "/logos/google.svg" },
   { name: "Twitter", src: "/logos/x.svg" },
   { name: "YouTube", src: "/logos/youtube.svg" },
+  { name: "Pinterest", src: "/logos/pinterest.svg" },
+  { name: "Snapchat", src: "/logos/snapchat.svg" },
+  { name: "Reddit", src: "/logos/reddit.svg" },
+  { name: "WhatsApp", src: "/logos/whatsapp.svg" },
+  { name: "Threads", src: "/logos/threads.svg" },
+  // E-commerce & Business
+  { name: "Google", src: "/logos/google.svg" },
+  { name: "Amazon", src: "/logos/amazon.svg" },
+  { name: "Shopify", src: "/logos/shopify.svg" },
+  { name: "Stripe", src: "/logos/stripe.svg" },
+  { name: "Etsy", src: "/logos/etsy.svg" },
+  { name: "Yelp", src: "/logos/yelp.svg" },
+  // Marketing Tools
+  { name: "Google Analytics", src: "/logos/google-analytics.svg" },
   { name: "Mailchimp", src: "/logos/mailchimp.svg" },
   { name: "HubSpot", src: "/logos/hubspot.svg" },
+  { name: "Semrush", src: "/logos/semrush.svg" },
+  { name: "Canva", src: "/logos/canva.svg" },
+  { name: "WordPress", src: "/logos/wordpress.svg" },
+  { name: "Slack", src: "/logos/slack.svg" },
 ];
 
 // Noise cards - contradictory advice
@@ -33,39 +48,62 @@ const NOISE_CARDS = [
   { text: "Email is back", type: "advice" },
   { text: "Reach down 23%", type: "metric" },
   { text: "Try Reels!", type: "advice" },
+  // More noise
+  { text: "Go viral!", type: "advice" },
+  { text: "SEO is dead", type: "advice" },
+  { text: "CTR: 0.3%", type: "metric" },
+  { text: "Be authentic", type: "advice" },
 ];
 
 // Starting positions - scattered around hero area (percentages of container)
-// These will be in the top portion where the hero headline is
-// Desktop: pulled inward to frame the content more tightly
+// Desktop: dense field of logos framing the content
 const LOGO_POSITIONS = [
-  // Top corners and edges
-  { x: 12, y: 4 },
-  { x: 26, y: 6 },
-  { x: 74, y: 5 },
-  { x: 88, y: 7 },
-  // Upper sides
-  { x: 10, y: 16 },
-  { x: 90, y: 14 },
-  // Mid sides (around headline level)
-  { x: 8, y: 26 },
-  { x: 92, y: 24 },
-  // Lower sides (below headline, above scroll point)
-  { x: 14, y: 36 },
-  { x: 32, y: 38 },
-  { x: 68, y: 37 },
-  { x: 86, y: 35 },
+  // Row 1 - very top
+  { x: 8, y: 3 },
+  { x: 20, y: 5 },
+  { x: 35, y: 4 },
+  { x: 65, y: 3 },
+  { x: 80, y: 5 },
+  { x: 92, y: 4 },
+  // Row 2 - upper
+  { x: 6, y: 12 },
+  { x: 18, y: 14 },
+  { x: 82, y: 13 },
+  { x: 94, y: 11 },
+  // Row 3 - mid-upper (around headline)
+  { x: 5, y: 22 },
+  { x: 15, y: 24 },
+  { x: 85, y: 23 },
+  { x: 95, y: 21 },
+  // Row 4 - mid (around subhead)
+  { x: 7, y: 32 },
+  { x: 20, y: 34 },
+  { x: 80, y: 33 },
+  { x: 93, y: 31 },
+  // Row 5 - lower (around CTA)
+  { x: 10, y: 42 },
+  { x: 28, y: 44 },
+  { x: 72, y: 43 },
+  { x: 90, y: 41 },
+  // Row 6 - bottom
+  { x: 15, y: 52 },
+  { x: 85, y: 51 },
 ];
 
 const NOISE_POSITIONS = [
-  { x: 18, y: 8 },
-  { x: 82, y: 10 },
-  { x: 12, y: 20 },
-  { x: 88, y: 18 },
-  { x: 14, y: 32 },
-  { x: 86, y: 30 },
-  { x: 22, y: 40 },
-  { x: 78, y: 38 },
+  // Scattered among logos
+  { x: 14, y: 7 },
+  { x: 86, y: 8 },
+  { x: 10, y: 18 },
+  { x: 90, y: 17 },
+  { x: 12, y: 28 },
+  { x: 88, y: 27 },
+  { x: 18, y: 38 },
+  { x: 82, y: 37 },
+  { x: 22, y: 48 },
+  { x: 78, y: 47 },
+  { x: 8, y: 55 },
+  { x: 92, y: 54 },
 ];
 
 export function HeroWithExplainer() {
