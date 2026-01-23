@@ -78,16 +78,27 @@ export function HeroWithExplainer() {
 
   return (
     <div ref={containerRef} className="relative">
+      {/* Gradient shapes spanning both sections */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        {/* Large warm blob - top right */}
+        <div
+          className="absolute -top-20 -right-20 w-[800px] h-[800px] rounded-full blur-[100px]"
+          style={{ background: "radial-gradient(circle, rgba(230, 126, 34, 0.25) 0%, transparent 60%)" }}
+        />
+        {/* Cool blob - bottom left */}
+        <div
+          className="absolute top-[50%] -left-60 w-[900px] h-[900px] rounded-full blur-[120px]"
+          style={{ background: "radial-gradient(circle, rgba(52, 152, 219, 0.15) 0%, transparent 60%)" }}
+        />
+        {/* Warm accent - center */}
+        <div
+          className="absolute top-[30%] left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full blur-[100px]"
+          style={{ background: "radial-gradient(circle, rgba(243, 156, 18, 0.2) 0%, transparent 60%)" }}
+        />
+      </div>
+
       {/* ===== HERO SECTION ===== */}
       <section className="relative min-h-screen flex flex-col justify-center py-16 lg:py-24">
-        {/* Warm glow background */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(ellipse 80% 50% at 50% 40%, rgba(230, 126, 34, 0.08) 0%, transparent 60%)",
-          }}
-        />
 
         {/* Hero content - centered */}
         <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
@@ -127,7 +138,7 @@ export function HeroWithExplainer() {
       </section>
 
       {/* ===== EXPLAINER SECTION - where logos converge TO ===== */}
-      <section id="how-it-works" className="relative py-16 lg:py-20 bg-gradient-to-b from-background to-surface">
+      <section id="how-it-works" className="relative py-16 lg:py-20">
         {/* Section header */}
         <motion.div
           className="relative z-10 mx-auto max-w-3xl px-6 text-center mb-12"
@@ -140,17 +151,15 @@ export function HeroWithExplainer() {
             How it works
           </p>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-foreground tracking-tight leading-tight">
-            We scan{" "}
-            <span className="font-black">the entire internet</span>
+            All that noise?
             <br />
-            and build you{" "}
-            <span className="font-black text-cta">one clear plan.</span>
+            <span className="font-black text-cta">We turned it into this.</span>
           </h2>
         </motion.div>
 
         {/* The card - convergence target, fades in fast to catch icons */}
         <motion.div
-          className="relative z-10 mx-auto max-w-xl px-6"
+          className="relative z-10 mx-auto max-w-3xl px-6"
           style={{
             opacity: useTransform(scrollYProgress, [0.2, 0.3], [0, 1]),
             scale: useTransform(scrollYProgress, [0.2, 0.35], [0.95, 1]),
@@ -167,9 +176,8 @@ export function HeroWithExplainer() {
             opacity: useTransform(scrollYProgress, [0.4, 0.55], [0, 1]),
           }}
         >
-          Data from <span className="font-semibold text-foreground">12+ platforms</span>,
-          analyzed and distilled into{" "}
-          <span className="font-semibold text-foreground">24 specific actions</span>.
+          We looked at everything so you don&apos;t have to.{" "}
+          <span className="font-semibold text-foreground">Just follow the steps.</span>
         </motion.p>
       </section>
 

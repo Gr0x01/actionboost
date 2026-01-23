@@ -2,33 +2,140 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ArrowRight } from "lucide-react";
+import { Check } from "lucide-react";
+import Image from "next/image";
+
+// Business type content - specific, actionable plans for each
+const BUSINESS_TYPES = {
+  salon: {
+    label: "Hair Salon",
+    week1: [
+      { text: "Add 8 before/after photos to Google Business (focus on balayage)" },
+      { text: "Reply to your 5 most recent Google reviews with personalized responses" },
+      { text: "Create an Instagram highlight called 'Transformations'" },
+    ],
+    week2: [
+      { text: "Post a 15-second Reel showing a color process with trending audio" },
+      { text: "Text your last 20 color clients offering $15 off rebooking" },
+    ],
+    insight: "Your top competitor ranks for 31 keywords you don't - like 'balayage near me'",
+    sources: ["google", "instagram", "yelp", "facebook"],
+  },
+  candles: {
+    label: "Candle Shop",
+    week1: [
+      { text: "Add burn time and scent notes to every product description" },
+      { text: "Email your list with 'Back in stock: [your #1 seller]' subject line" },
+      { text: "Create a 'Bestsellers' collection on your homepage" },
+    ],
+    week2: [
+      { text: "Set up an abandoned cart email - send 3 hours after abandonment" },
+      { text: "Post a TikTok showing the 'first light' of a new candle" },
+    ],
+    insight: "3 competitors offer subscription boxes - subscribers have 3x higher lifetime value",
+    sources: ["google-analytics", "tiktok", "pinterest", "mailchimp"],
+  },
+  cafe: {
+    label: "Local Cafe",
+    week1: [
+      { text: "Update Google Business hours and verify 'Popular times' accuracy" },
+      { text: "Add 6 food photos to Yelp with specific dish names as captions" },
+      { text: "Claim your Apple Maps listing and add your menu link" },
+    ],
+    week2: [
+      { text: "Create an Instagram Story template for your daily special" },
+      { text: "Reply to your 3 most critical Yelp reviews with an invitation to return" },
+    ],
+    insight: "Your closest competitor has 147 more Google reviews than you",
+    sources: ["google", "yelp", "instagram", "facebook"],
+  },
+  coach: {
+    label: "Business Coach",
+    week1: [
+      { text: "Rewrite LinkedIn headline to focus on specific results you deliver" },
+      { text: "Turn your best client result into a LinkedIn carousel" },
+      { text: "Send voice notes to 10 past clients asking for testimonials" },
+    ],
+    week2: [
+      { text: "Post a 'hot take' about a common mistake in your niche" },
+      { text: "Create a lead magnet: '5 Questions to Ask Before...'" },
+    ],
+    insight: "Your top 3 competitors publish weekly LinkedIn newsletters with 1K+ subscribers",
+    sources: ["linkedin", "google-analytics", "hubspot", "youtube"],
+  },
+  fitness: {
+    label: "Fitness Studio",
+    week1: [
+      { text: "Add class schedules to Google Business with prices visible" },
+      { text: "Film 3 short-form videos of members mid-workout" },
+      { text: "Create an Instagram 'New Here?' highlight with studio tour" },
+    ],
+    week2: [
+      { text: "Text inactive members: 'We miss you! Reply BACK for a free class'" },
+      { text: "Partner with a nearby smoothie shop for cross-promo" },
+    ],
+    insight: "Your competitor gets 73% of new members from Instagram DMs, not their website",
+    sources: ["instagram", "google", "tiktok", "facebook"],
+  },
+};
+
+type BusinessType = keyof typeof BUSINESS_TYPES;
+const BUSINESS_KEYS = Object.keys(BUSINESS_TYPES) as BusinessType[];
+
+// Source logos - maps to files in /public/logos/
+const SOURCE_LOGOS: Record<string, string> = {
+  google: "/logos/google.svg",
+  "google-analytics": "/logos/google-analytics.svg",
+  instagram: "/logos/instagram.svg",
+  facebook: "/logos/facebook.svg",
+  tiktok: "/logos/tiktok.svg",
+  pinterest: "/logos/pinterest.svg",
+  linkedin: "/logos/linkedin.svg",
+  yelp: "/logos/yelp.svg",
+  youtube: "/logos/youtube.svg",
+  mailchimp: "/logos/mailchimp.svg",
+  hubspot: "/logos/hubspot.svg",
+};
 
 interface HeroSummaryCardProps {
   visible: boolean;
 }
 
 export function HeroSummaryCard({ visible }: HeroSummaryCardProps) {
-  const [tasks, setTasks] = useState([
-    { id: 1, text: "Fix Google Business listing", checked: true, week: 1 },
-    { id: 2, text: "Set up review request flow", checked: true, week: 1 },
-    { id: 3, text: "Optimize Instagram bio", checked: false, week: 1 },
-    { id: 4, text: "Launch referral program", checked: false, week: 2 },
-    { id: 5, text: "First Instagram Reel", checked: false, week: 2 },
-  ]);
+  const [selectedType, setSelectedType] = useState<BusinessType>("salon");
+  const businessData = BUSINESS_TYPES[selectedType];
+
+  // Build tasks from selected business type
+  const [checkedTasks, setCheckedTasks] = useState<Set<string>>(new Set(["0", "1"]));
+
+  // Reset checked state when switching business types
+  useEffect(() => {
+    setCheckedTasks(new Set(["0", "1"]));
+  }, [selectedType]);
+
+  const allTasks = [
+    ...businessData.week1.map((t, i) => ({ ...t, id: `${i}`, week: 1 })),
+    ...businessData.week2.map((t, i) => ({ ...t, id: `${businessData.week1.length + i}`, week: 2 })),
+  ];
+
+  const week1Tasks = allTasks.filter(t => t.week === 1);
+  const week2Tasks = allTasks.filter(t => t.week === 2);
+
+  const toggleTask = (id: string) => {
+    setCheckedTasks(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   const [showConfetti, setShowConfetti] = useState(false);
   const prevWeekCompletions = useRef({ week1: false, week2: false });
 
-  const toggleTask = (id: number) => {
-    setTasks(tasks.map(t => t.id === id ? { ...t, checked: !t.checked } : t));
-  };
-
   // Check for week completions
-  const week1Tasks = tasks.filter(t => t.week === 1);
-  const week2Tasks = tasks.filter(t => t.week === 2);
-  const week1Complete = week1Tasks.every(t => t.checked);
-  const week2Complete = week2Tasks.every(t => t.checked);
+  const week1Complete = week1Tasks.every(t => checkedTasks.has(t.id));
+  const week2Complete = week2Tasks.every(t => checkedTasks.has(t.id));
 
   // Trigger confetti when a week becomes complete
   useEffect(() => {
@@ -43,13 +150,13 @@ export function HeroSummaryCard({ visible }: HeroSummaryCardProps) {
     prevWeekCompletions.current = { week1: week1Complete, week2: week2Complete };
   }, [week1Complete, week2Complete]);
 
-  const checkedCount = tasks.filter(t => t.checked).length;
+  const checkedCount = checkedTasks.size;
 
   if (!visible) return null;
 
   return (
     <motion.div
-      className="relative max-w-md mx-auto overflow-visible"
+      className="relative max-w-2xl mx-auto overflow-visible"
       initial={{ scale: 0.95, y: 20, opacity: 0 }}
       animate={{ scale: 1, y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
@@ -85,98 +192,117 @@ export function HeroSummaryCard({ visible }: HeroSummaryCardProps) {
           border: "1px solid rgba(0,0,0,0.06)",
         }}
       >
-        {/* Header - clean typography */}
-        <div className="px-6 pt-6 pb-4 border-b border-border/30">
-          <p className="text-xs font-mono text-foreground/40 uppercase tracking-widest mb-1">
-            Your result
-          </p>
-          <h3 className="text-2xl font-bold text-foreground tracking-tight">
-            30-Day Growth Plan
+        {/* Header with business type selector */}
+        <div className="px-6 pt-5 pb-4 border-b border-border/30">
+          {/* Business type tabs */}
+          <div className="flex flex-wrap gap-1.5 mb-4">
+            {BUSINESS_KEYS.map((key) => (
+              <button
+                key={key}
+                onClick={() => setSelectedType(key)}
+                className={`
+                  px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-150
+                  ${selectedType === key
+                    ? "bg-foreground text-white"
+                    : "bg-foreground/5 text-foreground/60 hover:bg-foreground/10 hover:text-foreground/80"
+                  }
+                `}
+              >
+                {BUSINESS_TYPES[key].label}
+              </button>
+            ))}
+          </div>
+          <h3 className="text-xl font-bold text-foreground tracking-tight">
+            Your first two weeks
           </h3>
         </div>
 
-        {/* Content */}
-        <div className="p-6 space-y-5">
-          {/* Week 1 */}
-          <div>
-            <div className="flex items-baseline gap-2 mb-3">
-              <span className="text-xs font-mono text-foreground/40 uppercase tracking-wide">
-                Week 1
-              </span>
-              <span className="text-sm font-semibold text-foreground">
-                Foundation
-              </span>
+        {/* Content - horizontal layout on desktop */}
+        <div className="p-5">
+          {/* Two-column layout for weeks */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* Week 1 */}
+            <div>
+              <div className="flex items-baseline gap-2 mb-2.5">
+                <span className="text-xs font-mono text-foreground/40 uppercase tracking-wide">
+                  Week 1
+                </span>
+                <span className="text-sm font-semibold text-foreground">
+                  Foundation
+                </span>
+              </div>
+              <div className="space-y-1.5">
+                {week1Tasks.map(task => (
+                  <TaskItem
+                    key={task.id}
+                    checked={checkedTasks.has(task.id)}
+                    onClick={() => toggleTask(task.id)}
+                  >
+                    {task.text}
+                  </TaskItem>
+                ))}
+              </div>
             </div>
-            <div className="space-y-2">
-              {week1Tasks.map(task => (
-                <TaskItem
-                  key={task.id}
-                  checked={task.checked}
-                  onClick={() => toggleTask(task.id)}
+
+            {/* Week 2 */}
+            <div>
+              <div className="flex items-baseline gap-2 mb-2.5">
+                <span className="text-xs font-mono text-foreground/40 uppercase tracking-wide">
+                  Week 2
+                </span>
+                <span className="text-sm font-semibold text-foreground">
+                  Quick Wins
+                </span>
+              </div>
+              <div className="space-y-1.5">
+                {week2Tasks.map(task => (
+                  <TaskItem
+                    key={task.id}
+                    checked={checkedTasks.has(task.id)}
+                    onClick={() => toggleTask(task.id)}
+                  >
+                    {task.text}
+                  </TaskItem>
+                ))}
+                {/* Fade hint inline */}
+                <div className="opacity-30 pt-1">
+                  <TaskItem disabled>+ 2 more weeks...</TaskItem>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom row: Insight + Sources */}
+          <div className="mt-4 pt-4 border-t border-border/30 flex flex-col md:flex-row md:items-center gap-4">
+            {/* Competitive Insight */}
+            <div className="flex-1 bg-cta/5 border border-cta/20 rounded-lg px-3 py-2">
+              <p className="text-xs font-medium text-cta/80 uppercase tracking-wide mb-0.5">
+                What we found
+              </p>
+              <p className="text-sm text-foreground/80 leading-snug">
+                {businessData.insight}
+              </p>
+            </div>
+
+            {/* Source icons */}
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="text-xs text-foreground/50">Built from:</span>
+              {businessData.sources.map((source) => (
+                <div
+                  key={source}
+                  className="w-6 h-6 rounded-md bg-white border border-border/30 flex items-center justify-center"
+                  title={source}
                 >
-                  {task.text}
-                </TaskItem>
+                  <Image
+                    src={SOURCE_LOGOS[source]}
+                    alt=""
+                    width={16}
+                    height={16}
+                    className="w-4 h-4"
+                  />
+                </div>
               ))}
-            </div>
-          </div>
-
-          {/* Week 2 */}
-          <div>
-            <div className="flex items-baseline gap-2 mb-3">
-              <span className="text-xs font-mono text-foreground/40 uppercase tracking-wide">
-                Week 2
-              </span>
-              <span className="text-sm font-semibold text-foreground">
-                Quick Wins
-              </span>
-            </div>
-            <div className="space-y-2">
-              {week2Tasks.map(task => (
-                <TaskItem
-                  key={task.id}
-                  checked={task.checked}
-                  onClick={() => toggleTask(task.id)}
-                >
-                  {task.text}
-                </TaskItem>
-              ))}
-            </div>
-          </div>
-
-          {/* Fade hint */}
-          <div className="relative">
-            <div className="space-y-2 opacity-30">
-              <TaskItem disabled>Week 3 actions...</TaskItem>
-              <TaskItem disabled>Week 4 actions...</TaskItem>
-            </div>
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background: "linear-gradient(to bottom, transparent 0%, #FAF7F4 100%)",
-              }}
-            />
-          </div>
-
-          {/* Bottom stats */}
-          <div className="pt-4 border-t border-border/30 flex items-center justify-between">
-            <div className="flex items-center gap-6 text-sm">
-              <div>
-                <span className="font-bold text-foreground">{checkedCount}/24</span>
-                <span className="text-foreground/50 ml-1">done</span>
-              </div>
-              <div>
-                <span className="font-bold text-foreground">4</span>
-                <span className="text-foreground/50 ml-1">weeks</span>
-              </div>
-              <div>
-                <span className="font-bold text-cta">3</span>
-                <span className="text-foreground/50 ml-1">priorities</span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-1 text-cta font-medium text-sm">
-              <span>Tailored to you</span>
-              <ArrowRight className="w-4 h-4" />
+              <span className="text-xs text-foreground/40">+8</span>
             </div>
           </div>
         </div>
