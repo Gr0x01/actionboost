@@ -132,7 +132,7 @@ export function HeroWithExplainer() {
 
           {/* Trust line */}
           <p className="mt-8 text-sm text-foreground/70 font-medium">
-            $49 one-time · 5 minutes · <span className="text-foreground">100% refund if it doesn&apos;t help</span>
+            $29 one-time · 5 minutes · <span className="text-foreground">100% refund if it doesn&apos;t help</span>
           </p>
         </div>
       </section>

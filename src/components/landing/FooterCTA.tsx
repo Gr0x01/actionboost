@@ -13,7 +13,7 @@ export function FooterCTA() {
           <span className="font-black">and you know it.</span>
         </h2>
         <p className="text-lg text-background/70 mb-10">
-          This is where you start. $49. Full refund if it&apos;s not worth it.
+          This is where you start. $29. Full refund if it&apos;s not worth it.
         </p>
 
         {/* Form (client component) */}

@@ -50,7 +50,7 @@ export function Hero() {
 
         {/* Trust line with price */}
         <p className="mt-6 text-sm text-foreground/50 text-center">
-          $49 one-time. Takes 5 minutes. No jargon. Money back if it doesn&apos;t help.
+          $29 one-time. Takes 5 minutes. No jargon. Money back if it doesn&apos;t help.
         </p>
       </div>
     </section>
