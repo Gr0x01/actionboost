@@ -5,22 +5,36 @@ interface MetricsSnapshotProps {
 }
 
 /**
- * Get plain English category label
+ * Get plain English category label (friendly, no jargon)
  */
 function getCategoryLabel(category: string): string {
   const labels: Record<string, string> = {
-    acquisition: 'GROWTH',
-    activation: 'ENGAGE',
-    retention: 'RETAIN',
-    referral: 'REFER',
-    revenue: 'REVENUE',
+    acquisition: 'Finding you',
+    activation: 'Trying you',
+    retention: 'Coming back',
+    referral: 'Telling friends',
+    revenue: 'Paying you',
   }
-  return labels[category] || 'GOAL'
+  return labels[category] || 'Goal'
+}
+
+/**
+ * Get accent color for category
+ */
+function getCategoryColor(category: string): string {
+  const colors: Record<string, string> = {
+    acquisition: 'border-l-blue-400/50',
+    activation: 'border-l-emerald-400/50',
+    retention: 'border-l-violet-400/50',
+    referral: 'border-l-amber-400/50',
+    revenue: 'border-l-cta/50',
+  }
+  return colors[category] || 'border-l-foreground/20'
 }
 
 /**
  * MetricsSnapshot - Compact tile strip
- * No borders, background tint only, horizontal scroll on mobile
+ * Confident styling with solid accents, horizontal scroll on mobile
  */
 export function MetricsSnapshot({ metrics }: MetricsSnapshotProps) {
   const displayMetrics = metrics.slice(0, 6)
@@ -31,9 +45,9 @@ export function MetricsSnapshot({ metrics }: MetricsSnapshotProps) {
 
   return (
     <section className="scroll-mt-32">
-      {/* Whisper-quiet section label */}
-      <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-4">
-        KEY METRICS
+      {/* Confident section label */}
+      <span className="text-xs font-bold text-foreground/50 uppercase tracking-wide block mb-4">
+        Your key metrics
       </span>
 
       {/* Horizontal scroll on mobile, 2-col grid on desktop */}
@@ -41,10 +55,10 @@ export function MetricsSnapshot({ metrics }: MetricsSnapshotProps) {
         {displayMetrics.map((metric, index) => (
           <div
             key={`${metric.name}-${index}`}
-            className="shrink-0 w-[160px] lg:w-auto bg-foreground/[0.03] p-4 rounded-lg"
+            className={`shrink-0 w-[170px] lg:w-auto bg-white p-4 rounded-xl border border-foreground/10 border-l-[3px] ${getCategoryColor(metric.category)} hover:shadow-[0_2px_8px_rgba(44,62,80,0.06)] transition-shadow`}
           >
-            {/* Category label - whisper quiet */}
-            <span className="font-mono text-[9px] tracking-wider text-foreground/40 uppercase">
+            {/* Category label - confident */}
+            <span className="text-[10px] font-bold text-foreground/50 uppercase tracking-wide">
               {getCategoryLabel(metric.category)}
             </span>
 
@@ -53,8 +67,8 @@ export function MetricsSnapshot({ metrics }: MetricsSnapshotProps) {
               {metric.name}
             </p>
 
-            {/* Target - prominent mono */}
-            <p className="font-mono text-lg font-bold text-foreground/70 mt-1">
+            {/* Target - prominent */}
+            <p className="text-lg font-bold text-foreground mt-1">
               {metric.target}
             </p>
           </div>
