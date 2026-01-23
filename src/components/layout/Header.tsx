@@ -5,7 +5,7 @@ import Link from "next/link";
 import { createBrowserClient } from "@supabase/ssr";
 import { Sparkles } from "lucide-react";
 import type { User as AuthUser } from "@supabase/supabase-js";
-import { AboostLogo } from "@/components/ui";
+import { BoostLogo } from "@/components/ui";
 import { UserMenu } from "./UserMenu";
 import { CreditBadge } from "./CreditBadge";
 
@@ -49,7 +49,7 @@ export function Header() {
         <div className="grid grid-cols-[1fr_auto_1fr] h-14 items-center">
           {/* Logo */}
           <Link href="/" className="hover:opacity-70 transition-opacity justify-self-start">
-            <AboostLogo width={120} height={22} className="text-foreground" />
+            <BoostLogo width={80} height={19} className="text-foreground" />
           </Link>
 
           {/* Nav links - centered, hidden on mobile, stretch to fill height */}
@@ -62,7 +62,7 @@ export function Header() {
                   flex items-center
                   text-sm font-bold text-foreground/60
                   border-b-2 border-transparent
-                  hover:text-foreground hover:border-foreground
+                  hover:text-foreground
                   transition-colors
                 "
               >
