@@ -248,26 +248,26 @@ function TaskItem({
   return (
     <div
       className={`
-        group flex items-start gap-3 p-4 rounded-md border-2 transition-all duration-100
+        group flex items-start gap-3 p-4 rounded-lg transition-all duration-100
         ${isCompleted
-          ? 'border-foreground/15 bg-foreground/[0.02]'
+          ? 'border border-foreground/10 bg-foreground/[0.02]'
           : isSkipped
-            ? 'border-foreground/15 bg-foreground/[0.02]'
-            : 'border-foreground bg-white hover:-translate-y-0.5 active:translate-y-0'
+            ? 'border border-foreground/10 bg-foreground/[0.02]'
+            : 'border border-foreground/15 bg-white hover:border-foreground/25 hover:shadow-md'
         }
       `}
-      style={!isCompleted && !isSkipped ? { boxShadow: '3px 3px 0 rgba(44, 62, 80, 0.08)' } : undefined}
+      style={!isCompleted && !isSkipped ? { boxShadow: '0 2px 8px rgba(44, 62, 80, 0.06)' } : undefined}
     >
       {/* Checkbox or status indicator */}
       {!isSkipped ? (
         <button
           onClick={isCompleted ? onReset : onComplete}
           className={`
-            w-6 h-6 rounded-sm border-2 flex items-center justify-center shrink-0 mt-0.5
+            w-6 h-6 rounded-md border flex items-center justify-center shrink-0 mt-0.5
             transition-all duration-100
             ${isCompleted
               ? 'border-cta bg-cta'
-              : 'border-foreground hover:bg-foreground/5'
+              : 'border-foreground/30 hover:border-foreground/50 hover:bg-foreground/5'
             }
           `}
           aria-label={isCompleted ? 'Undo completion' : 'Mark as complete'}
@@ -277,7 +277,7 @@ function TaskItem({
       ) : (
         <button
           onClick={onReset}
-          className="w-6 h-6 rounded-sm border-2 border-foreground/30 flex items-center justify-center shrink-0 mt-0.5 hover:border-foreground/50 transition-colors"
+          className="w-6 h-6 rounded-md border border-foreground/20 flex items-center justify-center shrink-0 mt-0.5 hover:border-foreground/40 transition-colors"
           aria-label="Restore task"
         >
           <RotateCcw className="w-3 h-3 text-foreground/40" />
@@ -518,12 +518,12 @@ function WeekPreview({
 }) {
   return (
     <div
-      className="border-2 border-foreground/20 rounded-md overflow-hidden bg-white"
-      style={{ boxShadow: '3px 3px 0 rgba(44, 62, 80, 0.08)' }}
+      className="border border-foreground/10 rounded-lg overflow-hidden bg-foreground/[0.03]"
+      style={{ boxShadow: '0 2px 8px rgba(44, 62, 80, 0.04)' }}
     >
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between p-4 hover:bg-foreground/[0.03] transition-colors text-left"
+        className="w-full flex items-center justify-between p-4 hover:bg-foreground/[0.06] transition-colors text-left"
       >
         <div className="flex items-baseline gap-3">
           <span className="font-mono text-sm font-bold uppercase tracking-wide text-foreground/50">
