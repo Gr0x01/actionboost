@@ -131,10 +131,10 @@ function ExpandedContent({ section }: { section: AccordionSection }) {
   // Two-column layout when TOC is available on lg+ screens
   if (hasToc) {
     return (
-      <div className="flex gap-8 px-5 pb-6">
+      <div className="flex gap-12 pl-8 pr-6 pb-8 pt-2">
         {/* Main content - constrained width for readability */}
-        <article className="flex-1 min-w-0 max-w-prose">
-          <div className="font-serif text-[17px] leading-[1.75] text-foreground/90">
+        <article className="flex-1 min-w-0 max-w-[65ch]">
+          <div className="font-serif text-[17px] leading-[1.8] text-foreground/85">
             <MarkdownContent
               content={section.content}
               extended
@@ -154,11 +154,11 @@ function ExpandedContent({ section }: { section: AccordionSection }) {
     )
   }
 
-  // Single column, centered, wider max-width when no TOC
+  // Single column when no TOC - generous padding, readable width
   return (
-    <div className="px-5 pb-6">
-      <article className="max-w-3xl">
-        <div className="font-serif text-[17px] leading-[1.75] text-foreground/90">
+    <div className="pl-8 pr-6 pb-8 pt-2">
+      <article className="max-w-[65ch]">
+        <div className="font-serif text-[17px] leading-[1.8] text-foreground/85">
           <MarkdownContent
             content={section.content}
             extended
