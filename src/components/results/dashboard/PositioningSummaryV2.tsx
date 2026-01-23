@@ -82,8 +82,8 @@ export function PositioningSummaryV2({ positioning }: PositioningSummaryV2Props)
         {/* Left 2/3 - Header + Hero pull quote */}
         <div className="lg:col-span-2">
           {/* Section label */}
-          <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-foreground/40 block mb-2">
-            Your Positioning
+          <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-2">
+            YOUR POSITIONING
           </span>
 
           {/* Verdict header */}

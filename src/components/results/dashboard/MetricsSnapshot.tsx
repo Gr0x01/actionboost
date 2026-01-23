@@ -5,15 +5,15 @@ interface MetricsSnapshotProps {
 }
 
 /**
- * Get plain English category label
+ * Get plain English category label (SMB-friendly, no jargon)
  */
 function getCategoryLabel(category: string): string {
   const labels: Record<string, string> = {
-    acquisition: 'GROWTH',
-    activation: 'ENGAGE',
-    retention: 'RETAIN',
-    referral: 'REFER',
-    revenue: 'REVENUE',
+    acquisition: 'FINDING YOU',
+    activation: 'TRYING YOU',
+    retention: 'COMING BACK',
+    referral: 'TELLING FRIENDS',
+    revenue: 'PAYING YOU',
   }
   return labels[category] || 'GOAL'
 }

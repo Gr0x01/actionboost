@@ -7,18 +7,6 @@ interface MarketPulseProps {
 }
 
 /**
- * Validate that a URL is safe to render as a link (http/https only)
- */
-function isValidHttpUrl(url: string): boolean {
-  try {
-    const parsed = new URL(url)
-    return ['http:', 'https:'].includes(parsed.protocol)
-  } catch {
-    return false
-  }
-}
-
-/**
  * MarketPulse - Clean typography grid for community quotes
  *
  * All quotes get equal treatment in a 2-column grid.
