@@ -9,6 +9,7 @@ interface TextareaInputProps {
   onChange: (v: string) => void;
   onSubmit: () => void;
   onBack?: () => void;
+  onSkip?: () => void;
   placeholder?: string;
   /** Current total chars across all form fields */
   currentTotal?: number;
@@ -21,6 +22,7 @@ export function TextareaInput({
   onChange,
   onSubmit,
   onBack,
+  onSkip,
   placeholder,
   currentTotal,
   maxTotal = MAX_TOTAL_CHARS,
@@ -93,14 +95,24 @@ export function TextareaInput({
         ) : (
           <p className="text-xs text-foreground/40 font-mono">Shift+Enter for new line</p>
         )}
-        <button
-          onClick={onSubmit}
-          disabled={!value.trim() || isOver}
-          className="flex items-center gap-1.5 rounded-xl px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:shadow-[3px_3px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0 transition-all duration-100"
-        >
-          Continue
-          <ArrowRight className="w-3.5 h-3.5" />
-        </button>
+        <div className="flex items-center gap-3">
+          {onSkip && !value.trim() && (
+            <button
+              onClick={onSkip}
+              className="text-sm font-medium text-foreground/50 hover:text-foreground transition-colors"
+            >
+              Skip
+            </button>
+          )}
+          <button
+            onClick={onSubmit}
+            disabled={!value.trim() || isOver}
+            className="flex items-center gap-1.5 rounded-xl px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:shadow-[3px_3px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0 transition-all duration-100"
+          >
+            Continue
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
       </div>
     </div>
   );

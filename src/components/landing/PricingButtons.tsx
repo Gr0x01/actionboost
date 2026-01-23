@@ -51,7 +51,7 @@ export function PaidTierButton() {
       disabled={loading}
       className="w-full rounded-xl py-4 px-4 font-bold text-lg bg-cta text-white shadow-md hover:shadow-lg hover:-translate-y-0.5 active:shadow-sm active:translate-y-0.5 disabled:opacity-50 disabled:hover:shadow-md disabled:hover:translate-y-0 transition-all duration-150"
     >
-      {loading ? "Setting things up..." : "Tell me about your business"}
+      {loading ? "Setting things up..." : "Get my plan for $49"}
     </button>
   );
 }

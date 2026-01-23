@@ -40,14 +40,19 @@ const STORAGE_KEY = "actionboost-form-v3";
 // View states for the form flow
 type ViewState = "loading" | "welcome_back" | "context_update" | "questions" | "checkout";
 
-// Question definitions
+// Question definitions - buttons first for easier entry
 const QUESTIONS: Question[] = [
   {
-    id: "websiteUrl",
-    question: "What's your website?",
-    acknowledgment: "Got it, I'll analyze this",
-    type: "url",
-    optional: true,
+    id: "currentTraction",
+    question: "What traction do you have so far?",
+    acknowledgment: "Good baseline",
+    type: "traction",
+  },
+  {
+    id: "focusArea",
+    question: "Where should we focus?",
+    acknowledgment: null,
+    type: "focus",
   },
   {
     id: "productDescription",
@@ -56,16 +61,25 @@ const QUESTIONS: Question[] = [
     type: "textarea",
   },
   {
-    id: "currentTraction",
-    question: "What traction do you have so far?",
-    acknowledgment: "Good baseline",
-    type: "traction",
-  },
-  {
     id: "tacticsAndResults",
     question: "What have you tried, and how's it going?",
     acknowledgment: "This helps a lot",
     type: "textarea",
+    optional: true,
+  },
+  {
+    id: "websiteUrl",
+    question: "What's your website?",
+    acknowledgment: "Got it, I'll analyze this",
+    type: "url",
+    optional: true,
+  },
+  {
+    id: "competitors",
+    question: "Any competitors I should study?",
+    acknowledgment: null,
+    type: "competitors",
+    optional: true,
   },
   {
     id: "attachments",
@@ -75,23 +89,10 @@ const QUESTIONS: Question[] = [
     optional: true,
   },
   {
-    id: "focusArea",
-    question: "Where should we focus?",
-    acknowledgment: null,
-    type: "focus",
-  },
-  {
     id: "email",
     question: "Where should we send your strategy?",
     acknowledgment: null,
     type: "email",
-    optional: true,
-  },
-  {
-    id: "competitors",
-    question: "Any competitors I should study?",
-    acknowledgment: null,
-    type: "competitors",
     optional: true,
   },
 ];

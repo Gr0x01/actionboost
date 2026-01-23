@@ -105,16 +105,17 @@ export function getTotalCharCount(form: FormInput): number {
 export function validateForm(form: FormInput, isReturningUser = false): Record<string, string> {
   const errors: Record<string, string> = {};
 
-  if (!form.productDescription.trim()) {
-    errors.productDescription = "Product description is required";
-  }
+  // currentTraction and focusArea are required (button selections)
   if (!form.currentTraction.trim()) {
     errors.currentTraction = "Current traction is required";
   }
-  // For returning users, tacticsAndResults is optional since they've already provided this info
-  if (!isReturningUser && !form.tacticsAndResults.trim()) {
-    errors.tacticsAndResults = "What you've tried is required";
+
+  // productDescription is required
+  if (!form.productDescription.trim()) {
+    errors.productDescription = "Product description is required";
   }
+
+  // tacticsAndResults is optional (can be skipped)
 
   const totalChars = getTotalCharCount(form);
   if (totalChars > MAX_TOTAL_CHARS) {
