@@ -7,33 +7,33 @@ import Link from "next/link";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { HeroSummaryCard } from "./HeroSummaryCard";
 
-// Platform logos - the chaos (24 unique platforms)
+// Platform logos - the chaos (23 unique platforms)
+// hasBackground = logo SVG has built-in background color (should fill entire card)
 const PLATFORM_LOGOS = [
   // Social & Communication
-  { name: "Instagram", src: "/logos/instagram.svg" },
-  { name: "Facebook", src: "/logos/facebook.svg" },
+  { name: "Instagram", src: "/logos/instagram.svg", hasBackground: true },
+  { name: "Facebook", src: "/logos/facebook.svg", hasBackground: true },
   { name: "TikTok", src: "/logos/tiktok.svg" },
-  { name: "LinkedIn", src: "/logos/linkedin.svg" },
-  { name: "Twitter", src: "/logos/x.svg" },
-  { name: "YouTube", src: "/logos/youtube.svg" },
+  { name: "LinkedIn", src: "/logos/linkedin.svg", hasBackground: true },
+  { name: "Twitter", src: "/logos/x.svg", hasBackground: true },
+  { name: "YouTube", src: "/logos/youtube.svg", hasBackground: true },
   { name: "Pinterest", src: "/logos/pinterest.svg" },
-  { name: "Snapchat", src: "/logos/snapchat.svg" },
-  { name: "Reddit", src: "/logos/reddit.svg" },
+  { name: "Ahrefs", src: "/logos/ahrefs.png", hasBackground: true },
+  { name: "Reddit", src: "/logos/reddit.svg", hasBackground: true },
   { name: "WhatsApp", src: "/logos/whatsapp.svg" },
   { name: "Threads", src: "/logos/threads.svg" },
   // E-commerce & Business
   { name: "Google", src: "/logos/google.svg" },
   { name: "Amazon", src: "/logos/amazon.svg" },
   { name: "Shopify", src: "/logos/shopify.svg" },
-  { name: "Stripe", src: "/logos/stripe.svg" },
-  { name: "Etsy", src: "/logos/etsy.svg" },
+  { name: "Stripe", src: "/logos/stripe.svg", hasBackground: true },
+  { name: "Etsy", src: "/logos/etsy.svg", hasBackground: true },
   { name: "Yelp", src: "/logos/yelp.svg" },
   // Marketing Tools
   { name: "Google Analytics", src: "/logos/google-analytics.svg" },
   { name: "Mailchimp", src: "/logos/mailchimp.svg" },
   { name: "HubSpot", src: "/logos/hubspot.svg" },
-  { name: "Semrush", src: "/logos/semrush.svg" },
-  { name: "Canva", src: "/logos/canva.svg" },
+  { name: "Semrush", src: "/logos/semrush.png", hasBackground: true },
   { name: "WordPress", src: "/logos/wordpress.svg" },
   { name: "Slack", src: "/logos/slack.svg" },
 ];
@@ -86,8 +86,7 @@ const LOGO_POSITIONS = [
   { x: 72, y: 43 },
   { x: 90, y: 41 },
   // Row 6 - bottom
-  { x: 15, y: 52 },
-  { x: 85, y: 51 },
+  { x: 50, y: 52 },
 ];
 
 const NOISE_POSITIONS = [
@@ -275,7 +274,7 @@ function ConvergingLogo({
   scrollProgress,
   index,
 }: {
-  logo: { name: string; src: string };
+  logo: { name: string; src: string; hasBackground?: boolean };
   startPos: { x: number; y: number };
   scrollProgress: ReturnType<typeof useScroll>["scrollYProgress"];
   index: number;
@@ -318,16 +317,31 @@ function ConvergingLogo({
       className="absolute -translate-x-1/2 -translate-y-1/2 will-change-transform"
       style={{ left, top, opacity, scale, rotate }}
     >
-      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white border-2 border-foreground/15 shadow-[3px_3px_0_rgba(44,62,80,0.08)] flex items-center justify-center">
-        <Image
-          src={logo.src}
-          alt=""
-          role="presentation"
-          width={28}
-          height={28}
-          className="w-7 h-7 sm:w-8 sm:h-8"
-        />
-      </div>
+      {logo.hasBackground ? (
+        // Logos with built-in backgrounds - fill the entire card
+        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl overflow-hidden shadow-[3px_3px_0_rgba(44,62,80,0.08)]">
+          <Image
+            src={logo.src}
+            alt=""
+            role="presentation"
+            width={56}
+            height={56}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      ) : (
+        // Icon-only logos - white card with centered icon
+        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white border-2 border-foreground/15 shadow-[3px_3px_0_rgba(44,62,80,0.08)] flex items-center justify-center">
+          <Image
+            src={logo.src}
+            alt=""
+            role="presentation"
+            width={28}
+            height={28}
+            className="w-7 h-7 sm:w-8 sm:h-8"
+          />
+        </div>
+      )}
     </motion.div>
   );
 }
