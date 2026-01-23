@@ -86,11 +86,11 @@ export function FooterCTAForm() {
 
   return (
     <>
-      {/* URL Input - Soft Brutalist on dark */}
+      {/* URL Input - Confident on dark */}
       <div className="max-w-lg mx-auto mb-6">
         <div
-          className="flex rounded-xl border-2 border-background/20 bg-background/10 overflow-hidden backdrop-blur-sm"
-          style={{ boxShadow: "4px 4px 0 rgba(255, 255, 255, 0.08)" }}
+          className="flex rounded-xl border-2 border-background/30 bg-background/15 overflow-hidden backdrop-blur-sm"
+          style={{ boxShadow: "4px 4px 0 rgba(255, 255, 255, 0.12)" }}
         >
           <div className="flex items-center gap-3 flex-1 px-4 py-3">
             {favicon ? (
@@ -115,7 +115,7 @@ export function FooterCTAForm() {
           <button
             onClick={handleAnalyze}
             disabled={!url.trim() || isAnalyzing}
-            className="shrink-0 flex items-center gap-2 px-6 py-3 bg-cta text-white font-bold hover:bg-cta-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+            className="shrink-0 flex items-center gap-2 px-6 py-3 bg-cta text-white font-bold hover:bg-cta-hover hover:shadow-[0_0_20px_rgba(230,126,34,0.5)] hover:-translate-y-0.5 active:translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150"
           >
             {isAnalyzing ? (
               <>
@@ -133,7 +133,7 @@ export function FooterCTAForm() {
       </div>
 
       {/* Skip link */}
-      <p className="text-sm text-background/50">
+      <p className="text-sm">
         <Link
           href="/start?source=footer"
           onClick={() =>
@@ -142,9 +142,9 @@ export function FooterCTAForm() {
               button: "skip_url",
             })
           }
-          className="text-background/60 hover:text-background underline underline-offset-2 transition-colors"
+          className="text-background/50 hover:text-background transition-colors"
         >
-          No website yet? That&apos;s okay, start anyway →
+          No website yet? Start anyway →
         </Link>
       </p>
     </>

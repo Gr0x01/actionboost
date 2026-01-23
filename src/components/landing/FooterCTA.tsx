@@ -5,15 +5,15 @@ export function FooterCTA() {
     <section className="relative py-24 bg-foreground">
       <div className="max-w-7xl mx-auto px-6 text-center">
         {/* Headline */}
-        <p className="font-mono text-xs tracking-[0.12em] text-background/50 uppercase mb-4">
-          Ready to stop guessing?
+        <p className="font-mono text-[11px] tracking-[0.2em] text-cta uppercase font-semibold mb-4">
+          You scrolled this far.
         </p>
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-background tracking-tight mb-4">
-          Tell me about your business.{" "}
-          <span className="font-black">Your plan ready in 5 minutes.</span>
+          That tells me something&apos;s not working{" "}
+          <span className="font-black">and you know it.</span>
         </h2>
-        <p className="text-lg text-background/60 mb-10">
-          If it doesn&apos;t help, you get your money back. Seriously.
+        <p className="text-lg text-background/70 mb-10">
+          This is where you start. $49. Full refund if it&apos;s not worth it.
         </p>
 
         {/* Form (client component) */}

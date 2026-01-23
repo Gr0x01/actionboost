@@ -217,7 +217,10 @@ export function HeroForm() {
   return (
     <div>
       {/* Card */}
-      <div className="rounded-2xl border border-border/60 bg-white shadow-xl overflow-hidden">
+      <div
+        className="rounded-xl border-2 border-foreground/20 bg-white overflow-hidden"
+        style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)" }}
+      >
         {/* Progress bar */}
         {currentStep !== "checkout" && (
           <div className="h-1 bg-border/30">

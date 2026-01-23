@@ -115,7 +115,7 @@ export function HeroWithExplainer() {
           {/* CTA Buttons */}
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
-              href="#pricing"
+              href="/start"
               className="inline-flex items-center gap-2 rounded-xl px-8 py-4 bg-cta text-white text-lg font-bold border-2 border-cta shadow-[4px_4px_0_rgba(44,62,80,0.4)] hover:shadow-[5px_5px_0_rgba(44,62,80,0.45)] hover:-translate-y-0.5 active:shadow-[2px_2px_0_rgba(44,62,80,0.4)] active:translate-y-0.5 transition-all duration-100"
             >
               Get Your Plan
@@ -131,8 +131,8 @@ export function HeroWithExplainer() {
           </div>
 
           {/* Trust line */}
-          <p className="mt-8 text-sm text-foreground/50">
-            $49 one-time · Takes 5 minutes · Money back if it doesn&apos;t help
+          <p className="mt-8 text-sm text-foreground/70 font-medium">
+            $49 one-time · 5 minutes · <span className="text-foreground">100% refund if it doesn&apos;t help</span>
           </p>
         </div>
       </section>
@@ -169,16 +169,20 @@ export function HeroWithExplainer() {
           <HeroSummaryCard visible={true} />
         </motion.div>
 
-        {/* Bottom text */}
-        <motion.p
-          className="relative z-10 mx-auto max-w-2xl px-6 text-center mt-10 text-lg text-foreground/70"
+        {/* Bottom text - bridge to pricing */}
+        <motion.div
+          className="relative z-10 mx-auto max-w-2xl px-6 text-center mt-12"
           style={{
             opacity: useTransform(scrollYProgress, [0.4, 0.55], [0, 1]),
           }}
         >
-          We looked at everything so you don&apos;t have to.{" "}
-          <span className="font-semibold text-foreground">Just follow the steps.</span>
-        </motion.p>
+          <p className="text-xl text-foreground font-medium mb-2">
+            That&apos;s your first two weeks.
+          </p>
+          <p className="text-lg text-foreground/60">
+            The full plan includes competitor research, customer journey analysis, and a complete 30-day roadmap.
+          </p>
+        </motion.div>
       </section>
 
       {/* ===== FLOATING CHAOS LAYER - spans both sections, BEHIND all content ===== */}
