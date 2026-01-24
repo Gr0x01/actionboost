@@ -165,7 +165,7 @@ export function HeroWithExplainer() {
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl lg:text-2xl text-foreground/70 max-w-2xl mx-auto font-medium">
-            Yet here you are, drowning in advice about algorithms, engagement rates, and &quot;just be consistent.&quot;
+            Yet here you are, drowning in advice about algorithms, engagement rates, and &quot;just be consistent.&quot; You need a plan, not more noise.
           </p>
 
           {/* CTA Buttons */}
@@ -188,7 +188,7 @@ export function HeroWithExplainer() {
 
           {/* Trust line */}
           <p className="mt-8 text-sm text-foreground/70 font-medium">
-            $29 one-time · Real research, not ChatGPT advice · <span className="text-foreground">Full refund if it doesn&apos;t help</span>
+            $29 once · Real competitor research, not AI guessing · <span className="text-foreground">Full refund if it doesn&apos;t help</span>
           </p>
         </div>
       </section>

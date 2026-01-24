@@ -17,12 +17,37 @@ export function Pricing() {
         {/* Section header */}
         <div className="mb-12 text-center max-w-4xl mx-auto">
           <p className="font-mono text-xs tracking-[0.12em] text-foreground/60 uppercase mb-4">
-            Your complete plan
+            Pricing
           </p>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-foreground tracking-tight text-balance">
-            Everything you need.{" "}
-            <span className="font-black">One payment.</span>
+            One plan.{" "}
+            <span className="font-black">One price.</span>
           </h2>
+        </div>
+
+        {/* Value stack */}
+        <div className="max-w-md mx-auto mb-10 text-sm font-mono">
+          <p className="text-foreground/50 uppercase tracking-wider text-xs mb-4 text-center">
+            What this would cost elsewhere
+          </p>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span className="text-foreground/60">Competitor analysis tool</span>
+              <span className="text-foreground/40 line-through">$99/mo</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-foreground/60">Marketing strategist (1 hour)</span>
+              <span className="text-foreground/40 line-through">$200+</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-foreground/60">Agency discovery session</span>
+              <span className="text-foreground/40 line-through">$500+</span>
+            </div>
+          </div>
+          <div className="border-t border-foreground/20 mt-4 pt-4 flex justify-between">
+            <span className="font-bold text-foreground font-sans">Your complete plan</span>
+            <span className="font-bold text-cta">{config.singlePrice}</span>
+          </div>
         </div>
 
         {/* Desktop: two-column grid, Mobile: single column */}
