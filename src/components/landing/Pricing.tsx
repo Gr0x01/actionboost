@@ -20,34 +20,9 @@ export function Pricing() {
             Pricing
           </p>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-foreground tracking-tight text-balance">
-            One plan.{" "}
-            <span className="font-black">One price.</span>
+            No retainer. No fluff.{" "}
+            <span className="font-black">One plan.</span>
           </h2>
-        </div>
-
-        {/* Value stack */}
-        <div className="max-w-md mx-auto mb-10 text-sm font-mono">
-          <p className="text-foreground/50 uppercase tracking-wider text-xs mb-4 text-center">
-            What this would cost elsewhere
-          </p>
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-foreground/60">Competitor analysis tool</span>
-              <span className="text-foreground/40 line-through">$99/mo</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-foreground/60">Marketing strategist (1 hour)</span>
-              <span className="text-foreground/40 line-through">$200+</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-foreground/60">Agency discovery session</span>
-              <span className="text-foreground/40 line-through">$500+</span>
-            </div>
-          </div>
-          <div className="border-t border-foreground/20 mt-4 pt-4 flex justify-between">
-            <span className="font-bold text-foreground font-sans">Your complete plan</span>
-            <span className="font-bold text-cta">{config.singlePrice}</span>
-          </div>
         </div>
 
         {/* Desktop: two-column grid, Mobile: single column */}
@@ -56,38 +31,62 @@ export function Pricing() {
           {/* Pricing card - left column */}
           <div className="max-w-md mx-auto lg:max-w-none lg:mx-0">
             <div
-              className="rounded-xl border-2 border-foreground/20 bg-white p-8 lg:p-10"
+              className="rounded-xl border-2 border-foreground/20 bg-white overflow-hidden"
               style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)" }}
             >
-              {/* Price */}
-              <div className="mb-8 text-center lg:text-left">
-                <div className="flex items-baseline justify-center lg:justify-start gap-2">
-                  <h3 className="text-6xl font-black text-foreground tracking-tight">{config.singlePrice}</h3>
-                  <span className="text-lg text-foreground/50 font-medium">one-time</span>
+              {/* Value stack - merged into card */}
+              <div className="px-8 pt-8 pb-6 lg:px-10 lg:pt-10 border-b border-foreground/10">
+                <p className="text-foreground/50 uppercase tracking-wider text-xs font-mono mb-4">
+                  What you were going to do instead
+                </p>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-foreground/60">Google &quot;how to market my business&quot;</span>
+                    <span className="text-foreground/40">6 hours, no clarity</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-foreground/60">Ask ChatGPT for the 47th time</span>
+                    <span className="text-foreground/40">same generic advice</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-foreground/60">Try another content calendar template</span>
+                    <span className="text-foreground/40">still no direction</span>
+                  </div>
                 </div>
               </div>
 
-              {/* What's included */}
-              <div className="space-y-3 mb-8">
-                <FeatureItem emphasis>Competitor research &amp; traffic analysis</FeatureItem>
-                <FeatureItem emphasis>Customer journey breakdown</FeatureItem>
-                <FeatureItem emphasis>Prioritized tactics (ranked by impact)</FeatureItem>
-                <FeatureItem emphasis>30-day week-by-week roadmap</FeatureItem>
-                <FeatureItem>2 refinements included</FeatureItem>
+              {/* Price + features */}
+              <div className="px-8 py-8 lg:px-10">
+                {/* Price */}
+                <div className="mb-6 text-center lg:text-left">
+                  <div className="flex items-baseline justify-center lg:justify-start gap-2">
+                    <h3 className="text-6xl font-black text-foreground tracking-tight">{config.singlePrice}</h3>
+                    <span className="text-lg text-foreground/50 font-medium">one-time</span>
+                  </div>
+                </div>
+
+                {/* What's included - outcome-focused */}
+                <div className="space-y-3 mb-6">
+                  <FeatureItem>Your competitors&apos; actual traffic sources</FeatureItem>
+                  <FeatureItem>The gaps they&apos;re missing that you can exploit</FeatureItem>
+                  <FeatureItem>Week-by-week roadmap: what to do and why</FeatureItem>
+                  <FeatureItem>Tactics ranked by effort-to-impact</FeatureItem>
+                  <FeatureItem muted>Refine it twice until it feels right</FeatureItem>
+                </div>
               </div>
 
-              {/* CTA */}
-              <div>
+              {/* CTA zone - warm background */}
+              <div className="bg-cta/[0.04] px-8 py-6 lg:px-10">
                 <PaidTierButton />
-                <p className="mt-4 text-center text-sm text-foreground/50">
-                  Didn&apos;t help? <span className="font-bold text-foreground/80">Full refund.</span>
+                <p className="mt-4 text-center text-sm text-foreground/60">
+                  Didn&apos;t help? <span className="font-bold text-foreground">Full refund.</span>
                 </p>
               </div>
             </div>
           </div>
 
           {/* Social proof column - right side on desktop, below on mobile */}
-          <div className="mt-8 space-y-4 max-w-md mx-auto lg:mt-0 lg:max-w-none lg:mx-0">
+          <div className="mt-8 space-y-6 max-w-md mx-auto lg:mt-0 lg:max-w-none lg:mx-0">
 
             {/* In-Action callout + Trust links */}
             <div
@@ -127,16 +126,13 @@ export function Pricing() {
               </div>
             </div>
 
-            {/* Testimonial */}
-            <div
-              className="rounded-xl border-2 border-foreground/20 bg-white p-5"
-              style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)" }}
-            >
-              <blockquote className="text-lg italic text-foreground leading-relaxed">
+            {/* Testimonial - editorial pull-quote, no card */}
+            <div className="pl-4 border-l-3 border-cta/40">
+              <blockquote className="text-base italic text-foreground/70 leading-relaxed">
                 &ldquo;The competitor analysis alone is worth it. Finally know what to focus on.&rdquo;
               </blockquote>
-              <p className="mt-3 text-sm font-semibold text-foreground/70">
-                <span className="text-cta">—</span> Noah P.
+              <p className="mt-2 text-sm text-foreground/50">
+                — Noah P.
               </p>
             </div>
 
@@ -147,13 +143,13 @@ export function Pricing() {
   );
 }
 
-function FeatureItem({ children, emphasis = false }: { children: React.ReactNode; emphasis?: boolean }) {
+function FeatureItem({ children, muted = false }: { children: React.ReactNode; muted?: boolean }) {
   return (
-    <div className="flex items-center gap-3">
-      <svg className="w-5 h-5 text-cta flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div className="flex items-start gap-3">
+      <svg className="w-5 h-5 text-cta flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
       </svg>
-      <span className={emphasis ? "text-[15px] font-medium text-foreground" : "text-sm text-foreground/70"}>
+      <span className={muted ? "text-sm text-foreground/60" : "text-[15px] text-foreground"}>
         {children}
       </span>
     </div>

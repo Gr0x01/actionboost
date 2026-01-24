@@ -1,32 +1,27 @@
-const OBJECTIONS = [
+const COMPACT_OBJECTIONS = [
   {
     question: "Is this just ChatGPT wrapped in a pretty UI?",
     answer:
-      "No. We use real research APIs to pull live competitor data, traffic estimates, keyword rankings, and market trends. ChatGPT can't see any of that — it's working from training data. We're working from what's happening right now.",
-  },
-  {
-    question: "$29 seems cheap. Is the output actually useful?",
-    answer:
-      "We spent months building this. The research alone would cost you $500+ if you bought API access yourself. We make money because we've automated the research, not because we cut corners. And if it's not useful? Full refund.",
+      "No. We pull live competitor data, traffic estimates, and market trends. ChatGPT can't see any of that.",
   },
   {
     question: "What if my business is too weird or niche?",
     answer:
-      "We've run plans for SaaS, e-commerce, consultants, local services, coaches, agencies, and a guy selling handmade fishing lures. If you have customers (or want them), we can research your market.",
+      "We've run plans for SaaS, e-commerce, consultants, a small business salon, and lip balm for equestrians.",
   },
   {
-    question: "What if it sucks?",
+    question: "$29 seems cheap. Is it actually useful?",
     answer:
-      "Full refund. No questions, no hassle. We'd rather give your money back than have you feel stuck. Seriously — just email us.",
+      "You get a real strategy based on live research. We use the same data APIs bigger agencies use—you're just cutting out their markup.",
   },
 ];
 
 export function Objections() {
   return (
     <section className="relative py-20">
-      <div className="mx-auto max-w-3xl px-6">
+      <div className="mx-auto max-w-4xl px-6">
         {/* Section header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-10">
           <p className="font-mono text-xs tracking-[0.15em] text-foreground/60 uppercase mb-4">
             Fair questions
           </p>
@@ -35,18 +30,29 @@ export function Objections() {
           </h2>
         </div>
 
-        {/* FAQ list */}
-        <div className="space-y-6">
-          {OBJECTIONS.map((obj, i) => (
+        {/* Hero objection - the refund promise */}
+        <blockquote className="text-center mb-12">
+          <p className="text-2xl sm:text-3xl font-light text-foreground leading-snug mb-4">
+            &ldquo;What if it <span className="font-bold text-cta">sucks?</span>&rdquo;
+          </p>
+          <p className="text-lg text-foreground/70 max-w-xl mx-auto">
+            Full refund. No questions, no hassle. We&apos;d rather give your money back than have you feel stuck.
+          </p>
+        </blockquote>
+
+        {/* Compact objection list */}
+        <div className="space-y-0">
+          {COMPACT_OBJECTIONS.map((obj, i) => (
             <div
               key={i}
-              className="rounded-xl border-2 border-foreground/15 bg-white p-6"
-              style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.08)" }}
+              className="flex flex-col sm:flex-row gap-2 sm:gap-8 py-5 border-b border-foreground/10 last:border-b-0"
             >
-              <h3 className="text-lg font-bold text-foreground mb-3">
-                &ldquo;{obj.question}&rdquo;
-              </h3>
-              <p className="text-foreground/70 leading-relaxed">{obj.answer}</p>
+              <p className="text-foreground/60 text-base sm:w-2/5 shrink-0">
+                {obj.question}
+              </p>
+              <p className="text-foreground text-sm sm:text-base leading-relaxed">
+                {obj.answer}
+              </p>
             </div>
           ))}
         </div>
