@@ -194,11 +194,9 @@ export function DeepDivesAccordion({ strategy }: DeepDivesAccordionProps) {
                 }`}
               >
                 <div className="pl-8 pr-6 pb-8 pt-2">
-                  <article className="max-w-[65ch]">
-                    <div className="font-serif text-[17px] leading-[1.8] text-foreground/85">
-                      <MarkdownContent content={section.content} extended />
-                    </div>
-                  </article>
+                  <div className="font-serif text-[17px] leading-[1.8] text-foreground/85">
+                    <MarkdownContent content={section.content} extended />
+                  </div>
                 </div>
               </div>
             </div>
