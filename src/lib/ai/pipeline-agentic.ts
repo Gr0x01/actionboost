@@ -8,6 +8,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { tavily } from '@tavily/core'
 import type { RunInput, ResearchContext, UserHistoryContext } from './types'
+import { trackApiCall, calculateApiCost } from '@/lib/analytics'
 
 // DO NOT CHANGE without explicit approval
 const MODEL = 'claude-opus-4-5-20251101'
@@ -230,10 +231,19 @@ function sanitizeDomain(domain: string): string {
     .toLowerCase()
 }
 
+/**
+ * Context for tool execution - includes tracking info
+ */
+type ToolContext = {
+  userDomain?: string
+  runId?: string
+  userId?: string
+}
+
 async function executeTool(
   name: string,
   input: ToolInput,
-  context: { userDomain?: string }
+  context: ToolContext
 ): Promise<ToolResult> {
   try {
     switch (name) {
@@ -244,7 +254,7 @@ async function executeTool(
         if (input.query.length > 500) {
           return { text: 'Error: query too long (max 500 characters)' }
         }
-        return await executeSearch(input.query)
+        return await executeSearch(input.query, context)
       case 'scrape':
         if (!input.url || typeof input.url !== 'string') {
           return { text: 'Error: url is required for scrape' }
@@ -252,17 +262,17 @@ async function executeTool(
         if (!isAllowedUrl(input.url)) {
           return { text: 'Error: URL not allowed (must be public http/https URL)' }
         }
-        return await executeScrape(input.url)
+        return await executeScrape(input.url, context)
       case 'seo':
         if (!input.domain || typeof input.domain !== 'string') {
           return { text: 'Error: domain is required for seo' }
         }
-        return await executeSEO(input.domain)
+        return await executeSEO(input.domain, context)
       case 'keyword_gaps':
         if (!input.competitor_domain || typeof input.competitor_domain !== 'string') {
           return { text: 'Error: competitor_domain is required for keyword_gaps' }
         }
-        return await executeKeywordGaps(input.competitor_domain, context.userDomain)
+        return await executeKeywordGaps(input.competitor_domain, context.userDomain, context)
       default:
         return { text: `Unknown tool: ${name}` }
     }
@@ -271,57 +281,85 @@ async function executeTool(
   }
 }
 
-async function executeSearch(query: string): Promise<ToolResult> {
+async function executeSearch(query: string, context: ToolContext): Promise<ToolResult> {
   const tvly = tavily({ apiKey: process.env.TAVILY_API! })
+  const startTime = Date.now()
+  let success = false
+  let errorMsg: string | undefined
 
-  const response = await withTimeout(
-    tvly.search(query, {
-      searchDepth: 'advanced',
-      maxResults: 8,
-      includeRawContent: false,
-    }),
-    TOOL_TIMEOUT,
-    'Search'
-  )
+  try {
+    const response = await withTimeout(
+      tvly.search(query, {
+        searchDepth: 'advanced',
+        maxResults: 8,
+        includeRawContent: false,
+      }),
+      TOOL_TIMEOUT,
+      'Search'
+    )
 
-  if (!response.results?.length) {
-    return { text: 'No results found.' }
-  }
+    success = true
 
-  // Build structured data for dashboard
-  const structuredResults = response.results.map(r => ({
-    title: r.title || '',
-    url: r.url || '',
-    snippet: r.content?.slice(0, 300) || '',
-  }))
+    if (!response.results?.length) {
+      return { text: 'No results found.' }
+    }
 
-  // Build text for LLM
-  const text = response.results
-    .map((r, i) => `[${i + 1}] ${r.title}\n    URL: ${r.url}\n    ${r.content?.slice(0, 300)}...`)
-    .join('\n\n')
+    // Build structured data for dashboard
+    const structuredResults = response.results.map(r => ({
+      title: r.title || '',
+      url: r.url || '',
+      snippet: r.content?.slice(0, 300) || '',
+    }))
 
-  return {
-    text,
-    data: {
-      type: 'search',
-      query,
-      results: structuredResults,
-    },
+    // Build text for LLM
+    const text = response.results
+      .map((r, i) => `[${i + 1}] ${r.title}\n    URL: ${r.url}\n    ${r.content?.slice(0, 300)}...`)
+      .join('\n\n')
+
+    return {
+      text,
+      data: {
+        type: 'search',
+        query,
+        results: structuredResults,
+      },
+    }
+  } catch (err) {
+    errorMsg = err instanceof Error ? err.message : String(err)
+    throw err
+  } finally {
+    // Track API call (fire-and-forget)
+    const distinctId = context.userId || context.runId || 'anonymous'
+    trackApiCall(distinctId, {
+      service: 'tavily',
+      endpoint: 'search',
+      run_id: context.runId,
+      latency_ms: Date.now() - startTime,
+      success,
+      error: errorMsg,
+      estimated_cost_usd: calculateApiCost('tavily', 'search'),
+    })
   }
 }
 
-async function executeScrape(url: string): Promise<ToolResult> {
+async function executeScrape(url: string, context: ToolContext): Promise<ToolResult> {
   const apiKey = process.env.SCRAPINGDOG_API_KEY
+  const distinctId = context.userId || context.runId || 'anonymous'
 
   if (!apiKey) {
     // Fallback to Tavily extract if no ScrapingDog key
     const tvly = tavily({ apiKey: process.env.TAVILY_API! })
+    const startTime = Date.now()
+    let success = false
+    let errorMsg: string | undefined
+
     try {
       const response = await withTimeout(
         tvly.extract([url]),
         TOOL_TIMEOUT,
         'Scrape (Tavily)'
       )
+      success = true
       if (response.results?.[0]?.rawContent) {
         const content = response.results[0].rawContent.slice(0, 5000)
         return {
@@ -334,50 +372,85 @@ async function executeScrape(url: string): Promise<ToolResult> {
         }
       }
       return { text: 'Could not extract content from URL.' }
-    } catch {
+    } catch (err) {
+      errorMsg = err instanceof Error ? err.message : String(err)
       return { text: 'Could not scrape URL.' }
+    } finally {
+      // Track Tavily extract API call
+      trackApiCall(distinctId, {
+        service: 'tavily',
+        endpoint: 'extract',
+        run_id: context.runId,
+        latency_ms: Date.now() - startTime,
+        success,
+        error: errorMsg,
+        estimated_cost_usd: calculateApiCost('tavily', 'extract'),
+      })
     }
   }
 
-  const encodedUrl = encodeURIComponent(url)
-  const response = await withTimeout(
-    fetch(
-      `https://api.scrapingdog.com/scrape?api_key=${apiKey}&url=${encodedUrl}&dynamic=false`
-    ),
-    TOOL_TIMEOUT,
-    'Scrape (ScrapingDog)'
-  )
+  // ScrapingDog path
+  const startTime = Date.now()
+  let success = false
+  let errorMsg: string | undefined
 
-  if (!response.ok) {
-    return { text: `Scrape failed: HTTP ${response.status}` }
-  }
+  try {
+    const encodedUrl = encodeURIComponent(url)
+    const response = await withTimeout(
+      fetch(
+        `https://api.scrapingdog.com/scrape?api_key=${apiKey}&url=${encodedUrl}&dynamic=false`
+      ),
+      TOOL_TIMEOUT,
+      'Scrape (ScrapingDog)'
+    )
 
-  const rawText = await response.text()
+    if (!response.ok) {
+      errorMsg = `HTTP ${response.status}`
+      return { text: `Scrape failed: HTTP ${response.status}` }
+    }
 
-  // Basic HTML to text conversion
-  const cleaned = rawText
-    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
-    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .slice(0, 5000)
+    success = true
+    const rawText = await response.text()
 
-  if (!cleaned) {
-    return { text: 'No content extracted.' }
-  }
+    // Basic HTML to text conversion
+    const cleaned = rawText
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 5000)
 
-  return {
-    text: cleaned,
-    data: {
-      type: 'scrape',
-      url,
-      contentSummary: cleaned.slice(0, 500),
-    },
+    if (!cleaned) {
+      return { text: 'No content extracted.' }
+    }
+
+    return {
+      text: cleaned,
+      data: {
+        type: 'scrape',
+        url,
+        contentSummary: cleaned.slice(0, 500),
+      },
+    }
+  } catch (err) {
+    errorMsg = err instanceof Error ? err.message : String(err)
+    throw err
+  } finally {
+    // Track ScrapingDog API call
+    trackApiCall(distinctId, {
+      service: 'scrapingdog',
+      endpoint: 'scrape',
+      run_id: context.runId,
+      latency_ms: Date.now() - startTime,
+      success,
+      error: errorMsg,
+      estimated_cost_usd: calculateApiCost('scrapingdog', 'scrape'),
+    })
   }
 }
 
-async function executeSEO(domain: string): Promise<ToolResult> {
+async function executeSEO(domain: string, context: ToolContext): Promise<ToolResult> {
   const login = process.env.DATAFORSEO_LOGIN
   const password = process.env.DATAFORSEO_PASSWORD
 
@@ -385,76 +458,100 @@ async function executeSEO(domain: string): Promise<ToolResult> {
     return { text: 'SEO data not available (DataForSEO not configured).' }
   }
 
+  const distinctId = context.userId || context.runId || 'anonymous'
+  const startTime = Date.now()
+  let success = false
+  let errorMsg: string | undefined
+
   const credentials = Buffer.from(`${login}:${password}`).toString('base64')
   const cleanDomain = sanitizeDomain(domain)
 
-  const response = await withTimeout(
-    fetch(
-      'https://api.dataforseo.com/v3/dataforseo_labs/google/domain_rank_overview/live',
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Basic ${credentials}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify([
-          {
-            target: cleanDomain,
-            location_code: 2840,
-            language_code: 'en',
+  try {
+    const response = await withTimeout(
+      fetch(
+        'https://api.dataforseo.com/v3/dataforseo_labs/google/domain_rank_overview/live',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Basic ${credentials}`,
+            'Content-Type': 'application/json',
           },
-        ]),
-      }
-    ),
-    TOOL_TIMEOUT,
-    'SEO lookup'
-  )
+          body: JSON.stringify([
+            {
+              target: cleanDomain,
+              location_code: 2840,
+              language_code: 'en',
+            },
+          ]),
+        }
+      ),
+      TOOL_TIMEOUT,
+      'SEO lookup'
+    )
 
-  if (!response.ok) {
-    return { text: `SEO lookup failed: HTTP ${response.status}` }
-  }
-
-  const data = await response.json()
-  // API returns: tasks[0].result[0].items[0].metrics.organic
-  const metrics = data?.tasks?.[0]?.result?.[0]?.items?.[0]?.metrics?.organic
-
-  if (!metrics) {
-    // Still return data structure with nulls so it's captured in research data
-    return {
-      text: `No SEO data found for ${cleanDomain}. This could mean the domain is new or has minimal organic presence.`,
-      data: {
-        type: 'seo',
-        domain: cleanDomain,
-        traffic: null,
-        keywords: null,
-      },
+    if (!response.ok) {
+      errorMsg = `HTTP ${response.status}`
+      return { text: `SEO lookup failed: HTTP ${response.status}` }
     }
-  }
 
-  const text = `SEO Metrics for ${cleanDomain}:
+    success = true
+    const data = await response.json()
+    // API returns: tasks[0].result[0].items[0].metrics.organic
+    const metrics = data?.tasks?.[0]?.result?.[0]?.items?.[0]?.metrics?.organic
+
+    if (!metrics) {
+      // Still return data structure with nulls so it's captured in research data
+      return {
+        text: `No SEO data found for ${cleanDomain}. This could mean the domain is new or has minimal organic presence.`,
+        data: {
+          type: 'seo',
+          domain: cleanDomain,
+          traffic: null,
+          keywords: null,
+        },
+      }
+    }
+
+    const text = `SEO Metrics for ${cleanDomain}:
 - Estimated Organic Traffic: ~${metrics.etv?.toLocaleString() || 'N/A'} monthly visits
 - Organic Keywords: ${metrics.count?.toLocaleString() || 'N/A'} ranking keywords
 - Keyword Positions: ${metrics.pos_1 || 0} in #1, ${metrics.pos_2_3 || 0} in #2-3, ${metrics.pos_4_10 || 0} in #4-10`
 
-  return {
-    text,
-    data: {
-      type: 'seo',
-      domain: cleanDomain,
-      traffic: metrics.etv || null,
-      keywords: metrics.count || null,
-      topPositions: {
-        pos1: metrics.pos_1 || 0,
-        pos2_3: metrics.pos_2_3 || 0,
-        pos4_10: metrics.pos_4_10 || 0,
+    return {
+      text,
+      data: {
+        type: 'seo',
+        domain: cleanDomain,
+        traffic: metrics.etv || null,
+        keywords: metrics.count || null,
+        topPositions: {
+          pos1: metrics.pos_1 || 0,
+          pos2_3: metrics.pos_2_3 || 0,
+          pos4_10: metrics.pos_4_10 || 0,
+        },
       },
-    },
+    }
+  } catch (err) {
+    errorMsg = err instanceof Error ? err.message : String(err)
+    throw err
+  } finally {
+    // Track DataForSEO API call
+    trackApiCall(distinctId, {
+      service: 'dataforseo',
+      endpoint: 'domain_rank_overview',
+      run_id: context.runId,
+      latency_ms: Date.now() - startTime,
+      success,
+      error: errorMsg,
+      estimated_cost_usd: calculateApiCost('dataforseo', 'domain_rank_overview'),
+    })
   }
 }
 
 async function executeKeywordGaps(
   competitorDomain: string,
-  userDomain?: string
+  userDomain: string | undefined,
+  context: ToolContext
 ): Promise<ToolResult> {
   if (!userDomain) {
     return { text: 'Cannot analyze keyword gaps - user did not provide their website URL.' }
@@ -467,79 +564,102 @@ async function executeKeywordGaps(
     return { text: 'Keyword gap analysis not available (DataForSEO not configured).' }
   }
 
+  const distinctId = context.userId || context.runId || 'anonymous'
+  const startTime = Date.now()
+  let success = false
+  let errorMsg: string | undefined
+
   const credentials = Buffer.from(`${login}:${password}`).toString('base64')
   const cleanCompetitor = sanitizeDomain(competitorDomain)
   const cleanUser = sanitizeDomain(userDomain)
 
-  const response = await withTimeout(
-    fetch(
-      'https://api.dataforseo.com/v3/dataforseo_labs/google/domain_intersection/live',
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Basic ${credentials}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify([
-          {
-            target1: cleanCompetitor,
-            target2: cleanUser,
-            intersections: false, // Keywords competitor has, user doesn't
-            location_code: 2840,
-            language_code: 'en',
-            limit: 20,
-            order_by: ['keyword_data.keyword_info.search_volume,desc'],
+  try {
+    const response = await withTimeout(
+      fetch(
+        'https://api.dataforseo.com/v3/dataforseo_labs/google/domain_intersection/live',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Basic ${credentials}`,
+            'Content-Type': 'application/json',
           },
-        ]),
+          body: JSON.stringify([
+            {
+              target1: cleanCompetitor,
+              target2: cleanUser,
+              intersections: false, // Keywords competitor has, user doesn't
+              location_code: 2840,
+              language_code: 'en',
+              limit: 20,
+              order_by: ['keyword_data.keyword_info.search_volume,desc'],
+            },
+          ]),
+        }
+      ),
+      TOOL_TIMEOUT,
+      'Keyword gap analysis'
+    )
+
+    if (!response.ok) {
+      errorMsg = `HTTP ${response.status}`
+      return { text: `Keyword gap analysis failed: HTTP ${response.status}` }
+    }
+
+    success = true
+    const data = await response.json()
+    const items = data?.tasks?.[0]?.result?.[0]?.items || []
+
+    if (!items.length) {
+      return { text: `No keyword gaps found between ${cleanCompetitor} and ${cleanUser}. This could mean both domains are new or target very different keywords.` }
+    }
+
+    type GapItem = {
+      keyword_data?: {
+        keyword?: string
+        keyword_info?: { search_volume?: number }
       }
-    ),
-    TOOL_TIMEOUT,
-    'Keyword gap analysis'
-  )
-
-  if (!response.ok) {
-    return { text: `Keyword gap analysis failed: HTTP ${response.status}` }
-  }
-
-  const data = await response.json()
-  const items = data?.tasks?.[0]?.result?.[0]?.items || []
-
-  if (!items.length) {
-    return { text: `No keyword gaps found between ${cleanCompetitor} and ${cleanUser}. This could mean both domains are new or target very different keywords.` }
-  }
-
-  type GapItem = {
-    keyword_data?: {
-      keyword?: string
-      keyword_info?: { search_volume?: number }
+      first_domain_serp_element?: {
+        serp_item?: { rank_absolute?: number }
+      }
     }
-    first_domain_serp_element?: {
-      serp_item?: { rank_absolute?: number }
+
+    // Build structured data for dashboard
+    const structuredKeywords = items.slice(0, 15).map((item: GapItem) => ({
+      keyword: item.keyword_data?.keyword || '',
+      volume: item.keyword_data?.keyword_info?.search_volume || 0,
+      competitorRank: item.first_domain_serp_element?.serp_item?.rank_absolute || 0,
+    }))
+
+    // Build text for LLM
+    const gaps = items.slice(0, 15).map((item: GapItem) => {
+      const kw = item.keyword_data?.keyword || '?'
+      const vol = item.keyword_data?.keyword_info?.search_volume || 0
+      const pos = item.first_domain_serp_element?.serp_item?.rank_absolute || '?'
+      return `- "${kw}" (${vol.toLocaleString()} searches/mo) - ${cleanCompetitor} ranks #${pos}`
+    })
+
+    return {
+      text: `Keyword Gaps (${cleanCompetitor} ranks, you don't):\n${gaps.join('\n')}`,
+      data: {
+        type: 'keyword_gaps',
+        competitor: cleanCompetitor,
+        keywords: structuredKeywords,
+      },
     }
-  }
-
-  // Build structured data for dashboard
-  const structuredKeywords = items.slice(0, 15).map((item: GapItem) => ({
-    keyword: item.keyword_data?.keyword || '',
-    volume: item.keyword_data?.keyword_info?.search_volume || 0,
-    competitorRank: item.first_domain_serp_element?.serp_item?.rank_absolute || 0,
-  }))
-
-  // Build text for LLM
-  const gaps = items.slice(0, 15).map((item: GapItem) => {
-    const kw = item.keyword_data?.keyword || '?'
-    const vol = item.keyword_data?.keyword_info?.search_volume || 0
-    const pos = item.first_domain_serp_element?.serp_item?.rank_absolute || '?'
-    return `- "${kw}" (${vol.toLocaleString()} searches/mo) - ${cleanCompetitor} ranks #${pos}`
-  })
-
-  return {
-    text: `Keyword Gaps (${cleanCompetitor} ranks, you don't):\n${gaps.join('\n')}`,
-    data: {
-      type: 'keyword_gaps',
-      competitor: cleanCompetitor,
-      keywords: structuredKeywords,
-    },
+  } catch (err) {
+    errorMsg = err instanceof Error ? err.message : String(err)
+    throw err
+  } finally {
+    // Track DataForSEO API call
+    trackApiCall(distinctId, {
+      service: 'dataforseo',
+      endpoint: 'domain_intersection',
+      run_id: context.runId,
+      latency_ms: Date.now() - startTime,
+      success,
+      error: errorMsg,
+      estimated_cost_usd: calculateApiCost('dataforseo', 'domain_intersection'),
+    })
   }
 }
 
@@ -677,11 +797,15 @@ function describeToolCall(name: string, input: ToolInput): string {
  * @param input - User's run input
  * @param userHistory - Optional user history for returning users
  * @param onStageUpdate - Callback for progress updates
+ * @param runId - Run ID for tracking
+ * @param userId - User ID for tracking
  */
 export async function generateAgenticStrategy(
   input: RunInput,
   userHistory?: UserHistoryContext | null,
-  onStageUpdate?: StageCallback
+  onStageUpdate?: StageCallback,
+  runId?: string,
+  userId?: string
 ): Promise<AgenticResult> {
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
   const toolCalls: string[] = []
@@ -701,10 +825,15 @@ export async function generateAgenticStrategy(
     }
   }
 
-  // Context for tool execution
-  const context = {
+  // Context for tool execution (includes tracking info)
+  const context: ToolContext = {
     userDomain: input.websiteUrl?.replace(/^https?:\/\//, '').replace(/\/$/, ''),
+    runId,
+    userId,
   }
+
+  // Tracking distinctId
+  const distinctId = userId || runId || 'anonymous'
 
   // Build messages
   const systemPrompt = buildSystemPrompt(userHistory)
@@ -720,13 +849,49 @@ export async function generateAgenticStrategy(
   while (iterations < MAX_ITERATIONS + 2) {
     iterations++
 
-    const response = await client.messages.create({
-      model: MODEL,
-      max_tokens: MAX_TOKENS,
-      system: systemPrompt,
-      tools: TOOLS,
-      messages,
-    })
+    // Track Anthropic API call
+    const apiStartTime = Date.now()
+
+    let response: Anthropic.Message
+    try {
+      response = await client.messages.create({
+        model: MODEL,
+        max_tokens: MAX_TOKENS,
+        system: systemPrompt,
+        tools: TOOLS,
+        messages,
+      })
+
+      // Track successful Anthropic call
+      trackApiCall(distinctId, {
+        service: 'anthropic',
+        endpoint: 'messages.create',
+        run_id: runId,
+        latency_ms: Date.now() - apiStartTime,
+        success: true,
+        input_tokens: response.usage?.input_tokens,
+        output_tokens: response.usage?.output_tokens,
+        model: MODEL,
+        estimated_cost_usd: calculateApiCost('anthropic', 'messages.create', {
+          inputTokens: response.usage?.input_tokens,
+          outputTokens: response.usage?.output_tokens,
+        }),
+      })
+    } catch (err) {
+      // Track failed Anthropic call
+      const apiError = err instanceof Error ? err.message : String(err)
+      trackApiCall(distinctId, {
+        service: 'anthropic',
+        endpoint: 'messages.create',
+        run_id: runId,
+        latency_ms: Date.now() - apiStartTime,
+        success: false,
+        error: apiError,
+        model: MODEL,
+        estimated_cost_usd: 0,
+      })
+      throw err
+    }
 
     // Check if we're done (no more tool calls)
     if (response.stop_reason === 'end_turn') {
@@ -780,13 +945,47 @@ export async function generateAgenticStrategy(
       ]
 
       // One final call WITHOUT tools to force strategy generation
-      const finalResponse = await client.messages.create({
-        model: MODEL,
-        max_tokens: MAX_TOKENS,
-        system: systemPrompt,
-        messages,
-        // No tools - force text completion
-      })
+      const finalApiStartTime = Date.now()
+      let finalResponse: Anthropic.Message
+      try {
+        finalResponse = await client.messages.create({
+          model: MODEL,
+          max_tokens: MAX_TOKENS,
+          system: systemPrompt,
+          messages,
+          // No tools - force text completion
+        })
+
+        // Track successful final Anthropic API call
+        trackApiCall(distinctId, {
+          service: 'anthropic',
+          endpoint: 'messages.create',
+          run_id: runId,
+          latency_ms: Date.now() - finalApiStartTime,
+          success: true,
+          input_tokens: finalResponse.usage?.input_tokens,
+          output_tokens: finalResponse.usage?.output_tokens,
+          model: MODEL,
+          estimated_cost_usd: calculateApiCost('anthropic', 'messages.create', {
+            inputTokens: finalResponse.usage?.input_tokens,
+            outputTokens: finalResponse.usage?.output_tokens,
+          }),
+        })
+      } catch (err) {
+        // Track failed final Anthropic API call
+        const finalApiError = err instanceof Error ? err.message : String(err)
+        trackApiCall(distinctId, {
+          service: 'anthropic',
+          endpoint: 'messages.create',
+          run_id: runId,
+          latency_ms: Date.now() - finalApiStartTime,
+          success: false,
+          error: finalApiError,
+          model: MODEL,
+          estimated_cost_usd: 0,
+        })
+        throw err
+      }
 
       const textBlock = finalResponse.content.find((b) => b.type === 'text')
       const total = Date.now() - startTime
@@ -946,9 +1145,11 @@ export async function generateStrategyAgentic(
   input: RunInput,
   _research: ResearchContext, // Ignored - agentic fetches its own data
   userHistory?: UserHistoryContext | null,
-  onStageUpdate?: StageCallback
+  onStageUpdate?: StageCallback,
+  runId?: string,
+  userId?: string
 ): Promise<AgenticStrategyResult> {
-  const result = await generateAgenticStrategy(input, userHistory, onStageUpdate)
+  const result = await generateAgenticStrategy(input, userHistory, onStageUpdate, runId, userId)
 
   if (!result.success || !result.output) {
     throw new Error(result.error || 'Agentic generation failed')
@@ -1075,12 +1276,16 @@ ${input.tacticsAndResults || 'Not specified'}
  * @param previousOutput - The previous strategy to refine
  * @param additionalContext - User's feedback/additional context
  * @param onStageUpdate - Callback for progress updates
+ * @param runId - Run ID for tracking
+ * @param userId - User ID for tracking
  */
 export async function generateAgenticRefinement(
   input: RunInput,
   previousOutput: string,
   additionalContext: string,
-  onStageUpdate?: StageCallback
+  onStageUpdate?: StageCallback,
+  runId?: string,
+  userId?: string
 ): Promise<AgenticResult> {
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
   const toolCalls: string[] = []
@@ -1100,10 +1305,15 @@ export async function generateAgenticRefinement(
     }
   }
 
-  // Context for tool execution
-  const context = {
+  // Context for tool execution (includes tracking info)
+  const context: ToolContext = {
     userDomain: input.websiteUrl?.replace(/^https?:\/\//, '').replace(/\/$/, ''),
+    runId,
+    userId,
   }
+
+  // Tracking distinctId
+  const distinctId = userId || runId || 'anonymous'
 
   // Build messages with refinement-specific prompts
   const systemPrompt = buildRefinementSystemPrompt()
@@ -1121,6 +1331,9 @@ export async function generateAgenticRefinement(
   while (iterations < MAX_REFINEMENT_ITERATIONS + 2) {
     iterations++
 
+    // Track Anthropic API call
+    const apiStartTime = Date.now()
+
     let response: Anthropic.Message
     try {
       response = await client.messages.create({
@@ -1130,9 +1343,37 @@ export async function generateAgenticRefinement(
         tools: TOOLS,
         messages,
       })
-    } catch (apiError) {
-      console.error('[AgenticRefinement] Anthropic API error:', apiError)
-      throw apiError
+
+      // Track successful Anthropic call
+      trackApiCall(distinctId, {
+        service: 'anthropic',
+        endpoint: 'messages.create',
+        run_id: runId,
+        latency_ms: Date.now() - apiStartTime,
+        success: true,
+        input_tokens: response.usage?.input_tokens,
+        output_tokens: response.usage?.output_tokens,
+        model: MODEL,
+        estimated_cost_usd: calculateApiCost('anthropic', 'messages.create', {
+          inputTokens: response.usage?.input_tokens,
+          outputTokens: response.usage?.output_tokens,
+        }),
+      })
+    } catch (err) {
+      // Track failed Anthropic call
+      const apiError = err instanceof Error ? err.message : String(err)
+      trackApiCall(distinctId, {
+        service: 'anthropic',
+        endpoint: 'messages.create',
+        run_id: runId,
+        latency_ms: Date.now() - apiStartTime,
+        success: false,
+        error: apiError,
+        model: MODEL,
+        estimated_cost_usd: 0,
+      })
+      console.error('[AgenticRefinement] Anthropic API error:', err)
+      throw err
     }
 
     // Check if we're done (no more tool calls)

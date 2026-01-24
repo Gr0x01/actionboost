@@ -8,6 +8,104 @@ const posthog = process.env.NEXT_PUBLIC_POSTHOG_KEY
     })
   : null;
 
+// =============================================================================
+// API CALL TRACKING
+// =============================================================================
+
+export type ApiService = 'anthropic' | 'tavily' | 'dataforseo' | 'scrapingdog'
+export type ApiEndpoint =
+  | 'messages.create'
+  | 'search'
+  | 'extract'
+  | 'domain_rank_overview'
+  | 'domain_intersection'
+  | 'scrape'
+
+export type ApiCallProperties = {
+  service: ApiService
+  endpoint: ApiEndpoint
+  run_id?: string
+  latency_ms: number
+  success: boolean
+  error?: string
+  // Anthropic-specific
+  input_tokens?: number
+  output_tokens?: number
+  model?: string
+  // Cost
+  estimated_cost_usd: number
+}
+
+// Cost constants (USD)
+const API_COSTS = {
+  anthropic: {
+    // Claude Opus 4.5 pricing per 1M tokens
+    input_per_million: 15,
+    output_per_million: 75,
+  },
+  tavily: {
+    search: 0.01,
+    extract: 0.05,
+  },
+  dataforseo: {
+    domain_rank_overview: 0.02,
+    domain_intersection: 0.05,
+  },
+  scrapingdog: {
+    scrape: 0.001,
+  },
+} as const
+
+/**
+ * Calculate estimated cost for an API call
+ */
+export function calculateApiCost(
+  service: ApiService,
+  endpoint: ApiEndpoint,
+  options?: { inputTokens?: number; outputTokens?: number }
+): number {
+  switch (service) {
+    case 'anthropic': {
+      const inputCost = ((options?.inputTokens || 0) / 1_000_000) * API_COSTS.anthropic.input_per_million
+      const outputCost = ((options?.outputTokens || 0) / 1_000_000) * API_COSTS.anthropic.output_per_million
+      return inputCost + outputCost
+    }
+    case 'tavily':
+      return endpoint === 'search' ? API_COSTS.tavily.search : API_COSTS.tavily.extract
+    case 'dataforseo':
+      return endpoint === 'domain_rank_overview'
+        ? API_COSTS.dataforseo.domain_rank_overview
+        : API_COSTS.dataforseo.domain_intersection
+    case 'scrapingdog':
+      return API_COSTS.scrapingdog.scrape
+    default:
+      return 0
+  }
+}
+
+/**
+ * Track an API call to PostHog (fire-and-forget)
+ * Never awaited - should not block business logic
+ */
+export function trackApiCall(
+  distinctId: string,
+  properties: ApiCallProperties
+): void {
+  try {
+    posthog?.capture({
+      distinctId,
+      event: 'api_call',
+      properties,
+    })
+    // Fire-and-forget - don't await flush for API tracking
+    posthog?.flush().catch(() => {
+      // Silently ignore flush errors for API tracking
+    })
+  } catch {
+    // Silently ignore - API tracking should never break business logic
+  }
+}
+
 export async function trackServerEvent(
   distinctId: string,
   event: string,

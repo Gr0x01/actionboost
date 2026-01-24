@@ -396,7 +396,14 @@ export async function runAgenticPipeline(runId: string): Promise<PipelineResult>
   // 4. Generate strategy with agentic Claude (AI fetches data as needed)
   try {
     console.log(`[AgenticPipeline] Starting agentic generation for run ${runId}`)
-    const { output, researchData } = await generateStrategyAgentic(input, {} as ResearchContext, userHistory, onStageUpdate)
+    const { output, researchData } = await generateStrategyAgentic(
+      input,
+      {} as ResearchContext,
+      userHistory,
+      onStageUpdate,
+      runId,
+      run.user_id || undefined
+    )
     console.log(`[AgenticPipeline] Strategy generated: ${output.length} characters`)
 
     // 5. Extract structured output for dashboard UI (fire-and-forget, graceful degradation)
@@ -688,7 +695,14 @@ export async function runRefinementPipeline(runId: string): Promise<RefinementPi
   try {
     console.log(`[RefinementPipeline] Starting agentic refinement for run ${runId}`)
 
-    const result = await generateAgenticRefinement(input, parentRun.output, additionalContext, onStageUpdate)
+    const result = await generateAgenticRefinement(
+      input,
+      parentRun.output,
+      additionalContext,
+      onStageUpdate,
+      runId,
+      run.user_id || undefined
+    )
 
     if (!result.success || !result.output) {
       throw new Error(result.error || 'Agentic refinement failed')

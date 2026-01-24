@@ -479,6 +479,50 @@ STRIPE_WEBHOOK_SECRET
 STRIPE_PRICE_SINGLE
 ```
 
+### PostHog Analytics
+
+**Status**: ✅ Complete
+
+Product analytics + API usage tracking.
+
+**API Call Tracking** (Jan 24, 2026):
+All external API calls are tracked to PostHog with latency, success/failure, and cost estimates.
+
+| Service | Endpoints Tracked | Cost Constants |
+|---------|------------------|----------------|
+| Anthropic | messages.create | $15/1M input, $75/1M output |
+| Tavily | search, extract | $0.01, $0.05 |
+| DataForSEO | domain_rank_overview, domain_intersection | $0.02, $0.05 |
+| ScrapingDog | scrape | $0.001 |
+
+**Event schema** (`api_call`):
+```typescript
+{
+  service: 'anthropic' | 'tavily' | 'dataforseo' | 'scrapingdog',
+  endpoint: string,
+  run_id: string,
+  latency_ms: number,
+  success: boolean,
+  error?: string,
+  input_tokens?: number,   // Anthropic only
+  output_tokens?: number,  // Anthropic only
+  model?: string,          // Anthropic only
+  estimated_cost_usd: number
+}
+```
+
+**Files**:
+- `src/lib/analytics.ts` - `trackApiCall()`, `calculateApiCost()`
+- `src/lib/ai/pipeline-agentic.ts` - Tracking in all tool execute functions
+
+**PostHog Dashboard**: "API Usage & Costs" with 6 insights:
+- API Calls by Service (line)
+- Cost by Service (pie)
+- Cost Over Time (line)
+- API Error Rate (bar)
+- P95 Latency (bar)
+- Anthropic Token Usage (line)
+
 ### Resend
 
 **Status**: ✅ Complete
