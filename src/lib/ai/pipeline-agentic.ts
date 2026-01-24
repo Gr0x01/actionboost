@@ -415,10 +415,20 @@ async function executeSEO(domain: string): Promise<ToolResult> {
   }
 
   const data = await response.json()
-  const metrics = data?.tasks?.[0]?.result?.[0]?.metrics?.organic
+  // API returns: tasks[0].result[0].items[0].metrics.organic
+  const metrics = data?.tasks?.[0]?.result?.[0]?.items?.[0]?.metrics?.organic
 
   if (!metrics) {
-    return { text: `No SEO data found for ${cleanDomain}. This could mean the domain is new or has minimal organic presence.` }
+    // Still return data structure with nulls so it's captured in research data
+    return {
+      text: `No SEO data found for ${cleanDomain}. This could mean the domain is new or has minimal organic presence.`,
+      data: {
+        type: 'seo',
+        domain: cleanDomain,
+        traffic: null,
+        keywords: null,
+      },
+    }
   }
 
   const text = `SEO Metrics for ${cleanDomain}:
@@ -551,30 +561,33 @@ Your past recommendations (evolve, don't repeat): ${userHistory.pastRecommendati
 `
     : ''
 
-  return `You are an elite Growth Strategist. You have research tools available: search (web), scrape (pages), seo (domain metrics), keyword_gaps (competitive keywords).
+  return `You're a senior marketing analyst. A client just hired you for a week of dedicated research to build them a growth strategy.
 
-Your job: Deliver a growth strategy that's specific to THIS user's product, stage, and constraints—not generic advice.
+You have access to real data:
+- Search the entire web for discussions, reviews, trends, news, competitor intel
+- Read any page in full when you need deeper context
+- Look up traffic and keyword rankings for any domain
+- Compare keyword positions between competing domains
 
-## Tool Usage Guidelines
+The client will see your strategy alongside the data you gathered—competitive traffic comparisons, keyword opportunities, market quotes, and your key discoveries. Empty data sections signal shallow research. Do the work.
 
-Use tools when they would provide actionable data for the strategy:
-- \`search\`: Market discussions, reviews, competitor complaints, industry trends - almost always useful
-- \`scrape\`: Deep-dive on promising search results
-- \`seo\`: Domain traffic/keywords - use when SEO, content marketing, or organic growth is relevant to the focus area
-- \`keyword_gaps\`: Competitive keyword opportunities - use when organic search strategy matters
+## Your Approach
 
-Don't use SEO tools just because URLs exist. Use them when organic search is part of the strategy.
+When the client provides competitor URLs, investigate them—you want to know their traffic, what keywords drive it, and where the gaps are. When they mention a market, understand it. When they describe a problem, find how others have solved it.
+
+A good analyst doesn't wait to be told what to research. You see the inputs, you know what data would make the strategy stronger, you go get it.
 
 ${historySection}
 
-## Output
+## Your Deliverable
 
-After you have what you need, write the full strategy:
+After your research, write the full strategy:
 - Executive Summary (2-3 paragraphs)
 - Your Situation (AARRR analysis)
 - Your SEO Landscape (if you gathered SEO data)
 - Market Sentiment (if you found relevant discussions)
 - Competitive Landscape
+- Key Discoveries (novel insights that don't fit above—hidden competitors, risks, behavioral patterns, opportunities, surprising finds)
 - Channel Strategy (table + explanations)
 - Stop Doing (3-5 items)
 - Start Doing (5-8 with ICE scores: Impact + Confidence + Ease, each 1-10)
@@ -740,13 +753,29 @@ export async function generateAgenticStrategy(
     if (toolCalls.length >= MAX_TOTAL_TOOL_CALLS) {
       console.log(`[Agentic] Hit MAX_TOTAL_TOOL_CALLS (${MAX_TOTAL_TOOL_CALLS}), forcing final output`)
 
-      // Add current response to messages, then ask Claude to complete WITHOUT tools
+      // Must provide tool_result for every tool_use in the response before continuing
+      const pendingToolResults: Anthropic.ToolResultBlockParam[] = toolUseBlocks
+        .filter((block): block is Anthropic.ToolUseBlock => block.type === 'tool_use')
+        .map((block) => ({
+          type: 'tool_result' as const,
+          tool_use_id: block.id,
+          content: 'Research budget exceeded. Please complete the strategy with the data you have.',
+        }))
+
+      // Add current response with tool results, then ask Claude to complete
+      // Combine tool_results with text instruction in single user message
       messages = [
         ...messages,
         { role: 'assistant', content: response.content },
         {
           role: 'user',
-          content: `You've gathered enough research data. Now write the complete strategy document using the OUTPUT FORMAT specified in your system prompt. Do not request any more tools - use the data you have. Start with "# Growth Strategy" and include all 10 sections.`,
+          content: [
+            ...pendingToolResults,
+            {
+              type: 'text' as const,
+              text: `You've gathered enough research data. Now write the complete strategy document. Do not request any more tools - use the data you have.`,
+            },
+          ],
         },
       ]
 

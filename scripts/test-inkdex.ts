@@ -1,88 +1,68 @@
 import { config } from 'dotenv'
 config({ path: '.env.local' })
 
-import { runResearch } from '../src/lib/ai/research'
-import { generateStrategy } from '../src/lib/ai/generate'
-import type { RunInput, ResearchContext } from '../src/lib/ai/types'
+import { generateAgenticStrategy } from '../src/lib/ai/pipeline-agentic'
+import { extractStructuredOutput } from '../src/lib/ai/formatter'
+import type { RunInput } from '../src/lib/ai/types'
 
 // Real test: Inkdex - Visual search engine for tattoo artists
 const INKDEX_INPUT: RunInput = {
-  productDescription: `Inkdex is a visual search engine for finding tattoo artists by style. Users can search by uploading an image, entering text, or pasting an Instagram post/profile URL. The platform uses CLIP embeddings (768-dim) + pgvector for semantic image search.
+  productDescription: `Inkdex is a visual search engine for finding tattoo artists by style. It's like "Shazam for tattoos" - upload an image or describe what you want, and find artists whose work matches your vision.
 
-Key features:
-- Multi-modal search (image upload, text query, Instagram URL detection)
-- 20,643 artists across 154 cities in 56 countries (US, Canada, Australia, NZ, India, Pakistan, EU)
-- 99,258 portfolio images with ML-generated style tags (11 display styles)
-- Artist claiming via Instagram OAuth
-- Pro tier ($15/mo) with auto-sync, pinning, unlimited portfolio
-- Color-weighted search (boosts B&G or color results based on query)
+How it works:
+- We scrape Instagram to auto-create portfolios for tattoo artists
+- We create CLIP embeddings of their work for semantic search
+- Sub-2s search across styles via text or image upload
+- Tagged by location so clients can find amazing artists in their city
 
-The core value prop: Instead of browsing generic "tattoo artists near me" results, users can find artists whose actual work matches their vision.`,
+Key stats:
+- 25,000 artists in database
+- 200,000 images with embeddings
+- 8,000 pages indexed by Google (waiting for trust to index the rest)
+- Programmatic SEO: city/state/country pages + style pages with custom text
+- Live for 3 weeks
 
-  currentTraction: `Platform metrics:
-- 20,643 artists in database
-- 99,258 images with embeddings
-- 154 cities across 56 countries
-- ~50-100 daily visitors (organic)
-- 0 paying Pro subscribers yet
-- 0 claimed artist profiles yet
+The problem we solve: Tattoo artists live on Instagram, but Instagram is built for engagement, not search. You can't search "fine line floral tattoo artist in Austin." We make that possible.`,
 
-Recent traffic analysis (Jan 9-16, 2026):
-| Channel | Spent | Users | Profile Views | Cost/Profile |
-|---------|-------|-------|---------------|--------------|
-| Google Ads | $58.82 | 12 | 3 | $19.61 |
-| Reddit Ads | $39.63 | 24 | 0 | ∞ |
-| BetaList | FREE | 29 | 5 | $0 |
-| Google Organic | FREE | 54 | 30 | $0 |
+  currentTraction: `Platform live for 3 weeks. Metrics:
+- 25,000 artists
+- 200,000 images
+- 8,000 pages indexed by Google
+- Waiting for Google to trust us to index the rest
+- Everybody who USES it as a client loves it
+- We need TRAFFIC`,
 
-Key insight: Google Ads had 93% click loss (181 clicks → 12 users) - likely bot clicks or ad blockers. Reddit users arrived but didn't convert to profile views at all. Free traffic (organic, BetaList) significantly outperformed paid.`,
+  tacticsAndResults: `What hasn't worked:
+- Paid ads: Tried Google Ads and Reddit Ads. Terrible ROI, paused.
+- DMing artists: Low response rate, doesn't scale
 
-  tacticsAndResults: `Paid advertising (not working):
-- Google Ads targeting "tattoo artists near me" keywords - terrible ROI ($19.61/profile view)
-- Reddit Ads in r/tattoos and r/tattoo - users arrived but 0% converted to profile views
-- Paused all paid ads to collect organic baseline data
+What we've built:
+- Programmatic SEO pages: city/state/country + style combinations
+- All pages have custom generated text, not just templates
+- 8k pages indexed, many more waiting
 
-Growth features built:
-- Share buttons with Web Share API + clipboard fallback
-- Dynamic OG images for social sharing (search results, artist profiles)
-- Referral tracking with UTM/ref params via PostHog
-- "Ambassador" program page (mention us on IG → 3 months Pro free)
-
-SEO work:
-- 4,000+ static pages (city, state, country, style browse pages)
-- City guides with editorial content (~1,500-2,000 words each)
-- IndexNow integration for Bing/Yandex
-
-What's working:
-- Google organic: 54 users → 30 profile views (55% conversion)
-- Free traffic converts 10-20x better than paid
-- BetaList listing drove 29 users, 5 profile views (17% conversion)
-
-Technical infrastructure is solid:
-- Search performs well (200ms response time)
-- ML style classifier working (11 styles)
-- International expansion running smoothly (EU, India, Pakistan, Canada, Australia)`,
+What's next:
+- Waiting for Google to build trust and index more pages
+- Need organic traffic strategies that work for a 3-week-old site`,
 
   focusArea: 'acquisition',
 
   competitorUrls: [
     'tattoodo.com',
-    'inkstinct.co',
   ],
 
   websiteUrl: 'https://inkdex.io',
 
-  constraints: `Solo founder, limited budget (~$200/month for growth experiments).
-Have been burning ~$100/week on paid ads with terrible results - need to find sustainable acquisition.
-80% of traffic is mobile but the core search experience was desktop-first (recently added sticky mobile search bar).
-Main technical focus has been international expansion + GDPR compliance, not growth marketing.
-Need to prove organic acquisition works before investing more in paid channels.`,
+  constraints: `Solo founder. Limited budget.
+The product works great - users who find us love it.
+The problem is discovery. How do people find us?
+Site is only 3 weeks old so Google trust is still building.`,
 }
 
 async function main() {
-  console.log('=== Inkdex Growth Strategy Test ===\n')
-  console.log('Product: Visual search engine for finding tattoo artists by style')
-  console.log('Focus: Acquisition - "How do I get more users?"\n')
+  console.log('=== Inkdex Agentic Pipeline Test ===\n')
+  console.log('Testing: New "senior analyst" system prompt')
+  console.log('Focus: SEO - should call seo tool on tattoodo.com\n')
 
   // Verify environment
   const requiredEnvVars = ['ANTHROPIC_API_KEY', 'TAVILY_API']
@@ -91,87 +71,100 @@ async function main() {
     console.error(`Missing environment variables: ${missingVars.join(', ')}`)
     process.exit(1)
   }
-  console.log('Environment: OK\n')
 
-  // Research phase
-  console.log('1. Running research phase...')
-  const startResearch = Date.now()
-  let research: ResearchContext
+  const hasDataForSEO = process.env.DATAFORSEO_LOGIN && process.env.DATAFORSEO_PASSWORD
+  console.log(`Environment: OK (DataForSEO: ${hasDataForSEO ? 'configured' : 'NOT configured'})\n`)
 
-  try {
-    research = await runResearch(INKDEX_INPUT)
-    const researchTime = Date.now() - startResearch
+  // Agentic generation
+  console.log('Running agentic strategy generation...')
+  console.log('(Watch for tool calls - should see SEO for tattoodo.com)\n')
 
-    console.log(`   Completed in ${(researchTime / 1000).toFixed(1)}s`)
-    console.log(`   - Competitor insights: ${research.competitorInsights.length}`)
-    console.log(`   - Market trends: ${research.marketTrends.length}`)
-    console.log(`   - Growth tactics: ${research.growthTactics.length}`)
-    console.log(`   - SEO metrics: ${research.seoMetrics.length}`)
-    if (research.errors.length) {
-      console.log(`   - Warnings: ${research.errors.join(', ')}`)
-    }
-    console.log()
-  } catch (err) {
-    console.error('   Research failed:', err)
-    research = {
-      competitorInsights: [],
-      marketTrends: [],
-      growthTactics: [],
-      seoMetrics: [],
-      researchCompletedAt: new Date().toISOString(),
-      errors: [String(err)],
-    }
-  }
-
-  // Generation phase
-  console.log('2. Generating strategy with Claude Opus 4.5...')
-  const startGen = Date.now()
+  const startTime = Date.now()
 
   try {
-    const output = await generateStrategy(INKDEX_INPUT, research)
-    const genTime = Date.now() - startGen
+    const result = await generateAgenticStrategy(
+      INKDEX_INPUT,
+      null, // no user history
+      async (stage) => console.log(`  Stage: ${stage}`)
+    )
 
-    console.log(`   Completed in ${(genTime / 1000).toFixed(1)}s`)
-    console.log(`   Output: ${output.length} characters, ${output.split('\n').length} lines\n`)
+    const genTime = Date.now() - startTime
 
-    // Verify sections
-    const expectedSections = [
-      'Executive Summary',
-      'Your Current Situation',
-      'Competitive Landscape',
-      'Stop Doing',
-      'Start Doing',
-      'Quick Wins',
-      '30-Day Roadmap',
-      'Metrics to Track',
-    ]
-    const missingSections = expectedSections.filter((s) => !output.includes(`## ${s}`))
+    if (!result.success) {
+      console.error('Generation failed:', result.error)
+      process.exit(1)
+    }
 
-    console.log('3. Verifying output structure...')
-    if (missingSections.length === 0) {
-      console.log('   All 8 sections present: OK\n')
+    console.log(`\nCompleted in ${(genTime / 1000).toFixed(1)}s`)
+    console.log(`Tool calls: ${result.toolCalls?.length || 0}`)
+
+    // Show tool calls
+    if (result.toolCalls?.length) {
+      console.log('\n--- Tool Calls ---')
+      result.toolCalls.forEach((call, i) => {
+        console.log(`${i + 1}. ${call}`)
+      })
+    }
+
+    // Show research data captured
+    if (result.researchData) {
+      console.log('\n--- Research Data Captured ---')
+      console.log(`Searches: ${result.researchData.searches.length}`)
+      console.log(`SEO Metrics: ${result.researchData.seoMetrics.length}`)
+      if (result.researchData.seoMetrics.length > 0) {
+        console.log('  Domains:')
+        result.researchData.seoMetrics.forEach(m => {
+          console.log(`    - ${m.domain}: ${m.traffic?.toLocaleString() || 'N/A'} traffic, ${m.keywords?.toLocaleString() || 'N/A'} keywords`)
+        })
+      }
+      console.log(`Keyword Gaps: ${result.researchData.keywordGaps.length}`)
+      console.log(`Scrapes: ${result.researchData.scrapes.length}`)
+    }
+
+    // Extract structured output
+    console.log('\n--- Extracting Structured Output ---')
+    const structured = await extractStructuredOutput(result.output!, result.researchData)
+
+    if (structured) {
+      console.log('Extraction successful!')
+      console.log(`Priorities: ${structured.topPriorities?.length || 0}`)
+      console.log(`Competitors: ${structured.competitors?.length || 0}`)
+      console.log(`Positioning: ${structured.positioning ? 'yes' : 'no'}`)
+      console.log(`Competitive Comparison: ${structured.competitiveComparison?.domains?.length || 0} domains`)
+      if (structured.competitiveComparison?.domains) {
+        structured.competitiveComparison.domains.forEach(d => {
+          console.log(`  - ${d.domain}: ${d.traffic?.toLocaleString() || 'N/A'}/mo`)
+        })
+      }
+      console.log(`Keyword Opportunities: ${structured.keywordOpportunities?.keywords?.length || 0}`)
+      console.log(`Discoveries: ${structured.discoveries?.length || 0}`)
+      if (structured.discoveries?.length) {
+        structured.discoveries.forEach((d, i) => {
+          console.log(`  ${i + 1}. [${d.type}] ${d.title}`)
+          console.log(`     ${d.content}`)
+          if (d.source) console.log(`     Source: ${d.source}`)
+        })
+      }
     } else {
-      console.log(`   Missing: ${missingSections.join(', ')}\n`)
+      console.log('Extraction failed or returned null')
     }
 
-    // Print output
-    console.log('='.repeat(70))
+    // Print strategy
+    console.log('\n' + '='.repeat(70))
     console.log('INKDEX GROWTH STRATEGY')
-    console.log('='.repeat(70))
-    console.log()
-    console.log(output)
-    console.log()
-    console.log('='.repeat(70))
+    console.log('='.repeat(70) + '\n')
+    console.log(result.output)
+    console.log('\n' + '='.repeat(70))
 
     // Summary
-    const totalTime = Date.now() - startResearch
     console.log('\n=== Summary ===')
-    console.log(`Total time: ${(totalTime / 1000).toFixed(1)}s`)
-    console.log(`Research: ${((totalTime - genTime) / 1000).toFixed(1)}s`)
-    console.log(`Generation: ${(genTime / 1000).toFixed(1)}s`)
-    console.log(`Output: ${output.length} chars, ${output.split('\n').length} lines`)
+    console.log(`Total time: ${(genTime / 1000).toFixed(1)}s`)
+    console.log(`Tool time: ${((result.timing?.tools || 0) / 1000).toFixed(1)}s`)
+    console.log(`Generation time: ${((result.timing?.generation || 0) / 1000).toFixed(1)}s`)
+    console.log(`Output: ${result.output?.length || 0} chars`)
+
   } catch (err) {
-    console.error('   Generation failed:', err)
+    console.error('Failed:', err)
     process.exit(1)
   }
 }

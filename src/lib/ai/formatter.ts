@@ -7,20 +7,13 @@ import {
   FORMATTER_USER_PROMPT_WITH_RESEARCH,
   type StructuredOutput,
   type PartialStructuredOutput,
-  type DayAction,
-  type DetailedWeek,
-  type PriorityItem,
-  type MetricItem,
-  type CompetitorItem,
-  type RoadmapWeek,
 } from './formatter-types'
-import { parseStartDoing, parseRoadmap } from '@/lib/markdown/parser'
 import type { ResearchData } from './pipeline-agentic'
 
 // Sonnet for reliable extraction (understands intent, not just examples)
 const FORMATTER_MODEL = 'claude-sonnet-4-20250514'
-const FORMATTER_MAX_TOKENS = 4000
-const FORMATTER_TIMEOUT_MS = 60000 // 60s - tested: ~23s for 17k doc
+const FORMATTER_MAX_TOKENS = 16000 // Set high - extraction includes 28 days + priorities + positioning + metrics
+const FORMATTER_TIMEOUT_MS = 90000 // 90s - some extractions take ~50s
 
 /**
  * Build research data section for the prompt
@@ -138,13 +131,13 @@ export async function extractStructuredOutput(
     ])
 
     const elapsed = Date.now() - startTime
-    console.log(`[Formatter] Sonnet responded in ${elapsed}ms`)
+    console.log(`[Formatter] Sonnet responded in ${elapsed}ms, tokens: ${response.usage.input_tokens} in / ${response.usage.output_tokens} out`)
 
     // Extract text content
     const textContent = response.content.find((block) => block.type === 'text')
     if (!textContent || textContent.type !== 'text') {
-      console.warn('[Formatter] No text content in Sonnet response')
-      return extractStructuredOutputFallback(markdown)
+      console.error('[Formatter] No text content in Sonnet response')
+      return null
     }
 
     // Parse JSON - handle potential markdown code blocks
@@ -164,8 +157,8 @@ export async function extractStructuredOutput(
     try {
       parsed = JSON.parse(jsonText)
     } catch (parseErr) {
-      console.warn('[Formatter] JSON parse error:', parseErr)
-      return extractStructuredOutputFallback(markdown)
+      console.error('[Formatter] JSON parse error:', parseErr, 'Raw text:', jsonText.slice(0, 500))
+      return null
     }
 
     // Debug: Log if new research fields are present in parsed JSON
@@ -181,16 +174,16 @@ export async function extractStructuredOutput(
     // Validate with Zod
     const result = StructuredOutputSchema.safeParse(parsed)
     if (!result.success) {
-      console.warn('[Formatter] Zod validation failed:', result.error.issues)
+      console.error('[Formatter] Zod validation failed:', result.error.issues)
 
-      // Try partial validation for graceful degradation
+      // Try partial validation - still useful for when optional fields are missing
       const partialResult = PartialStructuredOutputSchema.safeParse(parsed)
       if (partialResult.success) {
         console.log('[Formatter] Partial extraction successful')
         return normalizePartialOutput(partialResult.data)
       }
 
-      return extractStructuredOutputFallback(markdown)
+      return null
     }
 
     console.log(`[Formatter] Successfully extracted structured output`)
@@ -198,197 +191,14 @@ export async function extractStructuredOutput(
 
   } catch (err) {
     if (err instanceof Error && err.message === 'Formatter timeout') {
-      console.warn('[Formatter] Sonnet extraction timed out')
+      console.error('[Formatter] Sonnet extraction timed out after', FORMATTER_TIMEOUT_MS, 'ms')
     } else {
       console.error('[Formatter] Sonnet extraction failed:', err)
     }
-    return extractStructuredOutputFallback(markdown)
-  }
-}
-
-/**
- * Fallback extraction using existing regex parsers
- * Used when Sonnet fails or times out
- */
-export function extractStructuredOutputFallback(markdown: string): StructuredOutput | null {
-  console.log('[Formatter] Using fallback regex extraction...')
-
-  try {
-    const now = new Date().toISOString()
-
-    // Try new "## Week X:" format first, then fallback to "## This Week"
-    const weekPattern = /## Week (\d+):\s*([^\n]*)\s*([\s\S]*?)(?=## Week \d+:|## [A-Z]|$)/gi
-    const weekMatches = [...markdown.matchAll(weekPattern)]
-
-    const weeks: DetailedWeek[] = []
-
-    if (weekMatches.length > 0) {
-      // New format: extract all weeks
-      for (const match of weekMatches) {
-        const weekNum = parseInt(match[1], 10)
-        const theme = match[2].trim()
-        const content = match[3]
-        const days = parseThisWeekTable(content)
-        if (days.length > 0) {
-          weeks.push({ week: weekNum, theme, days })
-        }
-      }
-    }
-
-    // Get Week 1 data for thisWeek (backward compatibility)
-    const week1 = weeks.find(w => w.week === 1)
-    let thisWeekDays: DayAction[] = week1?.days || []
-
-    // Fallback to legacy "## This Week" if no Week 1 found
-    if (thisWeekDays.length === 0) {
-      const thisWeekMatch = markdown.match(/## This Week\s*([\s\S]*?)(?=##|$)/i)
-      thisWeekDays = thisWeekMatch ? parseThisWeekTable(thisWeekMatch[1]) : []
-    }
-
-    const totalHours = thisWeekDays.reduce((sum, day) => {
-      const hourMatch = day.timeEstimate.match(/(\d+(?:\.\d+)?)\s*(?:hr|hour)/i)
-      return sum + (hourMatch ? parseFloat(hourMatch[1]) : 0)
-    }, 0)
-
-    // Extract "Start Doing" section for priorities
-    const startDoingMatch = markdown.match(/## Start Doing[^\n]*\s*([\s\S]*?)(?=##|$)/i)
-    const priorities = startDoingMatch ? parseStartDoing(startDoingMatch[1]) : []
-    const topPriorities: PriorityItem[] = priorities.slice(0, 8).map((item, index) => ({
-      rank: index + 1,
-      title: item.title,
-      iceScore: item.iceScore,
-      impact: item.impact,
-      confidence: item.confidence,
-      ease: item.ease,
-      description: item.description,
-    }))
-
-    // Extract metrics from "Metrics Dashboard" section
-    const metricsMatch = markdown.match(/## Metrics Dashboard\s*([\s\S]*?)(?=##|$)/i)
-    const metrics = metricsMatch ? parseMetricsTable(metricsMatch[1]) : []
-
-    // Competitors are extracted by the LLM, not regex
-    // The new schema requires actionable insights (weakness, opportunity, stealThis)
-    // which can't be parsed from markdown - LLM must generate them
-    const competitors: CompetitorItem[] = []
-
-    // Extract roadmap
-    const roadmapMatch = markdown.match(/## 30-Day Roadmap\s*([\s\S]*?)(?=##|$)/i)
-    const roadmapWeeks: RoadmapWeek[] = roadmapMatch
-      ? parseRoadmap(roadmapMatch[1]).map((w) => ({
-          week: w.week,
-          theme: w.theme,
-          tasks: w.tasks.map((t) => t.text),
-        }))
-      : []
-
-    const output: StructuredOutput = {
-      thisWeek: {
-        days: thisWeekDays,
-        totalHours: totalHours || undefined,
-      },
-      topPriorities,
-      metrics,
-      competitors,
-      currentWeek: 1,
-      roadmapWeeks,
-      extractedAt: now,
-      formatterVersion: '1.0',
-      // Include detailed weeks if we extracted them
-      weeks: weeks.length > 0 ? weeks : undefined,
-    }
-
-    // Validate even the fallback output
-    const result = StructuredOutputSchema.safeParse(output)
-    if (!result.success) {
-      console.warn('[Formatter] Fallback validation failed:', result.error.issues)
-      return null
-    }
-
-    console.log('[Formatter] Fallback extraction successful')
-    return result.data
-
-  } catch (err) {
-    console.error('[Formatter] Fallback extraction failed:', err)
     return null
   }
 }
 
-// =============================================================================
-// HELPER PARSERS
-// =============================================================================
-
-/**
- * Parse "This Week" markdown table
- */
-function parseThisWeekTable(content: string): DayAction[] {
-  const days: DayAction[] = []
-  const lines = content.split('\n')
-
-  for (const line of lines) {
-    // Skip header rows and dividers
-    if (line.startsWith('|--') || (line.includes('Day') && line.includes('Action'))) {
-      continue
-    }
-
-    // Parse table row: | Day | Action | Time | Success Metric |
-    const match = line.match(/^\|\s*(\d+)\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|/)
-    if (match) {
-      days.push({
-        day: parseInt(match[1], 10),
-        action: match[2].trim(),
-        timeEstimate: match[3].trim(),
-        successMetric: match[4].trim(),
-      })
-    }
-  }
-
-  return days
-}
-
-/**
- * Parse metrics table from Metrics Dashboard section
- */
-function parseMetricsTable(content: string): MetricItem[] {
-  const metrics: MetricItem[] = []
-  const lines = content.split('\n')
-
-  for (const line of lines) {
-    // Skip header and divider rows
-    if (line.startsWith('|--') || (line.includes('Stage') && line.includes('Metric'))) {
-      continue
-    }
-
-    // Parse table row: | Stage | Metric | Target | How to Measure |
-    const match = line.match(/^\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|/)
-    if (match) {
-      const category = match[1].trim().toLowerCase()
-      // Skip if this looks like a header
-      if (category === 'stage' || category === 'metric') continue
-
-      metrics.push({
-        name: match[2].trim(),
-        target: match[3].trim(),
-        category: normalizeCategory(category),
-      })
-    }
-  }
-
-  return metrics
-}
-
-/**
- * Normalize AARRR category names
- */
-function normalizeCategory(category: string): string {
-  const normalized = category.toLowerCase().trim()
-  if (normalized.includes('acqui')) return 'acquisition'
-  if (normalized.includes('activ')) return 'activation'
-  if (normalized.includes('reten')) return 'retention'
-  if (normalized.includes('refer')) return 'referral'
-  if (normalized.includes('rev') || normalized.includes('monet')) return 'revenue'
-  return 'custom'
-}
 
 /**
  * Convert partial output to full output with defaults
@@ -411,5 +221,7 @@ function normalizePartialOutput(partial: PartialStructuredOutput): StructuredOut
     keywordOpportunities: partial.keywordOpportunities,
     marketQuotes: partial.marketQuotes,
     positioning: partial.positioning,
+    // Novel insights
+    discoveries: partial.discoveries,
   }
 }

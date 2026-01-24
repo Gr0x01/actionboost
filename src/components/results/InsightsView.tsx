@@ -10,6 +10,8 @@ import {
   KeywordOpportunities,
   MarketPulse,
   PositioningSummaryV2,
+  LeadDiscovery,
+  Discoveries,
 } from './dashboard'
 import { RefinementInterstitial } from './RefinementInterstitial'
 
@@ -26,12 +28,15 @@ interface InsightsViewProps {
  *
  * Layout:
  * 1. PositioningSummaryV2 (from structured output)
- * 2. PriorityCards
- * 3. CompetitiveComparison (if available)
- * 4. KeywordOpportunities (if available)
- * 5. MarketPulse (if available)
- * 6. MetricsSnapshot
- * 7. DeepDivesAccordion
+ * 2. LeadDiscovery (hero - single most impactful discovery)
+ * 3. PriorityCards
+ * 4. RefinementInterstitial (CTA break)
+ * 5. CompetitiveComparison (if available)
+ * 6. MarketPulse (if available)
+ * 7. KeywordOpportunities (if available)
+ * 8. MetricsSnapshot
+ * 9. Discoveries (remaining discoveries)
+ * 10. DeepDivesAccordion
  */
 export function InsightsView({
   strategy,
@@ -45,19 +50,27 @@ export function InsightsView({
     competitiveComparison,
     keywordOpportunities,
     marketQuotes,
+    discoveries,
   } = structuredOutput
+
+  // Split discoveries: first one is hero, rest go to secondary section
+  const leadDiscovery = discoveries?.[0]
+  const remainingDiscoveries = discoveries?.slice(1) || []
 
   return (
     <div className="space-y-24">
-      {/* 1. Positioning - from structured output only */}
+      {/* 1. Positioning */}
       {positioning && <PositioningSummaryV2 positioning={positioning} />}
 
-      {/* 3. Top Priorities - #1 as hero, #2-3 compact */}
+      {/* 2. Lead Discovery (hero) */}
+      {leadDiscovery && <LeadDiscovery discovery={leadDiscovery} />}
+
+      {/* 3. Top Priorities */}
       {structuredOutput.topPriorities.length > 0 && (
         <PriorityCards priorities={structuredOutput.topPriorities} />
       )}
 
-      {/* Refinement Interstitial - after the "big hit" of positioning + priorities */}
+      {/* 4. Refinement Interstitial */}
       {runId && (
         <RefinementInterstitial
           runId={runId}
@@ -66,27 +79,32 @@ export function InsightsView({
         />
       )}
 
-      {/* 4. Competitive Comparison - from structured output only */}
+      {/* 5. Competitive Comparison */}
       {competitiveComparison && competitiveComparison.domains.length > 0 && (
         <CompetitiveComparison comparison={competitiveComparison} />
       )}
 
-      {/* 5. Market Pulse - breaks card run with typography */}
+      {/* 6. Market Pulse */}
       {marketQuotes && marketQuotes.quotes.length > 0 && (
         <MarketPulse quotes={marketQuotes} />
       )}
 
-      {/* 6. Keyword Opportunities - keyword gap table */}
+      {/* 7. Keyword Opportunities */}
       {keywordOpportunities && keywordOpportunities.keywords.length > 0 && (
         <KeywordOpportunities opportunities={keywordOpportunities} />
       )}
 
-      {/* 7. Metrics Snapshot (existing) */}
+      {/* 8. Metrics Snapshot */}
       {structuredOutput.metrics.length > 0 && (
         <MetricsSnapshot metrics={structuredOutput.metrics} />
       )}
 
-      {/* 8. Deep Dives - full width, prose constrained inside */}
+      {/* 9. Remaining Discoveries */}
+      {remainingDiscoveries.length > 0 && (
+        <Discoveries discoveries={remainingDiscoveries} />
+      )}
+
+      {/* 10. Deep Dives */}
       <DeepDivesAccordion strategy={strategy} />
     </div>
   )

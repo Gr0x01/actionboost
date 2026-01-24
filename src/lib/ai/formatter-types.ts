@@ -145,7 +145,7 @@ export const MarketQuoteSchema = z.object({
     text: z.string(),
     source: z.string(), // e.g., "Reddit r/SaaS"
     url: z.string().url().optional(), // Validated URL for security
-    sentiment: z.enum(['positive', 'negative', 'neutral']).optional(),
+    sentiment: z.string().optional(), // Flexible - "positive", "negative", "neutral", "frustrated", "mixed", etc.
   })),
 })
 
@@ -163,6 +163,20 @@ export const PositioningDataSchema = z.object({
 })
 
 export type PositioningData = z.infer<typeof PositioningDataSchema>
+
+/**
+ * Discovery - novel insights that don't fit standard categories
+ * Examples: hidden competitors, risks, behavioral patterns, opportunities
+ */
+export const DiscoverySchema = z.object({
+  type: z.string(), // "competitive_intel", "risk", "pattern", "opportunity", "finding"
+  title: z.string(), // Brief headline (5-10 words)
+  content: z.string(), // The insight itself (1-3 sentences)
+  source: z.string().optional(), // Where it came from, if mentioned
+  significance: z.string(), // Why this matters to the client's strategy
+})
+
+export type Discovery = z.infer<typeof DiscoverySchema>
 
 // =============================================================================
 // FULL STRUCTURED OUTPUT SCHEMA
@@ -194,6 +208,9 @@ export const StructuredOutputSchema = z.object({
   keywordOpportunities: KeywordOpportunitySchema.optional(),
   marketQuotes: MarketQuoteSchema.optional(),
   positioning: PositioningDataSchema.optional(),
+
+  // Novel insights that don't fit standard categories
+  discoveries: z.array(DiscoverySchema).optional(),
 })
 
 export type StructuredOutput = z.infer<typeof StructuredOutputSchema>
@@ -223,6 +240,9 @@ export const PartialStructuredOutputSchema = z.object({
   keywordOpportunities: KeywordOpportunitySchema.optional(),
   marketQuotes: MarketQuoteSchema.optional(),
   positioning: PositioningDataSchema.optional(),
+
+  // Novel insights that don't fit standard categories
+  discoveries: z.array(DiscoverySchema).optional(),
 })
 
 export type PartialStructuredOutput = z.infer<typeof PartialStructuredOutputSchema>
@@ -260,15 +280,40 @@ COMPETITOR EXTRACTION RULES:
 - "opportunity": Based on their weakness, how can the USER beat this competitor? What angle should they take?
 - "stealThis": What does this competitor do WELL that's worth copying? A specific tactic, feature, or approach.
 
-RESEARCH DATA EXTRACTION (IMPORTANT - include these fields when research data section is provided):
-When a "RESEARCH DATA" section is provided after the strategy document, you MUST extract these additional fields:
+POSITIONING EXTRACTION (ALWAYS REQUIRED):
+ALWAYS extract "positioning" from the "## Your Situation" section in the markdown:
+- "verdict": Assess clarity - "clear" (strong/differentiated), "needs-work" (some gaps), or "unclear" (confused/unfocused)
+- "summary": 2-3 sentence summary of their market position and key insight
+- "uniqueValue": What makes this business different from alternatives
+- "targetSegment": Who they serve best
+- "competitiveAdvantage": Their edge over competitors (if mentioned)
+
+RESEARCH DATA EXTRACTION (only when research data section is provided):
+When a "RESEARCH DATA" section is provided after the strategy document, ALSO extract:
 - "researchSnapshot": Count from research data headers (e.g., "12 searches performed" → searchesRun: 12)
 - "competitiveComparison": Build from SEO Metrics section - domains array with traffic/keywords/isUser
 - "keywordOpportunities": Build from Keyword Gaps section - keywords array with keyword/volume/competitorRank/competitor
 - "marketQuotes": Extract notable quotes from search results about the industry/competitors (text, source like "Reddit r/SaaS", sentiment)
-- "positioning": Extract from "Your Situation" section in markdown (verdict: clear/needs-work/unclear, summary, uniqueValue, targetSegment)
 
-If NO research data section is provided, OMIT these 5 fields entirely.
+If NO research data section is provided, OMIT these 4 research fields (but STILL include positioning).
+
+DISCOVERIES EXTRACTION (Novel Insights):
+Scan the strategy for valuable insights that don't fit standard categories. Look for:
+- Competitor intel: "Tattoodo cancelled X feature, artists are upset"
+- Hidden competitors: "TattoosWizard emerged as major player with 318K traffic"
+- Risks/warnings: "Google penalizing programmatic SEO sites"
+- Behavioral patterns: "City subreddits are where people ask for artist recs"
+- Market context: "Instagram's algorithm is broken for geographic discovery"
+- Meta discoveries: "Found user's existing Product Hunt page"
+
+For each discovery found:
+- type: "competitive_intel" | "risk" | "pattern" | "opportunity" | "finding" | etc.
+- title: Brief headline (5-10 words)
+- content: The insight itself (1-3 sentences)
+- source: Where it came from, if mentioned
+- significance: Why this matters to the client's strategy
+
+If Opus found something interesting and novel, capture it. Don't let insights get lost.
 
 OUTPUT FORMAT:
 {
@@ -378,7 +423,23 @@ OUTPUT FORMAT:
     "summary": "Your positioning is unclear - you're trying to appeal to everyone...",
     "uniqueValue": "AI-powered automation for small teams",
     "targetSegment": "Solo founders and small agencies"
-  }
+  },
+  "discoveries": [
+    {
+      "type": "competitive_intel",
+      "title": "Major Competitor Cancelled Key Feature",
+      "content": "Tattoodo recently cancelled their artist discovery feature, leaving artists frustrated with no way to be found by local clients.",
+      "source": "Reddit r/TattooArtists",
+      "significance": "Opens a positioning opportunity as the reliable alternative for artist discovery"
+    },
+    {
+      "type": "pattern",
+      "title": "City Subreddits Drive Tattoo Referrals",
+      "content": "Users consistently ask for artist recommendations in city-specific subreddits rather than tattoo-focused ones.",
+      "source": "SEO research",
+      "significance": "Distribution channel opportunity - engage in local subreddits rather than competing on broad tattoo keywords"
+    }
+  ]
 }`
 
 export const FORMATTER_USER_PROMPT = `Extract structured data from this strategy document. Return ONLY the JSON object, no other text.
