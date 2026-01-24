@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, Suspense, useRef } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 import { Header, Footer } from "@/components/layout";
-import { ResultsContent, StatusMessage, MagicLinkBanner, AddContextSection } from "@/components/results";
+import { ResultsContent, StatusMessage, MagicLinkBanner } from "@/components/results";
 import { ResultsHeader } from "@/components/results/ResultsHeader";
 import { parseStrategy, type ParsedStrategy } from "@/lib/markdown/parser";
 import type { StructuredOutput } from "@/lib/ai/formatter-types";
@@ -253,50 +253,15 @@ function ResultsPageContent() {
       ? (run.input as { productDescription?: string }).productDescription
       : undefined;
 
-  // Check if we have dashboard data (same logic as ResultsContent)
-  const hasDashboardData = run.structured_output &&
-    (run.structured_output.thisWeek.days.length > 0 ||
-     run.structured_output.topPriorities.length > 0);
-
-  // Success state - render full results
-  // Use DashboardResults for structured output, otherwise use traditional layout
-  if (hasDashboardData && strategy) {
-    return (
-      <DashboardResults
-        run={run}
-        strategy={strategy}
-        productName={productName}
-        isNewCheckout={isNewCheckout}
-        isShareAccess={isShareAccess}
-      />
-    );
-  }
-
-  // Traditional layout for runs without structured output
+  // Always use dashboard view
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <main className="flex-1">
-        <div className="mx-auto max-w-4xl px-6 py-8">
-          {isNewCheckout && <MagicLinkBanner />}
-          {strategy && (
-            <>
-              <ResultsContent
-                strategy={strategy}
-                structuredOutput={run.structured_output}
-                runId={run.id}
-              />
-              <AddContextSection
-                runId={run.id}
-                refinementsUsed={run.root_refinements_used ?? run.refinements_used ?? 0}
-                isOwner={!isShareAccess}
-              />
-            </>
-          )}
-        </div>
-      </main>
-      <Footer />
-    </div>
+    <DashboardResults
+      run={run}
+      strategy={strategy!}
+      productName={productName}
+      isNewCheckout={isNewCheckout}
+      isShareAccess={isShareAccess}
+    />
   );
 }
 
