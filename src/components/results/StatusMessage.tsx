@@ -317,10 +317,17 @@ export function StatusMessage({
         </div>
       </div>
 
-      {/* Time estimate */}
-      <p className="text-sm text-foreground/40 font-mono mt-6">
-        typically 2-3 minutes
-      </p>
+      {/* Time estimate + email notice */}
+      <div className="mt-6 space-y-2">
+        <p className="text-sm font-semibold text-foreground/70">
+          Real research takes real time.
+        </p>
+        <p className="text-sm text-foreground/50">
+          We&apos;re pulling live competitive data and building your custom 30-day plan.
+          <br />
+          About 8 minutes. We&apos;ll email you when it&apos;s done.
+        </p>
+      </div>
     </div>
   );
 }

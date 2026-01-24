@@ -19,7 +19,7 @@ const ALTERNATIVES = [
     title: "Get a real plan",
     price: "$29",
     priceNote: "once",
-    time: "Ready in minutes",
+    time: "Built on real research",
     points: [
       "Real competitor research on YOUR market",
       "Specific tactics ranked by impact",
