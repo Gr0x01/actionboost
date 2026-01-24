@@ -155,7 +155,7 @@ export function HeroSummaryCard({ visible }: HeroSummaryCardProps) {
         }}
       >
         {/* Header with business type selector */}
-        <div className="px-6 pt-5 pb-4 border-b border-foreground/10">
+        <div className="px-4 sm:px-6 pt-4 sm:pt-5 pb-3 sm:pb-4 border-b border-foreground/10">
           <div className="flex flex-wrap gap-2">
             {BUSINESS_KEYS.map((key) => (
               <button
@@ -176,7 +176,7 @@ export function HeroSummaryCard({ visible }: HeroSummaryCardProps) {
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {/* === POSITIONING SECTION - matching PositioningSummaryV2 === */}
           <div className="mb-6">
             <div className="flex flex-col md:flex-row md:items-start md:gap-6">
@@ -233,16 +233,16 @@ export function HeroSummaryCard({ visible }: HeroSummaryCardProps) {
 
             {/* Discovery card - matching LeadDiscovery styling */}
             <div
-              className="bg-background border-2 border-foreground/20 rounded-md p-5 relative"
+              className="bg-background border-2 border-foreground/20 rounded-md p-4 sm:p-5 relative"
               style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.08)" }}
             >
-              {/* Type badge - top right, exact match */}
-              <span className="absolute top-3 right-3 font-mono text-[9px] uppercase tracking-wider text-foreground/30 bg-surface px-2 py-0.5 rounded">
+              {/* Type badge - inline on mobile, absolute on desktop */}
+              <span className="sm:absolute sm:top-3 sm:right-3 inline-block sm:inline mb-2 sm:mb-0 font-mono text-[9px] uppercase tracking-wider text-foreground/30 bg-surface px-2 py-0.5 rounded">
                 {formatDiscoveryType(businessData.discovery.type)}
               </span>
 
-              {/* Title - exact match */}
-              <h4 className="text-base font-bold text-foreground leading-tight pr-36">
+              {/* Title - full width on mobile, room for badge on desktop */}
+              <h4 className="text-base font-bold text-foreground leading-tight sm:pr-36">
                 {businessData.discovery.title}
               </h4>
 

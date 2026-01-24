@@ -89,7 +89,7 @@ export function FooterCTAForm() {
       {/* URL Input - Confident on dark */}
       <div className="max-w-lg mx-auto mb-6">
         <div
-          className="flex rounded-xl border-2 border-background/30 bg-background/15 overflow-hidden backdrop-blur-sm"
+          className="flex flex-col sm:flex-row rounded-xl border-2 border-background/30 bg-background/15 overflow-hidden backdrop-blur-sm"
           style={{ boxShadow: "4px 4px 0 rgba(255, 255, 255, 0.12)" }}
         >
           <div className="flex items-center gap-3 flex-1 px-4 py-3">
@@ -115,7 +115,7 @@ export function FooterCTAForm() {
           <button
             onClick={handleAnalyze}
             disabled={!url.trim() || isAnalyzing}
-            className="shrink-0 flex items-center gap-2 px-6 py-3 bg-cta text-white font-bold hover:bg-cta-hover hover:shadow-[0_0_20px_rgba(230,126,34,0.5)] hover:-translate-y-0.5 active:translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150"
+            className="shrink-0 flex items-center justify-center gap-2 px-6 py-3 bg-cta text-white font-bold hover:bg-cta-hover hover:shadow-[0_0_20px_rgba(230,126,34,0.5)] sm:hover:-translate-y-0.5 active:translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150"
           >
             {isAnalyzing ? (
               <>

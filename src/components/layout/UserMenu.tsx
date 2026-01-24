@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Zap } from 'lucide-react'
 import type { User as AuthUser } from '@supabase/supabase-js'
 
 interface UserMenuProps {
@@ -29,9 +31,25 @@ export function UserMenu({ user }: UserMenuProps) {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [isSigningOut, setIsSigningOut] = useState(false)
+  const [credits, setCredits] = useState<number | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
   const initials = getInitials(user.email || 'U')
+
+  // Fetch credits for mobile display
+  useEffect(() => {
+    async function fetchCredits() {
+      try {
+        const res = await fetch('/api/user/credits')
+        if (!res.ok) return
+        const data = await res.json()
+        setCredits(data.credits ?? 0)
+      } catch {
+        // Silently fail
+      }
+    }
+    fetchCredits()
+  }, [])
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -96,22 +114,35 @@ export function UserMenu({ user }: UserMenuProps) {
       </button>
 
       {/* Dropdown */}
-      {isOpen && (
-        <div className="
-          absolute right-0 top-full mt-2
-          w-56
-          bg-background
-          border-2 border-foreground/20
-          rounded-md
-          shadow-[4px_4px_0_rgba(44,62,80,0.1)]
-          z-50
-          overflow-hidden
-        ">
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: -10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -10 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+            className="
+              absolute right-0 top-full mt-2
+              w-56
+              bg-background
+              border-2 border-foreground/20
+              rounded-md
+              shadow-[4px_4px_0_rgba(44,62,80,0.1)]
+              z-50
+              overflow-hidden
+            ">
           {/* Email header */}
           <div className="px-4 py-3 border-b border-foreground/10 bg-foreground/[0.02]">
             <p className="text-sm font-semibold text-foreground truncate">
               {user.email}
             </p>
+            {/* Credits - visible only on mobile */}
+            {credits !== null && credits > 0 && (
+              <div className="sm:hidden flex items-center gap-1.5 mt-1.5 text-xs font-medium text-foreground/60">
+                <Zap className="w-3 h-3" />
+                {credits} credit{credits === 1 ? '' : 's'}
+              </div>
+            )}
           </div>
 
           {/* Menu items */}
@@ -161,8 +192,9 @@ export function UserMenu({ user }: UserMenuProps) {
               {isSigningOut ? 'Signing out...' : 'Sign out'}
             </button>
           </div>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </div>
   )
 }
