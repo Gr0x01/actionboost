@@ -10,83 +10,80 @@ test.describe("Form Wizard", () => {
   test("navigates through multi-step form", async ({ page }) => {
     await page.goto("/start")
 
-    // Step 1: Website URL (optional - skip it)
-    await expect(page.getByText("What's your website?")).toBeVisible()
-    await page.getByRole("button", { name: /skip/i }).click()
+    // Step 1: Traction (required - chip selection)
+    await expect(page.getByText("What traction do you have so far?")).toBeVisible()
+    await page.getByText("Pre-launch").click() // Click a chip to proceed
 
-    // Step 2: Product description (required)
-    await expect(
-      page.getByText("Tell me about your product")
-    ).toBeVisible()
+    // Step 2: Focus area (required - single select)
+    await expect(page.getByText("Where should we focus?")).toBeVisible()
+    await page.getByText("Acquisition").click()
+
+    // Step 3: Product description (required)
+    await expect(page.getByText("Tell me about your business")).toBeVisible()
     await page.getByRole("textbox").fill("A SaaS tool for managing widgets")
     await expect(page.getByRole("button", { name: /continue/i })).toBeEnabled()
     await page.getByRole("button", { name: /continue/i }).click()
 
-    // Step 3: Traction
-    await expect(page.getByText("What traction do you have")).toBeVisible()
-    await page.getByRole("textbox").fill("100 users, $500 MRR")
-    await expect(page.getByRole("button", { name: /continue/i })).toBeEnabled()
+    // Step 4: Alternatives (required - multi-select, needs Continue)
+    await expect(page.getByText("If they didn't use you")).toBeVisible()
+    await page.getByRole("button", { name: /Google it/i }).click()
     await page.getByRole("button", { name: /continue/i }).click()
 
-    // Step 4: Tactics tried
-    await expect(page.getByText("What have you tried")).toBeVisible()
-    await page.getByRole("textbox").fill("Content marketing, some paid ads")
-    await expect(page.getByRole("button", { name: /continue/i })).toBeEnabled()
-    await page.getByRole("button", { name: /continue/i }).click()
-
-    // Step 5: Attachments (optional - skip)
-    await expect(page.getByText("screenshots or data")).toBeVisible()
+    // Step 5: Website (optional - skip)
+    await expect(page.getByText("What's your website?")).toBeVisible()
     await page.getByRole("button", { name: /skip/i }).click()
 
-    // Step 6: Focus area
-    await expect(page.getByText("Where should we focus")).toBeVisible()
-    await page.getByText("Acquisition").click()
+    // Step 6: Competitors (optional - skip)
+    await expect(page.getByText("competitors")).toBeVisible()
+    await page.getByRole("button", { name: /skip/i }).click()
 
     // Step 7: Email (optional - skip)
     await expect(page.getByText("Where should we send")).toBeVisible()
     await page.getByRole("button", { name: /skip/i }).click()
 
-    // Step 8: Competitors (optional - skip)
-    await expect(page.getByText("competitors")).toBeVisible()
-    await page.getByRole("button", { name: /skip/i }).click()
-
-    // Should reach checkout - look for checkout heading or price button
+    // Should reach checkout
     await expect(page.getByText("Ready to")).toBeVisible()
   })
 
   test("back navigation works", async ({ page }) => {
     await page.goto("/start")
 
-    // Skip first question
-    await expect(page.getByText("What's your website?")).toBeVisible()
-    await page.getByRole("button", { name: /skip/i }).click()
+    // Step 1: Select traction
+    await expect(page.getByText("What traction do you have so far?")).toBeVisible()
+    await page.getByText("Pre-launch").click()
 
-    // On step 2, fill in something
-    await expect(
-      page.getByText("Tell me about your product")
-    ).toBeVisible()
+    // Step 2: Select focus
+    await expect(page.getByText("Where should we focus?")).toBeVisible()
+    await page.getByText("Acquisition").click()
+
+    // Step 3: Fill product description
+    await expect(page.getByText("Tell me about your business")).toBeVisible()
     await page.getByRole("textbox").fill("Test product")
     await expect(page.getByRole("button", { name: /continue/i })).toBeEnabled()
     await page.getByRole("button", { name: /continue/i }).click()
 
-    // On step 3, go back
-    await expect(page.getByText("What traction")).toBeVisible()
+    // Step 4: Go back from alternatives
+    await expect(page.getByText("If they didn't use you")).toBeVisible()
     await page.getByRole("button", { name: /back/i }).click()
 
-    // Should be back on step 2 with text preserved
-    await expect(
-      page.getByText("Tell me about your product")
-    ).toBeVisible()
+    // Should be back on step 3 with text preserved
+    await expect(page.getByText("Tell me about your business")).toBeVisible()
     await expect(page.getByRole("textbox")).toHaveValue("Test product")
   })
 
   test("persists form data in localStorage", async ({ page }) => {
     await page.goto("/start")
 
-    // Skip to product description and fill it
-    await expect(page.getByText("What's your website?")).toBeVisible()
-    await page.getByRole("button", { name: /skip/i }).click()
-    await expect(page.getByText("Tell me about your product")).toBeVisible()
+    // Step 1: Select traction
+    await expect(page.getByText("What traction do you have so far?")).toBeVisible()
+    await page.getByText("Pre-launch").click()
+
+    // Step 2: Select focus
+    await expect(page.getByText("Where should we focus?")).toBeVisible()
+    await page.getByText("Acquisition").click()
+
+    // Step 3: Fill product description
+    await expect(page.getByText("Tell me about your business")).toBeVisible()
     await page.getByRole("textbox").fill("Persisted product data")
     await expect(page.getByRole("button", { name: /continue/i })).toBeEnabled()
     await page.getByRole("button", { name: /continue/i }).click()
@@ -96,7 +93,7 @@ test.describe("Form Wizard", () => {
 
     // Check localStorage was saved correctly
     const storage = await page.evaluate(() =>
-      localStorage.getItem("actionboost-form-v3")
+      localStorage.getItem("actionboost-form-v4")
     )
     expect(storage).toBeTruthy()
     const parsed = JSON.parse(storage!)
@@ -106,35 +103,26 @@ test.describe("Form Wizard", () => {
   test("validates required fields", async ({ page }) => {
     await page.goto("/start")
 
-    // Skip to product description (required field)
-    await page.getByRole("button", { name: /skip/i }).click()
+    // Step 1: Traction - requires chip selection, no skip button
+    await expect(page.getByText("What traction do you have so far?")).toBeVisible()
 
-    // Try to proceed with empty required field
-    await expect(
-      page.getByText("Tell me about your product")
-    ).toBeVisible()
+    // Verify there's no skip button for required field
+    const skipButton = page.getByRole("button", { name: /skip/i })
+    const isSkipVisible = await skipButton.isVisible().catch(() => false)
+    expect(isSkipVisible).toBe(false)
 
-    // The Continue button should be disabled or clicking it should not advance
-    const continueButton = page.getByRole("button", { name: /continue/i })
+    // Click a chip to proceed
+    await page.getByText("Pre-launch").click()
 
-    // Either button is disabled or clicking doesn't advance
-    const isDisabled = await continueButton.isDisabled().catch(() => false)
-
-    if (!isDisabled) {
-      // Click and verify we don't advance
-      await continueButton.click()
-      // Should still be on the same question
-      await expect(
-        page.getByText("Tell me about your product")
-      ).toBeVisible()
-    }
+    // Should advance to next question
+    await expect(page.getByText("Where should we focus?")).toBeVisible()
   })
 
   test("handles URL prefill from hero", async ({ page }) => {
     // Simulate coming from hero with prefilled description
     await page.goto("/start?prefill=My%20awesome%20startup")
 
-    // Should start at first question (website)
-    await expect(page.getByText("What's your website?")).toBeVisible()
+    // Should start at first question (traction)
+    await expect(page.getByText("What traction do you have so far?")).toBeVisible()
   })
 })
