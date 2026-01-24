@@ -72,6 +72,18 @@ export function Footer() {
               height={28}
             />
           </a>
+          <a
+            href="https://auraplusplus.com/projects/boost-market-research-strategy"
+            target="_blank"
+            rel="noopener"
+          >
+            <Image
+              src="https://auraplusplus.com/images/badges/featured-on-dark.svg"
+              alt="Featured on Aura++"
+              width={120}
+              height={28}
+            />
+          </a>
         </div>
 
         {/* Copyright + Founder */}
