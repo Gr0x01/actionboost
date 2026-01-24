@@ -253,6 +253,33 @@ function ResultsPageContent() {
       ? (run.input as { productDescription?: string }).productDescription
       : undefined;
 
+  // Legacy run without structured output - show apology page
+  if (!run.structured_output) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="max-w-md mx-auto text-center px-6 py-16">
+            <h1 className="text-2xl font-bold text-foreground mb-4">
+              We upgraded your experience
+            </h1>
+            <p className="text-foreground/70 mb-6">
+              This plan was created before our new dashboard. We&apos;ve added 3 free credits
+              to your account so you can generate a fresh plan with the improved experience.
+            </p>
+            <a
+              href="/start"
+              className="inline-block bg-cta text-white font-semibold px-6 py-3 rounded-md hover:opacity-90 transition-opacity"
+            >
+              Create New Plan
+            </a>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   // Always use dashboard view
   return (
     <DashboardResults
