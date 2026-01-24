@@ -165,9 +165,23 @@ function ResultsPageContent() {
             const fullRes = await fetch(getApiUrl(`/api/runs/${runId}`));
             if (fullRes.ok) {
               const fullData = await fullRes.json();
-              setRun(fullData.run);
-              if (fullData.run.output) {
-                setStrategy(parseStrategy(fullData.run.output));
+              const runData = fullData.run;
+
+              // Check if we have valid dashboard data
+              const hasDashboard = runData.structured_output &&
+                (runData.structured_output.thisWeek?.days?.length > 0 ||
+                 runData.structured_output.topPriorities?.length > 0);
+
+              // If complete but no dashboard data yet, keep polling (max 5 more cycles)
+              // This handles race conditions where status is set before structured_output is readable
+              if (!hasDashboard && pollCount < MAX_POLLS - 5) {
+                console.log('[Results] Status complete but no dashboard data yet, continuing to poll...');
+                return; // Don't clear interval, keep polling
+              }
+
+              setRun(runData);
+              if (runData.output) {
+                setStrategy(parseStrategy(runData.output));
                 if (!trackedRef.current) {
                   trackedRef.current = true;
                   posthog?.capture("results_viewed", {
