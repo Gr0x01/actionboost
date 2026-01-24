@@ -1,8 +1,125 @@
 # Current Phase
 
-## Latest Update: Dashboard Overhaul - Soft SaaS Aesthetic
+## Latest Update: Target Audience Pivot - Tech-Adjacent Entrepreneurs
 
-**Completed Jan 23, 2026** - Full visual and copy overhaul of dashboards to match new SMB-friendly brand voice.
+**Jan 24, 2026** - Strategic pivot from pure SMBs to tech-adjacent entrepreneurs based on competitive intel.
+
+### The Discovery
+
+Ran Boost on itself → discovered **Enji.co**, a direct competitor that:
+- ChatGPT couldn't find
+- Claude (chat) couldn't find
+- Anthropic search couldn't find
+- Manual searches couldn't find
+
+**Only Boost's Tavily + DataForSEO research found them.** This validates the "real research" differentiator.
+
+### Enji Reality Check
+
+| Metric | Value |
+|--------|-------|
+| Founded | ~2021 (4+ years) |
+| Team | ~12 people |
+| Monthly organic traffic | **1,537 visits** |
+| Pricing | $29/mo full suite |
+| Features | Strategy, calendar, scheduler, AI copywriter, coaching calls |
+
+**Key insight**: Despite 4 years, 12 people, polished marketing, and tons of features — they haven't cracked distribution. Features don't win this market.
+
+### The Pivot
+
+**From**: SMBs (salons, local services, Etsy sellers) — hard to reach online
+
+**To**: Tech-adjacent entrepreneurs who can find and buy tools:
+1. **SaaS founders / solopreneurs** — r/SaaS, r/solopreneur, Twitter
+2. **E-commerce / Shopify** — r/ecommerce, r/shopify
+3. **Service businesses** — consultants, agencies who find us
+
+### Why This Works
+
+- SaaS/solopreneur subreddits are FULL of marketing questions
+- These people can actually FIND tools online
+- They won't build their own version
+- Current design already appeals to them
+- More comfortable paying for tools
+
+### Subscription Strategy (Refined)
+
+Don't compete with Enji on features ($29/mo for calendar, scheduler, copywriter).
+
+Compete on **intelligence**:
+- Enji: "Here are tools, go do marketing"
+- Boost: "We watch your metrics and tell you what to focus on THIS week"
+
+**v2 Subscription (~$39-49/mo)**:
+1. Connect GA/PostHog/Mixpanel
+2. Weekly "what changed + what to do" based on YOUR data
+3. Fresh competitor monitoring
+4. ICP generator (quick add)
+
+### Immediate Actions
+
+- [ ] Update homepage examples: Tech/SaaS first, e-commerce second, service third
+- [ ] Adjust trust badges to "SaaS, e-commerce, consultants"
+- [ ] Continue Reddit presence in r/SaaS, r/solopreneur, r/ecommerce
+
+### The Math
+
+You don't need to win the market. You need 200-500 customers/month.
+
+| Customers/mo | Revenue | Cost (~$2.50/run) | Profit |
+|--------------|---------|-------------------|--------|
+| 200 | $5,800 | $500 | **$5,300** |
+| 500 | $14,500 | $1,250 | **$13,250** |
+
+Distribution > features. Whoever finds customers wins.
+
+---
+
+## Brand Voice Pivot - Direct Strategist
+
+**Jan 24, 2026** - Shifted brand voice from "friendly hand-holding expert" to "direct strategist who respects your intelligence."
+
+### Why the Change
+
+The SMB-focused warm voice ("Let's figure it out together") didn't fit:
+1. **Audience unreachable**: SMBs require webinars, video, personal brand — founder won't/can't do this
+2. **Founder personality mismatch**: Natural style is blunt, direct, helpful — not warm and hand-holdy
+3. **New audience fit**: SaaS founders/solopreneurs don't want hand-holding, they want answers
+
+### Voice Shift
+
+| FROM (Jan 23) | TO (Jan 24) |
+|---------------|-------------|
+| "Stuck on marketing? Let's figure it out together." | "Stop guessing. Get a marketing plan that works." |
+| Warm, hand-holding | Direct, confident |
+| Explains everything in plain English | Respects their intelligence (they know AARRR) |
+| "Don't worry, we've got you" | "Here's exactly what to do" |
+| Caregiver archetype | Sage/Creator archetype (Notion, Linear energy) |
+
+### Distribution Strategy (Confirmed)
+
+Channels that work for a solo founder who won't do video:
+- **Reddit**: r/SaaS, r/solopreneur, r/startups, r/Entrepreneur
+- **Twitter/X**: Build in public, opinions, output screenshots
+- **Written content**: SEO articles, guest posts
+- **Product Hunt / Indie Hackers**: Launches, milestones
+- **Product as proof**: Share real outputs, let quality speak
+
+### Files Updated
+- `memory-bank/product.md` - Brand voice, personality, copy patterns, landing page content
+- `memory-bank/decisions.md` - New "Brand Voice: Direct Strategist" section
+
+### Next Steps
+- [ ] Update landing page copy to match new voice
+- [ ] Design free lead magnet for this audience (Market Pulse or similar)
+- [ ] Begin Reddit participation strategy
+
+---
+
+## Previous: Dashboard Overhaul - Soft SaaS Aesthetic
+
+**Completed Jan 23, 2026** - Full visual and copy overhaul of dashboards to match SMB-friendly brand voice (voice now superseded by pivot above).
 
 ### Design Direction: Light Skeuomorphism
 
@@ -92,7 +209,7 @@ Multi-select chip input for competitive alternatives (Dunford's core positioning
 
 #### 4. Growth-Hacker Subagent Updated
 
-Updated `CLAUDE.md` subagent with Dunford + Gerhardt expertise for building Actionboo.st itself.
+Updated `CLAUDE.md` subagent with Dunford + Gerhardt expertise for building Boost itself.
 
 ### Files Added
 - `src/components/forms/AlternativesInput.tsx` - Multi-select chip component
@@ -826,7 +943,7 @@ src/components/forms/
 ### Pipeline V2: Competitive Intelligence Upgrade (Priority)
 **Full plan:** `memory-bank/projects/pipeline-v2-plan.md`
 
-Major upgrade transforming Actionboo.st from "AI growth strategist" to "competitive intelligence platform."
+Major upgrade transforming Boost from "AI growth strategist" to "competitive intelligence platform."
 
 **Key changes:**
 - Price: $9.99 → $39

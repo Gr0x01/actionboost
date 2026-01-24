@@ -4,28 +4,34 @@ Key architectural and product decisions. Reference this when you need to underst
 
 ---
 
-## Target Audience: SMBs, Not Founders (Jan 23 2026)
+## Target Audience: Tech-Adjacent Entrepreneurs (Jan 24 2026)
 
-**Decision**: Pivot from indie hackers/startup founders to small business owners (SMBs).
+**Decision**: Pivot from pure SMBs to tech-adjacent entrepreneurs who can find and buy tools.
 
 **Why the change**:
-- "Cheap, just try it" ($9.99) messaging attracted tire-kickers, not buyers
-- Build-in-public content reached founders who could build this themselves
-- Reddit validation: A salon owner and niche e-commerce seller (lip balm for equestrians) both found real value in the output
-- These SMBs can't build their own AI tools — they just want the answer
+- Ran Boost on itself → discovered Enji.co, a direct competitor that 4 years of searching never found
+- Enji has been targeting SMBs for 4+ years with ~12 people, still only 1.5K monthly organic visits
+- SMBs (salons, local services) are extremely hard to reach online
+- SaaS/solopreneur subreddits are FULL of marketing questions — proven, active demand
+- These audiences can actually FIND tools (unlike traditional SMBs)
+- They won't build their own version (unlike pure indie hackers)
 
-**New target audience**:
-- Salon owners, local service businesses
-- Niche e-commerce (Etsy sellers, specialty products)
-- Small business owners who are stuck on marketing
+**New target audience (in priority order)**:
+1. **SaaS founders / solopreneurs** — r/SaaS, r/solopreneur, Twitter. Need marketing help, won't build this
+2. **E-commerce / Shopify** — r/ecommerce, r/shopify. Tech-savvy, buy tools
+3. **Service businesses** — consultants, agencies, freelancers who find us (self-selecting)
+
+**What this means**:
+- Homepage examples: Tech/SaaS first, then e-commerce, then service business
+- Channels: Reddit (r/SaaS, r/solopreneur, r/ecommerce), Twitter, newsletters
+- Language: Can use some industry terms (these people know AARRR)
+- Design: Current soft brutalist style fits this audience well
+- Price sensitivity: More comfortable paying for tools than traditional SMBs
+
+**Previous audience (Jan 23)**:
+- Salon owners, local service businesses, Etsy sellers
 - NOT tech-savvy, NOT on founder Twitter
-
-**What changed**:
-- Price: $9.99 → $49 (serious business expense, not impulse buy)
-- Voice: Snarky founder → Friendly expert ("Let's figure it out together")
-- Frameworks: Keep AARRR/ICE but explain in plain English
-- Design: Brutalist harsh → Light skeuomorphism (softer shadows, warmer)
-- Copy: No jargon, no startup references, SMB examples (salons, not SaaS)
+- Proved too hard to reach (Enji's 4-year struggle validates this)
 
 **Homepage copy shift**:
 
@@ -61,6 +67,52 @@ Key architectural and product decisions. Reference this when you need to underst
 - Build-in-public references
 - Founder Twitter vibes
 - Emojis (absolutely never)
+
+---
+
+## Competitive Intel: Enji.co (Jan 24 2026)
+
+**Discovery**: Boost found Enji.co as a competitor that ChatGPT, Claude chat, Anthropic search, and manual searches ALL missed. Only Tavily + DataForSEO research surfaced it.
+
+**This validates the "real research" differentiator is real, not marketing fluff.**
+
+**Enji.co profile**:
+- Founded: ~2021 (4+ years)
+- Team: ~12 people
+- Monthly organic traffic: **1,537 visits** (per DataForSEO)
+- Ranking keywords: 681
+- Pricing: Free tier → $19/mo social only → $29/mo full suite
+
+**What Enji offers at $29/mo**:
+- Custom marketing strategy generator (proprietary AI)
+- Marketing calendar + task management
+- Social media scheduling
+- AI copywriter
+- Performance dashboard
+- Twice-monthly group coaching calls
+- Templates, brand tools
+
+**Key insight**: Despite 4 years, 12 people, polished marketing, and lots of features — they have NOT cracked distribution. 1.5K visits is tiny.
+
+**What this means for Boost**:
+1. **Features don't win this market** — Enji built everything, still invisible
+2. **SMBs are genuinely hard to reach** — validates pivot to tech-adjacent audience
+3. **Distribution > features** — whoever finds customers wins, not whoever has more tools
+4. **Subscription positioning matters** — don't compete on features with Enji
+
+**Enji vs Boost positioning**:
+| Enji | Boost |
+|------|-------|
+| Ongoing execution platform | One-shot strategic clarity |
+| "Tools you use" | "Intelligence that tells you what to do" |
+| Calendar, scheduler, copywriter | Research-backed direction |
+| $29/mo subscription | $29 one-shot → $49/mo subscription (different value) |
+
+**Subscription strategy (updated)**:
+- Don't compete on features — Enji has more and charges less
+- Compete on **intelligence**: connected analytics + competitor monitoring + weekly "what to do"
+- Enji: "Here are tools, go do marketing"
+- Boost: "We watch your metrics and tell you what to focus on THIS week"
 
 ---
 
@@ -544,52 +596,54 @@ npx tsx scripts/retry-run.ts <runId>
 
 ---
 
-## Brand Voice: Friendly Expert (Jan 2026)
+## Brand Voice: Direct Strategist (Jan 24 2026)
 
-**Decision**: Warm, hand-holding voice like a smart friend who knows marketing.
+**Decision**: Direct, confident voice that respects the audience's intelligence. Blunt but kind.
 
-**Core narrative**: "Stuck on marketing? Let's figure it out."
+**Core narrative**: "Stop guessing. Get a marketing plan that actually fits your business."
 
-**Why this works**:
-- Acknowledges the user's pain directly (they ARE stuck)
-- Non-intimidating, collaborative tone
-- No jargon, no posturing
-- Money-back guarantee removes risk
+**Why the change from "Friendly Expert" (Jan 23)**:
+- Original warm/hand-holding voice was designed for SMBs (salons, local services)
+- SMBs proved unreachable without webinars, video, personal brand content (see Enji case study)
+- New audience (SaaS founders, solopreneurs) doesn't want hand-holding — they want answers
+- **Founder personality fit**: The founder is naturally blunt, direct, helpful — not warm. Authentic voice > performed voice.
 
 **Voice framework**:
-- **Tone**: Friendly, helpful, like a smart friend explaining something
-- **Perspective**: First person ("Tell me about your business... I'll research...")
-- **Audience**: SMBs who are stuck, not tech-savvy founders
-- **Value**: Real research on YOUR competitors, not generic advice
+- **Tone**: Direct, confident, helpful — like a smart peer who cuts through noise
+- **Perspective**: Second person ("Here's what to do", "Your competitors are...")
+- **Audience**: Tech-adjacent founders who know marketing matters but are stuck on what to do
+- **Value**: Specific recommendations backed by real research, not generic advice
 
 **Copy patterns established**:
 
 | Element | Pattern | Example |
 |---------|---------|---------|
-| Headlines | Light/black weight contrast | "Stuck on marketing? **Let's figure it out.**" |
-| Taglines | Single value prop, conversational | "Money back if it doesn't help. Seriously." |
-| Subheads | Direct, first person, warm | "Tell me about your business... I'll build you a 30-day plan." |
-| CTAs | Action + outcome | "Get my 30-day plan" |
-| Guarantees | Bold, casual | "Didn't help? Full refund. No questions asked." |
-| Trust | Practical, specific | "Plan ready in 5 minutes · No jargon" |
+| Headlines | Direct, confident | "Stop guessing. Get a plan that works." |
+| Taglines | Outcome-focused | "Real competitor research. Specific tactics." |
+| Subheads | Specific, no fluff | "See where your competitors get traffic. Get a plan to beat them." |
+| CTAs | Action-oriented | "Get my 30-day plan" |
+| Guarantees | Bold, clear | "Money back if it doesn't help. Seriously." |
+| Trust | Audience-specific | "SaaS, e-commerce, consultants" |
 
 **What to preserve**:
-- First-person voice ("Tell me...", "I'll research...")
 - Money-back guarantee prominent
-- SMB examples (salons, e-commerce, consultants)
 - Speed promise (5 minutes)
+- Specific outcomes over vague benefits
+- Confidence in recommendations
 
 **What to avoid**:
-- Startup jargon (without plain-English explanation)
-- Founder/indie hacker references
-- Snarky or irreverent tone
+- Hand-holding language ("let's figure it out together", "don't worry")
+- Over-explaining basics (this audience gets it)
+- Startup bro energy ("crush it", "10x")
 - Emojis (absolutely never)
-- Tech-savvy assumptions
+- Hedging ("might", "could", "potentially")
+- Preachy or condescending tone
 
-**Testimonial style**:
-- Italic quote text
-- Small orange bar before attribution
-- Name format (not Twitter handles)
+**Previous voice (Jan 23 - SUPERSEDED)**:
+- "Friendly expert who simplifies marketing"
+- "Hand-holding, patient, explains things in plain English"
+- Designed for SMBs who needed reassurance
+- Didn't match founder personality or reachable audience
 
 ---
 
@@ -634,7 +688,7 @@ $29 one-shot → dashboard access (forever, static)
 - Agencies: $2000+/mo (out of reach)
 - ChatGPT: Free but generic, no research
 
-**Nobody does what Boost does**: Personalized marketing strategy with live competitive research for SMBs. Content tools exist. Strategy tools for SMBs at this price point don't.
+**Nobody does what we do**: Personalized marketing strategy with live competitive research for SMBs. Content tools exist. Strategy tools for SMBs at this price point don't.
 
 **Previous pricing**:
 - v0: $9.99 → zero traction, felt like garbage
@@ -684,7 +738,7 @@ $29 one-shot → dashboard access (forever, static)
 
 ## Positioning Frameworks: Dunford + Gerhardt (Jan 23 2026)
 
-**Decision**: Add April Dunford and Dave Gerhardt positioning expertise to both the AI pipeline and the growth-hacker subagent.
+**Decision**: Add April Dunford and Dave Gerhardt positioning expertise to both the Boost AI pipeline and the growth-hacker subagent.
 
 **Why**:
 - The pipeline was jumping straight to tactics without assessing positioning clarity

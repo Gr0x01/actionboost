@@ -1,4 +1,4 @@
-# Product: Actionboo.st
+# Product: Boost
 
 ## Value Prop
 
@@ -12,24 +12,37 @@ Tell us about your business. We research your competitors, analyze what's workin
 
 ### Core Narrative
 
-**"Stuck on marketing? Let's figure it out together."**
+**"Stop guessing. Get a marketing plan that actually fits your business."**
 
-The friendly marketing expert who does the research for you. Real competitor data, practical recommendations, no jargon.
+The direct strategist who does the research and tells you exactly what to do. Real competitor data, specific recommendations, no fluff.
 
 ### Target Audience
 
-**Small business owners** — salons, local services, niche e-commerce. People who are stuck on marketing and don't have time to become marketing experts.
+**Tech-adjacent entrepreneurs** — people who can find and buy tools, but won't build their own.
+
+**Primary segments (in order):**
+1. **SaaS founders / solopreneurs** — active in r/SaaS, r/solopreneur, Twitter. Know they need marketing help, won't build this themselves
+2. **E-commerce / Shopify** — r/ecommerce, r/shopify. Tech-savvy, comfortable buying tools
+3. **Service businesses** — consultants, agencies, freelancers who find us (self-selecting for tech comfort)
+
+**Why this audience (Jan 24 2026 pivot):**
+- SMBs (salons, local services) are hard to reach — Enji.co tried for 4+ years with 12 people, still only 1.5K monthly visits
+- SaaS/solopreneur subreddits are FULL of marketing questions — proven demand
+- These audiences can actually FIND tools online (unlike traditional SMBs)
+- They won't build their own version (unlike pure indie hackers)
+- Current design already appeals to them
+- **Founder personality fit**: Blunt, direct, helpful — matches this audience better than warm hand-holding
 
 ### The Personality
 
-**Actionboo.st = the friendly expert who simplifies marketing.** Hand-holding, patient, explains things in plain English.
+**Boost = the direct strategist who respects your intelligence.** Blunt, practical, tells you exactly what to do.
 
 **5 traits:**
-1. **Encouraging** — believes you can grow, meets you where you are
+1. **Direct** — gets to the point, respects your time
 2. **Practical** — focused on what you can actually do this week
-3. **Research-backed** — pulls real data, explains it simply
-4. **No jargon** — explains frameworks in plain English (AARRR → "Finding you, Trying you, Coming back, Telling friends, Paying you")
-5. **Trustworthy** — honest about what works and what doesn't
+3. **Research-backed** — pulls real data, shows the receipts
+4. **Honest** — tells you what's working AND what's not (even if it stings)
+5. **Helpful** — genuinely wants you to succeed, not just sell you something
 
 ### Competitive Alternatives (Dunford Positioning)
 
@@ -46,49 +59,50 @@ The friendly marketing expert who does the research for you. Real competitor dat
 
 | We sound like | We don't sound like |
 |---------------|---------------------|
-| Friendly marketing expert | Startup bro |
-| Smart friend who knows marketing | LinkedIn influencer |
-| "Let's figure this out together" | "Here's what you're doing wrong" |
-| Hand-holding, patient | Impatient, condescending |
+| Smart peer who cuts through the noise | Startup bro |
+| Direct strategist with receipts | LinkedIn influencer |
+| "Here's exactly what to do" | "It depends..." |
+| Confident, helpful | Condescending, preachy |
 
-**Words we use:** plan, together, your business, this week, simple, practical, real, competitors, let's
+**Words we use:** plan, specific, your business, this week, here's what, stop, start, data, competitors, exactly
 
-**Words we avoid:** leverage, optimize, scale, transform, journey, solution, cutting-edge, empower, unlock, hack, growth hacking
+**Words we avoid:** leverage, optimize, scale, transform, journey, solution, cutting-edge, empower, unlock, hack, growth hacking, "let's figure it out together" (too hand-holdy)
 
 ### Copy Patterns (Jan 2026)
 
 | Element | Pattern | Example |
 |---------|---------|---------|
-| Headlines | Warm, direct | "Stuck on marketing? Let's figure it out." |
-| Subheads | Reassuring | "We'll research your competitors and build a plan just for you." |
-| CTAs | Collaborative | "Get my 30-day plan", "Let's get started" |
+| Headlines | Direct, confident | "Stop guessing. Get a plan that works." |
+| Subheads | Specific, outcome-focused | "Real competitor research. Specific tactics. Ready to execute." |
+| CTAs | Action-oriented | "Get my 30-day plan", "See what's working" |
 | Guarantees | Clear, near CTA | "Money back if it doesn't help. Seriously." |
-| Trust | Specific examples | "Salons, e-commerce, consultants" |
-| Labels | Sentence case, friendly | "Your marketing plans" not "YOUR ACTION PLANS" |
+| Trust | Specific audiences | "SaaS, e-commerce, consultants" |
+| Labels | Sentence case, clean | "Your marketing plans" not "YOUR ACTION PLANS" |
 
 ### Copy Rules
 
-1. **Lead with empathy** — Acknowledge they're stuck, not failing
+1. **Lead with the problem** — They know they're stuck, get to the solution
 2. **Be specific over vague** — "See where competitors get their traffic" not "understand your competitive landscape"
 3. **Use active voice** — "We research your competitors" not "Competitor analysis is performed"
-4. **Use "we" and "together"** — Collaborative, not transactional
-5. **Explain jargon** — If you must use a term, define it immediately
+4. **Respect their intelligence** — They know marketing matters, don't over-explain
+5. **Industry terms are fine** — This audience knows AARRR, CAC, etc. (but still avoid jargon for jargon's sake)
 6. **Price + guarantee together** — Removes risk, makes decision easy
-7. **Use sentence case** — Friendly, not shouty
-8. **Sound human** — "Here's what we found" not "Analysis complete"
+7. **Use sentence case** — Clean, not shouty
+8. **Sound confident** — "Here's what to do" not "Here's what you might consider"
 9. **Show the outcome** — "A plan you can start tomorrow" not "Comprehensive strategy document"
-10. **Be encouraging** — "Ready to grow?" not "Stop wasting time"
+10. **Be direct** — "Stop doing X" not "You might want to reconsider X"
 
 ### What NOT to do
 
-- Don't mention what AI model powers it (technical flex, wrong audience)
-- Don't use ALL CAPS labels (shouty, unfriendly)
-- Don't use jargon without explanation (ICE scores, AARRR without context)
+- Don't mention what AI model powers it (irrelevant to outcome)
+- Don't use ALL CAPS labels (shouty)
+- Don't over-explain basics (this audience gets it)
 - Don't use exclamation points (tryhard energy)
 - Don't hedge ("might" "could" "potentially") — commit to what we deliver
 - Don't use emojis
 - Don't sound like a startup bro ("crush it", "10x", "hack")
-- Don't be condescending about their current efforts
+- Don't be warm/hand-holdy ("let's figure it out together", "don't worry")
+- Don't be preachy or condescending
 
 ---
 
@@ -116,16 +130,21 @@ Subtle "Just want a taste?" option at checkout → 4-section condensed audit →
 ## Landing Page Content
 
 ### Hero
-- Headline: "Stuck on marketing? Let's figure it out."
-- Subhead: We research your competitors and build a 30-day plan just for your business. Real data, practical steps.
+- Headline: "Stop guessing. Get a marketing plan that works."
+- Subhead: Real competitor research. Specific tactics. A 30-day plan you can actually execute.
 - Trust line: "Money back if it doesn't help. Seriously."
-- Trust badges: "Plan ready in 5 minutes. No jargon. Salons, e-commerce, consultants."
+- Trust badges: "Plan ready in 5 minutes. SaaS, e-commerce, consultants."
 - CTA: "Get my 30-day plan"
 
+### Homepage Examples (priority order)
+1. **Tech/SaaS** — first, catches the most reachable audience
+2. **E-commerce/Shopify** — second, tech-savvy buyers
+3. **Service business** — third, consultants/agencies who found us
+
 ### Pain → Solution Flow
-1. **Acknowledge the pain**: "Marketing feels overwhelming. You've tried different things but nothing seems to stick."
-2. **Show the difference**: "We research what's actually working for businesses like yours."
-3. **Deliver the outcome**: "A clear plan you can start tomorrow. What to focus on, what to skip."
+1. **Name the problem**: "You know marketing matters. You just don't know what to do next."
+2. **Show the difference**: "We research your competitors and tell you exactly what's working."
+3. **Deliver the outcome**: "A specific plan. What to stop. What to start. What to do this week."
 
 ### What You Get
 - Your competitors' actual traffic sources

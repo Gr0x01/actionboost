@@ -6,18 +6,18 @@ import { ArrowRight, Check } from "lucide-react";
 export const metadata: Metadata = {
   title: "About | Boost",
   description:
-    "We help small businesses figure out marketing. Real research on your competitors, turned into a plan you can actually follow.",
+    "Real competitor research. A 30-day marketing plan you can actually execute. Built for founders who know marketing matters but need to know what to do next.",
   openGraph: {
     title: "About Boost",
     description:
-      "We help small businesses figure out marketing. Real research on your competitors, turned into a plan you can actually follow.",
+      "Real competitor research. A 30-day marketing plan you can actually execute. Built for founders who know marketing matters but need to know what to do next.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "About Boost",
     description:
-      "We help small businesses figure out marketing. Real research on your competitors, turned into a plan you can actually follow.",
+      "Real competitor research. A 30-day marketing plan you can actually execute. Built for founders who know marketing matters but need to know what to do next.",
   },
 };
 
@@ -31,36 +31,35 @@ export default function AboutPage() {
           {/* Hero Section */}
           <section className="mb-12">
             <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground mb-6">
-              We help small businesses figure out&nbsp;marketing
+              Real competitor research. A plan you can&nbsp;execute.
             </h1>
             <p className="text-xl text-foreground/70 leading-relaxed max-w-2xl">
-              Real research on your competitors. A 30-day plan you can actually
-              follow. No jargon, no fluff.
+              You know marketing matters. You just need to know what to do next.
+              We research your competitors and tell you exactly what&apos;s working.
             </p>
           </section>
 
           {/* The Problem We Solve */}
           <section className="mb-12 space-y-6">
             <h2 className="text-2xl font-bold text-foreground">
-              Marketing advice is broken
+              Generic advice doesn&apos;t work
             </h2>
             <div className="space-y-4 text-foreground/70 leading-relaxed">
               <p>
-                You&apos;ve probably tried asking ChatGPT for marketing help.
-                You got the same advice everyone else gets. &quot;Post on social
-                media.&quot; &quot;Build an email list.&quot; Great. But what
+                ChatGPT tells everyone the same thing. &quot;Post on social
+                media.&quot; &quot;Build an email list.&quot; But what
                 should <em>you</em> do, specifically, this week?
               </p>
               <p>
-                Most marketing advice is either generic (one-size-fits-all blog
-                posts) or expensive (agencies charging thousands per month).
+                Most marketing advice is either generic (one-size-fits-all) or
+                expensive (agencies at $2K+/month).
               </p>
               <p>
                 <strong className="text-foreground">
-                  We built Boost to fill the gap.
+                  Boost fills the gap.
                 </strong>{" "}
-                Real research on your competitors, your market, turned into a
-                30-day plan you can actually follow.
+                We research your actual competitors and market, then give you a
+                specific 30-day plan. What to stop. What to start. What to do this week.
               </p>
             </div>
           </section>
@@ -79,11 +78,11 @@ export default function AboutPage() {
                   <Check className="w-5 h-5 text-cta shrink-0 mt-0.5" />
                   <div>
                     <p className="font-semibold text-foreground">
-                      We research your actual competitors
+                      Real competitor research
                     </p>
                     <p className="text-foreground/60 text-sm">
-                      Not generic advice. We look at what&apos;s working for
-                      businesses like yours.
+                      We analyze your actual competitors — their traffic sources,
+                      positioning, what&apos;s working for them.
                     </p>
                   </div>
                 </div>
@@ -91,10 +90,11 @@ export default function AboutPage() {
                   <Check className="w-5 h-5 text-cta shrink-0 mt-0.5" />
                   <div>
                     <p className="font-semibold text-foreground">
-                      Plain English, no marketing speak
+                      Specific, not generic
                     </p>
                     <p className="text-foreground/60 text-sm">
-                      We explain what to do and why. No acronyms, no jargon.
+                      You get tactics for your business, your stage, your market.
+                      Not one-size-fits-all advice.
                     </p>
                   </div>
                 </div>
@@ -102,11 +102,11 @@ export default function AboutPage() {
                   <Check className="w-5 h-5 text-cta shrink-0 mt-0.5" />
                   <div>
                     <p className="font-semibold text-foreground">
-                      A plan you can start today
+                      Ready to execute
                     </p>
                     <p className="text-foreground/60 text-sm">
-                      30 days of specific actions, prioritized by what will move
-                      the needle.
+                      30 days of prioritized actions. What to stop, what to start,
+                      what to do this week.
                     </p>
                   </div>
                 </div>
@@ -117,11 +117,11 @@ export default function AboutPage() {
           {/* Who We Help */}
           <section className="mb-12">
             <h2 className="text-2xl font-bold text-foreground mb-4">
-              Built for small businesses
+              Built for founders who ship
             </h2>
             <p className="text-foreground/70 leading-relaxed mb-6">
-              We work with people who are good at what they do, but don&apos;t
-              have time to become marketing experts.
+              You know how to build. You know marketing matters. You just need
+              to know what to do next.
             </p>
             <div className="grid sm:grid-cols-2 gap-4">
               <div
@@ -129,10 +129,10 @@ export default function AboutPage() {
                 style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)" }}
               >
                 <p className="font-semibold text-foreground mb-1">
-                  Salons and spas
+                  SaaS founders
                 </p>
                 <p className="text-sm text-foreground/60">
-                  Figuring out Instagram vs. Google, getting more bookings
+                  Product-market fit questions, acquisition channels, positioning
                 </p>
               </div>
               <div
@@ -140,10 +140,10 @@ export default function AboutPage() {
                 style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)" }}
               >
                 <p className="font-semibold text-foreground mb-1">
-                  E-commerce shops
+                  E-commerce brands
                 </p>
                 <p className="text-sm text-foreground/60">
-                  Deciding where to spend ad budget, standing out on Etsy
+                  Ad spend allocation, differentiation, scaling what works
                 </p>
               </div>
               <div
@@ -151,10 +151,10 @@ export default function AboutPage() {
                 style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)" }}
               >
                 <p className="font-semibold text-foreground mb-1">
-                  Consultants and coaches
+                  Solopreneurs
                 </p>
                 <p className="text-sm text-foreground/60">
-                  LinkedIn vs. email, getting referrals, building authority
+                  Limited time, need to focus on high-impact channels
                 </p>
               </div>
               <div
@@ -162,10 +162,10 @@ export default function AboutPage() {
                 style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)" }}
               >
                 <p className="font-semibold text-foreground mb-1">
-                  Local services
+                  Consultants and agencies
                 </p>
                 <p className="text-sm text-foreground/60">
-                  Getting found online, beating competitors in your area
+                  Lead gen, authority building, referral systems
                 </p>
               </div>
             </div>
@@ -191,12 +191,11 @@ export default function AboutPage() {
                     Hey, I&apos;m Rashaad
                   </h2>
                   <p className="text-foreground/70 leading-relaxed">
-                    I spent 10+ years in product design, helping companies
-                    figure out what to build. Now I&apos;m using that same
-                    research-first approach to help small businesses figure out
-                    marketing. Behind Boost is a small team that actually reads
-                    what you submit. If your plan doesn&apos;t help, we&apos;ll
-                    refund you.
+                    10+ years in product design, helping companies figure out
+                    what to build. Now I&apos;m applying that same research-first
+                    approach to marketing strategy. Boost does the competitive
+                    research and gives you a specific plan. If it doesn&apos;t
+                    help, full refund.
                   </p>
                 </div>
               </div>
@@ -236,11 +235,11 @@ export default function AboutPage() {
               style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)" }}
             >
               <h2 className="text-2xl font-black text-foreground">
-                Ready to get unstuck?
+                Stop guessing. Get a plan.
               </h2>
               <p className="text-foreground/70 max-w-md mx-auto">
-                Tell us about your business. Get a 30-day marketing plan built
-                on real research. Money back if it doesn&apos;t help.
+                Real competitor research. A 30-day plan you can execute.
+                Money back if it doesn&apos;t help.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
                 <Link href="/start">
