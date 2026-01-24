@@ -84,23 +84,20 @@ export function calculateApiCost(
 }
 
 /**
- * Track an API call to PostHog (fire-and-forget)
- * Never awaited - should not block business logic
+ * Track an API call to PostHog
+ * Must await flush in serverless environments or events won't be sent
  */
-export function trackApiCall(
+export async function trackApiCall(
   distinctId: string,
   properties: ApiCallProperties
-): void {
+): Promise<void> {
   try {
     posthog?.capture({
       distinctId,
       event: 'api_call',
       properties,
     })
-    // Fire-and-forget - don't await flush for API tracking
-    posthog?.flush().catch(() => {
-      // Silently ignore flush errors for API tracking
-    })
+    await posthog?.flush()
   } catch {
     // Silently ignore - API tracking should never break business logic
   }
