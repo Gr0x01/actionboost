@@ -8,6 +8,8 @@ interface MarkdownContentProps {
   extended?: boolean;
   /** Optional prefix for heading IDs (for uniqueness across sections) */
   idPrefix?: string;
+  /** Skip rendering horizontal rules */
+  skipHr?: boolean;
 }
 
 /** Generate a URL-friendly slug from heading text */
@@ -50,7 +52,7 @@ function parseIceScore(text: string): { impact: number; confidence: number; ease
  * Handles: headers (###), bold (**), italic (*), lists (- or *), numbered lists, paragraphs, horizontal rules
  * Extended mode adds: tables, code blocks, ICE badges
  */
-export function MarkdownContent({ content, className = "", extended = false, idPrefix = "" }: MarkdownContentProps) {
+export function MarkdownContent({ content, className = "", extended = false, idPrefix = "", skipHr = false }: MarkdownContentProps) {
   const lines = content.split("\n");
   const elements: React.ReactNode[] = [];
   let currentList: { type: "ul" | "ol"; items: string[] } | null = null;
@@ -392,12 +394,14 @@ export function MarkdownContent({ content, className = "", extended = false, idP
     // Horizontal rule: --- or more dashes
     if (/^-{3,}$/.test(trimmed)) {
       flushList();
-      elements.push(
-        <hr
-          key={keyIndex++}
-          className="my-10 border-t border-border/40"
-        />
-      );
+      if (!skipHr) {
+        elements.push(
+          <hr
+            key={keyIndex++}
+            className="my-10 border-t border-border/40"
+          />
+        );
+      }
       continue;
     }
 
