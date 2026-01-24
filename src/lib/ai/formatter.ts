@@ -13,7 +13,7 @@ import type { ResearchData } from './pipeline-agentic'
 // Sonnet for reliable extraction (understands intent, not just examples)
 const FORMATTER_MODEL = 'claude-sonnet-4-20250514'
 const FORMATTER_MAX_TOKENS = 16000 // Set high - extraction includes 28 days + priorities + positioning + metrics
-const FORMATTER_TIMEOUT_MS = 90000 // 90s - some extractions take ~50s
+const FORMATTER_TIMEOUT_MS = 150000 // 150s - some extractions timeout at 90s
 
 /**
  * Build research data section for the prompt
