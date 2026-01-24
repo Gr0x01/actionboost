@@ -1,7 +1,7 @@
 /**
- * Generate Actionboo.st's own marketing plan
+ * Generate Boost's own marketing plan
  *
- * This script runs the agentic pipeline on Actionboo.st itself,
+ * This script runs the agentic pipeline on Boost itself,
  * saving both the markdown output and structured_output JSON
  * for use in the blog post at /blog/our-growth-plan
  *
@@ -19,7 +19,7 @@ import type { RunInput, ResearchContext } from '../src/lib/ai/types'
 
 // Updated for SMB positioning (January 2026)
 const ACTIONBOOST_INPUT: RunInput = {
-  productDescription: `Actionboo.st creates 30-day marketing plans for small business owners who are stuck.
+  productDescription: `Boost creates 30-day marketing plans for small business owners who are stuck.
 
 Target audience: Salons, local service businesses, niche e-commerce shops. People who know they need to market but don't have time to become marketing experts.
 
@@ -83,7 +83,7 @@ Content strategy: Show real examples of Boost output to prove value.`,
 }
 
 async function main() {
-  console.log('=== Generating Actionboo.st Marketing Plan ===\n')
+  console.log('=== Generating Boost Marketing Plan ===\n')
 
   // Verify environment
   const required = ['ANTHROPIC_API_KEY', 'TAVILY_API', 'DATAFORSEO_LOGIN', 'DATAFORSEO_PASSWORD']

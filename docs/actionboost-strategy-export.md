@@ -2,14 +2,14 @@ I have gathered substantial data. Now let me synthesize everything into your com
 
 ---
 
-# Actionboo.st Growth Strategy
+# Boost Growth Strategy
 ## Acquisition-Focused 30-Day Plan to Reach 50 Paying Customers
 
 ---
 
 ## Executive Summary
 
-Actionboo.st occupies a unique position in an increasingly crowded AI marketing tools market: you deliver personalized, research-backed strategy rather than generic content generation. Your competitors (Copy.ai at 161K monthly organic visits, Jasper.ai at 207K, Easy-Peasy.ai at 189K) dominate broad "AI writing" keywords but serve an entirely different use case. They help people write faster; you help people know what to write and where to focus. This is a critical distinction that should shape your entire messaging and channel strategy.
+Boost occupies a unique position in an increasingly crowded AI marketing tools market: you deliver personalized, research-backed strategy rather than generic content generation. Your competitors (Copy.ai at 161K monthly organic visits, Jasper.ai at 207K, Easy-Peasy.ai at 189K) dominate broad "AI writing" keywords but serve an entirely different use case. They help people write faster; you help people know what to write and where to focus. This is a critical distinction that should shape your entire messaging and channel strategy.
 
 The SMB pivot was correct. Reddit discussions reveal a consistent pain point: small business owners feeling "overwhelmed," "paralyzed," and "stuck" on marketing, not lacking tools but lacking direction. Marketing consultants charge $125-399/hour; you offer a complete 30-day roadmap for $49. The value proposition is clear, but your challenge is reaching people at the moment of frustration before they either give up or hire an expensive consultant. Your target customers (salon owners, local services, niche e-commerce) are active in specific subreddits, Facebook groups, and industry forums, but they are not searching for "AI marketing plan generator."
 
@@ -124,7 +124,7 @@ Salon owners, estheticians, cleaning business owners - they congregate in privat
 
 ## Channel Strategy
 
-| Channel | Fit for Actionboo.st | Effort | Expected CAC | Priority |
+| Channel | Fit for Boost | Effort | Expected CAC | Priority |
 |---------|---------------------|--------|--------------|----------|
 | **Reddit (SMB subs)** | High - target audience asking your exact question | Medium | $0-5 (time only) | **1st** |
 | **Facebook Groups (industry-specific)** | High - salon owners, service businesses congregate here | Medium | $0-5 (time only) | **2nd** |
