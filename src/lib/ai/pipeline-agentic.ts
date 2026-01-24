@@ -1143,7 +1143,7 @@ export type AgenticStrategyResult = {
  */
 export async function generateStrategyAgentic(
   input: RunInput,
-  _research: ResearchContext, // Ignored - agentic fetches its own data
+  _research?: ResearchContext | null, // Ignored - agentic fetches its own data
   userHistory?: UserHistoryContext | null,
   onStageUpdate?: StageCallback,
   runId?: string,

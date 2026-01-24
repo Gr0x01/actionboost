@@ -85,7 +85,7 @@ function AARRRContent() {
       </div>
 
       <p className="text-foreground/80 leading-relaxed">
-        <span className="font-bold text-foreground">Primary leak:</span> Referral. Users who love the product aren't sharing it.{" "}
+        <span className="font-bold text-foreground">Primary leak:</span> Referral. Users who love the product aren&apos;t sharing it.{" "}
         <span className="font-bold text-foreground">Secondary leak:</span> Acquisition. Zero organic traffic pipeline.
       </p>
     </>
@@ -170,7 +170,7 @@ function OutputContent() {
             <span className="font-mono text-xs bg-foreground text-background px-2 py-1 h-fit rounded font-bold">D5-7</span>
             <div>
               <p className="font-semibold text-foreground text-sm">Launch on Indie Hackers</p>
-              <p className="text-foreground/60 text-sm">"We ran our AI growth tool on ourselves" — first paying customers</p>
+              <p className="text-foreground/60 text-sm">&ldquo;We ran our AI growth tool on ourselves&rdquo; — first paying customers</p>
             </div>
           </div>
         </div>

@@ -85,7 +85,7 @@ export function RefinementIndicator({
                 <X className="h-4 w-4" />
               </button>
               <p className="font-semibold text-sm text-foreground mb-1">
-                You're ready to go.
+                You&apos;re ready to go.
               </p>
               <p className="text-xs text-foreground/60">
                 Both refinements used. Your strategy is solid — time to focus on doing instead of planning.

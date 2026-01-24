@@ -44,9 +44,6 @@ export function TaskGrid({
   onReset,
   excludeIndex,
 }: TaskGridProps) {
-  // Group tasks by day and track which days we've seen
-  let lastDay = 0
-
   // Filter out skipped tasks and the excluded index (hero task)
   const visibleTasks = tasks
     .map((task, i) => ({ task, index: i }))
@@ -57,14 +54,18 @@ export function TaskGrid({
       return true
     })
 
-  if (visibleTasks.length === 0) return null
+  // Pre-compute which tasks should show day labels (first task of each day)
+  const tasksWithDayLabels = visibleTasks.map((item, idx) => ({
+    ...item,
+    showDayLabel: idx === 0 || item.task.day !== visibleTasks[idx - 1].task.day,
+  }))
+
+  if (tasksWithDayLabels.length === 0) return null
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-max">
-      {visibleTasks.map(({ task, index: taskIndex }) => {
+      {tasksWithDayLabels.map(({ task, index: taskIndex, showDayLabel }) => {
         const status = taskStates[taskIndex] ?? 'pending'
-        const showDayLabel = task.day !== lastDay
-        lastDay = task.day
 
         return (
           <React.Fragment key={taskIndex}>

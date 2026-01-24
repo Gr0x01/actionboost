@@ -61,7 +61,23 @@ export function HeroForm() {
   const posthog = usePostHog();
 
   const [currentStep, setCurrentStep] = useState<Step>("traction");
-  const [form, setForm] = useState<FormInput>(INITIAL_FORM_STATE);
+  // Initialize form from localStorage if available (lazy initial state)
+  const [form, setForm] = useState<FormInput>(() => {
+    if (typeof window === "undefined") return INITIAL_FORM_STATE;
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === "object") {
+          if (!Array.isArray(parsed.alternatives)) parsed.alternatives = [];
+          return { ...INITIAL_FORM_STATE, ...parsed };
+        }
+      }
+    } catch {
+      // Invalid JSON - use default
+    }
+    return INITIAL_FORM_STATE;
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState("");
@@ -97,21 +113,7 @@ export function HeroForm() {
     fetchCredits();
   }, []);
 
-  // Load from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (parsed && typeof parsed === "object") {
-          if (!Array.isArray(parsed.alternatives)) parsed.alternatives = [];
-          setForm({ ...INITIAL_FORM_STATE, ...parsed });
-        }
-      } catch {
-        // Invalid JSON
-      }
-    }
-  }, []);
+  // Note: localStorage loading is now handled via lazy initial state in useState above
 
   // Save to localStorage
   useEffect(() => {

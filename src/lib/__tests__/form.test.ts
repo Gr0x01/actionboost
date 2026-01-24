@@ -17,13 +17,14 @@ describe("getTotalCharCount", () => {
       ...INITIAL_FORM_STATE,
       productDescription: "12345", // 5
       currentTraction: "123", // 3
-      tacticsAndResults: "12", // 2
+      alternatives: ["ab", "cd"], // 4 (joined: "abcd")
       competitors: ["a", "bb", "ccc"], // 6
       websiteUrl: "1234", // 4
       analyticsSummary: "12345678", // 8
       constraints: "1", // 1
     }
-    expect(getTotalCharCount(form)).toBe(29)
+    // 5 + 3 + 4 + 6 + 4 + 8 + 1 = 31
+    expect(getTotalCharCount(form)).toBe(31)
   })
 
   it("handles empty competitors array elements", () => {
@@ -42,6 +43,7 @@ describe("validateForm", () => {
     productDescription: "A SaaS product for managing widgets",
     currentTraction: "100 users, $1k MRR",
     tacticsAndResults: "Tried content marketing, mixed results",
+    alternatives: ["wing-it", "google"],
   }
 
   it("passes validation for complete form", () => {
@@ -61,16 +63,17 @@ describe("validateForm", () => {
     expect(errors.currentTraction).toBeDefined()
   })
 
-  it("requires tacticsAndResults for new users", () => {
-    const form = { ...validForm, tacticsAndResults: "" }
+  it("requires alternatives for new users", () => {
+    const form = { ...validForm, alternatives: [] }
     const errors = validateForm(form, false) // isReturningUser = false
-    expect(errors.tacticsAndResults).toBeDefined()
+    expect(errors.alternatives).toBeDefined()
   })
 
-  it("does not require tacticsAndResults for returning users", () => {
-    const form = { ...validForm, tacticsAndResults: "" }
+  it("still requires alternatives for returning users", () => {
+    const form = { ...validForm, alternatives: [] }
     const errors = validateForm(form, true) // isReturningUser = true
-    expect(errors.tacticsAndResults).toBeUndefined()
+    // alternatives is always required regardless of user status
+    expect(errors.alternatives).toBeDefined()
   })
 
   it("rejects whitespace-only fields", () => {
