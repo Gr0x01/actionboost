@@ -1065,6 +1065,7 @@ export async function generateAgenticStrategy(
                 })
                 break
               case 'seo':
+                console.log(`[Agentic] Accumulating SEO: ${toolResult.data.domain} (traffic=${toolResult.data.traffic}, keywords=${toolResult.data.keywords})`)
                 researchData.seoMetrics.push({
                   domain: toolResult.data.domain,
                   traffic: toolResult.data.traffic,
@@ -1084,7 +1085,13 @@ export async function generateAgenticStrategy(
                   contentSummary: toolResult.data.contentSummary,
                 })
                 break
+              default:
+                // Defensive: log if we ever add new tool types without updating accumulation
+                console.warn(`[Agentic] Unknown tool data type: ${(toolResult.data as { type: string }).type}`)
             }
+          } else if (block.name === 'seo' || block.name === 'search') {
+            // Log when SEO/search tools don't return structured data (indicates error path)
+            console.warn(`[Agentic] Tool ${block.name} returned no structured data (error path?)`)
           }
 
           return { id: block.id, result: toolResult.text }
@@ -1483,6 +1490,7 @@ export async function generateAgenticRefinement(
                 })
                 break
               case 'seo':
+                console.log(`[Agentic] Accumulating SEO: ${toolResult.data.domain} (traffic=${toolResult.data.traffic}, keywords=${toolResult.data.keywords})`)
                 researchData.seoMetrics.push({
                   domain: toolResult.data.domain,
                   traffic: toolResult.data.traffic,

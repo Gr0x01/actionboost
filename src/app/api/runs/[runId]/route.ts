@@ -21,10 +21,10 @@ export async function GET(
 
   const supabase = createServiceClient();
 
-  // Fetch the run (include structured_output)
+  // Fetch the run (include structured_output and research_data for lazy backfill)
   const { data: run, error } = await supabase
     .from("runs")
-    .select("id, status, input, output, share_slug, completed_at, created_at, user_id, refinements_used, parent_run_id, structured_output")
+    .select("id, status, input, output, share_slug, completed_at, created_at, user_id, refinements_used, parent_run_id, structured_output, research_data")
     .eq("id", runId)
     .single();
 
@@ -80,12 +80,14 @@ export async function GET(
   const structuredOutput = run.structured_output;
   if (run.status === "complete" && run.output && !structuredOutput) {
     // Fire-and-forget async extraction for lazy backfill
-    // Capture output in a const to satisfy TypeScript
+    // Capture values in consts to satisfy TypeScript
     const outputToProcess = run.output;
+    const researchDataToUse = run.research_data as import('@/lib/ai/pipeline-agentic').ResearchData | null;
     (async () => {
       try {
-        console.log(`[RunAPI] Lazy backfill: extracting structured_output for run ${runId}`);
-        const extracted = await extractStructuredOutput(outputToProcess);
+        console.log(`[RunAPI] Lazy backfill: extracting structured_output for run ${runId} (has research_data: ${!!researchDataToUse})`);
+        // Pass stored research_data if available for better extraction
+        const extracted = await extractStructuredOutput(outputToProcess, researchDataToUse || undefined);
         if (extracted) {
           await supabase
             .from("runs")

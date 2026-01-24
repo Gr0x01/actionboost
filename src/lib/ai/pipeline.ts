@@ -408,6 +408,16 @@ export async function runAgenticPipeline(runId: string): Promise<PipelineResult>
 
     // 5. Extract structured output for dashboard UI (fire-and-forget, graceful degradation)
     await onStageUpdate('Preparing your dashboard...')
+
+    // Debug: Log research data before passing to formatter
+    console.log(`[AgenticPipeline] Research data for formatter:`, {
+      searches: researchData.searches.length,
+      seoMetrics: researchData.seoMetrics.length,
+      keywordGaps: researchData.keywordGaps.length,
+      scrapes: researchData.scrapes.length,
+      seoDomainsFound: researchData.seoMetrics.map(s => s.domain),
+    })
+
     let structuredOutput = null
     try {
       structuredOutput = await extractStructuredOutput(output, researchData)
@@ -428,6 +438,7 @@ export async function runAgenticPipeline(runId: string): Promise<PipelineResult>
         stage: null,
         output,
         structured_output: structuredOutput,
+        research_data: researchData, // Store raw tool call results for debugging/re-extraction
         completed_at: new Date().toISOString(),
       })
       .eq('id', runId)
@@ -733,6 +744,7 @@ export async function runRefinementPipeline(runId: string): Promise<RefinementPi
         stage: null,
         output: result.output,
         structured_output: structuredOutput,
+        research_data: result.researchData,
         completed_at: new Date().toISOString(),
       })
       .eq('id', runId)

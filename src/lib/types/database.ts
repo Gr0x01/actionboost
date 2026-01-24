@@ -218,6 +218,7 @@ export type Database = {
           output: string | null
           parent_run_id: string | null
           refinements_used: number | null
+          research_data: Json | null
           share_slug: string | null
           source: string | null
           stage: string | null
@@ -238,6 +239,7 @@ export type Database = {
           output?: string | null
           parent_run_id?: string | null
           refinements_used?: number | null
+          research_data?: Json | null
           share_slug?: string | null
           source?: string | null
           stage?: string | null
@@ -258,6 +260,7 @@ export type Database = {
           output?: string | null
           parent_run_id?: string | null
           refinements_used?: number | null
+          research_data?: Json | null
           share_slug?: string | null
           source?: string | null
           stage?: string | null
