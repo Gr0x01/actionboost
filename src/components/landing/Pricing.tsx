@@ -75,7 +75,7 @@ export function Pricing() {
               >
                 <div>
                   <p className="font-mono text-[10px] text-cta font-bold uppercase tracking-widest mb-1">See the output</p>
-                  <p className="text-foreground font-bold text-base leading-snug">Real plans for salons, cafes,<br className="sm:hidden" /> coaches &amp; more</p>
+                  <p className="text-foreground font-bold text-base leading-snug">Real plans for SaaS, e-commerce,<br className="sm:hidden" /> consultants &amp; more</p>
                 </div>
                 <svg className="w-6 h-6 text-cta group-hover:translate-x-1 transition-transform flex-shrink-0 ml-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
