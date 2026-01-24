@@ -4,9 +4,22 @@ import type { Metadata } from "next";
 import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/Button";
 import { MarkdownContent } from "@/components/results/MarkdownContent";
+import {
+  PriorityCards,
+  MetricsSnapshot,
+  DeepDivesAccordion,
+  CompetitiveComparison,
+  KeywordOpportunities,
+  MarketPulse,
+  PositioningSummaryV2,
+  LeadDiscovery,
+  Discoveries,
+} from "@/components/results/dashboard";
+import { parseStrategy } from "@/lib/markdown/parser";
 import { createServiceClient } from "@/lib/supabase/server";
 import { config } from "@/lib/config";
 import type { Example } from "@/lib/types/database";
+import type { StructuredOutput } from "@/lib/ai/formatter-types";
 
 // Force dynamic rendering
 export const dynamic = "force-dynamic";
@@ -62,13 +75,21 @@ export default async function ExampleDetailPage({ params }: PageProps) {
   }
 
   const typedExample = example as Example;
+  const structuredOutput = typedExample.structured_output as StructuredOutput | null;
+  const strategy = parseStrategy(typedExample.content);
+
+  // Check if we have dashboard data
+  const hasDashboardData = structuredOutput && (
+    (structuredOutput.thisWeek?.days?.length ?? 0) > 0 ||
+    (structuredOutput.topPriorities?.length ?? 0) > 0
+  );
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
 
       <main className="flex-1 px-4 py-12">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           {/* Breadcrumb */}
           <nav className="mb-6">
             <ol className="flex items-center gap-2 text-sm">
@@ -88,7 +109,7 @@ export default async function ExampleDetailPage({ params }: PageProps) {
           </nav>
 
           {/* Badges */}
-          <div className="flex items-center gap-2 mb-6">
+          <div className="flex items-center gap-2 mb-8">
             <span className="px-3 py-1 text-xs font-semibold uppercase tracking-wide bg-cta/10 text-cta rounded-full">
               {typedExample.industry}
             </span>
@@ -100,14 +121,21 @@ export default async function ExampleDetailPage({ params }: PageProps) {
             </span>
           </div>
 
-          {/* Full Boost Output */}
-          <article className="prose-like">
-            <MarkdownContent content={typedExample.content} extended />
-          </article>
+          {/* Content - Dashboard or Markdown */}
+          {hasDashboardData && structuredOutput ? (
+            <ExampleDashboard
+              structuredOutput={structuredOutput}
+              strategy={strategy}
+            />
+          ) : (
+            <article className="prose-like max-w-3xl">
+              <MarkdownContent content={typedExample.content} extended />
+            </article>
+          )}
 
           {/* Bottom CTA */}
           <section className="mt-16 pt-10 border-t border-foreground/10">
-            <div className="rounded-md border-2 border-foreground/20 bg-white p-8 shadow-[4px_4px_0_rgba(44,62,80,0.1)] text-center">
+            <div className="max-w-2xl mx-auto rounded-md border-2 border-foreground/20 bg-white p-8 shadow-[4px_4px_0_rgba(44,62,80,0.1)] text-center">
               <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-3">
                 Get a plan like this for your business.
               </h2>
@@ -135,6 +163,73 @@ export default async function ExampleDetailPage({ params }: PageProps) {
       </main>
 
       <Footer />
+    </div>
+  );
+}
+
+/**
+ * Dashboard view for examples with structured output
+ * Same layout as InsightsView but without refinement interstitial
+ */
+function ExampleDashboard({
+  structuredOutput,
+  strategy,
+}: {
+  structuredOutput: StructuredOutput;
+  strategy: ReturnType<typeof parseStrategy>;
+}) {
+  const {
+    positioning,
+    competitiveComparison,
+    keywordOpportunities,
+    marketQuotes,
+    discoveries,
+  } = structuredOutput;
+
+  // Split discoveries: first one is hero, rest go to secondary section
+  const leadDiscovery = discoveries?.[0];
+  const remainingDiscoveries = discoveries?.slice(1) || [];
+
+  return (
+    <div className="space-y-24">
+      {/* 1. Positioning */}
+      {positioning && <PositioningSummaryV2 positioning={positioning} />}
+
+      {/* 2. Lead Discovery (hero) */}
+      {leadDiscovery && <LeadDiscovery discovery={leadDiscovery} />}
+
+      {/* 3. Top Priorities */}
+      {structuredOutput.topPriorities.length > 0 && (
+        <PriorityCards priorities={structuredOutput.topPriorities} />
+      )}
+
+      {/* 4. Competitive Comparison */}
+      {competitiveComparison && competitiveComparison.domains.length > 0 && (
+        <CompetitiveComparison comparison={competitiveComparison} />
+      )}
+
+      {/* 5. Market Pulse */}
+      {marketQuotes && marketQuotes.quotes.length > 0 && (
+        <MarketPulse quotes={marketQuotes} />
+      )}
+
+      {/* 6. Keyword Opportunities */}
+      {keywordOpportunities && keywordOpportunities.keywords.length > 0 && (
+        <KeywordOpportunities opportunities={keywordOpportunities} />
+      )}
+
+      {/* 7. Metrics Snapshot */}
+      {structuredOutput.metrics.length > 0 && (
+        <MetricsSnapshot metrics={structuredOutput.metrics} />
+      )}
+
+      {/* 8. Remaining Discoveries */}
+      {remainingDiscoveries.length > 0 && (
+        <Discoveries discoveries={remainingDiscoveries} />
+      )}
+
+      {/* 9. Deep Dives */}
+      <DeepDivesAccordion strategy={strategy} />
     </div>
   );
 }
