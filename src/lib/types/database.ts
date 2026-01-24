@@ -217,6 +217,7 @@ export type Database = {
           input: Json
           output: string | null
           parent_run_id: string | null
+          plan_start_date: string | null
           refinements_used: number | null
           research_data: Json | null
           share_slug: string | null
@@ -225,6 +226,7 @@ export type Database = {
           status: string | null
           stripe_session_id: string | null
           structured_output: Json | null
+          task_schedule: Json | null
           user_id: string | null
         }
         Insert: {
@@ -238,6 +240,7 @@ export type Database = {
           input: Json
           output?: string | null
           parent_run_id?: string | null
+          plan_start_date?: string | null
           refinements_used?: number | null
           research_data?: Json | null
           share_slug?: string | null
@@ -246,6 +249,7 @@ export type Database = {
           status?: string | null
           stripe_session_id?: string | null
           structured_output?: Json | null
+          task_schedule?: Json | null
           user_id?: string | null
         }
         Update: {
@@ -259,6 +263,7 @@ export type Database = {
           input?: Json
           output?: string | null
           parent_run_id?: string | null
+          plan_start_date?: string | null
           refinements_used?: number | null
           research_data?: Json | null
           share_slug?: string | null
@@ -267,6 +272,7 @@ export type Database = {
           status?: string | null
           stripe_session_id?: string | null
           structured_output?: Json | null
+          task_schedule?: Json | null
           user_id?: string | null
         }
         Relationships: [

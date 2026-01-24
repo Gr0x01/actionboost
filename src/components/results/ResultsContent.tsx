@@ -12,6 +12,7 @@ import { SectionCard } from "./SectionCard";
 import { MarkdownContent } from "./MarkdownContent";
 import { InsightsView } from "./InsightsView";
 import { TasksView } from "./TasksView";
+import { CalendarView } from "./calendar";
 
 interface ResultsContentProps {
   strategy: ParsedStrategy;
@@ -22,6 +23,8 @@ interface ResultsContentProps {
   /** Refinement tracking */
   refinementsUsed?: number;
   isOwner?: boolean;
+  /** Plan start date for calendar view */
+  planStartDate?: string | null;
 }
 
 /**
@@ -35,6 +38,7 @@ function DashboardLayout({
   activeTab = 'insights',
   refinementsUsed = 0,
   isOwner = true,
+  planStartDate,
 }: {
   strategy: ParsedStrategy;
   structuredOutput: StructuredOutput;
@@ -42,20 +46,37 @@ function DashboardLayout({
   activeTab?: TabType;
   refinementsUsed?: number;
   isOwner?: boolean;
+  planStartDate?: string | null;
 }) {
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'insights':
+        return (
+          <InsightsView
+            strategy={strategy}
+            structuredOutput={structuredOutput}
+            runId={runId}
+            refinementsUsed={refinementsUsed}
+            isOwner={isOwner}
+          />
+        );
+      case 'calendar':
+        return (
+          <CalendarView
+            runId={runId}
+            structuredOutput={structuredOutput}
+            planStartDate={planStartDate ?? null}
+          />
+        );
+      case 'dashboard':
+      default:
+        return <TasksView runId={runId} structuredOutput={structuredOutput} />;
+    }
+  };
+
   return (
     <div role="tabpanel" id={`${activeTab}-panel`} aria-labelledby={activeTab}>
-      {activeTab === 'insights' ? (
-        <InsightsView
-          strategy={strategy}
-          structuredOutput={structuredOutput}
-          runId={runId}
-          refinementsUsed={refinementsUsed}
-          isOwner={isOwner}
-        />
-      ) : (
-        <TasksView runId={runId} structuredOutput={structuredOutput} />
-      )}
+      {renderTabContent()}
     </div>
   );
 }
@@ -122,6 +143,7 @@ export function ResultsContent({
   activeTab,
   refinementsUsed,
   isOwner,
+  planStartDate,
 }: ResultsContentProps) {
   // Use dashboard layout if structured_output is available and has meaningful data
   const hasDashboardData = structuredOutput &&
@@ -137,6 +159,7 @@ export function ResultsContent({
         activeTab={activeTab}
         refinementsUsed={refinementsUsed}
         isOwner={isOwner}
+        planStartDate={planStartDate}
       />
     );
   }

@@ -6,6 +6,7 @@ import type { TabType } from '@/lib/storage/visitTracking'
 interface ResultsTabNavigationProps {
   activeTab: TabType
   onTabChange: (tab: TabType) => void
+  showCalendar?: boolean
 }
 
 /**
@@ -15,6 +16,7 @@ interface ResultsTabNavigationProps {
 export function ResultsTabNavigation({
   activeTab,
   onTabChange,
+  showCalendar = false,
 }: ResultsTabNavigationProps) {
   const navRef = useRef<HTMLDivElement>(null)
   const [underlineStyle, setUnderlineStyle] = useState({ left: 0, width: 0 })
@@ -22,6 +24,7 @@ export function ResultsTabNavigation({
   const tabs: { id: TabType; label: string }[] = [
     { id: 'insights', label: 'Insights' },
     { id: 'dashboard', label: 'Tasks' },
+    ...(showCalendar ? [{ id: 'calendar' as TabType, label: 'Calendar' }] : []),
   ]
 
   // Update underline position when active tab changes

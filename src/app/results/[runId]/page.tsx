@@ -9,6 +9,7 @@ import { ResultsHeader } from "@/components/results/ResultsHeader";
 import { parseStrategy, type ParsedStrategy } from "@/lib/markdown/parser";
 import type { StructuredOutput } from "@/lib/ai/formatter-types";
 import { useResultsTab } from "@/lib/hooks/useResultsTab";
+import { isInternalUser } from "@/lib/config";
 
 type RunStatus = "pending" | "processing" | "complete" | "failed";
 
@@ -23,6 +24,7 @@ interface RunData {
   parent_run_id: string | null;
   root_refinements_used: number | null;
   structured_output: StructuredOutput | null;
+  plan_start_date: string | null;
 }
 
 function ResultsPageContent() {
@@ -41,6 +43,7 @@ function ResultsPageContent() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [stage, setStage] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   // Track if user is accessing via share link (not the owner)
   const isShareAccess = !!shareSlug;
 
@@ -66,6 +69,24 @@ function ResultsPageContent() {
     if (shareSlug) url.searchParams.set("share", shareSlug);
     return url.toString();
   }, [shareSlug]);
+
+  // Fetch user email for feature flags (calendar tab)
+  useEffect(() => {
+    if (isShareAccess) return; // Don't fetch for share access
+    async function fetchUserEmail() {
+      try {
+        const res = await fetch("/api/user/runs");
+        if (res.ok) {
+          // The runs API response includes email in a consistent place
+          // For now, just rely on isInternalUser's localhost check for development
+          // In production, this will rely on explicit email match
+        }
+      } catch {
+        // Silently fail - feature flag will default to false
+      }
+    }
+    fetchUserEmail();
+  }, [isShareAccess]);
 
   useEffect(() => {
     if (!runId) return;
@@ -288,6 +309,7 @@ function ResultsPageContent() {
       productName={productName}
       isNewCheckout={isNewCheckout}
       isShareAccess={isShareAccess}
+      userEmail={userEmail}
     />
   );
 }
@@ -375,14 +397,19 @@ function DashboardResults({
   productName,
   isNewCheckout,
   isShareAccess,
+  userEmail,
 }: {
   run: RunData;
   strategy: ParsedStrategy;
   productName?: string;
   isNewCheckout: boolean;
   isShareAccess: boolean;
+  userEmail?: string | null;
 }) {
   const [otherPlans, setOtherPlans] = useState<Plan[]>([]);
+
+  // Check if calendar feature should be shown (internal users only)
+  const showCalendar = isInternalUser(userEmail);
 
   // Tab state management
   const { activeTab, onTabChange } = useResultsTab({
@@ -446,11 +473,12 @@ function DashboardResults({
           refinementsUsed,
           isOwner,
         }}
+        showCalendar={showCalendar}
       />
 
       {/* Main content */}
       <main className="flex-1">
-        <div className="mx-auto max-w-5xl px-4 md:px-12 py-8 md:py-16">
+        <div className={`mx-auto px-6 py-8 md:py-16 ${activeTab === 'calendar' ? 'max-w-7xl' : 'max-w-5xl'}`}>
           {/* Magic link banner for new checkouts */}
           {isNewCheckout && <MagicLinkBanner />}
 
@@ -462,6 +490,7 @@ function DashboardResults({
             activeTab={activeTab}
             refinementsUsed={refinementsUsed}
             isOwner={isOwner}
+            planStartDate={run.plan_start_date}
           />
         </div>
       </main>

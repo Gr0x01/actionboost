@@ -17,6 +17,7 @@ import { trackServerEvent, identifyUser } from '@/lib/analytics'
 import type { RunInput, PipelineResult, ResearchContext, UserHistoryContext } from './types'
 import type { UserContext } from '@/lib/types/context'
 import { MAX_CONTEXT_LENGTH, type PipelineStage, type RunSource } from '@/lib/types/database'
+import { addDays, format } from 'date-fns'
 
 // Validate critical env vars at module load
 const REQUIRED_ENV_VARS = ['ANTHROPIC_API_KEY', 'TAVILY_API'] as const
@@ -430,6 +431,9 @@ export async function runAgenticPipeline(runId: string): Promise<PipelineResult>
     }
 
     // 6. Save output and mark complete
+    // Set plan_start_date to day after completion for calendar view
+    const planStartDate = format(addDays(new Date(), 1), 'yyyy-MM-dd')
+
     await onStageUpdate('Finalizing your strategy...')
     const { error: updateError } = await supabase
       .from('runs')
@@ -440,6 +444,7 @@ export async function runAgenticPipeline(runId: string): Promise<PipelineResult>
         structured_output: structuredOutput,
         research_data: researchData, // Store raw tool call results for debugging/re-extraction
         completed_at: new Date().toISOString(),
+        plan_start_date: planStartDate,
       })
       .eq('id', runId)
 
@@ -681,7 +686,7 @@ export async function runRefinementPipeline(runId: string): Promise<RefinementPi
 
   const { data: parentRun, error: parentError } = await supabase
     .from('runs')
-    .select('output, user_id')
+    .select('output, user_id, plan_start_date')
     .eq('id', run.parent_run_id)
     .single()
 
@@ -736,6 +741,9 @@ export async function runRefinementPipeline(runId: string): Promise<RefinementPi
     }
 
     // 6. Save output and mark complete
+    // For refinements, inherit plan_start_date from parent or create new one
+    const planStartDate = parentRun.plan_start_date || format(addDays(new Date(), 1), 'yyyy-MM-dd')
+
     await onStageUpdate('Finalizing your refined strategy...')
     const { error: updateError } = await supabase
       .from('runs')
@@ -746,6 +754,7 @@ export async function runRefinementPipeline(runId: string): Promise<RefinementPi
         structured_output: structuredOutput,
         research_data: result.researchData,
         completed_at: new Date().toISOString(),
+        plan_start_date: planStartDate,
       })
       .eq('id', runId)
 

@@ -27,6 +27,7 @@ interface ResultsHeaderProps {
     refinementsUsed: number
     isOwner: boolean
   }
+  showCalendar?: boolean
 }
 
 /**
@@ -46,6 +47,7 @@ export function ResultsHeader({
   onTabChange,
   exportProps,
   refinementProps,
+  showCalendar = false,
 }: ResultsHeaderProps) {
   return (
     <div className="sticky top-14 z-40 bg-background border-b border-foreground/10">
@@ -62,6 +64,7 @@ export function ResultsHeader({
             <ResultsTabNavigation
               activeTab={activeTab}
               onTabChange={onTabChange}
+              showCalendar={showCalendar}
             />
           </div>
 
@@ -82,6 +85,7 @@ export function ResultsHeader({
           <ResultsTabNavigation
             activeTab={activeTab}
             onTabChange={onTabChange}
+            showCalendar={showCalendar}
           />
         </div>
       </div>
