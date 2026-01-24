@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og'
 import { BOOST_LOGO_PATHS, BOOST_LOGO_VIEWBOX } from '@/components/ui'
 
 export const runtime = 'edge'
-export const alt = 'Boost - AI Action Plan for Founders'
+export const alt = 'Boost - Your 30-Day Marketing Plan'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -21,70 +21,68 @@ export default async function Image() {
           padding: '60px',
         }}
       >
-        {/* Brutalist card container */}
+        {/* Soft brutalist card - offset shadow, visible border, slight radius */}
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            padding: '48px 64px',
-            border: '3px solid #2C3E50',
+            padding: '56px 80px',
             background: '#FFFFFF',
-            boxShadow: '8px 8px 0 0 #2C3E50',
+            border: '2px solid #2C3E50',
+            borderRadius: '6px',
+            boxShadow: '6px 6px 0 rgba(44, 62, 80, 0.15)',
           }}
         >
-          {/* Logo/Brand mark */}
+          {/* Logo */}
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
-              marginBottom: '32px',
+              marginBottom: '40px',
             }}
           >
-            <svg width="320" height="75" viewBox={BOOST_LOGO_VIEWBOX} fill="none">
+            <svg width="360" height="84" viewBox={BOOST_LOGO_VIEWBOX} fill="none">
               {BOOST_LOGO_PATHS.map((d, i) => (
                 <path key={i} d={d} fill="#2C3E50" />
               ))}
             </svg>
           </div>
 
-          {/* Tagline - light/bold contrast */}
+          {/* Tagline - bold */}
           <div
             style={{
               display: 'flex',
-              fontSize: '36px',
+              fontSize: '42px',
               color: '#2C3E50',
               textAlign: 'center',
               marginBottom: '24px',
+              fontWeight: 700,
             }}
           >
-            <span style={{ fontWeight: 300 }}>Stop guessing.</span>
-            <span style={{ fontWeight: 900, marginLeft: '12px' }}>Start growing.</span>
+            Your 30-Day Marketing Plan
           </div>
 
-          {/* Subtitle - mono uppercase */}
+          {/* Subtitle */}
           <div
             style={{
-              fontSize: '18px',
-              fontFamily: 'monospace',
-              color: '#2C3E50',
-              textTransform: 'uppercase',
-              letterSpacing: '0.15em',
+              fontSize: '22px',
+              color: '#7F8C8D',
               textAlign: 'center',
             }}
           >
-            $9.99 → 30-day growth plan → no fluff
+            Real competitor research. Actionable strategy. $29.
           </div>
         </div>
 
-        {/* Bottom accent - solid brutalist block */}
+        {/* Bottom accent bar */}
         <div
           style={{
             position: 'absolute',
             bottom: '0',
             left: '0',
             right: '0',
-            height: '12px',
+            height: '10px',
             background: '#E67E22',
           }}
         />
