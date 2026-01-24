@@ -88,6 +88,7 @@ async function main() {
 
       const pipelineTime = ((Date.now() - startTime) / 1000).toFixed(1)
       console.log(`✓ Pipeline complete in ${pipelineTime}s`)
+      console.log(`  Output length: ${result.output.length} chars`)
 
       // Extract structured output
       console.log('\n🎨 Extracting structured output...')

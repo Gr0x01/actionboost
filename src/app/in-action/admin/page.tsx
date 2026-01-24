@@ -455,6 +455,22 @@ export default function InActionAdminPage() {
 
                     <div className="flex items-center gap-2 shrink-0">
                       <button
+                        onClick={() => handleExtract(example.id)}
+                        disabled={extractingId === example.id}
+                        className={`p-2 rounded-lg transition-colors ${
+                          example.structured_output
+                            ? "bg-emerald-100 hover:bg-emerald-200"
+                            : "bg-amber-100 hover:bg-amber-200"
+                        }`}
+                        title={example.structured_output ? "Re-extract dashboard data" : "Extract dashboard data"}
+                      >
+                        {extractingId === example.id ? (
+                          <Loader2 className="w-4 h-4 animate-spin text-foreground/60" />
+                        ) : (
+                          <Sparkles className={`w-4 h-4 ${example.structured_output ? "text-emerald-600" : "text-amber-600"}`} />
+                        )}
+                      </button>
+                      <button
                         onClick={() => handleEdit(example)}
                         className="p-2 rounded-lg hover:bg-foreground/10 transition-colors"
                         title="Edit"
