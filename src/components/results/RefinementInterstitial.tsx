@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { usePostHog } from 'posthog-js/react'
-import { SlidersHorizontal, ChevronDown, Loader2, Check } from 'lucide-react'
+import { SlidersHorizontal, ChevronDown, Loader2 } from 'lucide-react'
 import { MAX_FREE_REFINEMENTS, MIN_CONTEXT_LENGTH, MAX_CONTEXT_LENGTH } from '@/lib/types/database'
 
 interface RefinementInterstitialProps {
@@ -19,10 +19,10 @@ type FormState = 'collapsed' | 'expanded' | 'submitting'
  *
  * Three states based on remaining refinements:
  * - 2 remaining: Subtle, encouraging
- * - 1 remaining: Warmer, "make it count"
+ * - 1 remaining: Slightly more prominent
  * - 0 remaining: Closure, "all set"
  *
- * Soft brutalist styling with warm amber accents
+ * Soft Brutalist styling matching project design system
  */
 export function RefinementInterstitial({
   runId,
@@ -36,16 +36,14 @@ export function RefinementInterstitial({
   const [error, setError] = useState<string | null>(null)
 
   const remaining = MAX_FREE_REFINEMENTS - refinementsUsed
-  const isExhausted = remaining <= 0
   const isLastOne = remaining === 1
   const contextLength = context.trim().length
   const isValidLength = contextLength >= MIN_CONTEXT_LENGTH && contextLength <= MAX_CONTEXT_LENGTH
 
-  // Don't show for non-owners
-  if (!isOwner) return null
+  // Don't show for non-owners or when exhausted
+  if (!isOwner || remaining <= 0) return null
 
   const handleExpand = () => {
-    if (isExhausted) return
     setFormState('expanded')
     posthog?.capture('refinement_interstitial_expanded', { run_id: runId, remaining })
   }
@@ -90,67 +88,35 @@ export function RefinementInterstitial({
     }
   }
 
-  // Exhausted state - soft closure
-  if (isExhausted) {
-    return (
-      <div
-        id="refinement-interstitial"
-        className="
-          bg-slate-50 border-2 border-foreground/10 rounded-md p-5
-          flex items-center justify-between
-        "
-        style={{ boxShadow: '3px 3px 0 rgba(44, 62, 80, 0.05)' }}
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center">
-            <Check className="w-4 h-4 text-slate-400" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-foreground/60">
-              All set
-            </p>
-            <p className="text-xs text-foreground/40">
-              You have used both refinements. Time to put this plan into action.
-            </p>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  // Collapsed state
+  // Collapsed state - clickable card
   if (formState === 'collapsed') {
     return (
       <button
         id="refinement-interstitial"
         onClick={handleExpand}
         aria-label={isLastOne ? 'One refinement left - click to expand' : 'Refine your plan - click to expand'}
-        className="
-          group w-full text-left
-          bg-white border-2 rounded-md p-5
-          transition-all duration-100
+        className={`
+          group w-full text-left rounded-xl p-5
+          border-2 transition-all duration-150
           hover:-translate-y-0.5
-        "
+          ${isLastOne
+            ? 'bg-background border-foreground/25'
+            : 'bg-background border-foreground/15'
+          }
+        `}
         style={{
-          borderColor: isLastOne ? 'rgba(217, 119, 6, 0.3)' : 'rgba(44, 62, 80, 0.15)',
-          backgroundColor: isLastOne ? 'rgba(255, 251, 235, 0.5)' : 'white',
           boxShadow: isLastOne
-            ? '3px 3px 0 rgba(217, 119, 6, 0.1)'
-            : '3px 3px 0 rgba(44, 62, 80, 0.08)',
+            ? '4px 4px 0 rgba(44, 62, 80, 0.12)'
+            : '4px 4px 0 rgba(44, 62, 80, 0.08)',
         }}
       >
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div
-              className="w-9 h-9 rounded-full flex items-center justify-center"
-              style={{
-                backgroundColor: isLastOne ? 'rgba(254, 243, 199, 1)' : 'rgba(254, 249, 195, 0.8)',
-              }}
-            >
-              <SlidersHorizontal className="w-4 h-4 text-amber-600" />
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full bg-foreground/5 flex items-center justify-center flex-shrink-0">
+              <SlidersHorizontal className="w-5 h-5 text-foreground/50" />
             </div>
             <div>
-              <p className="text-sm font-medium text-foreground/80 group-hover:text-foreground transition-colors">
+              <p className="text-sm font-semibold text-foreground/80 group-hover:text-foreground transition-colors">
                 {isLastOne
                   ? 'One refinement left'
                   : 'Have context that could make this even better?'
@@ -164,7 +130,7 @@ export function RefinementInterstitial({
               </p>
             </div>
           </div>
-          <ChevronDown className="h-5 w-5 text-foreground/30 group-hover:text-foreground/50 transition-colors" />
+          <ChevronDown className="h-5 w-5 text-foreground/30 group-hover:text-foreground/50 transition-colors flex-shrink-0" />
         </div>
       </button>
     )
@@ -174,26 +140,26 @@ export function RefinementInterstitial({
   return (
     <div
       id="refinement-interstitial"
-      className="bg-white border-2 border-foreground/20 rounded-md overflow-hidden"
-      style={{ boxShadow: '4px 4px 0 rgba(44, 62, 80, 0.1)' }}
+      className="bg-background border-2 border-foreground/20 rounded-xl overflow-hidden"
+      style={{ boxShadow: '4px 4px 0 rgba(44, 62, 80, 0.15)' }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-foreground/10">
-        <div className="flex items-center gap-2">
-          <SlidersHorizontal className="h-4 w-4 text-amber-600" />
-          <span className="text-sm font-semibold text-foreground/70">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-foreground/10">
+        <div className="flex items-center gap-3">
+          <SlidersHorizontal className="h-4 w-4 text-foreground/50" />
+          <span className="font-mono text-xs font-bold uppercase tracking-wider text-foreground/50">
             Sharpen Your Plan
           </span>
         </div>
-        <span className="text-xs text-foreground/40">
-          {remaining} refinement{remaining === 1 ? '' : 's'} left
+        <span className="font-mono text-xs text-foreground/40">
+          {remaining} left
         </span>
       </div>
 
       {/* Form content */}
       <div className="p-5">
         <p className="text-sm text-foreground/60 mb-4" id="refinement-description">
-          Add details only you know — your secret sauce, local quirks, what has worked before — and we will sharpen the plan.
+          Add details only you know, your secret sauce, local quirks, what has worked before, and we will sharpen the plan.
         </p>
 
         <label htmlFor="refinement-context" className="sr-only">
@@ -207,13 +173,13 @@ export function RefinementInterstitial({
           disabled={formState === 'submitting'}
           placeholder="What would make this plan fit your business better? Maybe your bestseller, a slow season coming up, or something that worked in the past..."
           className="
-            w-full h-28 p-4 text-sm rounded-md
+            w-full h-28 p-4 text-sm rounded-xl
             border-2 border-foreground/15
             bg-white
             placeholder:text-foreground/30
-            focus:border-amber-400 focus:outline-none
+            focus:border-foreground/40 focus:outline-none
             resize-none
-            disabled:opacity-50 disabled:bg-slate-50
+            disabled:opacity-50 disabled:bg-surface
             transition-colors
           "
         />
@@ -243,7 +209,7 @@ export function RefinementInterstitial({
           <button
             onClick={handleCollapse}
             disabled={formState === 'submitting'}
-            className="text-sm text-foreground/50 hover:text-foreground/70 transition-colors disabled:opacity-50"
+            className="text-sm font-medium text-foreground/50 hover:text-foreground/70 transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
@@ -253,14 +219,18 @@ export function RefinementInterstitial({
             disabled={!isValidLength || formState === 'submitting'}
             className="
               flex items-center gap-2
-              bg-cta text-white font-semibold
-              px-5 py-2.5 rounded-md text-sm
-              border-b-[3px] border-b-[#B85D10]
+              bg-cta text-white font-bold
+              px-5 py-2.5 rounded-xl text-sm
+              border-2 border-cta
+              shadow-[4px_4px_0_rgba(44,62,80,0.3)]
+              hover:shadow-[5px_5px_0_rgba(44,62,80,0.35)]
               hover:-translate-y-0.5
-              active:translate-y-0.5 active:border-b-0
-              transition-all duration-100
+              active:shadow-[2px_2px_0_rgba(44,62,80,0.3)]
+              active:translate-y-0.5
+              transition-all duration-150
               disabled:opacity-50 disabled:cursor-not-allowed
-              disabled:hover:translate-y-0 disabled:active:translate-y-0
+              disabled:hover:shadow-[4px_4px_0_rgba(44,62,80,0.3)]
+              disabled:hover:translate-y-0
             "
           >
             {formState === 'submitting' ? (

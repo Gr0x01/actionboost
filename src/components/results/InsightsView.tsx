@@ -3,14 +3,9 @@
 import type { ParsedStrategy } from '@/lib/markdown/parser'
 import type { StructuredOutput } from '@/lib/ai/formatter-types'
 import {
-  // Legacy components (fallbacks)
-  PositioningSummary,
-  CompetitorSnapshot,
-  // Existing components
   PriorityCards,
   MetricsSnapshot,
   DeepDivesAccordion,
-  // NEW: Research-backed components
   CompetitiveComparison,
   KeywordOpportunities,
   MarketPulse,
@@ -27,16 +22,16 @@ interface InsightsViewProps {
 }
 
 /**
- * InsightsView - "What we found" tab for new users
+ * InsightsView - "What we found" tab
  *
- * Layout (with graceful fallbacks):
- * 1. PositioningSummaryV2 OR legacy PositioningSummary
- * 2. PriorityCards (existing)
- * 3. CompetitiveComparison OR legacy CompetitorSnapshot
+ * Layout:
+ * 1. PositioningSummaryV2 (from structured output)
+ * 2. PriorityCards
+ * 3. CompetitiveComparison (if available)
  * 4. KeywordOpportunities (if available)
  * 5. MarketPulse (if available)
- * 6. MetricsSnapshot (existing)
- * 7. DeepDivesAccordion (existing)
+ * 6. MetricsSnapshot
+ * 7. DeepDivesAccordion
  */
 export function InsightsView({
   strategy,
@@ -45,7 +40,6 @@ export function InsightsView({
   refinementsUsed = 0,
   isOwner = true,
 }: InsightsViewProps) {
-  // Destructure optional research-backed data for cleaner conditionals
   const {
     positioning,
     competitiveComparison,
@@ -55,12 +49,8 @@ export function InsightsView({
 
   return (
     <div className="space-y-24">
-      {/* 1. Positioning - V2 (data-driven) OR legacy (regex-parsed) */}
-      {positioning ? (
-        <PositioningSummaryV2 positioning={positioning} />
-      ) : (
-        <PositioningSummary strategy={strategy} />
-      )}
+      {/* 1. Positioning - from structured output only */}
+      {positioning && <PositioningSummaryV2 positioning={positioning} />}
 
       {/* 3. Top Priorities - #1 as hero, #2-3 compact */}
       {structuredOutput.topPriorities.length > 0 && (
@@ -76,13 +66,9 @@ export function InsightsView({
         />
       )}
 
-      {/* 4. Competitive Comparison - V2 (traffic bars) OR legacy (list) */}
-      {competitiveComparison?.domains?.length ? (
+      {/* 4. Competitive Comparison - from structured output only */}
+      {competitiveComparison && competitiveComparison.domains.length > 0 && (
         <CompetitiveComparison comparison={competitiveComparison} />
-      ) : (
-        structuredOutput.competitors.length > 0 && (
-          <CompetitorSnapshot competitors={structuredOutput.competitors} />
-        )
       )}
 
       {/* 5. Market Pulse - breaks card run with typography */}
