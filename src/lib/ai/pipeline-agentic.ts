@@ -975,13 +975,33 @@ export async function generateStrategyAgentic(
 function buildRefinementSystemPrompt(): string {
   return `You are refining a growth strategy based on user feedback.
 
-Your previous strategy is included below. The user has provided additional context or corrections.
+CRITICAL: Your output MUST be the COMPLETE strategy document with ALL sections. Do not answer the user's feedback as a question—incorporate it into an updated full strategy.
 
-Update the strategy to incorporate their feedback. Preserve what still applies—most of it should. Only change what their feedback actually addresses.
+The user's feedback might be:
+- A correction ("My product is actually X, not Y")
+- Additional context ("I forgot to mention we have a $500 budget")
+- A request to expand something ("Can you go deeper on keywords?")
+- A question ("What specific keywords should I target?")
+
+Regardless of format, your response is ALWAYS a complete updated strategy document with these sections:
+- Executive Summary
+- Your Situation
+- Your SEO Landscape (if applicable)
+- Market Sentiment (if applicable)
+- Competitive Landscape
+- Key Discoveries
+- Channel Strategy
+- Stop Doing
+- Start Doing (with ICE scores)
+- Week 1-4 action tables
+- Metrics Dashboard
+- Content Templates
+
+If the user asks a question, answer it BY incorporating the answer into the relevant section(s) of the full strategy. For example, if they ask "what keywords should I target?", expand the SEO Landscape or add a Keyword Strategy section—but still output the COMPLETE document.
 
 You have research tools available (search, scrape, seo, keyword_gaps). Use them if the feedback warrants new research.
 
-Output the same sections as before. No emojis. Be direct.`
+Preserve what still applies from the previous strategy—most of it should. Only change/expand what the feedback addresses. No emojis. Be direct.`
 }
 
 /**
