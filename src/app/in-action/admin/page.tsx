@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createBrowserClient } from "@supabase/ssr";
 import { motion } from "framer-motion";
-import { Loader2, Plus, Eye, EyeOff, Trash2, ExternalLink, Edit2 } from "lucide-react";
+import { Loader2, Plus, Eye, EyeOff, Trash2, ExternalLink, Edit2, Sparkles } from "lucide-react";
 import { Header, Footer } from "@/components/layout";
 import { Button } from "@/components/ui/Button";
 import type { Example } from "@/lib/types/database";
@@ -156,6 +156,24 @@ export default function InActionAdminPage() {
       await fetchExamples();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete");
+    }
+  };
+
+  const [extractingId, setExtractingId] = useState<string | null>(null);
+
+  const handleExtract = async (id: string) => {
+    setExtractingId(id);
+    try {
+      const res = await fetch(`/api/examples/${id}/extract`, { method: "POST" });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to extract");
+      }
+      await fetchExamples();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to extract");
+    } finally {
+      setExtractingId(null);
     }
   };
 
