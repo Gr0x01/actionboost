@@ -50,25 +50,25 @@ function BlogPostCard({ post }: { post: BlogPost }) {
   return (
     <Link href={`/blog/${post.slug}`} className="group block">
       <article
-        className={`rounded-2xl border-[3px] border-foreground bg-background p-6 lg:p-8 ${
+        className={`rounded-lg border-2 border-foreground/20 bg-background p-6 lg:p-8 ${
           post.featured
-            ? "shadow-[6px_6px_0_0_rgba(44,62,80,1)]"
-            : "shadow-[4px_4px_0_0_rgba(44,62,80,1)]"
-        } hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100`}
+            ? "shadow-[4px_4px_0_rgba(44,62,80,0.12)]"
+            : "shadow-[4px_4px_0_rgba(44,62,80,0.08)]"
+        } hover:shadow-[4px_4px_0_rgba(44,62,80,0.15)] hover:-translate-y-0.5 transition-all duration-100`}
       >
         {/* Top row: category + date */}
         <div className="flex items-center justify-between gap-4 mb-4">
-          <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-cta font-semibold">
+          <span className="text-[10px] font-semibold tracking-wide uppercase text-cta">
             {CATEGORY_LABELS[post.category]}
           </span>
-          <span className="font-mono text-xs text-foreground/50">
+          <span className="text-xs text-foreground/50">
             {post.date} · {post.readTime}
           </span>
         </div>
 
         {/* Title */}
         <h2
-          className={`font-black text-foreground mb-3 ${
+          className={`font-bold text-foreground mb-3 ${
             post.featured ? "text-2xl sm:text-3xl" : "text-xl sm:text-2xl"
           }`}
         >
@@ -81,7 +81,7 @@ function BlogPostCard({ post }: { post: BlogPost }) {
         </p>
 
         {/* Read more */}
-        <div className="flex items-center gap-2 font-bold text-foreground group-hover:text-cta transition-colors">
+        <div className="flex items-center gap-2 font-semibold text-foreground group-hover:text-cta transition-colors">
           Read more
           <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
         </div>
@@ -99,10 +99,10 @@ export default function BlogPage() {
         <div className="mx-auto max-w-4xl px-6">
           {/* Hero - minimal */}
           <section className="pt-12 pb-8 lg:pt-16 lg:pb-12">
-            <p className="font-mono text-xs tracking-[0.15em] text-foreground/60 uppercase mb-4">
-              Startup Teardowns & Growth Insights
+            <p className="text-xs font-semibold tracking-wide text-foreground/50 uppercase mb-4">
+              Growth insights for small businesses
             </p>
-            <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground mb-4">
+            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground mb-4">
               The Blog
             </h1>
             <p className="text-lg text-foreground/70 max-w-xl leading-relaxed">
@@ -121,21 +121,21 @@ export default function BlogPage() {
 
           {/* Bottom CTA */}
           <section className="pb-16">
-            <div className="rounded-2xl border-[3px] border-foreground bg-background p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] text-center space-y-4">
-              <p className="font-mono text-xs tracking-[0.15em] text-foreground/60 uppercase">
+            <div className="rounded-lg border-2 border-foreground/20 bg-background p-8 shadow-[4px_4px_0_rgba(44,62,80,0.1)] text-center space-y-4">
+              <p className="text-xs font-medium tracking-wide text-foreground/50 uppercase">
                 Build your own growth plan
               </p>
-              <h2 className="text-2xl font-black text-foreground">
+              <h2 className="text-2xl font-bold text-foreground">
                 Ready to stop guessing?
               </h2>
               <p className="text-foreground/70 max-w-md mx-auto">
                 Get AI-powered growth recommendations with live competitive
-                research—specifically for your product.
+                research—specifically for your business.
               </p>
               <div className="pt-2">
                 <Link href="/start">
-                  <button className="rounded-xl px-8 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
-                    Get Started - {config.singlePrice}
+                  <button className="rounded-md px-8 py-4 bg-cta text-white font-semibold text-lg border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0.5 active:border-b-0 transition-all duration-100">
+                    Get started - {config.singlePrice}
                   </button>
                 </Link>
               </div>

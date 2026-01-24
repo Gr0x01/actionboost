@@ -23,24 +23,24 @@ export const metadata = {
 function ExampleCard({ example }: { example: Example }) {
   return (
     <Link href={`/in-action/${example.slug}`} className="block group">
-      <article className="h-full rounded-2xl border-[3px] border-foreground bg-surface p-6 shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-1 transition-all duration-150">
+      <article className="h-full rounded-lg border-2 border-foreground/20 bg-surface p-6 shadow-[4px_4px_0_rgba(44,62,80,0.08)] hover:shadow-[4px_4px_0_rgba(44,62,80,0.15)] hover:-translate-y-0.5 transition-all duration-150">
         {/* Badges */}
         <div className="flex items-center gap-2 mb-4">
-          <span className="px-2 py-0.5 text-[10px] font-mono uppercase tracking-wide bg-cta/10 text-cta rounded font-semibold">
+          <span className="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide bg-cta/10 text-cta rounded-full">
             {example.industry}
           </span>
-          <span className="px-2 py-0.5 text-[10px] font-mono uppercase tracking-wide bg-foreground/10 text-foreground/70 rounded">
+          <span className="px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide bg-foreground/5 text-foreground/60 rounded-full">
             {example.stage}
           </span>
         </div>
 
         {/* Insight - the hook */}
-        <p className="text-lg font-bold text-foreground leading-snug group-hover:text-cta transition-colors">
+        <p className="text-lg font-semibold text-foreground leading-snug group-hover:text-cta transition-colors">
           {example.insight}
         </p>
 
         {/* View link */}
-        <div className="mt-4 pt-4 border-t border-border">
+        <div className="mt-4 pt-4 border-t border-foreground/10">
           <span className="text-sm font-semibold text-cta group-hover:underline">
             See full plan &rarr;
           </span>
@@ -69,10 +69,10 @@ export default async function InActionPage() {
         {/* Hero Section */}
         <section className="py-16 lg:py-24 px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <p className="font-mono text-[11px] tracking-[0.2em] text-cta uppercase font-semibold mb-4">
+            <p className="text-xs font-semibold tracking-wide text-cta uppercase mb-4">
               Boost in Action
             </p>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-foreground leading-tight mb-6">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-6">
               Real strategies.
               <br />
               Real businesses.
@@ -127,9 +127,9 @@ export default async function InActionPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-16 px-4 bg-surface border-t border-border">
+        <section className="py-16 px-4 bg-surface border-t border-foreground/10">
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-2xl sm:text-3xl font-black text-foreground mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">
               Your situation is different.
             </h2>
             <p className="text-foreground/70 mb-8">
@@ -137,7 +137,7 @@ export default async function InActionPage() {
             </p>
             <Link href="/start">
               <Button size="xl">
-                Get My Plan &mdash; {config.singlePrice}
+                Get my plan - {config.singlePrice}
               </Button>
             </Link>
           </div>

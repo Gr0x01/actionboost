@@ -1,6 +1,6 @@
 'use client'
 
-import { Lightbulb, Copy, Check } from 'lucide-react'
+import { Copy, Check } from 'lucide-react'
 import { useState } from 'react'
 import type { Discovery } from '@/lib/ai/formatter-types'
 
@@ -27,13 +27,10 @@ export function LeadDiscovery({ discovery }: LeadDiscoveryProps) {
 
   return (
     <section className="scroll-mt-32">
-      {/* Section label with icon */}
-      <div className="flex items-center gap-2 mb-4">
-        <Lightbulb className="w-4 h-4 text-cta" />
-        <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40">
-          KEY DISCOVERY
-        </span>
-      </div>
+      {/* Section label */}
+      <span className="block text-[10px] font-semibold tracking-[0.2em] uppercase text-foreground/40 mb-4">
+        Key Discovery
+      </span>
 
       {/* Hero card - full width, stronger presence */}
       <div
@@ -72,18 +69,13 @@ export function LeadDiscovery({ discovery }: LeadDiscoveryProps) {
           {/* Copy button */}
           <button
             onClick={handleCopy}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground/50 hover:text-foreground/70 bg-surface border border-foreground/10 rounded-md transition-colors shrink-0"
+            className="p-2 text-foreground/40 hover:text-foreground/60 bg-surface border border-foreground/10 rounded-md transition-colors shrink-0"
+            aria-label="Copy to clipboard"
           >
             {copied ? (
-              <>
-                <Check className="w-4 h-4 text-green-600" />
-                <span>Copied</span>
-              </>
+              <Check className="w-4 h-4 text-green-600" />
             ) : (
-              <>
-                <Copy className="w-4 h-4" />
-                <span>Copy</span>
-              </>
+              <Copy className="w-4 h-4" />
             )}
           </button>
         </div>

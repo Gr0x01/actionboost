@@ -11,13 +11,13 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "rounded-2xl bg-cta text-white border-[3px] border-foreground shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[5px_5px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1",
+    "rounded-md bg-cta text-white border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0.5 active:border-b-0",
   secondary:
-    "rounded-2xl bg-surface text-foreground border-[3px] border-foreground shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[5px_5px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1",
+    "rounded-md bg-surface text-foreground border-2 border-foreground/20 shadow-[4px_4px_0_rgba(44,62,80,0.1)] hover:-translate-y-0.5 hover:shadow-[4px_4px_0_rgba(44,62,80,0.15)] active:translate-y-0.5 active:shadow-none",
   outline:
-    "rounded-2xl bg-transparent text-foreground border-2 border-foreground hover:bg-foreground/5",
+    "rounded-md bg-transparent text-foreground border-2 border-foreground/30 hover:bg-foreground/5 hover:border-foreground/50",
   ghost:
-    "rounded-lg text-muted hover:text-foreground hover:bg-surface/50 active:bg-surface",
+    "rounded-md text-muted hover:text-foreground hover:bg-surface/50 active:bg-surface",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {

@@ -89,13 +89,13 @@ export default async function ExampleDetailPage({ params }: PageProps) {
 
           {/* Badges */}
           <div className="flex items-center gap-2 mb-6">
-            <span className="px-3 py-1 text-xs font-mono uppercase tracking-wide bg-cta/10 text-cta rounded-lg font-semibold">
+            <span className="px-3 py-1 text-xs font-semibold uppercase tracking-wide bg-cta/10 text-cta rounded-full">
               {typedExample.industry}
             </span>
-            <span className="px-3 py-1 text-xs font-mono uppercase tracking-wide bg-foreground/10 text-foreground/70 rounded-lg">
+            <span className="px-3 py-1 text-xs font-medium uppercase tracking-wide bg-foreground/5 text-foreground/60 rounded-full">
               {typedExample.stage}
             </span>
-            <span className="px-3 py-1 text-xs font-mono uppercase tracking-wide bg-foreground/5 text-foreground/50 rounded-lg">
+            <span className="px-3 py-1 text-xs font-medium uppercase tracking-wide bg-foreground/5 text-foreground/50 rounded-full">
               Example Plan
             </span>
           </div>
@@ -106,9 +106,9 @@ export default async function ExampleDetailPage({ params }: PageProps) {
           </article>
 
           {/* Bottom CTA */}
-          <section className="mt-16 pt-10 border-t border-border">
-            <div className="rounded-2xl border-[3px] border-foreground bg-surface p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] text-center">
-              <h2 className="text-xl sm:text-2xl font-black text-foreground mb-3">
+          <section className="mt-16 pt-10 border-t border-foreground/10">
+            <div className="rounded-lg border-2 border-foreground/20 bg-surface p-8 shadow-[4px_4px_0_rgba(44,62,80,0.1)] text-center">
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-3">
                 Get a plan like this for your business.
               </h2>
               <p className="text-foreground/70 mb-6 max-w-md mx-auto">
@@ -116,7 +116,7 @@ export default async function ExampleDetailPage({ params }: PageProps) {
               </p>
               <Link href="/start">
                 <Button size="xl">
-                  Get My Plan &mdash; {config.singlePrice}
+                  Get my plan - {config.singlePrice}
                 </Button>
               </Link>
             </div>

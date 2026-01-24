@@ -53,7 +53,7 @@ export function ShareModal({ runId, shareSlug, onClose }: ShareModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="relative w-full max-w-md mx-4 p-6 rounded-2xl bg-background border-[3px] border-foreground shadow-[6px_6px_0_0_rgba(44,62,80,1)] animate-scale-in">
+      <div className="relative w-full max-w-md mx-4 p-6 rounded-lg bg-background border-2 border-foreground/20 shadow-[4px_4px_0_rgba(44,62,80,0.1)] animate-scale-in">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-1 text-muted hover:text-foreground transition-colors duration-100"
@@ -81,11 +81,11 @@ export function ShareModal({ runId, shareSlug, onClose }: ShareModalProps) {
                 type="text"
                 value={shareUrl}
                 readOnly
-                className="flex-1 rounded-lg px-3 py-2 border-2 border-foreground bg-surface text-sm text-foreground font-mono"
+                className="flex-1 rounded-md px-3 py-2 border border-foreground/20 bg-surface text-sm text-foreground font-mono"
               />
               <button
                 onClick={handleCopy}
-                className="rounded-xl p-2 border-[3px] border-foreground bg-primary text-white shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[5px_5px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100"
+                className="rounded-md p-2 bg-cta text-white border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 hover:shadow-md active:translate-y-0.5 active:border-b-0 transition-all duration-100"
               >
                 {copied ? (
                   <Check className="h-5 w-5" />
@@ -98,7 +98,7 @@ export function ShareModal({ runId, shareSlug, onClose }: ShareModalProps) {
               This link never expires. You can regenerate it if needed.
             </p>
 
-            <div className="flex items-center gap-3 pt-4 border-t-2 border-foreground/20">
+            <div className="flex items-center gap-3 pt-4 border-t border-foreground/10">
               <span className="text-sm font-medium text-foreground">Share on:</span>
               <SocialShareButtons
                 url={shareUrl}

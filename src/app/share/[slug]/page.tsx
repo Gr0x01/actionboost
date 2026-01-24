@@ -2,11 +2,12 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { createServiceClient } from "@/lib/supabase/server";
 import { parseStrategy } from "@/lib/markdown/parser";
-import { Header, Footer, ResultsLayout } from "@/components/layout";
+import { Header, Footer } from "@/components/layout";
 import { ResultsContent } from "@/components/results";
 import { SocialShareButtons } from "@/components/ui/SocialShareButtons";
 import { config } from "@/lib/config";
 import Link from "next/link";
+import type { StructuredOutput } from "@/lib/ai/formatter-types";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -17,7 +18,7 @@ async function getSharedRun(slug: string) {
 
   const { data: run } = await supabase
     .from("runs")
-    .select("id, status, input, output, share_slug, completed_at, created_at")
+    .select("id, status, input, output, share_slug, completed_at, created_at, structured_output")
     .eq("share_slug", slug)
     .single();
 
@@ -76,64 +77,68 @@ export default async function SharePage({ params }: PageProps) {
   }
 
   const strategy = parseStrategy(run.output);
-
-  const shareBanner = (
-    <div className="rounded-2xl border-[3px] border-foreground bg-background p-4 shadow-[4px_4px_0_0_rgba(44,62,80,1)] mb-6">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-          <p className="text-sm text-foreground/70">
-            This action plan was created with Boost
-          </p>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-foreground/30 hidden sm:inline">|</span>
-            <SocialShareButtons
-              url={`https://aboo.st/share/${slug}`}
-              text="Interesting action plan I found on Boost"
-              source="share_page"
-            />
-          </div>
-        </div>
-        <Link href="/start">
-          <button className="rounded-lg whitespace-nowrap px-4 py-2 bg-cta text-white font-bold text-sm border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
-            Get Your Own Plan
-          </button>
-        </Link>
-      </div>
-    </div>
-  );
-
-  const bottomCta = (
-    <div className="rounded-2xl mt-16 border-[3px] border-foreground bg-background p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] text-center space-y-4">
-      <p className="font-mono text-xs tracking-[0.15em] text-foreground/60 uppercase">
-        Your turn
-      </p>
-      <h2 className="text-2xl font-black text-foreground">
-        Want an action plan for your product?
-      </h2>
-      <p className="text-foreground/70 max-w-md mx-auto">
-        Boost uses live competitive research and AI to create actionable strategies for startups and entrepreneurs.
-      </p>
-      <Link href="/start">
-        <button className="rounded-xl px-8 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
-          Get Started - {config.singlePrice}
-        </button>
-      </Link>
-    </div>
-  );
+  const structuredOutput = run.structured_output as StructuredOutput | null;
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <ResultsLayout
-        toc={{ strategy }}
-        slots={{
-          afterToc: shareBanner,
-          bottomCta,
-        }}
-      >
-        <ResultsContent strategy={strategy} />
-      </ResultsLayout>
+      <main className="flex-1">
+        <div className="mx-auto max-w-5xl px-4 md:px-12 py-8 md:py-16">
+          {/* Share Banner - Soft Brutalist */}
+          <div className="rounded-lg border-2 border-foreground/20 bg-background p-4 shadow-[4px_4px_0_rgba(44,62,80,0.1)] mb-10">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                <p className="text-sm text-foreground/70">
+                  This marketing plan was created with Boost
+                </p>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-foreground/20 hidden sm:inline">|</span>
+                  <SocialShareButtons
+                    url={`https://aboo.st/share/${slug}`}
+                    text="Interesting marketing plan I found on Boost"
+                    source="share_page"
+                  />
+                </div>
+              </div>
+              <Link href="/start">
+                <button className="rounded-md whitespace-nowrap px-4 py-2 bg-cta text-white font-semibold text-sm border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 hover:shadow-md active:translate-y-0.5 active:border-b-0 transition-all duration-100">
+                  Get your own plan
+                </button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Results Content - InsightsView if structured_output available */}
+          <ResultsContent
+            strategy={strategy}
+            structuredOutput={structuredOutput}
+            runId={run.id}
+            activeTab="insights"
+            isOwner={false}
+          />
+
+          {/* Bottom CTA - Soft Brutalist */}
+          <div className="rounded-lg mt-20 border-2 border-foreground/20 bg-background p-8 shadow-[4px_4px_0_rgba(44,62,80,0.1)] text-center space-y-4">
+            <p className="text-xs font-medium tracking-wide text-foreground/50 uppercase">
+              Your turn
+            </p>
+            <h2 className="text-2xl font-bold text-foreground">
+              Want a marketing plan for your business?
+            </h2>
+            <p className="text-foreground/70 max-w-md mx-auto">
+              Boost uses live competitive research and AI to create actionable strategies for small businesses.
+            </p>
+            <div className="pt-2">
+              <Link href="/start">
+                <button className="rounded-md px-8 py-4 bg-cta text-white font-semibold text-lg border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0.5 active:border-b-0 transition-all duration-100">
+                  Get started - {config.singlePrice}
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </main>
 
       <Footer />
     </div>

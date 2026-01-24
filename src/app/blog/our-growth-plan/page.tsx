@@ -64,16 +64,16 @@ export default async function GrowthPlanPage() {
         </div>
       </div>
 
-      {/* CTA banner - brutalist box */}
-      <div className="rounded-2xl mb-8 border-[3px] border-foreground bg-background p-6 shadow-[6px_6px_0_0_rgba(44,62,80,1)]">
+      {/* CTA banner - Soft Brutalist */}
+      <div className="rounded-lg mb-8 border-2 border-foreground/20 bg-background p-6 shadow-[4px_4px_0_rgba(44,62,80,0.1)]">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <p className="font-bold text-foreground">Want an action plan like this for your product?</p>
+            <p className="font-semibold text-foreground">Want a marketing plan like this for your business?</p>
             <p className="text-sm text-foreground/60">Get AI-powered growth recommendations with live competitive research.</p>
           </div>
           <Link href="/start">
-            <button className="rounded-xl whitespace-nowrap px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
-              Get Your Action Plan - {config.singlePrice}
+            <button className="rounded-md whitespace-nowrap px-6 py-3 bg-cta text-white font-semibold border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 hover:shadow-md active:translate-y-0.5 active:border-b-0 transition-all duration-100">
+              Get your plan - {config.singlePrice}
             </button>
           </Link>
         </div>
@@ -82,26 +82,26 @@ export default async function GrowthPlanPage() {
   );
 
   const bottomCta = (
-    <div className="rounded-2xl mt-16 border-[3px] border-foreground bg-background p-8 shadow-[6px_6px_0_0_rgba(44,62,80,1)] text-center space-y-4">
-      <p className="font-mono text-xs tracking-[0.15em] text-foreground/60 uppercase">
+    <div className="rounded-lg mt-16 border-2 border-foreground/20 bg-background p-8 shadow-[4px_4px_0_rgba(44,62,80,0.1)] text-center space-y-4">
+      <p className="text-xs font-medium tracking-wide text-foreground/50 uppercase">
         Your turn
       </p>
-      <h2 className="text-2xl font-black text-foreground">
-        Ready to get your own action plan?
+      <h2 className="text-2xl font-bold text-foreground">
+        Ready to get your own marketing plan?
       </h2>
       <p className="text-foreground/70 max-w-md mx-auto">
-        Boost uses live competitive research and Claude Opus to create
-        actionable strategies specifically for your product.
+        Boost uses live competitive research and AI to create
+        actionable strategies specifically for your business.
       </p>
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
         <Link href="/start">
-          <button className="rounded-xl px-8 py-4 bg-cta text-white font-bold text-lg border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
-            Get Started - {config.singlePrice}
+          <button className="rounded-md px-8 py-4 bg-cta text-white font-semibold text-lg border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0.5 active:border-b-0 transition-all duration-100">
+            Get started - {config.singlePrice}
           </button>
         </Link>
         <Link href="/">
-          <button className="rounded-xl px-8 py-4 bg-transparent text-foreground font-bold text-lg border-2 border-foreground shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100">
-            Learn More
+          <button className="rounded-md px-8 py-4 bg-transparent text-foreground font-semibold text-lg border-2 border-foreground/30 hover:bg-foreground/5 hover:border-foreground/50 transition-all duration-100">
+            Learn more
           </button>
         </Link>
       </div>
