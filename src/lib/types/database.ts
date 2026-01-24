@@ -18,6 +18,7 @@ export type Database = {
           insight: string
           content: string
           metadata: Json | null
+          structured_output: Json | null
           is_live: boolean
           published_at: string | null
           created_at: string
@@ -30,6 +31,7 @@ export type Database = {
           insight: string
           content: string
           metadata?: Json | null
+          structured_output?: Json | null
           is_live?: boolean
           published_at?: string | null
           created_at?: string
@@ -42,6 +44,7 @@ export type Database = {
           insight?: string
           content?: string
           metadata?: Json | null
+          structured_output?: Json | null
           is_live?: boolean
           published_at?: string | null
           created_at?: string
