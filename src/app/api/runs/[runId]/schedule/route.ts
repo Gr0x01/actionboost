@@ -171,7 +171,7 @@ export async function PATCH(
   }
 
   // Get or create schedule
-  let schedule = (run.task_schedule as TaskSchedule | null) || createEmptySchedule()
+  const schedule = (run.task_schedule as TaskSchedule | null) || createEmptySchedule()
 
   // Find original day for this task (to initialize if needed)
   const existingTasks = mergeTasksWithSchedule(

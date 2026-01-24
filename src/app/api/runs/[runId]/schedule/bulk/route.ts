@@ -132,7 +132,7 @@ export async function POST(
   }
 
   // Get or create schedule
-  let schedule = (run.task_schedule as TaskSchedule | null) || createEmptySchedule()
+  const schedule = (run.task_schedule as TaskSchedule | null) || createEmptySchedule()
 
   // Apply all updates
   for (const update of body.updates) {

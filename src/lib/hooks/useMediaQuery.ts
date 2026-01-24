@@ -1,39 +1,31 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useSyncExternalStore, useCallback } from 'react'
 
 /**
  * Hook to track media query matches
- * SSR-safe: returns false on server, then hydrates with actual value
+ * SSR-safe: uses useSyncExternalStore for proper hydration
  *
  * @param query - CSS media query string (e.g., '(max-width: 768px)')
  * @returns boolean indicating if the media query matches
  */
 export function useMediaQuery(query: string): boolean {
-  // Default to false for SSR
-  const [matches, setMatches] = useState(false)
+  const subscribe = useCallback(
+    (callback: () => void) => {
+      const mediaQuery = window.matchMedia(query)
+      mediaQuery.addEventListener('change', callback)
+      return () => mediaQuery.removeEventListener('change', callback)
+    },
+    [query]
+  )
 
-  useEffect(() => {
-    // Check if window is available (client-side)
-    if (typeof window === 'undefined') return
-
-    const mediaQuery = window.matchMedia(query)
-
-    // Set initial value
-    setMatches(mediaQuery.matches)
-
-    // Listen for changes
-    const handleChange = (event: MediaQueryListEvent) => {
-      setMatches(event.matches)
-    }
-
-    // Modern browsers
-    mediaQuery.addEventListener('change', handleChange)
-
-    return () => {
-      mediaQuery.removeEventListener('change', handleChange)
-    }
+  const getSnapshot = useCallback(() => {
+    return window.matchMedia(query).matches
   }, [query])
 
-  return matches
+  const getServerSnapshot = useCallback(() => {
+    return false // Default to false on server
+  }, [])
+
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 }
