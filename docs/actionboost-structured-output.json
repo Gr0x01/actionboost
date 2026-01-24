@@ -3,288 +3,322 @@
     "days": [
       {
         "day": 1,
-        "action": "Update website: $49 pricing, SMB messaging, \"real research\" prominently featured",
-        "timeEstimate": "4 hours",
-        "successMetric": "Site live with correct positioning"
+        "action": "Generate 5 sample outputs (salon, cleaning service, Etsy shop, local plumber, niche e-commerce). Redact customer info.",
+        "timeEstimate": "3 hrs",
+        "successMetric": "5 publishable samples"
       },
       {
         "day": 2,
-        "action": "Run Actionboo.st on 3 real businesses (salon, Etsy shop, local service) to create sample outputs",
-        "timeEstimate": "2 hours",
-        "successMetric": "3 complete sample plans"
+        "action": "Update landing page with 2 full sample outputs (not just preview). Add industry selector to show relevant example.",
+        "timeEstimate": "4 hrs",
+        "successMetric": "Bounce rate baseline established"
       },
       {
         "day": 3,
-        "action": "Create visual excerpts from samples showing competitor research data",
-        "timeEstimate": "2 hours",
-        "successMetric": "6 shareable images for social/Reddit"
+        "action": "Research and join 10 Facebook groups (Salon Owners, Mobile Detailing, House Cleaning Business, Etsy Seller Success, etc.)",
+        "timeEstimate": "2 hrs",
+        "successMetric": "10 groups joined, rules read"
       },
       {
         "day": 4,
-        "action": "Post in r/smallbusiness weekly thread with genuine help + subtle mention",
-        "timeEstimate": "1 hour",
-        "successMetric": "Post live, no removal"
+        "action": "Monitor Reddit: r/smallbusiness, r/sweatystartup, r/Esthetics, r/EtsySellers. Identify 10 \"stuck on marketing\" posts from past 30 days.",
+        "timeEstimate": "2 hrs",
+        "successMetric": "10 potential prospects identified"
       },
       {
         "day": 5,
-        "action": "DM 15 salon owners on Instagram with free audit offer",
-        "timeEstimate": "2 hours",
-        "successMetric": "3+ responses"
+        "action": "Provide genuine value on 5 Reddit posts (no links, no pitch). Establish helpful presence. DM 3 posters with free competitor insight offer.",
+        "timeEstimate": "3 hrs",
+        "successMetric": "3 DMs sent, track response rate"
       },
       {
         "day": 6,
-        "action": "Deliver free audits, ask for testimonials and permission to share",
-        "timeEstimate": "2 hours",
-        "successMetric": "1+ testimonial secured"
+        "action": "Create automated post-purchase email sequence: Day 0 (delivery), Day 2 (check-in), Day 7 (testimonial request)",
+        "timeEstimate": "2 hrs",
+        "successMetric": "Sequence live"
       },
       {
         "day": 7,
-        "action": "Publish \"Our own Actionboo.st plan\" blog post, share on Twitter",
-        "timeEstimate": "3 hours",
-        "successMetric": "Post live, 10+ engagements"
+        "action": "Twitter/X thread: \"I built a tool that researches your competitors before making your marketing plan. Here's what we found for a salon owner.\" Share real (anonymized) insights.",
+        "timeEstimate": "1.5 hrs",
+        "successMetric": "Thread posted, engagement tracked"
       }
     ],
-    "totalHours": 16
+    "totalHours": 17.5
   },
   "topPriorities": [
     {
       "rank": 1,
-      "title": "Fix website pricing/positioning to match $49 SMB strategy",
+      "title": "Create 3-5 redacted sample outputs for different verticals",
       "iceScore": 26,
       "impact": {
         "score": 9,
-        "reason": "Every day the mismatch persists, you confuse potential buyers and undermine your positioning"
+        "reason": "Shows actual value delivered, builds trust, addresses skepticism about AI quality"
       },
       "confidence": {
         "score": 9,
-        "reason": "Site currently shows $9.99-$10 pricing while strategy is $49 SMB - direct contradiction"
+        "reason": "Direct control over asset creation, proven to work in sales demos"
       },
       "ease": {
         "score": 8,
-        "reason": "Website update, no technical complexity"
+        "reason": "Can be done quickly with existing system, just need to redact customer info"
       },
-      "description": "Update live site to show correct $49 pricing and SMB messaging instead of current indie hacker positioning"
+      "description": "Generate sample outputs for salon, cleaning service, Etsy shop, local service business to use across all marketing channels"
     },
     {
       "rank": 2,
-      "title": "Create 3 real sample outputs for salon, Etsy, local service",
+      "title": "Identify and join 10+ Facebook groups where target customers ask marketing questions",
       "iceScore": 23,
       "impact": {
         "score": 8,
-        "reason": "Sample outputs showing actual competitor data prove the 'real research' differentiator"
+        "reason": "Direct access to target audience expressing exact pain point you solve"
       },
       "confidence": {
         "score": 8,
-        "reason": "Product exists, just need to run it on real businesses for samples"
+        "reason": "Groups exist and are active, just need to find and join them"
       },
       "ease": {
         "score": 7,
-        "reason": "Requires running product 3 times and creating shareable formats"
+        "reason": "Manual process but straightforward, just time intensive"
       },
-      "description": "Run Actionboo.st on 3 real businesses to create compelling proof assets showing actual competitor research"
+      "description": "Join industry-specific Facebook groups for salon owners, cleaning businesses, Etsy sellers where they discuss marketing challenges"
     },
     {
       "rank": 3,
-      "title": "Post in r/smallbusiness weekly thread with genuine value",
+      "title": "Add referral mechanism",
       "iceScore": 22,
       "impact": {
         "score": 7,
-        "reason": "Direct access to target audience actively asking for marketing help"
+        "reason": "High-satisfaction customers likely to refer at low price point, viral coefficient boost"
       },
       "confidence": {
         "score": 7,
-        "reason": "1.5M+ members, consistent marketing questions, proven channel"
+        "reason": "Simple incentive structure, customers seem happy based on early feedback"
       },
       "ease": {
         "score": 8,
-        "reason": "Just requires posting helpful responses with subtle mentions"
+        "reason": "Can implement with basic credit system, minimal dev work"
       },
-      "description": "Engage in r/smallbusiness threads with genuine marketing advice, subtly mentioning tool when relevant"
+      "description": "Share your plan with another stuck business owner, get $10 credit toward refinements or future purchase"
     },
     {
       "rank": 4,
-      "title": "DM 10 salon owners daily with free audit offer",
+      "title": "Create \"I analyzed your competitor for free\" DM offer",
       "iceScore": 21,
       "impact": {
         "score": 8,
-        "reason": "Direct outreach to high-fit vertical, builds case studies and testimonials"
+        "reason": "Demonstrates value before asking for payment, builds trust through proof"
       },
       "confidence": {
         "score": 7,
-        "reason": "Salon owners consistently express marketing overwhelm in research"
+        "reason": "Research tools already exist, just need to productize the outreach"
       },
       "ease": {
         "score": 6,
-        "reason": "Manual outreach, time-intensive but straightforward"
+        "reason": "Manual process, time intensive, but clear process"
       },
-      "description": "Personal Instagram DMs to salon owners offering free marketing plan audits to build proof and conversions"
+      "description": "Research someone's actual competitor, share one insight for free, offer full plan as upsell"
     },
     {
       "rank": 5,
-      "title": "Publish 'We ran Actionboo.st on ourselves' case study",
+      "title": "Write value-first Reddit posts in target communities",
       "iceScore": 21,
       "impact": {
         "score": 7,
-        "reason": "Shows the product working, builds credibility, creates shareable content"
+        "reason": "Builds reputation and trust, targets exact audience with demonstrated need"
       },
       "confidence": {
         "score": 8,
-        "reason": "Have the data since product runs on itself, just need to format it"
+        "reason": "Reddit has active communities asking these questions daily"
       },
       "ease": {
         "score": 6,
-        "reason": "Requires writing and formatting, but data exists"
+        "reason": "Requires consistent effort and community management, risk of being seen as promotional"
       },
-      "description": "Create blog post showing Actionboo.st's own marketing plan output as proof of concept"
+      "description": "Post helpful marketing advice in r/smallbusiness, r/sweatystartup, r/Esthetics without promotion"
     },
     {
       "rank": 6,
-      "title": "Add 'share your plan' prompt with pre-written tweet to dashboard",
+      "title": "Resolve price point - test $29 vs $49",
       "iceScore": 21,
       "impact": {
         "score": 6,
-        "reason": "Activates referral mechanism for existing users"
+        "reason": "Price optimization critical for conversion, but unclear which direction is optimal"
       },
       "confidence": {
+        "score": 6,
+        "reason": "Can test but small sample size may not be statistically significant"
+      },
+      "ease": {
+        "score": 9,
+        "reason": "Simple change, immediate implementation"
+      },
+      "description": "Current discrepancy between brief ($49) and website ($29) needs resolution with clear testing approach"
+    },
+    {
+      "rank": 7,
+      "title": "Add testimonial collection automation",
+      "iceScore": 23,
+      "impact": {
         "score": 7,
-        "reason": "Simple feature, users already get shareable artifact"
+        "reason": "Social proof essential for converting skeptical SMB owners"
+      },
+      "confidence": {
+        "score": 8,
+        "reason": "Customers seem satisfied, just need systematic collection process"
       },
       "ease": {
         "score": 8,
-        "reason": "Small UI addition with pre-written social copy"
+        "reason": "Simple email sequence, can implement quickly"
       },
-      "description": "Add dashboard CTA encouraging users to share their marketing plan with pre-written social media copy"
+      "description": "Automated post-delivery email asking for feedback with permission to use testimonials"
+    },
+    {
+      "rank": 8,
+      "title": "Prepare Product Hunt launch",
+      "iceScore": 16,
+      "impact": {
+        "score": 6,
+        "reason": "Category validation exists, but audience may skew too technical"
+      },
+      "confidence": {
+        "score": 5,
+        "reason": "PH success is unpredictable, depends on many external factors"
+      },
+      "ease": {
+        "score": 5,
+        "reason": "Requires hunter outreach, asset creation, community mobilization"
+      },
+      "description": "Gather hunters, create assets, line up launch day support for credibility boost"
     }
   ],
   "metrics": [
     {
-      "name": "Website visitors",
-      "target": "1,500 by Week 4",
+      "name": "Paying Customers",
+      "target": "50 total",
       "category": "acquisition"
     },
     {
-      "name": "Reddit referrals",
-      "target": "250 by Week 4",
+      "name": "Revenue",
+      "target": "$1,450-2,450",
+      "category": "revenue"
+    },
+    {
+      "name": "Reddit DM Conversion",
+      "target": "10%+",
+      "category": "conversion"
+    },
+    {
+      "name": "Testimonials Collected",
+      "target": "10",
+      "category": "retention"
+    },
+    {
+      "name": "Visitor-to-Customer Rate",
+      "target": "3-5%",
+      "category": "conversion"
+    },
+    {
+      "name": "Product Hunt Upvotes",
+      "target": "100+",
       "category": "acquisition"
     },
     {
-      "name": "DM response rate",
-      "target": "25%",
-      "category": "activation"
+      "name": "Facebook Groups Active",
+      "target": "15",
+      "category": "acquisition"
     },
     {
-      "name": "Form completion rate",
-      "target": "20% by Week 4",
-      "category": "activation"
-    },
-    {
-      "name": "Paying customers",
-      "target": "50 total by Week 4",
-      "category": "revenue"
-    },
-    {
-      "name": "Conversion rate",
-      "target": "3.5% by Week 4",
-      "category": "revenue"
-    },
-    {
-      "name": "Testimonials collected",
-      "target": "8 by Week 4",
-      "category": "referral"
+      "name": "Landing Page Visits",
+      "target": "Track baseline",
+      "category": "acquisition"
     }
   ],
   "competitors": [
     {
-      "name": "M1-Project",
-      "traffic": "36K/mo",
-      "trafficNumber": 36000,
-      "positioning": "AI Marketing Strategy Generator for Startups, 10-chapter comprehensive strategy with ICP focus",
-      "weakness": "Startup-focused rather than SMB-focused, lacks live competitor research component that makes strategies generic",
-      "opportunity": "Position as the SMB-focused alternative with real-time competitive intelligence built in",
-      "stealThis": "10-chapter comprehensive structure approach - users want depth and completeness"
-    },
-    {
-      "name": "Enji",
-      "traffic": "1.5K/mo",
-      "trafficNumber": 1500,
-      "positioning": "Full Marketing Suite for Small Business, subscription-based workspace with strategy + execution tools",
-      "weakness": "Ongoing subscription cost creates resistance, complexity overwhelms SMBs, strategy is just gateway to tool suite",
-      "opportunity": "Position as one-time purchase for just the strategy without ongoing commitment or complexity",
-      "stealThis": "They actively educate market that generic AI strategies don't work - validates your 'real research' positioning"
-    },
-    {
       "name": "Copy.ai",
       "traffic": "161K/mo",
       "trafficNumber": 161000,
-      "positioning": "AI content generator with focus on content at scale, not strategy",
-      "weakness": "Generates words not plans, no strategic thinking or competitor research, subscription model",
-      "opportunity": "Not a direct competitor - they're solving content creation, you're solving strategy planning",
-      "stealThis": "Strong SEO presence and content marketing approach to educate market"
+      "positioning": "AI writing assistant, marketing copy, $36-49/mo subscription",
+      "weakness": "Writes content but doesn't tell you what content to write or where to focus - wrong use case entirely",
+      "opportunity": "Position as strategy-first: 'They help you write faster, we help you know what to write'",
+      "stealThis": "Strong SEO presence and content marketing approach for organic acquisition"
     },
     {
       "name": "Jasper.ai",
       "traffic": "207K/mo",
       "trafficNumber": 207000,
-      "positioning": "AI marketing platform focused on enterprise, brand voice, content at scale",
-      "weakness": "Enterprise-focused pricing and complexity, not strategy-focused, expensive ongoing subscription",
-      "opportunity": "Position as the affordable, strategy-focused alternative for SMBs who can't afford enterprise tools",
-      "stealThis": "Brand voice consistency features and professional positioning"
+      "positioning": "AI content platform, $49-125/mo, enterprise focus",
+      "weakness": "Overkill for SMBs, content generation not strategy, expensive monthly commitment",
+      "opportunity": "Target SMBs who find Jasper too complex and expensive with one-time affordable offering",
+      "stealThis": "Professional positioning and enterprise-level polish in marketing materials"
     },
     {
-      "name": "ChatGPT (free)",
+      "name": "Easy-Peasy.ai",
+      "traffic": "189K/mo",
+      "trafficNumber": 189000,
+      "positioning": "Free marketing plan generator, broad AI tool platform",
+      "weakness": "Generic output, no actual research on user's competitors, template-based responses",
+      "opportunity": "Emphasize real competitor research and personalized strategy vs generic templates",
+      "stealThis": "Free tier to reduce friction, but their marketing plan tool validates the category"
+    },
+    {
+      "name": "Marketing consultants",
       "traffic": "",
-      "positioning": "Generic AI accessible to everyone, instant responses",
-      "weakness": "Generic responses with no research, 'just guessing' without real data, no structure or framework",
-      "opportunity": "Your core differentiator - real research vs. guessing, structured output vs. generic responses",
-      "stealThis": "Instant gratification and ease of use - match the speed but add the substance"
+      "positioning": "Human strategy, $125-399/hour, requires multiple sessions",
+      "weakness": "Expensive, intimidating for small business owners, time-intensive process",
+      "opportunity": "Position as accessible consultant alternative: complete strategy for price of 20 minutes of consultant time",
+      "stealThis": "Deep expertise positioning and industry-specific knowledge"
     },
     {
-      "name": "GrowthMentor",
-      "traffic": "49K/mo",
-      "trafficNumber": 49000,
-      "positioning": "Human mentorship marketplace connecting entrepreneurs with marketing experts",
-      "weakness": "Expensive ($99-500/session), requires scheduling, one-off advice without ongoing framework",
-      "opportunity": "Position as the always-available, affordable alternative that gives structured plans not just advice",
-      "stealThis": "Emphasis on real expertise and personalized guidance - bring that feeling to AI-generated output"
+      "name": "ChatGPT/Claude",
+      "traffic": "",
+      "positioning": "DIY prompting, $20/mo, general AI assistant",
+      "weakness": "Requires marketing knowledge to prompt well, no competitor research, generic advice",
+      "opportunity": "Market as 'ChatGPT but with actual research and marketing expertise built-in'",
+      "stealThis": "Conversational interface and accessibility to non-experts"
     }
   ],
   "currentWeek": 1,
   "roadmapWeeks": [
     {
       "week": 1,
-      "theme": "Foundation and First Sales",
+      "theme": "Foundation & First 10 Customers",
       "tasks": [
-        "Fix website pricing/positioning",
-        "Create sample outputs",
-        "Start Reddit engagement",
-        "Begin salon outreach"
+        "Generate sample outputs",
+        "Update landing page",
+        "Join Facebook groups",
+        "Identify Reddit prospects"
       ]
     },
     {
       "week": 2,
-      "theme": "Vertical Focus and Outreach Scale",
+      "theme": "Systematic Outreach & Community Engagement",
       "tasks": [
-        "Launch salon landing page",
-        "Scale outreach",
-        "Build social proof"
+        "Facebook group value posts",
+        "Reddit engagement",
+        "DM outreach",
+        "Collect testimonials"
       ]
     },
     {
       "week": 3,
-      "theme": "Expand Verticals and Social Proof",
+      "theme": "Amplification & Product Hunt Prep",
       "tasks": [
-        "Launch Etsy vertical",
-        "Accumulate testimonials",
-        "Content marketing"
+        "Contact PH hunters",
+        "Create PH assets",
+        "Value content posting",
+        "Video walkthrough"
       ]
     },
     {
       "week": 4,
-      "theme": "Product Hunt and Scale",
+      "theme": "Product Hunt Launch & Push to 50",
       "tasks": [
         "Product Hunt launch",
-        "Systematize processes",
-        "Plan Month 2"
+        "Post-launch follow-up",
+        "Intensive DM campaign",
+        "Month review"
       ]
     }
   ],
@@ -293,239 +327,246 @@
   "weeks": [
     {
       "week": 1,
-      "theme": "Foundation and First Sales",
+      "theme": "Foundation & First 10 Customers",
       "days": [
         {
           "day": 1,
-          "action": "Update website: $49 pricing, SMB messaging, \"real research\" prominently featured",
-          "timeEstimate": "4 hours",
-          "successMetric": "Site live with correct positioning"
+          "action": "Generate 5 sample outputs (salon, cleaning service, Etsy shop, local plumber, niche e-commerce). Redact customer info.",
+          "timeEstimate": "3 hrs",
+          "successMetric": "5 publishable samples"
         },
         {
           "day": 2,
-          "action": "Run Actionboo.st on 3 real businesses (salon, Etsy shop, local service) to create sample outputs",
-          "timeEstimate": "2 hours",
-          "successMetric": "3 complete sample plans"
+          "action": "Update landing page with 2 full sample outputs (not just preview). Add industry selector to show relevant example.",
+          "timeEstimate": "4 hrs",
+          "successMetric": "Bounce rate baseline established"
         },
         {
           "day": 3,
-          "action": "Create visual excerpts from samples showing competitor research data",
-          "timeEstimate": "2 hours",
-          "successMetric": "6 shareable images for social/Reddit"
+          "action": "Research and join 10 Facebook groups (Salon Owners, Mobile Detailing, House Cleaning Business, Etsy Seller Success, etc.)",
+          "timeEstimate": "2 hrs",
+          "successMetric": "10 groups joined, rules read"
         },
         {
           "day": 4,
-          "action": "Post in r/smallbusiness weekly thread with genuine help + subtle mention",
-          "timeEstimate": "1 hour",
-          "successMetric": "Post live, no removal"
+          "action": "Monitor Reddit: r/smallbusiness, r/sweatystartup, r/Esthetics, r/EtsySellers. Identify 10 \"stuck on marketing\" posts from past 30 days.",
+          "timeEstimate": "2 hrs",
+          "successMetric": "10 potential prospects identified"
         },
         {
           "day": 5,
-          "action": "DM 15 salon owners on Instagram with free audit offer",
-          "timeEstimate": "2 hours",
-          "successMetric": "3+ responses"
+          "action": "Provide genuine value on 5 Reddit posts (no links, no pitch). Establish helpful presence. DM 3 posters with free competitor insight offer.",
+          "timeEstimate": "3 hrs",
+          "successMetric": "3 DMs sent, track response rate"
         },
         {
           "day": 6,
-          "action": "Deliver free audits, ask for testimonials and permission to share",
-          "timeEstimate": "2 hours",
-          "successMetric": "1+ testimonial secured"
+          "action": "Create automated post-purchase email sequence: Day 0 (delivery), Day 2 (check-in), Day 7 (testimonial request)",
+          "timeEstimate": "2 hrs",
+          "successMetric": "Sequence live"
         },
         {
           "day": 7,
-          "action": "Publish \"Our own Actionboo.st plan\" blog post, share on Twitter",
-          "timeEstimate": "3 hours",
-          "successMetric": "Post live, 10+ engagements"
+          "action": "Twitter/X thread: \"I built a tool that researches your competitors before making your marketing plan. Here's what we found for a salon owner.\" Share real (anonymized) insights.",
+          "timeEstimate": "1.5 hrs",
+          "successMetric": "Thread posted, engagement tracked"
         }
       ]
     },
     {
       "week": 2,
-      "theme": "Vertical Focus and Outreach Scale",
+      "theme": "Systematic Outreach & Community Engagement",
       "days": [
         {
           "day": 8,
-          "action": "Create salon-specific landing page with sample output and testimonial",
-          "timeEstimate": "3 hours",
-          "successMetric": "Landing page live at /salons"
+          "action": "Facebook group value posts: Share \"3 marketing wins for [industry]\" in 3 groups. No promotion, pure value.",
+          "timeEstimate": "2 hrs",
+          "successMetric": "Posts approved, engagement tracked"
         },
         {
           "day": 9,
-          "action": "Find and join 3 salon/beauty business Facebook groups",
-          "timeEstimate": "1 hour",
-          "successMetric": "Joined, intro posts made"
+          "action": "Reddit: Reply to 5+ \"what marketing should I do\" posts with specific, helpful advice. Build reputation.",
+          "timeEstimate": "1.5 hrs",
+          "successMetric": "5 helpful replies, karma tracked"
         },
         {
           "day": 10,
-          "action": "DM 20 salon owners with link to /salons page",
-          "timeEstimate": "2 hours",
-          "successMetric": "5+ responses"
+          "action": "DM outreach: Find 10 people who posted marketing questions on Reddit/Facebook in past 2 weeks. Offer free competitor insight (1 finding, not full plan).",
+          "timeEstimate": "3 hrs",
+          "successMetric": "10 DMs sent, track conversions"
         },
         {
           "day": 11,
-          "action": "Comment helpfully on 5 r/smallbusiness threads about marketing struggles",
-          "timeEstimate": "1.5 hours",
-          "successMetric": "Comments posted, no removal"
+          "action": "Follow up on Week 1 testimonial requests. Reach out personally to paying customers. Offer extra refinement for detailed testimonial.",
+          "timeEstimate": "1 hr",
+          "successMetric": "2+ testimonials collected"
         },
         {
           "day": 12,
-          "action": "Create Twitter thread: \"I analyzed 10 successful salons' marketing. Here's what they all do.\"",
-          "timeEstimate": "2 hours",
-          "successMetric": "Thread posted, 20+ engagements"
+          "action": "Create \"before/after\" content: Screenshot of generic ChatGPT marketing advice vs your research-backed output. Post on Twitter.",
+          "timeEstimate": "2 hrs",
+          "successMetric": "Content created and posted"
         },
         {
           "day": 13,
-          "action": "Follow up with all free audit recipients, offer $49 plan as \"thank you\" discount",
-          "timeEstimate": "1 hour",
-          "successMetric": "2+ conversions"
+          "action": "Facebook group engagement: Answer questions, become known as helpful marketing person. Soft mention tool only if directly relevant.",
+          "timeEstimate": "1.5 hrs",
+          "successMetric": "5+ helpful interactions"
         },
         {
           "day": 14,
-          "action": "Review Week 2 metrics, document what's converting",
-          "timeEstimate": "1 hour",
-          "successMetric": "Clear data on best-performing channel"
+          "action": "Weekly review: Analyze which channels drove customers. Double down on what works. Document learnings.",
+          "timeEstimate": "1 hr",
+          "successMetric": "Channel attribution documented"
         }
       ]
     },
     {
       "week": 3,
-      "theme": "Expand Verticals and Social Proof",
+      "theme": "Amplification & Product Hunt Prep",
       "days": [
         {
           "day": 15,
-          "action": "Create Etsy seller landing page with sample output",
-          "timeEstimate": "3 hours",
-          "successMetric": "/etsy page live"
+          "action": "Reach out to 3-5 Product Hunt hunters with history of launching similar products. Pitch your story.",
+          "timeEstimate": "2 hrs",
+          "successMetric": "2+ hunter conversations"
         },
         {
           "day": 16,
-          "action": "Post in r/EtsySellers monthly sales thread with helpful marketing tip + mention",
-          "timeEstimate": "1 hour",
-          "successMetric": "Post live"
+          "action": "Create Product Hunt assets: tagline, description, 4 images/GIFs showing the output, maker comment draft",
+          "timeEstimate": "3 hrs",
+          "successMetric": "All assets ready"
         },
         {
           "day": 17,
-          "action": "DM 15 Etsy sellers whose shops show marketing struggles",
-          "timeEstimate": "2 hours",
-          "successMetric": "4+ responses"
+          "action": "Reddit: Post value content in r/smallbusiness - \"How I helped a salon owner figure out what marketing to focus on\" (story format, not promotional)",
+          "timeEstimate": "2 hrs",
+          "successMetric": "Post submitted, engagement tracked"
         },
         {
           "day": 18,
-          "action": "Collect all testimonials, add to homepage and vertical pages",
-          "timeEstimate": "2 hours",
-          "successMetric": "3+ testimonials visible on site"
+          "action": "Expand Facebook presence: Join 5 more groups. Begin same value-first engagement pattern.",
+          "timeEstimate": "2 hrs",
+          "successMetric": "5 new groups, introductions made"
         },
         {
           "day": 19,
-          "action": "Write \"5 marketing mistakes salon owners make\" blog post (SEO play)",
-          "timeEstimate": "3 hours",
-          "successMetric": "Post live"
+          "action": "DM campaign: Target people who engaged with your Reddit/Facebook posts positively. Offer \"interested in seeing what we'd find about your competitors?\"",
+          "timeEstimate": "2 hrs",
+          "successMetric": "15 DMs sent"
         },
         {
           "day": 20,
-          "action": "Reach out to 3 small business podcasts for guest appearances",
-          "timeEstimate": "1.5 hours",
-          "successMetric": "3 pitches sent"
+          "action": "Create Loom video walkthrough: \"Here's exactly what you get for $49\" - full tour of a sample output",
+          "timeEstimate": "1.5 hrs",
+          "successMetric": "Video created, added to landing page"
         },
         {
           "day": 21,
-          "action": "Add \"Share your plan\" CTA with pre-written tweet to dashboard",
-          "timeEstimate": "2 hours",
-          "successMetric": "Feature live"
+          "action": "Line up Product Hunt launch support: Ask existing customers, Twitter followers, Facebook group connections to support on launch day",
+          "timeEstimate": "1.5 hrs",
+          "successMetric": "20+ committed supporters"
         }
       ]
     },
     {
       "week": 4,
-      "theme": "Product Hunt and Scale",
+      "theme": "Product Hunt Launch & Push to 50",
       "days": [
         {
           "day": 22,
-          "action": "Prepare Product Hunt launch: screenshots, description, maker comment",
-          "timeEstimate": "3 hours",
-          "successMetric": "All assets ready"
+          "action": "Final Product Hunt prep: Confirm hunter, finalize all assets, schedule launch for Tuesday-Thursday",
+          "timeEstimate": "1 hr",
+          "successMetric": "Launch scheduled"
         },
         {
           "day": 23,
-          "action": "Notify email list and social followers of upcoming launch",
-          "timeEstimate": "1 hour",
-          "successMetric": "20+ people committed to upvote"
+          "action": "Product Hunt Launch Day: Post, respond to every comment within 15 mins, share across all channels, activate supporter network",
+          "timeEstimate": "6+ hrs",
+          "successMetric": "Top 5 finish, 100+ upvotes"
         },
         {
           "day": 24,
-          "action": "Launch on Product Hunt",
-          "timeEstimate": "4 hours",
-          "successMetric": "Top 10 of the day"
+          "action": "Post-launch: Thank supporters, follow up with PH visitors who didn't convert, capture feedback",
+          "timeEstimate": "2 hrs",
+          "successMetric": "Conversion rate from PH tracked"
         },
         {
           "day": 25,
-          "action": "Follow up with all PH traffic, respond to comments, convert interest",
-          "timeEstimate": "2 hours",
-          "successMetric": "10+ new customers from PH"
+          "action": "Push testimonials: Create image cards from best testimonials for social proof across channels",
+          "timeEstimate": "2 hrs",
+          "successMetric": "3 testimonial images created"
         },
         {
           "day": 26,
-          "action": "Create \"local service business\" landing page (plumbers, electricians, etc.)",
-          "timeEstimate": "3 hours",
-          "successMetric": "/local-service page live"
+          "action": "Reddit recap post: \"I launched an AI marketing plan tool on Product Hunt - here's what I learned\" (authentic, includes failures)",
+          "timeEstimate": "2 hrs",
+          "successMetric": "Post in r/SaaS or r/indiehackers"
         },
         {
           "day": 27,
-          "action": "Systematize: document repeatable outreach process for VAs or future scaling",
-          "timeEstimate": "2 hours",
-          "successMetric": "SOP document complete"
+          "action": "Intensive DM day: 25 personalized outreach messages to \"stuck on marketing\" posters across all platforms",
+          "timeEstimate": "4 hrs",
+          "successMetric": "25 DMs, track conversion"
         },
         {
           "day": 28,
-          "action": "Review 30-day metrics, identify top 2 channels, plan Month 2",
-          "timeEstimate": "2 hours",
-          "successMetric": "Clear strategy for next 30 days"
+          "action": "Month review: Total customers, CAC by channel, testimonials collected, what worked, what didn't. Plan Month 2.",
+          "timeEstimate": "2 hrs",
+          "successMetric": "Full retrospective documented"
         }
       ]
     }
   ],
   "positioning": {
-    "verdict": "needs-work",
-    "summary": "You are entering a validated market with a differentiated product, but facing a positioning mismatch and discovery problem. Your website shows $9.99-$10 pricing targeting indie hackers while your strategy describes $49 SMB positioning - this inconsistency is costing conversions.",
-    "uniqueValue": "AI-generated marketing strategy with real competitor research at one-time price point",
-    "targetSegment": "Small business owners who feel overwhelmed by marketing and need structured, actionable guidance",
-    "competitiveAdvantage": "Real research on actual competitors vs generic AI guessing, structured 30-day format, one-time purchase vs subscription"
+    "verdict": "clear",
+    "summary": "Actionboo.st occupies a unique position delivering personalized, research-backed marketing strategy rather than generic content generation. Unlike Copy.ai and Jasper which help write faster, Actionboo.st helps SMBs know what to write and where to focus.",
+    "uniqueValue": "Real competitor research using APIs plus complete 30-day roadmap, not just generic templates",
+    "targetSegment": "Overwhelmed small business owners (salons, local services, niche e-commerce) who feel stuck on marketing",
+    "competitiveAdvantage": "Only tool that actually researches competitors before generating strategy, priced 10x below consultant alternative"
   },
   "discoveries": [
     {
-      "type": "competitive_intel",
-      "title": "Enji Actively Educates Against Generic AI",
-      "content": "Competitor Enji is actively educating the market that generic AI doesn't work for marketing strategy: 'No, you can't just use ChatGPT... It's just guessing... You're not going to prompt it right.'",
-      "source": "Enji.co website messaging",
-      "significance": "This validates your 'real research' positioning and shows competitors are creating the problem you solve"
-    },
-    {
-      "type": "finding",
-      "title": "Website Pricing Contradiction Identified",
-      "content": "Live site shows $9.99-$10 pricing and targets 'AI Action Plan for Founders' while strategy brief describes $49 SMB positioning - direct contradiction confusing prospects.",
-      "source": "Website audit",
-      "significance": "Critical issue undermining all marketing efforts - must be fixed immediately before any other growth tactics"
+      "type": "pattern",
+      "title": "The \"Stuck\" Keyword is Positioning Goldmine",
+      "content": "Business owners don't search for 'marketing plan generator' - they say 'I'm stuck,' 'I'm paralyzed,' 'I'm overwhelmed' across Reddit threads.",
+      "source": "Reddit analysis",
+      "significance": "Emotional state targeting more effective than feature-based positioning"
     },
     {
       "type": "opportunity",
-      "title": "Salon Owners Are Goldmine Audience",
-      "content": "Multiple Reddit threads show salon/spa owners explicitly asking for business strategy tools, feeling overwhelmed, and seeking simple guidance. They're time-poor but not cash-strapped.",
-      "source": "Reddit research across r/Mangomint, r/hairstylist",
-      "significance": "Identifies high-value vertical with clear pain point and willingness to pay for solutions"
-    },
-    {
-      "type": "pattern",
-      "title": "SMBs Think in 30-Day Cycles",
-      "content": "Multiple Reddit threads reference 30-day challenges, monthly planning cycles, and 'what to do this month' - your 30-day format matches how audience conceptualizes time.",
-      "source": "Reddit sentiment analysis",
-      "significance": "Product structure aligns with natural customer behavior patterns, increasing adoption likelihood"
+      "title": "r/sweatystartup Untapped Channel",
+      "content": "Highly engaged local service business owners asking exactly your question, but they ban software promotion so requires value-first approach.",
+      "source": "Reddit community research",
+      "significance": "Perfect audience match but requires careful community engagement strategy"
     },
     {
       "type": "competitive_intel",
-      "title": "Hidden Competitor: Fiverr Marketing Strategists",
-      "content": "Fiverr has hundreds of gigs offering 'marketing strategy' for $50-200 with variable quality. Your $49 AI-researched, instant delivery competes favorably.",
-      "source": "Fiverr marketplace research",
-      "significance": "Price anchoring opportunity - your instant, researched output beats manual freelancer timeline and quality inconsistency"
+      "title": "$500-3,000 Marketing Package Rejection",
+      "content": "Multiple salon owners specifically mention rejecting expensive marketing packages in that range, with $49 hitting the 'worth trying' threshold.",
+      "source": "Reddit r/smallbusiness",
+      "significance": "Price positioning validated - 10x below rejection threshold creates trial willingness"
+    },
+    {
+      "type": "finding",
+      "title": "Etsy Sellers Overlooked Niche",
+      "content": "r/EtsySellers and r/Etsy have highly active users feeling overwhelmed with marketing - perfect fit for niche e-commerce positioning.",
+      "source": "Reddit community analysis",
+      "significance": "Underserved segment that matches target profile and current positioning"
+    },
+    {
+      "type": "risk",
+      "title": "Wrong Competitive Set in Current Positioning",
+      "content": "Copy.ai and Jasper.ai are AI writing tools, not strategy generators - positioning against them confuses the value proposition.",
+      "source": "Competitor analysis",
+      "significance": "Need to reframe competition as doing nothing, ChatGPT generic advice, or expensive consultants"
+    },
+    {
+      "type": "pattern",
+      "title": "Facebook Groups Where Customers Actually Live",
+      "content": "Salon owners, estheticians, cleaning business owners congregate in private Facebook groups, not on Twitter where current marketing focuses.",
+      "source": "Channel analysis",
+      "significance": "Major channel strategy shift needed from Twitter to industry-specific Facebook groups"
     }
   ]
 }
