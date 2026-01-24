@@ -188,7 +188,7 @@ export function HeroWithExplainer() {
 
           {/* Trust line */}
           <p className="mt-8 text-sm text-foreground/70 font-medium">
-            $29 one-time · 5 minutes · <span className="text-foreground">100% refund if it doesn&apos;t help</span>
+            $29 one-time · Real research, not ChatGPT advice · <span className="text-foreground">Full refund if it doesn&apos;t help</span>
           </p>
         </div>
       </section>
@@ -207,15 +207,15 @@ export function HeroWithExplainer() {
             How it works
           </p>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-foreground tracking-tight leading-tight">
-            All that noise?
+            We researched.
             <br />
-            <span className="font-black text-cta">We turned it into this.</span>
+            <span className="font-black text-cta">Here&apos;s what we found.</span>
           </h2>
         </motion.div>
 
         {/* The card - convergence target, fades in fast to catch icons */}
         <motion.div
-          className="relative z-10 mx-auto max-w-3xl px-6"
+          className="relative z-10 mx-auto max-w-4xl px-6"
           style={{
             opacity: useTransform(scrollYProgress, [0.2, 0.3], [0, 1]),
             scale: useTransform(scrollYProgress, [0.2, 0.35], [0.95, 1]),
@@ -233,10 +233,10 @@ export function HeroWithExplainer() {
           }}
         >
           <p className="text-xl text-foreground font-medium mb-2">
-            That&apos;s your first two weeks.
+            That&apos;s what we discovered. And what to do about it.
           </p>
           <p className="text-lg text-foreground/60">
-            The full plan includes competitor research, customer journey analysis, and a complete 30-day roadmap.
+            The full plan digs deeper: positioning gaps, channel-by-channel strategy, and a complete 30-day roadmap.
           </p>
         </motion.div>
       </section>

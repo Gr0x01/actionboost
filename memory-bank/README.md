@@ -1,4 +1,4 @@
-# Actionboo.st
+# Boost
 
 **Founder**: Rashaad
 
@@ -36,6 +36,8 @@ Target audience: **Small business owners** — salons, local services, niche e-c
 
 **Model ID**: `claude-opus-4-5-20251101` - DO NOT CHANGE without approval.
 
+**Domain**: actionboo.st (legacy, product name is now just "Boost")
+
 ## Pricing & Economics
 
 | Product | Price | Cost | Margin |
@@ -50,8 +52,6 @@ Cost breakdown in `architecture.md`. Dashboard sells subscription via integratio
 ---
 
 ## For Development
-
-**Domain**: actionboo.st
 
 **Stack**: Next.js 16, React 19, Tailwind 4, Supabase, Stripe
 

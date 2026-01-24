@@ -10,26 +10,26 @@ export const dynamic = "force-dynamic";
 
 // Metadata for SEO
 export const metadata = {
-  title: "Boost in Action | Real Strategies for Real Businesses",
+  title: "Boost in Action | Real Strategies, Real Businesses",
   description:
-    "See real growth strategies for salons, e-commerce shops, and service businesses. Actual plans from Actionboo.st showing what works.",
+    "See what a Boost plan actually looks like. Real competitor research and specific tactics for SaaS, e-commerce, and service businesses.",
   openGraph: {
-    title: "Boost in Action | Real Strategies for Real Businesses",
+    title: "Boost in Action | Real Strategies, Real Businesses",
     description:
-      "See real growth strategies for salons, e-commerce shops, and service businesses. Actual plans from Actionboo.st showing what works.",
+      "See what a Boost plan actually looks like. Real competitor research and specific tactics for SaaS, e-commerce, and service businesses.",
   },
 };
 
 function ExampleCard({ example }: { example: Example }) {
   return (
     <Link href={`/in-action/${example.slug}`} className="block group">
-      <article className="h-full rounded-lg border-2 border-foreground/20 bg-surface p-6 shadow-[4px_4px_0_rgba(44,62,80,0.08)] hover:shadow-[4px_4px_0_rgba(44,62,80,0.15)] hover:-translate-y-0.5 transition-all duration-150">
+      <article className="h-full flex flex-col rounded-md border-2 border-foreground/20 bg-white p-6 shadow-[4px_4px_0_rgba(44,62,80,0.1)] hover:shadow-[4px_4px_0_rgba(44,62,80,0.18)] hover:-translate-y-0.5 transition-all duration-150">
         {/* Badges */}
         <div className="flex items-center gap-2 mb-4">
           <span className="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide bg-cta/10 text-cta rounded-full">
             {example.industry}
           </span>
-          <span className="px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide bg-foreground/5 text-foreground/60 rounded-full">
+          <span className="px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide border border-foreground/15 text-foreground/60 rounded-full">
             {example.stage}
           </span>
         </div>
@@ -39,11 +39,13 @@ function ExampleCard({ example }: { example: Example }) {
           {example.insight}
         </p>
 
-        {/* View link */}
-        <div className="mt-4 pt-4 border-t border-foreground/10">
-          <span className="text-sm font-semibold text-cta group-hover:underline">
-            See full plan &rarr;
-          </span>
+        {/* View link - pushed to bottom */}
+        <div className="mt-auto pt-4">
+          <div className="pt-4 border-t border-foreground/10">
+            <span className="text-sm font-semibold text-cta group-hover:underline">
+              See full plan &rarr;
+            </span>
+          </div>
         </div>
       </article>
     </Link>
@@ -73,12 +75,10 @@ export default async function InActionPage() {
               Boost in Action
             </p>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-6">
-              Real strategies.
-              <br />
-              Real businesses.
+              See what you
               <br />
               <span className="relative inline-block">
-                Actual results.
+                actually get.
                 <svg
                   className="absolute -bottom-2 left-0 w-full h-4"
                   viewBox="0 0 200 12"
@@ -97,9 +97,8 @@ export default async function InActionPage() {
               </span>
             </h1>
             <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
-              These are salons, niche e-commerce shops, and service
-              businesses&mdash;just like yours. Here&apos;s what they&apos;re
-              doing differently.
+              Real competitor research. Specific tactics. Plans for SaaS,
+              e-commerce, and service businesses.
             </p>
           </div>
         </section>
@@ -127,19 +126,21 @@ export default async function InActionPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-16 px-4 bg-surface border-t border-foreground/10">
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">
-              Your situation is different.
-            </h2>
-            <p className="text-foreground/70 mb-8">
-              Get a strategy built for your actual business&mdash;not a template.
-            </p>
-            <Link href="/start">
-              <Button size="xl">
-                Get my plan - {config.singlePrice}
-              </Button>
-            </Link>
+        <section className="py-16 px-4">
+          <div className="max-w-2xl mx-auto">
+            <div className="rounded-md border-2 border-foreground/20 bg-white p-10 shadow-[4px_4px_0_rgba(44,62,80,0.1)] text-center">
+              <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">
+                Get a plan for your business.
+              </h2>
+              <p className="text-foreground/70 mb-8">
+                Real competitor research. Specific tactics. Not a template.
+              </p>
+              <Link href="/start">
+                <Button size="xl">
+                  Get my 30-day plan - {config.singlePrice}
+                </Button>
+              </Link>
+            </div>
           </div>
         </section>
       </main>

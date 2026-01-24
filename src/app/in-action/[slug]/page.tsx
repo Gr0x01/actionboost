@@ -92,10 +92,10 @@ export default async function ExampleDetailPage({ params }: PageProps) {
             <span className="px-3 py-1 text-xs font-semibold uppercase tracking-wide bg-cta/10 text-cta rounded-full">
               {typedExample.industry}
             </span>
-            <span className="px-3 py-1 text-xs font-medium uppercase tracking-wide bg-foreground/5 text-foreground/60 rounded-full">
+            <span className="px-3 py-1 text-xs font-medium uppercase tracking-wide border border-foreground/15 text-foreground/60 rounded-full">
               {typedExample.stage}
             </span>
-            <span className="px-3 py-1 text-xs font-medium uppercase tracking-wide bg-foreground/5 text-foreground/50 rounded-full">
+            <span className="px-3 py-1 text-xs font-medium uppercase tracking-wide border border-foreground/15 text-foreground/50 rounded-full">
               Example Plan
             </span>
           </div>
@@ -107,7 +107,7 @@ export default async function ExampleDetailPage({ params }: PageProps) {
 
           {/* Bottom CTA */}
           <section className="mt-16 pt-10 border-t border-foreground/10">
-            <div className="rounded-lg border-2 border-foreground/20 bg-surface p-8 shadow-[4px_4px_0_rgba(44,62,80,0.1)] text-center">
+            <div className="rounded-md border-2 border-foreground/20 bg-white p-8 shadow-[4px_4px_0_rgba(44,62,80,0.1)] text-center">
               <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-3">
                 Get a plan like this for your business.
               </h2>
@@ -116,7 +116,7 @@ export default async function ExampleDetailPage({ params }: PageProps) {
               </p>
               <Link href="/start">
                 <Button size="xl">
-                  Get my plan - {config.singlePrice}
+                  Get my 30-day plan - {config.singlePrice}
                 </Button>
               </Link>
             </div>

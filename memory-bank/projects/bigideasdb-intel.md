@@ -30,7 +30,7 @@
 
 ## Stage Comparison
 
-| | BigIdeasDB | Actionboo.st |
+| | BigIdeasDB | Boost |
 |---|---|---|
 | **When** | Pre-build | Post-build |
 | **Problem** | "What should I build?" | "How do I grow?" |
@@ -71,7 +71,7 @@
 
 ---
 
-## Applicable Tactics for Actionboo.st
+## Applicable Tactics for Boost
 
 **Target Communities:**
 - r/SaaS (250k+)
@@ -97,7 +97,7 @@
 **Natural funnel:**
 1. BigIdeasDB → founder finds problem
 2. Founder builds MVP
-3. Founder needs growth → Actionboo.st
+3. Founder needs growth → Boost
 
 **Ideas:**
 - Cross-promotion
@@ -117,7 +117,7 @@
 - Give honest feedback
 - Don't ghost you
 
-**Question for Actionboo.st:**
+**Question for Boost:**
 - Is $9.99 too low? Are we attracting tire-kickers?
 - $9.99 → $29-39 would 3-4x revenue per customer AND filter for seriousness
 - v2 subscription is planned at $29/mo — maybe one-shot should be closer to that?

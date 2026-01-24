@@ -120,7 +120,7 @@ Keep docs lean. Intent over implementation. Agents can generate code from descri
     - **Growth Mechanics**: AARRR framework, viral loops, product-led growth, A/B testing
   - Tools: Write, Read, MultiEdit, Bash, Grep, Glob, WebSearch, WebFetch, Playwright
   - Model: Opus (for strategic decisions)
-  - **Highly relevant for Actionboo.st** - combines positioning clarity with tactical execution
+  - **Highly relevant for Boost** - combines positioning clarity with tactical execution
 
 - **instagram-curator**: Instagram content strategy and growth
   - Use for: Reels scripting, content planning, hashtag strategy

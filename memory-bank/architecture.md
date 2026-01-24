@@ -1,4 +1,4 @@
-# Architecture: Actionboo.st
+# Architecture: Boost
 
 ## System Overview
 
@@ -228,7 +228,7 @@ Page: `/free-results/[id]` with auto-polling and upsell UI
 
 ### Test Scripts
 ```bash
-npx tsx scripts/test-pipeline.ts   # Actionboo.st example
+npx tsx scripts/test-pipeline.ts   # Boost example
 npx tsx scripts/test-inkdex.ts     # Real project test
 ```
 
