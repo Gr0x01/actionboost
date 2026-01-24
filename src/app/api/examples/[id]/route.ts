@@ -127,6 +127,7 @@ export async function PATCH(
     if (body.insight !== undefined) updates.insight = body.insight;
     if (body.content !== undefined) updates.content = body.content;
     if (body.metadata !== undefined) updates.metadata = body.metadata;
+    if (body.structured_output !== undefined) updates.structured_output = body.structured_output;
 
     // Handle is_live toggle with published_at timestamp
     if (body.is_live !== undefined) {
