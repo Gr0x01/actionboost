@@ -1,231 +1,316 @@
-# Growth Strategy Analysis: Windburn Lip Balm for Equestrians
+I have substantial data. Let me compile the complete growth strategy now.
+
+---
+
+# Boo.st Growth Strategy
 
 ## Executive Summary
 
-You have something rare in the startup world: a validated product with genuine product-market fit. Your 9.4/10 beta score and 13 five-star reviews from a cold audience aren't vanity metrics—they're proof that when horse riders try your product, they love it. The week-long sales slump isn't a product problem; it's a distribution problem. You've exhausted your warm network and haven't yet built sustainable acquisition channels.
+You are entering a validated market with a differentiated product, but facing a positioning mismatch and a discovery problem. The market for "AI marketing help" is flooded with content generators (Copy.ai at 161K monthly organic visits, Jasper at 207K), but the specific niche of "AI-generated marketing strategy for SMBs" is underserved and growing. Your true competitors are M1-Project (36K organic visits, charging for full strategy), Enji (1.5K visits, subscription-based marketing workspace), and the implicit competitor: free ChatGPT prompting that people think will work but doesn't deliver.
 
-Your biggest opportunity is that you're playing in an underserved niche. The lip care market is dominated by generic products from L'Oreal, Estée Lauder, and Elizabeth Arden—none of which speak directly to equestrians or the specific windburn problem. You're not competing with them; you're creating a new category. The 550k addressable market in Australia/NZ might seem small, but a focused niche strategy can capture meaningful market share before larger players even notice you exist.
+Your website currently shows $9.99-$10 pricing and targets indie hackers, but your brief describes $49 SMB positioning. This inconsistency is costing you conversions. The Reddit research is clear: small business owners feel "massively overwhelmed" by marketing, describe themselves as "paralyzed" by the options, and consistently ask for simple, actionable help. They are willing to pay ($399/hour consultant rates are common, even if questioned), but they need proof that AI-generated plans actually work. Your "real research" differentiator directly addresses the #1 complaint about AI marketing tools: "it's just guessing."
 
-Your strategic direction should be ruthless niche focus. Stop thinking about "lip balm customers" and start thinking about "horse riders who suffer from windburn." Every piece of content, every ad, every partnership should scream "this was made by a horse rider, for horse riders." Your competition is generic; your advantage is specificity.
+The path to 50 customers in 30 days is achievable but requires immediate action on three fronts: (1) fix the pricing/positioning inconsistency on your live site, (2) launch aggressive proof-of-value content showing actual Actionboo.st outputs, and (3) go where stuck small business owners already congregate (r/smallbusiness, r/EtsySellers, industry-specific subreddits) rather than indie hacker communities who will build rather than buy.
 
-## Your Situation
+---
 
-Through the AARRR lens, your funnel breaks down as follows:
+## Your Situation (AARRR Analysis)
 
 | Stage | Current State | Assessment |
 |-------|---------------|------------|
-| Acquisition | Stalled after initial network exhausted | BOTTLENECK |
-| Activation | 9.4/10 beta score, strong first experience | Strong |
-| Retention | 13 five-star reviews, repeat purchase unclear | Needs data |
-| Referral | One ambassador active, no systematic program | Underdeveloped |
-| Revenue | 60 sales in 5 weeks, second product in beta | Early stage |
+| **Acquisition** | Zero organic traffic. No SEO presence. Primary sources: Twitter (indie hackers), Reddit outreach, direct referrals | Critical gap |
+| **Activation** | Form-before-payment flow, 15% start form (per your site data) | Healthy |
+| **Retention** | One-time product, no retention loop yet. Subscription upsell in backlog | Structural limitation |
+| **Referral** | 5% share rate. No referral mechanism built. "Runs on itself" case study exists but not deployed | Critical gap |
+| **Revenue** | $49 one-time, ~90% margin, 3% conversion rate (from your site data) | Healthy unit economics |
 
-**What you're doing right:**
-- You solved a real problem you personally experienced—authenticity that can't be manufactured
-- Beta testing before launch showed discipline and gave you social proof
-- You're building multiple products, suggesting vision beyond a single SKU
-- Your Traction framework reading shows strategic thinking about channels
+**Primary Leak:** Acquisition. You have no pipeline filling the top of funnel.
 
-**Where the gaps are:**
-- Your $500 Christmas ad spend was premature—you tested messaging and timing simultaneously, learning nothing useful from either
-- Organic social "engagement" without conversion suggests you're creating content for algorithms, not buyers
-- You have no email list capturing interested visitors who aren't ready to buy yet
-- Your trade stands are 4 weeks away, leaving a dangerous gap in acquisition
+**Secondary Leak:** Referral. Your product generates a shareable artifact (a marketing plan) but nothing prompts sharing.
+
+---
+
+## Your SEO Landscape
+
+| Domain | Monthly Traffic | Ranking Keywords | Position #1 | Position #2-3 |
+|--------|-----------------|------------------|-------------|---------------|
+| actionboo.st | 0 | 0 | 0 | 0 |
+| copy.ai | 161,238 | 39,753 | 260 | 367 |
+| jasper.ai | 206,722 | 50,036 | 210 | 225 |
+| growthmentor.com | 49,068 | 12,321 | 165 | 536 |
+| m1-project.com | 36,060 | 2,112 | 8 | 35 |
+| enji.co | 1,537 | 681 | 2 | 4 |
+
+**Analysis:** Copy.ai and Jasper are not your real competitors—they're AI content generators, not strategy generators. GrowthMentor is human mentorship. Your actual competitive set is M1-Project and Enji. M1-Project has meaningful traction (36K visits) with an AI marketing strategy generator at similar positioning. Enji is smaller but subscription-based with a full marketing workspace.
+
+Your SEO opportunity is narrow but achievable: long-tail keywords like "marketing plan for salon business," "30-day marketing strategy template," and "AI marketing plan generator for small business." You won't outrank Copy.ai for "AI copywriting"—you don't need to.
+
+---
+
+## Market Sentiment
+
+**The Pain is Real and Vocal**
+
+From r/Entrepreneur: "I've got my web design agency all set up... But when it comes to marketing, I get massively overwhelmed. The risks feel so high that I'm almost paralyzed."
+
+From r/smallbusiness: "Marketing feels overwhelming... social media, SEO, emails... what actually works?"
+
+From r/smallbusiness (salon thread): "Most [salon owners] are super talented at their craft but often feel overwhelmed when it comes to planning the business side."
+
+From r/ecommerce: "I'm more or less banging my head against a wall trying to strategize the best way, or even how, to do this."
+
+**The AI Skepticism is Also Real**
+
+From Enji.co (a competitor): "No, you can't just use ChatGPT to write you a marketing strategy... It's just guessing... It lacks nuance... You're not going to prompt it right."
+
+This is your opening. Competitors are educating the market that generic AI doesn't work. Your "real research on YOUR competitors" positioning directly answers this objection.
+
+**Price Sensitivity Exists but Isn't Prohibitive**
+
+Marketing consultants charge $125-400/hour. The r/smallbusiness sentiment shows people questioning whether it's "worth it" at these prices, but they're asking the question—meaning they're considering paying. $49 is an impulse-buy compared to consultant rates.
+
+---
 
 ## Competitive Landscape
 
-| Competitor | Their Approach | Your Advantage |
-|------------|----------------|----------------|
-| Elizabeth Arden Eight Hour | Premium mass-market, SPF focus, $20-30 price point | No sport-specific positioning; sold in department stores, not tack shops |
-| Burt's Bees | Natural ingredients, mainstream distribution | Generic "outdoor" positioning; doesn't speak to equestrians |
-| ChapStick | Commodity pricing, ubiquitous availability | Zero differentiation; competes on convenience, not performance |
-| Lanolin-based products (Lanolips, etc.) | Ingredient-led marketing for dry/damaged lips | No windburn-specific claims; no community connection |
+| Competitor | Positioning | Price | Differentiator | Weakness |
+|------------|-------------|-------|----------------|----------|
+| **M1-Project** | "AI Marketing Strategy Generator for Startups" | Free (3 chapters) + paid (10 chapters) | 10-chapter comprehensive strategy, ICP focus | Startup-focused, not SMB-focused; no live competitor research |
+| **Enji** | "Full Marketing Suite for Small Business" | Subscription ($29-99/mo) | Strategy + execution tools + calendar + scheduler | Ongoing cost, complexity; strategy is gateway to tool suite |
+| **Copy.ai** | "AI content generator" | Freemium + $49/mo | Content at scale | Not strategy; generates words, not plans |
+| **Jasper.ai** | "AI marketing platform" | $49-125/mo | Brand voice, content at scale | Enterprise-focused; not strategy |
+| **GrowthMentor** | "Human mentorship marketplace" | $99-500/session | Real human expertise | Expensive, requires scheduling, one-off advice |
+| **ChatGPT (free)** | Generic AI | Free | Accessible, instant | Generic, no research, no structure, "just guessing" |
 
-The market research reveals a clear trend: major players are competing on ingredients (peptides, hyaluronic acid, SPF) and luxury positioning (Louis Vuitton's $160 lip balm). Nobody is competing on use-case specificity for athletic communities. You have white space to own "windburn protection for equestrians" in a way that generic brands simply cannot.
+**Your Position:** You occupy a unique space—AI-generated strategy with real competitor research at a one-time price point. M1-Project is closest but lacks the live research component. Enji is closest in SMB focus but requires subscription commitment.
 
-One opportunity competitors are missing entirely: the equestrian community is tight-knit, event-based, and intensely loyal to brands that understand their lifestyle. A product that becomes "what endurance riders use" has built-in distribution through word-of-mouth at events, online forums, and club networks.
+---
+
+## Key Discoveries
+
+1. **Your website is misaligned with your stated strategy.** The live site shows $9.99-$10 pricing and "AI Action Plan for Founders" messaging. Your brief describes $49 SMB positioning. This must be fixed immediately—you're confusing prospects and undermining your pivot.
+
+2. **The "real research" differentiator is underexploited.** Your competitors (especially Enji) are actively educating the market that generic AI strategies don't work. You have actual competitive research built in, but your landing page doesn't make this viscerally clear. The sample output showing "Notion gets 2.3M monthly visits, 62% from organic search" is compelling—but it's buried.
+
+3. **Salon owners are a goldmine audience.** Multiple Reddit threads show salon/spa owners explicitly asking for business strategy tools, feeling overwhelmed, and seeking simple guidance. They're time-poor (working in the business), cash-aware but not cash-strapped, and underserved by existing tools. The r/Mangomint subreddit and r/hairstylist communities are active and receptive.
+
+4. **Etsy sellers are another strong vertical.** r/EtsySellers has consistent "help with marketing" threads, monthly sales discussions showing engaged users, and explicit questions about strategy vs. tactics. They understand business fundamentals but need structured guidance.
+
+5. **Indie hackers will build, not buy.** Your original $9.99 pivot away from founders was correct. Indie Hackers threads show builders asking "what AI tool should I use for marketing" not "who can give me a marketing plan." They view $49 as "I could build this" territory.
+
+6. **The 30-day format matches how SMBs think.** Multiple Reddit threads reference 30-day challenges, monthly planning cycles, and "what to do this month." Your 30-day structure isn't just convenient—it's how your audience already conceptualizes time.
+
+7. **Hidden competitor: Fiverr marketing strategists.** Not captured in your competitor list, but Fiverr has hundreds of gigs offering "marketing strategy" for $50-200. Quality varies wildly, but the price anchors your market. $49 for AI-researched, instant delivery competes favorably.
+
+---
 
 ## Channel Strategy
 
-| Channel | Effort/Week | Time to Results | Priority |
-|---------|-------------|-----------------|----------|
-| Equestrian-specific Meta ads | 3-4 hrs | 2-4 weeks | HIGH |
-| Email list building + nurture | 2-3 hrs | 4-8 weeks | HIGH |
-| Trade stands + sampling | 4-8 hrs (event days) | Immediate at events | HIGH |
-| Ambassador/referral program | 2 hrs | 4-6 weeks | MEDIUM |
-| Niche Facebook group engagement | 2-3 hrs | 2-4 weeks | MEDIUM |
-| Magazine/PR (editorial) | 1 hr (already in motion) | 1-2 weeks | LOW (already done) |
+| Channel | Fit | Effort | Expected CAC | Priority |
+|---------|-----|--------|--------------|----------|
+| **Reddit (r/smallbusiness, r/EtsySellers, niche subs)** | High - your exact audience asking for help | Medium - requires genuine participation | $0-10 (time only) | 1 |
+| **Twitter/X #buildinpublic** | Medium - audience appreciates product, less likely to buy | Low - organic posting | $0 | 2 |
+| **Direct outreach (Instagram DMs to salon owners)** | High - targeted, personal | High - manual, time-intensive | $0 (time) | 3 |
+| **Product Hunt launch** | Medium - spike traffic, awareness | Medium - prep required | $0 | 4 |
+| **SEO (long-tail content)** | High long-term - zero short-term | High - slow payoff | $0 | 5 (background) |
+| **Paid ads (Meta, Google)** | Unknown - need to test | Low to start | $25-75 (estimated) | 6 (after validation) |
+| **Indie Hackers** | Low - builders not buyers | Low | $0 | Deprioritize |
 
-**Top Channel: Equestrian-Specific Meta Ads**
-Your $10/day budget is sufficient for testing, but your previous spend failed because it wasn't targeted tightly enough. The opportunity is to create ads that immediately signal "this is for horse riders"—imagery of riders, language about 8-hour rides, before/after windburn comparisons. You're not competing for "lip balm" searches; you're interrupting equestrians scrolling and making them think "finally, someone gets it." A $300/month budget with proper targeting to equestrian interest groups in Australia/NZ should generate predictable, scalable acquisition.
+**Channel Deep Dives:**
 
-**Second Priority: Email List Building**
-You currently have zero ability to re-engage visitors who weren't ready to purchase. A simple "Get 10% off your first order" popup captures emails, and a 3-email welcome sequence (your story, the problem you solved, customer testimonials) converts browsers into buyers. This compounds: every visitor becomes a future sales opportunity, and email has the highest ROI of any marketing channel.
+**Reddit:** Your highest-leverage channel. r/smallbusiness has 1.5M+ members actively asking marketing questions. The rules prohibit direct promotion, but allow helpful responses with relevant links. The pattern: find "stuck on marketing" threads, provide genuine value, mention you built a tool when directly relevant. r/EtsySellers, r/hairstylist, r/Mangomint, and local business subreddits are less competitive.
+
+**Twitter/X:** Useful for credibility and build-in-public storytelling, but the audience is primarily other builders. Use it to document the journey, share sample outputs, and build backlinks—not as primary acquisition.
+
+**Direct Outreach:** Time-intensive but high-converting. Find salon owners, Etsy shop owners, and local service businesses on Instagram. Send brief, personalized DMs: "Saw your salon—I built an AI tool that creates 30-day marketing plans based on actual competitor research. Want me to run it on your business for free and send you the output?" The free audit approach builds case studies and converts.
+
+---
 
 ## Stop Doing
 
-- **Posting generic product photos on Instagram**: Your engagement-without-conversion pattern suggests your content looks like every other lip balm. Either make content that screams "equestrian" or stop wasting time here.
-- **Boosting posts or running untargeted ads**: Spending money to reach "women 25-45 interested in beauty" is burning cash. Only spend on hyper-targeted equestrian audiences.
-- **Waiting passively for the magazine feature to work**: Editorial coverage drives awareness, not sales. Have a capture mechanism ready (discount code, landing page) when it drops.
-- **Treating ambassadors as content creators**: One ambassador "sharing content" is a rounding error. Ambassadors should be recruiting other ambassadors and driving trackable sales with personal discount codes.
+1. **Stop showing $9.99-$10 pricing on your live site.** Your stated strategy is $49 for SMBs. The site contradicts this. Every day the mismatch persists, you confuse potential buyers and undermine your positioning.
 
-## Start Doing (Prioritized by ICE)
+2. **Stop targeting indie hackers as primary buyers.** They're builders who will either (a) build their own version or (b) use ChatGPT directly. Your Twitter/IH presence is fine for credibility, but don't optimize acquisition for this audience.
 
-### Build and Launch Your Email Capture System
-- **Impact**: 9/10 - Every visitor becomes a recoverable asset; email converts 3-5x better than social
-- **Confidence**: 9/10 - This is proven across every DTC brand; it will work
-- **Ease**: 8/10 - Can be set up in a single afternoon with free tools
-- **ICE Score**: 26
+3. **Stop hiding the "real research" differentiator.** Your landing page buries the most compelling proof—the actual competitor data. "Notion gets 2.3M monthly visits" is visceral. "Real research on your competitors" is abstract. Show, don't tell.
 
-Install a popup on your website offering 10% off the first order in exchange for an email. Use a free tool like Mailchimp or MailerLite (both have free tiers sufficient for your volume). Create a 3-email automated sequence: Email 1 (immediate) delivers the discount code and tells your story. Email 2 (day 3) shares the windburn problem and your 8-hour solution. Email 3 (day 7) includes a testimonial from a beta tester and a reminder the discount expires soon. This system runs 24/7 without your involvement and converts visitors who weren't ready to buy immediately.
+4. **Stop building features.** Your brief mentions the product is complete. The subscription upsell and integrations can wait. Every hour on product is an hour not on distribution. Freeze development for 30 days minimum.
 
-### Create "Equestrian-First" Ad Creative for Meta
-- **Impact**: 8/10 - Properly targeted ads to a niche audience can be highly efficient
-- **Confidence**: 7/10 - Your previous spend failed, but targeting was wrong; proper targeting changes everything
-- **Ease**: 7/10 - Requires creative iteration but no special skills
-- **ICE Score**: 22
+5. **Stop using jargon in outreach.** AARRR, ICE scoring, and April Dunford frameworks are meaningful to you and to marketers—not to salon owners. When doing outreach, speak in outcomes: "get more clients," "know what to post," "stop wasting time on marketing that doesn't work."
 
-Stop running ads that could be for any lip balm. Create 3-4 ad variations with unmistakably equestrian imagery: a rider with windburned face, a close-up applying balm before mounting, a testimonial from an endurance competitor. Your copy should lead with the problem ("8-hour rides destroy your lips") and your unique solution ("The only lip balm made for endurance riders"). Target Facebook/Instagram users in Australia/NZ who are members of equestrian groups, follow horse-related pages, or have interests in "endurance riding," "dressage," "eventing," etc. Start with $10/day across 3 ad sets to find what works, then scale winners.
+---
 
-### Launch a Structured Ambassador Recruitment Program
-- **Impact**: 8/10 - Peer recommendations in tight-knit communities drive purchasing decisions
-- **Confidence**: 7/10 - One ambassador isn't a program; systematic recruitment will generate results
-- **Ease**: 6/10 - Requires building a simple system and ongoing relationship management
-- **ICE Score**: 21
+## Start Doing (ICE-Prioritized)
 
-Your single ambassador should become your first recruiter. Create a simple ambassador program: ambassadors get free product, a personal discount code (tracks their referrals), and 15% of sales they generate. Target active competitors in your discipline who have social followings (even small ones—500 engaged followers beats 10k passive ones). Your outreach: "I saw your [specific result/post]. I'm an endurance rider who created a windburn lip balm after suffering through [specific experience]. Would you be interested in trying it and potentially becoming an ambassador?" Aim to have 5 ambassadors active by the end of month 1.
+| Action | Impact (1-10) | Confidence (1-10) | Ease (1-10) | ICE Score |
+|--------|---------------|-------------------|-------------|-----------|
+| **Fix website pricing/positioning to match $49 SMB strategy** | 9 | 9 | 8 | 26 |
+| **Create 3 real sample outputs for salon, Etsy, local service** | 8 | 8 | 7 | 23 |
+| **Post in r/smallbusiness weekly thread with genuine value** | 7 | 7 | 8 | 22 |
+| **DM 10 salon owners daily with free audit offer** | 8 | 7 | 6 | 21 |
+| **Publish "We ran Actionboo.st on ourselves" case study** | 7 | 8 | 6 | 21 |
+| **Add "share your plan" prompt with pre-written tweet to dashboard** | 6 | 7 | 8 | 21 |
+| **Create vertical-specific landing pages (salon, Etsy, service)** | 7 | 6 | 5 | 18 |
+| **Launch on Product Hunt with salon owner testimonial** | 6 | 5 | 5 | 16 |
 
-### Dominate Facebook Group Engagement
-- **Impact**: 7/10 - Direct access to your exact target audience at zero cost
-- **Confidence**: 8/10 - You're already in these groups; this is about improving execution
-- **Ease**: 7/10 - Just requires consistency and value-first approach
-- **ICE Score**: 22
+---
 
-Stop posting product announcements in Facebook groups—this screams "salesy" and gets ignored or removed. Instead, become the helpful windburn expert. When someone asks about gear recommendations, answer thoroughly (include your product as one suggestion among many). When someone posts about a tough ride in harsh conditions, share your own experience and mention what you've learned about lip protection. Create a valuable post like "5 things I wish I knew about windburn before my first 80km ride" that provides genuine value, with your product mentioned naturally. The goal is that when someone in these groups thinks "windburn," they think of you first.
+## Week 1: Foundation and First Sales
 
-### Prepare a Trade Stand Conversion System
-- **Impact**: 8/10 - Face-to-face sampling at events converts at extremely high rates for niche products
-- **Confidence**: 8/10 - You've correctly identified this as a key channel; execution determines results
-- **Ease**: 5/10 - Requires physical setup, inventory, and event attendance
-- **ICE Score**: 21
-
-Your trade stands shouldn't just sell product—they should build your email list and create content. Bring a signup sheet (or tablet for digital signup) offering entry into a draw for free product. Take photos with customers (with permission) for social proof. Have a QR code linking to your Instagram for immediate follows. Offer a "show special" discount code valid for 30 days that tracks event-driven sales. Collect brief video testimonials from happy customers ("Would you mind telling me in 15 seconds what you think?"). One event should generate 50+ emails, 20+ social follows, and content for weeks of posting.
-
-### Create a Referral Mechanism for Existing Customers
-- **Impact**: 7/10 - You have 60 satisfied customers who've never been asked to refer others
-- **Confidence**: 6/10 - Referral programs vary in effectiveness; worth testing
-- **Ease**: 7/10 - Simple email to existing customers can launch this immediately
-- **ICE Score**: 20
-
-Your 60 customers are an untapped referral source. Send them a simple email: "You're one of [X] people who've tried [product name]. If you've loved it (thank you for those reviews!), I'd love your help spreading the word. Share this link with a friend—they'll get 15% off, and you'll get 20% off your next order when they purchase." Use a simple referral tool (ReferralCandy has a free trial, or just track manually with unique codes for now). Even a 10% referral rate would add 6 new customers this month at zero acquisition cost.
-
-## This Week
+**Goal:** Fix positioning, create proof assets, get 5 paying customers.
 
 | Day | Action | Time | Success Metric |
 |-----|--------|------|----------------|
-| 1 | Set up email capture popup with 10% discount offer using Mailchimp or MailerLite | 2 hrs | Popup live on website, triggers on all pages |
-| 2 | Write 3-email welcome sequence (your story, the problem/solution, testimonial + urgency) | 2 hrs | Sequence scheduled and connected to signup |
-| 3 | Create 3 new ad creatives with unmistakable equestrian imagery/copy | 3 hrs | 3 different ads ready to launch |
-| 4 | Launch Meta ad campaign with 3 ad sets targeting different equestrian interests | 1 hr | Campaign live with $10/day budget split across 3 ad sets |
-| 5 | Draft ambassador outreach template; identify 10 potential ambassadors from your discipline | 2 hrs | List of 10 names with social handles and contact method |
-| 6 | Send referral email to all 60 existing customers with unique tracking codes | 1.5 hrs | Email sent, tracking codes assigned |
-| 7 | Send ambassador outreach to first 5 candidates; engage in 3 Facebook groups with value-first comments | 2 hrs | 5 outreach messages sent; 3 genuine helpful comments posted |
+| 1 | Update website: $49 pricing, SMB messaging, "real research" prominently featured | 4 hours | Site live with correct positioning |
+| 2 | Run Actionboo.st on 3 real businesses (salon, Etsy shop, local service) to create sample outputs | 2 hours | 3 complete sample plans |
+| 3 | Create visual excerpts from samples showing competitor research data | 2 hours | 6 shareable images for social/Reddit |
+| 4 | Post in r/smallbusiness weekly thread with genuine help + subtle mention | 1 hour | Post live, no removal |
+| 5 | DM 15 salon owners on Instagram with free audit offer | 2 hours | 3+ responses |
+| 6 | Deliver free audits, ask for testimonials and permission to share | 2 hours | 1+ testimonial secured |
+| 7 | Publish "Our own Actionboo.st plan" blog post, share on Twitter | 3 hours | Post live, 10+ engagements |
 
-## 30-Day Roadmap
+---
 
-### Week 1: Foundation
-- [ ] Email capture system live with automated welcome sequence
-- [ ] New Meta ad campaign launched with equestrian-specific creative
-- [ ] Referral email sent to existing customers
-- [ ] First 5 ambassador outreach messages sent
+## Week 2: Vertical Focus and Outreach Scale
 
-### Week 2: Amplify
-- [ ] Review ad performance; pause lowest performer, create 2 new variants based on learning
-- [ ] Send second ambassador outreach batch (5 more candidates)
-- [ ] Post value-first content in 5 different Facebook groups
-- [ ] Prepare magazine feature capture plan (unique discount code, landing page)
-- [ ] Onboard first new ambassador with tracking code and content guidelines
+**Goal:** Double down on salon vertical, expand outreach, reach 15 total customers.
 
-### Week 3: Convert
-- [ ] Magazine feature lands—drive traffic to capture page with limited-time offer
-- [ ] Send re-engagement email to abandoned cart / non-purchasers on email list
-- [ ] Have 3 ambassadors active and posting
-- [ ] Scale ad spend on winning ad creative (increase to $15-20/day if ROAS positive)
+| Day | Action | Time | Success Metric |
+|-----|--------|------|----------------|
+| 8 | Create salon-specific landing page with sample output and testimonial | 3 hours | Landing page live at /salons |
+| 9 | Find and join 3 salon/beauty business Facebook groups | 1 hour | Joined, intro posts made |
+| 10 | DM 20 salon owners with link to /salons page | 2 hours | 5+ responses |
+| 11 | Comment helpfully on 5 r/smallbusiness threads about marketing struggles | 1.5 hours | Comments posted, no removal |
+| 12 | Create Twitter thread: "I analyzed 10 successful salons' marketing. Here's what they all do." | 2 hours | Thread posted, 20+ engagements |
+| 13 | Follow up with all free audit recipients, offer $49 plan as "thank you" discount | 1 hour | 2+ conversions |
+| 14 | Review Week 2 metrics, document what's converting | 1 hour | Clear data on best-performing channel |
 
-### Week 4: Scale + Event Prep
-- [ ] Finalize trade stand setup (display, samples, signup sheet, QR codes, testimonial capture plan)
-- [ ] Create event-specific discount code for tracking
-- [ ] Review month 1 metrics; identify top 2 performing channels
-- [ ] Send monthly email to full list with riding season prep content + soft sell
+---
+
+## Week 3: Expand Verticals and Social Proof
+
+**Goal:** Launch Etsy vertical, accumulate social proof, reach 30 total customers.
+
+| Day | Action | Time | Success Metric |
+|-----|--------|------|----------------|
+| 15 | Create Etsy seller landing page with sample output | 3 hours | /etsy page live |
+| 16 | Post in r/EtsySellers monthly sales thread with helpful marketing tip + mention | 1 hour | Post live |
+| 17 | DM 15 Etsy sellers whose shops show marketing struggles | 2 hours | 4+ responses |
+| 18 | Collect all testimonials, add to homepage and vertical pages | 2 hours | 3+ testimonials visible on site |
+| 19 | Write "5 marketing mistakes salon owners make" blog post (SEO play) | 3 hours | Post live |
+| 20 | Reach out to 3 small business podcasts for guest appearances | 1.5 hours | 3 pitches sent |
+| 21 | Add "Share your plan" CTA with pre-written tweet to dashboard | 2 hours | Feature live |
+
+---
+
+## Week 4: Product Hunt and Scale
+
+**Goal:** Launch on Product Hunt, push to 50 customers, systematize acquisition.
+
+| Day | Action | Time | Success Metric |
+|-----|--------|------|----------------|
+| 22 | Prepare Product Hunt launch: screenshots, description, maker comment | 3 hours | All assets ready |
+| 23 | Notify email list and social followers of upcoming launch | 1 hour | 20+ people committed to upvote |
+| 24 | Launch on Product Hunt | 4 hours (monitoring/responding all day) | Top 10 of the day |
+| 25 | Follow up with all PH traffic, respond to comments, convert interest | 2 hours | 10+ new customers from PH |
+| 26 | Create "local service business" landing page (plumbers, electricians, etc.) | 3 hours | /local-service page live |
+| 27 | Systematize: document repeatable outreach process for VAs or future scaling | 2 hours | SOP document complete |
+| 28 | Review 30-day metrics, identify top 2 channels, plan Month 2 | 2 hours | Clear strategy for next 30 days |
+
+---
 
 ## Metrics Dashboard
 
-| Stage | Metric | Target (30 days) | How to Measure |
-|-------|--------|------------------|----------------|
-| Acquisition | New website visitors | 1,000+ | Google Analytics or Shopify analytics |
-| Acquisition | Email list size | 150+ subscribers | Mailchimp/MailerLite dashboard |
-| Acquisition | Meta ad ROAS | >2.0 (2x return on ad spend) | Meta Ads Manager |
-| Activation | Email signup rate | 3-5% of visitors | Popup tool analytics |
-| Activation | Welcome sequence open rate | >40% | Email tool analytics |
-| Retention | Repeat purchase rate | Track for baseline | Shopify customer reports |
-| Referral | Referral link shares | 20+ shares | Tracking code redemptions |
-| Referral | Active ambassadors | 5 | Manual count |
-| Revenue | Total orders | 30+ | Shopify dashboard |
+| Metric | Current | Week 1 Target | Week 2 Target | Week 3 Target | Week 4 Target |
+|--------|---------|---------------|---------------|---------------|---------------|
+| **Acquisition** |
+| Website visitors | Unknown | 200 | 500 | 800 | 1,500 |
+| Reddit referrals | 0 | 30 | 80 | 150 | 250 |
+| DM outreach sent | 0 | 15 | 50 | 85 | 120 |
+| DM response rate | N/A | 20% | 25% | 25% | 25% |
+| **Activation** |
+| Form starts | Unknown | 30 | 75 | 120 | 225 |
+| Form completion rate | 15% | 15% | 18% | 20% | 20% |
+| **Revenue** |
+| Paying customers | "Several" | +5 (total ~8) | +10 (total ~18) | +12 (total ~30) | +20 (total ~50) |
+| Revenue | Unknown | +$245 | +$490 | +$588 | +$980 |
+| Conversion rate (visitor to paid) | 3% | 3% | 3.5% | 3.5% | 3.5% |
+| **Referral** |
+| Testimonials collected | 0 | 1 | 3 | 5 | 8 |
+| Shares from dashboard | 0 | 0 | 0 | 5 | 15 |
 
-**Additional acquisition-specific metrics:**
-- Cost per email subscriber (ad spend / new subscribers from ads)
-- Facebook group engagement rate (comments/replies generated from your posts)
-- Ambassador-driven sales as % of total
+---
 
 ## Content Templates
 
-```
-META AD PRIMARY COPY - PROBLEM/SOLUTION
+### Template 1: Reddit Value-First Comment
 
-8 hours in the saddle. 0 windburn.
-
-I created [PRODUCT NAME] after years of coming home from endurance rides with cracked, painful lips. Regular lip balms wore off after the first hour.
-
-This one lasts the entire ride.
-
-Made by an endurance rider in Australia. 13 five-star reviews. Tested by 40+ riders who gave it a 9.4/10.
-
-[LINK] to try it with 10% off your first order.
-```
+**Use in:** r/smallbusiness, r/EtsySellers, r/hairstylist threads about marketing struggles
 
 ```
-FACEBOOK GROUP VALUE POST - WINDBURN TIPS
+I hear you—marketing is overwhelming when you're also running the actual business.
 
-"5 things I wish I knew about windburn before my first long ride"
+One thing that helped me was breaking it into 30-day chunks instead of trying to "figure out marketing" as a whole. Week 1: fix one thing (usually Google Business Profile for local businesses). Week 2: one platform only. Week 3: one type of content. Week 4: measure what worked.
 
-Been competing in endurance for [X years] and learned a lot of this the hard way:
+The other thing: look at what your top 3 local competitors are actually doing. Not what marketing blogs say to do—what's working for businesses like yours, right now. I built a tool that does this research automatically (pulls their traffic, keywords, what's working) because I got tired of doing it manually. Happy to share more if useful.
 
-1. Windburn isn't just a winter problem - any sustained wind exposure damages skin, even in mild temps
-2. SPF doesn't protect against wind - you need a barrier, not just UV protection  
-3. Re-apply before you think you need to - by the time your lips feel dry, damage is already done
-4. Your lips take longer to heal than regular skin - prevention is 10x easier than treatment
-5. Not all lip balms are created equal - most drugstore options wear off within 1-2 hours of riding
-
-Happy to share more if helpful - what have you all found works best for protecting your lips on long rides?
-```
-
-```
-AMBASSADOR OUTREACH MESSAGE
-
-Hi [NAME],
-
-I saw your [specific post/result - be genuine and specific] - congrats on [specific achievement].
-
-I'm reaching out because I'm an endurance rider who created a windburn lip balm after suffering through years of cracked lips on long rides. It's specifically designed to last 8 hours - basically one ride without re-applying.
-
-I'm building a small ambassador community of riders who love the product and would love to have you try it (free, of course). If you like it, there's a program where you can earn commission sharing it with other riders.
-
-Completely understand if it's not for you - but if you're interested, I'd love to send you a sample. What do you think?
-
-[YOUR NAME]
-Endurance rider, [LOCATION]
+What kind of business are you running?
 ```
 
 ---
 
-**Final note**: Your one-week sales slump feels scary, but it's actually normal. You've built something riders genuinely love—now you're learning how to tell the world about it. The magazine feature, trade stands, and ambassador program will all contribute, but your sustainable growth engine is the combination of targeted ads, email capture, and community engagement. Execute this plan consistently for 90 days and you'll look back at this slump as a minor blip.
+### Template 2: Instagram DM Outreach (Salon Focus)
+
+**Use for:** Cold outreach to salon owners
+
+```
+Hi [Name]—
+
+I came across [Salon Name] and love what you're doing with [specific thing you noticed—their color work, the vibe of their space, etc.].
+
+I built an AI tool that creates 30-day marketing plans for salons based on researching what your actual local competitors are doing (not generic advice). I'm looking for a few salon owners to test it with—would you be open to me running it on your business for free and sending you the output?
+
+No catch—I just need real feedback from real salon owners. Takes about 5 minutes on your end (just answer a few questions about your business).
+
+Let me know if you're interested!
+```
+
+---
+
+### Template 3: Twitter Thread (Proof of Value)
+
+**Use for:** Building credibility, showcasing output quality
+
+```
+I ran my AI marketing tool on 10 successful salons to see what they all have in common.
+
+Here's what I found (thread):
+
+1/ They all rank for "[city] + [service]" keywords—but NOT from expensive SEO. From Google Business Profile optimization. Most get 40-60% of new clients from GBP alone.
+
+2/ The ones growing fastest post client transformations on Instagram—but NOT every day. 3-4x per week max. And they always show before/after, never just "after."
+
+3/ None of them are running Facebook ads. The profitable ones use Instagram DMs and referral asks. "Know anyone who'd love this look? Tag them!"
+
+4/ The top performers ALL have a single "signature service" they're known for. Not a menu of 50 options. One thing they're the best at.
+
+5/ Retention beats acquisition. The fastest-growing salons have automated rebooking reminders (usually through their booking software) and a simple loyalty program.
+
+This is the kind of research my tool does—but for YOUR specific market, YOUR competitors.
+
+If you want to see what your competitors are actually doing: [link]
+
+$49, 30-day plan, real research (not ChatGPT guessing).
+```
+
+---
+
+## Final Notes
+
+Your product solves a real problem for a market that's actively asking for help. The fundamentals are strong: good margin, differentiated offering, validated pain point.
+
+The gap is discovery and trust. SMB owners don't know you exist, and when they find you, they need immediate proof that your "real research" claim is true. Every piece of content you create should show actual output—not describe it.
+
+50 customers in 30 days is aggressive but achievable. It requires ~2-3 hours of focused acquisition work daily, prioritizing Reddit and direct outreach over passive content. The Product Hunt launch in Week 4 can provide a spike, but don't rely on it—build the foundation first.
+
+One risk to watch: your cost per run (~$0.50-0.60) is healthy now, but if you offer many free audits, track whether they convert. Free users who don't convert are a drain on both time and margin. Set a limit (perhaps 10-15 free audits total) and cut off the free offer once you have sufficient proof assets.
