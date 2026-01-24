@@ -1,81 +1,96 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Check } from "lucide-react";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import Image from "next/image";
 
-// Business type content - specific, actionable plans for each
+// Business type content - positioning-first approach
+// Priority order: SaaS/tech → E-commerce → Service businesses (per Jan 24 pivot)
 const BUSINESS_TYPES = {
-  salon: {
-    label: "Hair Salon",
-    week1: [
-      { text: "Add 8 before/after photos to Google Business (focus on balayage)" },
-      { text: "Reply to your 5 most recent Google reviews with personalized responses" },
-      { text: "Create an Instagram highlight called 'Transformations'" },
-    ],
-    week2: [
-      { text: "Post a 15-second Reel showing a color process with trending audio" },
-      { text: "Text your last 20 color clients offering $15 off rebooking" },
-    ],
-    insight: "Your top competitor ranks for 31 keywords you don't - like 'balayage near me'",
-    sources: ["google", "instagram", "yelp", "facebook"],
+  saas: {
+    label: "SaaS Product",
+    positioning: {
+      verdict: "needs-work" as const,
+      summary: "You're positioned as generic 'project management for teams' but your unique async-first workflow could own the remote team niche. Lead with the differentiator.",
+      differentiator: "Async-first workflow, built for remote",
+      targetSegment: "Remote-first teams tired of sync meetings",
+    },
+    discovery: {
+      title: "Your top competitor spends $47K/mo on 'project management' keywords",
+      type: "competitive_intel",
+      content: "They're winning broad terms you can't afford. But 'async project management' and 'remote team workflow' have 4K monthly searches with almost no competition.",
+      source: "Ahrefs keyword analysis + ad spend data",
+      significance: "You're fighting the wrong battle. Own the niche first.",
+    },
+    sources: ["google-analytics", "hubspot", "linkedin", "youtube"],
   },
-  candles: {
-    label: "Candle Shop",
-    week1: [
-      { text: "Add burn time and scent notes to every product description" },
-      { text: "Email your list with 'Back in stock: [your #1 seller]' subject line" },
-      { text: "Create a 'Bestsellers' collection on your homepage" },
-    ],
-    week2: [
-      { text: "Set up an abandoned cart email - send 3 hours after abandonment" },
-      { text: "Post a TikTok showing the 'first light' of a new candle" },
-    ],
-    insight: "3 competitors offer subscription boxes - subscribers have 3x higher lifetime value",
-    sources: ["google-analytics", "tiktok", "pinterest", "mailchimp"],
+  ecommerce: {
+    label: "E-commerce",
+    positioning: {
+      verdict: "unclear" as const,
+      summary: "You're selling 'premium skincare' in a sea of premium skincare. Your ingredient transparency and cruelty-free testing could differentiate — but it's buried in the footer.",
+      differentiator: "Full ingredient transparency, cruelty-free",
+      targetSegment: "Clean beauty enthusiasts, 25-40, who read labels",
+    },
+    discovery: {
+      title: "3 competitors get 40% of traffic from TikTok Shop",
+      type: "pattern",
+      content: "They're not running ads — they're doing live shopping events 2x/week. Average order value from TikTok is 23% higher than their website.",
+      source: "SimilarWeb + TikTok Shop analysis",
+      significance: "The channel shift already happened. You're late but not too late.",
+    },
+    sources: ["google-analytics", "tiktok", "instagram", "mailchimp"],
   },
-  cafe: {
-    label: "Local Cafe",
-    week1: [
-      { text: "Update Google Business hours and verify 'Popular times' accuracy" },
-      { text: "Add 6 food photos to Yelp with specific dish names as captions" },
-      { text: "Claim your Apple Maps listing and add your menu link" },
-    ],
-    week2: [
-      { text: "Create an Instagram Story template for your daily special" },
-      { text: "Reply to your 3 most critical Yelp reviews with an invitation to return" },
-    ],
-    insight: "Your closest competitor has 147 more Google reviews than you",
-    sources: ["google", "yelp", "instagram", "facebook"],
-  },
-  coach: {
-    label: "Business Coach",
-    week1: [
-      { text: "Rewrite LinkedIn headline to focus on specific results you deliver" },
-      { text: "Turn your best client result into a LinkedIn carousel" },
-      { text: "Send voice notes to 10 past clients asking for testimonials" },
-    ],
-    week2: [
-      { text: "Post a 'hot take' about a common mistake in your niche" },
-      { text: "Create a lead magnet: '5 Questions to Ask Before...'" },
-    ],
-    insight: "Your top 3 competitors publish weekly LinkedIn newsletters with 1K+ subscribers",
+  agency: {
+    label: "Agency",
+    positioning: {
+      verdict: "clear" as const,
+      summary: "Your 'conversion-focused design for B2B SaaS' positioning is tight. Nobody else in your price range is this specific. Now you need to be findable.",
+      differentiator: "B2B SaaS focus, conversion expertise",
+      targetSegment: "B2B SaaS startups, Series A-B, $2-10M ARR",
+    },
+    discovery: {
+      title: "Top 5 agencies in your space all run a weekly newsletter",
+      type: "competitive_intel",
+      content: "They're building audiences while you chase cold leads. The agencies with newsletters close 3x more inbound deals and charge 40% higher rates.",
+      source: "LinkedIn + competitor content analysis",
+      significance: "Content is the new cold outreach. You're leaving money on the table.",
+    },
     sources: ["linkedin", "google-analytics", "hubspot", "youtube"],
   },
-  fitness: {
-    label: "Fitness Studio",
-    week1: [
-      { text: "Add class schedules to Google Business with prices visible" },
-      { text: "Film 3 short-form videos of members mid-workout" },
-      { text: "Create an Instagram 'New Here?' highlight with studio tour" },
-    ],
-    week2: [
-      { text: "Text inactive members: 'We miss you! Reply BACK for a free class'" },
-      { text: "Partner with a nearby smoothie shop for cross-promo" },
-    ],
-    insight: "Your competitor gets 73% of new members from Instagram DMs, not their website",
-    sources: ["instagram", "google", "tiktok", "facebook"],
+  consultant: {
+    label: "Consultant",
+    positioning: {
+      verdict: "needs-work" as const,
+      summary: "Your coaching framework is unique, but it's buried. Lead with 'From overwhelmed founder to 3-day workweek' — not 'business coaching services'.",
+      differentiator: "Proven framework, undersold outcome",
+      targetSegment: "Burned-out founders ready to work less",
+    },
+    discovery: {
+      title: "Your ICP is asking questions in r/Entrepreneur daily",
+      type: "opportunity",
+      content: "47 posts this month asking about 'scaling without burning out' or 'founder time management'. These are perfect-fit prospects actively seeking help.",
+      source: "Reddit research + sentiment analysis",
+      significance: "Your customers are assembled and asking. Go answer them.",
+    },
+    sources: ["linkedin", "google-analytics", "hubspot", "youtube"],
+  },
+  shopify: {
+    label: "Shopify Store",
+    positioning: {
+      verdict: "clear" as const,
+      summary: "Your 'sustainable pet supplies' niche is well-defined. Eco-conscious pet parents are a real and growing segment. You just need more of them to find you.",
+      differentiator: "Sustainable materials, eco-conscious pet parents",
+      targetSegment: "Urban millennials who treat pets like family",
+    },
+    discovery: {
+      title: "Pinterest drives 34% of competitor traffic (you're not on it)",
+      type: "opportunity",
+      content: "'Eco-friendly dog toys' and 'sustainable pet products' pins get 15K saves/month. This audience researches on Pinterest before buying on Shopify.",
+      source: "Pinterest Trends + competitor traffic analysis",
+      significance: "You're invisible on the platform where your customers browse.",
+    },
+    sources: ["google-analytics", "pinterest", "instagram", "mailchimp"],
   },
 };
 
@@ -97,73 +112,41 @@ const SOURCE_LOGOS: Record<string, string> = {
   hubspot: "/logos/hubspot.svg",
 };
 
+// Verdict styles - matching PositioningSummaryV2
+function getVerdictStyle(verdict: "clear" | "needs-work" | "unclear") {
+  switch (verdict) {
+    case "clear":
+      return { word: "Sharp.", subtitle: "Your positioning is clear" };
+    case "needs-work":
+      return { word: "Close.", subtitle: "Room to sharpen" };
+    case "unclear":
+      return { word: "Fuzzy.", subtitle: "Needs more clarity" };
+  }
+}
+
+// Discovery type display - matching actual dashboard
+function formatDiscoveryType(type: string) {
+  return type.replace(/_/g, " ").toUpperCase();
+}
+
 interface HeroSummaryCardProps {
   visible: boolean;
 }
 
 export function HeroSummaryCard({ visible }: HeroSummaryCardProps) {
-  const [selectedType, setSelectedType] = useState<BusinessType>("salon");
+  const [selectedType, setSelectedType] = useState<BusinessType>("saas");
   const businessData = BUSINESS_TYPES[selectedType];
-
-  // Build tasks from selected business type
-  const [checkedTasks, setCheckedTasks] = useState<Set<string>>(new Set(["0", "1"]));
-
-  // Reset checked state when switching business types
-  useEffect(() => {
-    setCheckedTasks(new Set(["0", "1"]));
-  }, [selectedType]);
-
-  const allTasks = [
-    ...businessData.week1.map((t, i) => ({ ...t, id: `${i}`, week: 1 })),
-    ...businessData.week2.map((t, i) => ({ ...t, id: `${businessData.week1.length + i}`, week: 2 })),
-  ];
-
-  const week1Tasks = allTasks.filter(t => t.week === 1);
-  const week2Tasks = allTasks.filter(t => t.week === 2);
-
-  const toggleTask = (id: string) => {
-    setCheckedTasks(prev => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
-
-  const [showConfetti, setShowConfetti] = useState(false);
-  const prevWeekCompletions = useRef({ week1: false, week2: false });
-
-  // Check for week completions
-  const week1Complete = week1Tasks.every(t => checkedTasks.has(t.id));
-  const week2Complete = week2Tasks.every(t => checkedTasks.has(t.id));
-
-  // Trigger confetti when a week becomes complete
-  useEffect(() => {
-    const wasWeek1Complete = prevWeekCompletions.current.week1;
-    const wasWeek2Complete = prevWeekCompletions.current.week2;
-
-    if ((week1Complete && !wasWeek1Complete) || (week2Complete && !wasWeek2Complete)) {
-      setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 3500);
-    }
-
-    prevWeekCompletions.current = { week1: week1Complete, week2: week2Complete };
-  }, [week1Complete, week2Complete]);
+  const verdictStyle = getVerdictStyle(businessData.positioning.verdict);
 
   if (!visible) return null;
 
   return (
     <motion.div
-      className="relative max-w-2xl mx-auto overflow-visible"
+      className="relative max-w-4xl mx-auto overflow-visible"
       initial={{ scale: 0.95, y: 20, opacity: 0 }}
       animate={{ scale: 1, y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
     >
-      {/* Big confetti burst behind card */}
-      <AnimatePresence>
-        {showConfetti && <BigConfettiBurst />}
-      </AnimatePresence>
-
       {/* The card - SOFT BRUTALIST */}
       <div
         className="relative z-10 bg-white border-2 border-foreground/20 rounded-xl overflow-hidden"
@@ -172,9 +155,8 @@ export function HeroSummaryCard({ visible }: HeroSummaryCardProps) {
         }}
       >
         {/* Header with business type selector */}
-        <div className="px-6 pt-5 pb-4 border-b-2 border-foreground/10">
-          {/* Business type tabs - Soft Brutalist style */}
-          <div className="flex flex-wrap gap-2 mb-4">
+        <div className="px-6 pt-5 pb-4 border-b border-foreground/10">
+          <div className="flex flex-wrap gap-2">
             {BUSINESS_KEYS.map((key) => (
               <button
                 key={key}
@@ -191,208 +173,119 @@ export function HeroSummaryCard({ visible }: HeroSummaryCardProps) {
               </button>
             ))}
           </div>
-          <h3 className="text-xl font-bold text-foreground tracking-tight">
-            Your first two weeks
-          </h3>
         </div>
 
-        {/* Content - horizontal layout on desktop */}
-        <div className="p-5">
-          {/* Two-column layout for weeks */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Week 1 */}
-            <div>
-              <div className="flex items-baseline gap-2 mb-3">
-                <span className="text-xs font-semibold uppercase tracking-wide text-foreground/40">
-                  Week 1
+        {/* Content */}
+        <div className="p-6">
+          {/* === POSITIONING SECTION - matching PositioningSummaryV2 === */}
+          <div className="mb-6">
+            <div className="flex flex-col md:flex-row md:items-start md:gap-6">
+              {/* Left: Verdict + Summary */}
+              <div className="flex-1">
+                {/* Section label */}
+                <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-2">
+                  Your Positioning
                 </span>
-                <span className="text-sm font-bold text-foreground">
-                  Foundation
-                </span>
-              </div>
-              <div className="space-y-2">
-                {week1Tasks.map(task => (
-                  <TaskItem
-                    key={task.id}
-                    checked={checkedTasks.has(task.id)}
-                    onClick={() => toggleTask(task.id)}
-                  >
-                    {task.text}
-                  </TaskItem>
-                ))}
-              </div>
-            </div>
 
-            {/* Week 2 */}
-            <div>
-              <div className="flex items-baseline gap-2 mb-3">
-                <span className="text-xs font-semibold uppercase tracking-wide text-foreground/40">
-                  Week 2
-                </span>
-                <span className="text-sm font-bold text-foreground">
-                  Quick Wins
-                </span>
-              </div>
-              <div className="space-y-2">
-                {week2Tasks.map(task => (
-                  <TaskItem
-                    key={task.id}
-                    checked={checkedTasks.has(task.id)}
-                    onClick={() => toggleTask(task.id)}
-                  >
-                    {task.text}
-                  </TaskItem>
-                ))}
-                {/* Fade hint inline */}
-                <div className="opacity-40 pt-1">
-                  <TaskItem disabled>+ 2 more weeks...</TaskItem>
+                {/* Verdict header - exact match */}
+                <div className="flex items-baseline gap-2 flex-wrap mb-4">
+                  <span className="text-2xl font-bold text-foreground tracking-tight">
+                    {verdictStyle.word}
+                  </span>
+                  <span className="text-base text-foreground/60 font-medium">
+                    {verdictStyle.subtitle}
+                  </span>
                 </div>
+
+                {/* Summary - matching font-serif, no italic, no quotes */}
+                <p className="text-base font-serif text-foreground leading-relaxed">
+                  {businessData.positioning.summary}
+                </p>
+              </div>
+
+              {/* Right: Sidebar - matching insight style */}
+              <div className="mt-4 md:mt-0 md:w-56 shrink-0 md:border-l md:border-foreground/10 md:pl-6">
+                {/* What makes you different */}
+                <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-foreground/50 block mb-2">
+                  What makes you different
+                </span>
+                <p className="text-sm text-foreground font-medium leading-relaxed">
+                  {businessData.positioning.differentiator}
+                </p>
+
+                {/* Who you serve best */}
+                <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-foreground/50 block mb-2 mt-5">
+                  Who you serve best
+                </span>
+                <p className="text-sm text-foreground font-medium leading-relaxed">
+                  {businessData.positioning.targetSegment}
+                </p>
               </div>
             </div>
           </div>
 
-          {/* Bottom row: Insight + Sources */}
-          <div className="mt-5 pt-5 border-t-2 border-foreground/10 flex flex-col md:flex-row md:items-center gap-4">
-            {/* Competitive Insight - Soft Brutalist accent */}
-            <div className="flex-1 bg-cta/10 border-l-4 border-l-cta rounded-r-md px-4 py-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-cta mb-1">
-                What we found
-              </p>
-              <p className="text-sm font-medium text-foreground leading-snug">
-                {businessData.insight}
-              </p>
-            </div>
+          {/* === KEY DISCOVERY - matching LeadDiscovery === */}
+          <div className="mb-5">
+            {/* Section label */}
+            <span className="block text-[10px] font-semibold tracking-[0.2em] uppercase text-foreground/40 mb-3">
+              Key Discovery
+            </span>
 
-            {/* Source icons */}
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="text-xs font-medium text-foreground/50">Built from:</span>
-              {businessData.sources.map((source) => (
-                <div
-                  key={source}
-                  className="w-6 h-6 rounded-md bg-white border-2 border-foreground/10 flex items-center justify-center"
-                  title={source}
-                >
-                  <Image
-                    src={SOURCE_LOGOS[source]}
-                    alt=""
-                    width={14}
-                    height={14}
-                    className="w-3.5 h-3.5"
-                  />
-                </div>
-              ))}
-              <span className="text-xs font-semibold text-foreground/30">+8</span>
+            {/* Discovery card - matching LeadDiscovery styling */}
+            <div
+              className="bg-background border-2 border-foreground/20 rounded-md p-5 relative"
+              style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.08)" }}
+            >
+              {/* Type badge - top right, exact match */}
+              <span className="absolute top-3 right-3 font-mono text-[9px] uppercase tracking-wider text-foreground/30 bg-surface px-2 py-0.5 rounded">
+                {formatDiscoveryType(businessData.discovery.type)}
+              </span>
+
+              {/* Title - exact match */}
+              <h4 className="text-base font-bold text-foreground leading-tight pr-36">
+                {businessData.discovery.title}
+              </h4>
+
+              {/* Content */}
+              <p className="text-sm text-foreground/80 mt-3 leading-relaxed">
+                {businessData.discovery.content}
+              </p>
+
+              {/* Footer - source + significance */}
+              <div className="mt-4 pt-3 border-t border-foreground/10">
+                <cite className="block text-xs text-foreground/50 italic mb-1 not-italic">
+                  {businessData.discovery.source}
+                </cite>
+                <p className="text-xs text-foreground/60 leading-relaxed">
+                  <span className="font-medium text-foreground/70">Why it matters:</span>{" "}
+                  {businessData.discovery.significance}
+                </p>
+              </div>
             </div>
+          </div>
+
+          {/* === SOURCES - condensed footer === */}
+          <div className="pt-4 border-t border-foreground/10 flex items-center justify-end gap-2">
+            <span className="text-xs font-medium text-foreground/50">Built from:</span>
+            {businessData.sources.map((source) => (
+              <div
+                key={source}
+                className="w-5 h-5 rounded bg-white border border-foreground/10 flex items-center justify-center"
+                title={source}
+              >
+                <Image
+                  src={SOURCE_LOGOS[source]}
+                  alt=""
+                  width={12}
+                  height={12}
+                  className="w-3 h-3"
+                />
+              </div>
+            ))}
+            <span className="text-xs font-semibold text-foreground/30">+8</span>
           </div>
         </div>
       </div>
     </motion.div>
-  );
-}
-
-function TaskItem({
-  children,
-  checked,
-  onClick,
-  disabled,
-}: {
-  children: React.ReactNode;
-  checked?: boolean;
-  onClick?: () => void;
-  disabled?: boolean;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className={`
-        flex items-start gap-3 text-sm w-full text-left
-        ${disabled ? "cursor-default" : "cursor-pointer group"}
-      `}
-    >
-      <div
-        className={`
-          w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5
-          transition-all duration-100
-          ${checked
-            ? "bg-cta border-2 border-cta"
-            : disabled
-              ? "border-2 border-foreground/20 bg-transparent"
-              : "border-2 border-foreground/25 bg-white group-hover:border-foreground/40"
-          }
-        `}
-      >
-        {checked && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
-      </div>
-      <span
-        className={`
-          transition-colors duration-100 leading-snug
-          ${checked ? "text-foreground/40 line-through" : "text-foreground/80"}
-          ${!disabled && !checked ? "group-hover:text-foreground" : ""}
-        `}
-      >
-        {children}
-      </span>
-    </button>
-  );
-}
-
-// Big confetti burst from behind the card
-const CONFETTI_COLORS = ["#E67E22", "#F39C12", "#3498DB", "#9B59B6", "#1ABC9C", "#E74C3C", "#2ECC71"];
-
-function BigConfettiBurst() {
-  const particles = Array.from({ length: 70 }, (_, i) => {
-    const angle = Math.random() * 360;
-    const distance = 350 + Math.random() * 250;
-
-    const finalX = Math.cos((angle * Math.PI) / 180) * distance;
-    const peakY = -180 - Math.random() * 200;
-    const finalY = 280 + Math.random() * 150;
-
-    const color = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
-    const width = 10 + Math.random() * 12;
-    const height = width * (0.4 + Math.random() * 0.4);
-    const rotateEnd = (Math.random() - 0.5) * 1080;
-    const delay = Math.random() * 0.12;
-
-    return { finalX, peakY, finalY, color, width, height, rotateEnd, delay };
-  });
-
-  return (
-    <div className="absolute inset-0 z-0 pointer-events-none" style={{ overflow: "visible" }}>
-      {particles.map((p, i) => (
-        <motion.div
-          key={i}
-          className="absolute left-1/2 top-1/2 rounded-[1px]"
-          style={{
-            width: p.width,
-            height: p.height,
-            backgroundColor: p.color,
-            marginLeft: -p.width / 2,
-            marginTop: -p.height / 2,
-            transformOrigin: "center",
-          }}
-          initial={{ x: 0, y: 0, scale: 0, opacity: 1, rotate: 0, rotateX: 0 }}
-          animate={{
-            x: [0, p.finalX],
-            y: [0, p.peakY, p.finalY],
-            scale: [0, 1, 1],
-            opacity: [1, 1, 0],
-            rotate: p.rotateEnd,
-            rotateX: 360,
-          }}
-          exit={{ opacity: 0 }}
-          transition={{
-            delay: p.delay,
-            x: { duration: 3, ease: "easeOut" },
-            y: { duration: 3, times: [0, 0.35, 1], ease: "easeInOut" },
-            scale: { duration: 3, times: [0, 0.15, 1] },
-            opacity: { duration: 3, times: [0, 0.7, 1] },
-            rotate: { duration: 3, ease: "linear" },
-            rotateX: { duration: 3, ease: "linear" },
-          }}
-        />
-      ))}
-    </div>
   );
 }
