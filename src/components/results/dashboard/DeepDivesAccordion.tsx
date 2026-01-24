@@ -193,7 +193,7 @@ export function DeepDivesAccordion({ strategy }: DeepDivesAccordionProps) {
                   isOpen ? 'max-h-[10000px] opacity-100' : 'max-h-0 opacity-0'
                 }`}
               >
-                <div className="pl-8 pr-6 pb-8 pt-2">
+                <div className="pl-8 pr-6 pb-8">
                   <div className="font-serif text-[17px] leading-[1.8] text-foreground/85">
                     <MarkdownContent content={section.content} extended />
                   </div>
