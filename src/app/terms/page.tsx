@@ -16,7 +16,7 @@ export default function TermsPage() {
             <h1 className="text-2xl font-bold text-foreground mb-2">
               Terms of Service
             </h1>
-            <p className="text-muted text-sm mb-8">Last updated: January 2025</p>
+            <p className="text-muted text-sm mb-8">Last updated: January 2026</p>
 
             <div className="prose prose-neutral max-w-none text-foreground/90 space-y-6 font-serif">
               <section>
@@ -48,7 +48,7 @@ export default function TermsPage() {
                     <strong className="text-foreground">Free mini audit</strong> — $0 (limited analysis)
                   </li>
                   <li>
-                    <strong className="text-foreground">Full action plan</strong> — $9.99 USD
+                    <strong className="text-foreground">Full action plan</strong> — $29 USD
                   </li>
                 </ul>
                 <p className="text-sm text-muted leading-relaxed mt-3">
