@@ -21,10 +21,10 @@ export async function GET(
 
   const supabase = createServiceClient();
 
-  // Fetch the run (include structured_output and research_data for lazy backfill)
+  // Fetch the run (include structured_output, research_data for lazy backfill, and plan_start_date for calendar)
   const { data: run, error } = await supabase
     .from("runs")
-    .select("id, status, input, output, share_slug, completed_at, created_at, user_id, refinements_used, parent_run_id, structured_output, research_data")
+    .select("id, status, input, output, share_slug, completed_at, created_at, user_id, refinements_used, parent_run_id, structured_output, research_data, plan_start_date")
     .eq("id", runId)
     .single();
 
