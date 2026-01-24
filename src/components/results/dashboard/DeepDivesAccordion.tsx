@@ -1,24 +1,9 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import type { ParsedStrategy } from '@/lib/markdown/parser'
-import { MarkdownContent, slugify } from '../MarkdownContent'
-import { SectionTableOfContents } from './SectionTableOfContents'
-
-/**
- * Count h2/h3 headings in markdown to determine if TOC should show
- */
-function countHeadings(markdown: string): number {
-  const lines = markdown.split('\n')
-  let count = 0
-  for (const line of lines) {
-    if (/^##\s+.+$/.test(line) || /^###\s+.+$/.test(line)) {
-      count++
-    }
-  }
-  return count
-}
+import { MarkdownContent } from '../MarkdownContent'
 
 interface DeepDivesAccordionProps {
   strategy: ParsedStrategy
@@ -121,64 +106,13 @@ function getSections(strategy: ParsedStrategy): AccordionSection[] {
 }
 
 /**
- * ExpandedContent - Renders section content with optional TOC
- * Two-column layout only when 2+ headings exist (TOC will show)
- */
-function ExpandedContent({ section }: { section: AccordionSection }) {
-  const headingCount = useMemo(() => countHeadings(section.content), [section.content])
-  const hasToc = headingCount >= 2
-
-  // Two-column layout when TOC is available on lg+ screens
-  if (hasToc) {
-    return (
-      <div className="flex gap-12 pl-8 pr-6 pb-8 pt-2">
-        {/* Main content - constrained width for readability */}
-        <article className="flex-1 min-w-0 max-w-[65ch]">
-          <div className="font-serif text-[17px] leading-[1.8] text-foreground/85">
-            <MarkdownContent
-              content={section.content}
-              extended
-              idPrefix={section.id}
-            />
-          </div>
-        </article>
-
-        {/* Right rail - sticky TOC, only on lg+ screens */}
-        <div className="hidden lg:block flex-shrink-0">
-          <SectionTableOfContents
-            content={section.content}
-            idPrefix={section.id}
-          />
-        </div>
-      </div>
-    )
-  }
-
-  // Single column when no TOC - generous padding, readable width
-  return (
-    <div className="pl-8 pr-6 pb-8 pt-2">
-      <article className="max-w-[65ch]">
-        <div className="font-serif text-[17px] leading-[1.8] text-foreground/85">
-          <MarkdownContent
-            content={section.content}
-            extended
-            idPrefix={section.id}
-          />
-        </div>
-      </article>
-    </div>
-  )
-}
-
-/**
  * DeepDivesAccordion - Full strategy content in expandable sections
  *
  * Design:
- * - Full-width accordion to match other sections
- * - Two-column layout when expanded: constrained prose + sticky TOC
- * - Sticky headers when expanded for navigation
+ * - Soft Brutalist left border
+ * - Sticky headers when expanded
  * - "Collapse all" when 2+ sections open
- * - Gap between sections for breathing room
+ * - Readable prose width (65ch)
  */
 export function DeepDivesAccordion({ strategy }: DeepDivesAccordionProps) {
   const sections = getSections(strategy)
@@ -253,13 +187,19 @@ export function DeepDivesAccordion({ strategy }: DeepDivesAccordionProps) {
                 />
               </button>
 
-              {/* Accordion content - two-column on lg+ when TOC available */}
+              {/* Accordion content */}
               <div
                 className={`overflow-hidden transition-all duration-300 ease-out ${
                   isOpen ? 'max-h-[10000px] opacity-100' : 'max-h-0 opacity-0'
                 }`}
               >
-                <ExpandedContent section={section} />
+                <div className="pl-8 pr-6 pb-8 pt-2">
+                  <article className="max-w-[65ch]">
+                    <div className="font-serif text-[17px] leading-[1.8] text-foreground/85">
+                      <MarkdownContent content={section.content} extended />
+                    </div>
+                  </article>
+                </div>
               </div>
             </div>
           )

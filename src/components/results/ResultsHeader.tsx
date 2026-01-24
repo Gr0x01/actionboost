@@ -3,6 +3,7 @@
 import { PlanSwitcher } from './PlanSwitcher'
 import { ResultsTabNavigation } from './ResultsTabNavigation'
 import { ExportActions } from './ExportActions'
+import { RefinementIndicator } from './RefinementIndicator'
 import type { TabType } from '@/lib/storage/visitTracking'
 
 interface Plan {
@@ -22,6 +23,10 @@ interface ResultsHeaderProps {
     shareSlug: string | null
     productName?: string
   }
+  refinementProps?: {
+    refinementsUsed: number
+    isOwner: boolean
+  }
 }
 
 /**
@@ -40,6 +45,7 @@ export function ResultsHeader({
   activeTab,
   onTabChange,
   exportProps,
+  refinementProps,
 }: ResultsHeaderProps) {
   return (
     <div className="sticky top-14 z-40 bg-background border-b border-foreground/10">
@@ -60,7 +66,13 @@ export function ResultsHeader({
           </div>
 
           {/* Right: Actions */}
-          <div className="py-3 flex justify-end">
+          <div className="py-3 flex justify-end items-center gap-2">
+            {refinementProps && (
+              <RefinementIndicator
+                refinementsUsed={refinementProps.refinementsUsed}
+                isOwner={refinementProps.isOwner}
+              />
+            )}
             <ExportActions {...exportProps} />
           </div>
         </div>

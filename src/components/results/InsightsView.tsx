@@ -16,10 +16,14 @@ import {
   MarketPulse,
   PositioningSummaryV2,
 } from './dashboard'
+import { RefinementInterstitial } from './RefinementInterstitial'
 
 interface InsightsViewProps {
   strategy: ParsedStrategy
   structuredOutput: StructuredOutput
+  runId?: string
+  refinementsUsed?: number
+  isOwner?: boolean
 }
 
 /**
@@ -34,7 +38,13 @@ interface InsightsViewProps {
  * 6. MetricsSnapshot (existing)
  * 7. DeepDivesAccordion (existing)
  */
-export function InsightsView({ strategy, structuredOutput }: InsightsViewProps) {
+export function InsightsView({
+  strategy,
+  structuredOutput,
+  runId,
+  refinementsUsed = 0,
+  isOwner = true,
+}: InsightsViewProps) {
   // Destructure optional research-backed data for cleaner conditionals
   const {
     positioning,
@@ -55,6 +65,15 @@ export function InsightsView({ strategy, structuredOutput }: InsightsViewProps) 
       {/* 3. Top Priorities - #1 as hero, #2-3 compact */}
       {structuredOutput.topPriorities.length > 0 && (
         <PriorityCards priorities={structuredOutput.topPriorities} />
+      )}
+
+      {/* Refinement Interstitial - after the "big hit" of positioning + priorities */}
+      {runId && (
+        <RefinementInterstitial
+          runId={runId}
+          refinementsUsed={refinementsUsed}
+          isOwner={isOwner}
+        />
       )}
 
       {/* 4. Competitive Comparison - V2 (traffic bars) OR legacy (list) */}

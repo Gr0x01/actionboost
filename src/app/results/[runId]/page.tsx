@@ -412,6 +412,10 @@ function DashboardResults({
   const planName = productName || "Your Marketing Plan";
   const planUpdatedAt = run.completed_at || new Date().toISOString();
 
+  // Refinement tracking
+  const refinementsUsed = run.root_refinements_used ?? run.refinements_used ?? 0;
+  const isOwner = !isShareAccess;
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -432,6 +436,10 @@ function DashboardResults({
           shareSlug: run.share_slug,
           productName: productName?.slice(0, 50),
         }}
+        refinementProps={{
+          refinementsUsed,
+          isOwner,
+        }}
       />
 
       {/* Main content */}
@@ -446,16 +454,9 @@ function DashboardResults({
             structuredOutput={run.structured_output}
             runId={run.id}
             activeTab={activeTab}
+            refinementsUsed={refinementsUsed}
+            isOwner={isOwner}
           />
-
-          {/* Add Context Section - shown to owners */}
-          <div className="mt-12">
-            <AddContextSection
-              runId={run.id}
-              refinementsUsed={run.root_refinements_used ?? run.refinements_used ?? 0}
-              isOwner={!isShareAccess}
-            />
-          </div>
         </div>
       </main>
 

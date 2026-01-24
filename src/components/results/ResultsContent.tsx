@@ -19,6 +19,9 @@ interface ResultsContentProps {
   runId?: string;
   /** Active tab - controlled by parent (via useResultsTab hook) */
   activeTab?: TabType;
+  /** Refinement tracking */
+  refinementsUsed?: number;
+  isOwner?: boolean;
 }
 
 /**
@@ -30,16 +33,26 @@ function DashboardLayout({
   structuredOutput,
   runId,
   activeTab = 'insights',
+  refinementsUsed = 0,
+  isOwner = true,
 }: {
   strategy: ParsedStrategy;
   structuredOutput: StructuredOutput;
   runId: string;
   activeTab?: TabType;
+  refinementsUsed?: number;
+  isOwner?: boolean;
 }) {
   return (
     <div role="tabpanel" id={`${activeTab}-panel`} aria-labelledby={activeTab}>
       {activeTab === 'insights' ? (
-        <InsightsView strategy={strategy} structuredOutput={structuredOutput} />
+        <InsightsView
+          strategy={strategy}
+          structuredOutput={structuredOutput}
+          runId={runId}
+          refinementsUsed={refinementsUsed}
+          isOwner={isOwner}
+        />
       ) : (
         <TasksView runId={runId} structuredOutput={structuredOutput} />
       )}
@@ -102,7 +115,14 @@ function TraditionalLayout({ strategy }: { strategy: ParsedStrategy }) {
   );
 }
 
-export function ResultsContent({ strategy, structuredOutput, runId, activeTab }: ResultsContentProps) {
+export function ResultsContent({
+  strategy,
+  structuredOutput,
+  runId,
+  activeTab,
+  refinementsUsed,
+  isOwner,
+}: ResultsContentProps) {
   // Use dashboard layout if structured_output is available and has meaningful data
   const hasDashboardData = structuredOutput &&
     (structuredOutput.thisWeek.days.length > 0 ||
@@ -115,6 +135,8 @@ export function ResultsContent({ strategy, structuredOutput, runId, activeTab }:
         structuredOutput={structuredOutput}
         runId={runId}
         activeTab={activeTab}
+        refinementsUsed={refinementsUsed}
+        isOwner={isOwner}
       />
     );
   }

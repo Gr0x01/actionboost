@@ -7,6 +7,8 @@ export { SectionCard } from "./SectionCard";
 export { TableOfContents } from "./TableOfContents";
 export { MagicLinkBanner } from "./MagicLinkBanner";
 export { AddContextSection } from "./AddContextSection";
+export { RefinementIndicator } from "./RefinementIndicator";
+export { RefinementInterstitial } from "./RefinementInterstitial";
 
 // New plan-centric components
 export { ResultsHeader } from "./ResultsHeader";
