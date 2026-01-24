@@ -12,7 +12,7 @@
 
 const STORAGE_PREFIX = 'actionboost-visit-'
 
-export type TabType = 'insights' | 'dashboard'
+export type TabType = 'insights' | 'dashboard' | 'calendar'
 
 interface VisitInfo {
   firstVisit: string | null
@@ -47,7 +47,7 @@ export function getRunVisitInfo(runId: string): VisitInfo {
 
     return {
       firstVisit: typeof parsed.firstVisit === 'string' ? parsed.firstVisit : null,
-      lastTab: parsed.lastTab === 'insights' || parsed.lastTab === 'dashboard' ? parsed.lastTab : null,
+      lastTab: parsed.lastTab === 'insights' || parsed.lastTab === 'dashboard' || parsed.lastTab === 'calendar' ? parsed.lastTab : null,
     }
   } catch {
     return { firstVisit: null, lastTab: null }
@@ -111,7 +111,7 @@ export function getDefaultTab(
   isNewCheckout: boolean
 ): TabType {
   // 1. URL param overrides all
-  if (urlViewParam === 'insights' || urlViewParam === 'dashboard') {
+  if (urlViewParam === 'insights' || urlViewParam === 'dashboard' || urlViewParam === 'calendar') {
     return urlViewParam
   }
 
