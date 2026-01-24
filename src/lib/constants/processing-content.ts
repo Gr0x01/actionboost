@@ -85,4 +85,4 @@ export const PROCESSING_TIPS: ProcessingTip[] = [
   },
 ]
 
-export const TIP_ROTATION_INTERVAL = 8000 // 8 seconds
+export const TIP_ROTATION_INTERVAL = 18000 // 18 seconds - slower for longer processing time

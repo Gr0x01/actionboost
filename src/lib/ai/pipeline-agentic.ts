@@ -845,6 +845,10 @@ export async function generateAgenticStrategy(
 
   await updateStage('Analyzing your situation...')
 
+  // Track phases for more descriptive stage messages
+  let hasStartedResearch = false
+  let researchBatchCount = 0
+
   // +2 allows for: initial analysis turn + final output turn (beyond tool iterations)
   while (iterations < MAX_ITERATIONS + 2) {
     iterations++
@@ -895,6 +899,11 @@ export async function generateAgenticStrategy(
 
     // Check if we're done (no more tool calls)
     if (response.stop_reason === 'end_turn') {
+      // Show final stage message before returning
+      if (hasStartedResearch) {
+        await updateStage('Building your 30-day roadmap...')
+      }
+
       const textBlock = response.content.find((b) => b.type === 'text')
       const total = Date.now() - startTime
 
@@ -1026,6 +1035,14 @@ export async function generateAgenticStrategy(
     // Update stage with first tool description
     const firstTool = toolUseBlocks[0]
     if (firstTool && firstTool.type === 'tool_use') {
+      // First tool call - indicate we're starting research
+      if (!hasStartedResearch) {
+        hasStartedResearch = true
+        await updateStage('Planning research approach...')
+        // Small delay so the planning message is visible
+        await new Promise(resolve => setTimeout(resolve, 800))
+      }
+
       const description = describeToolCall(firstTool.name, firstTool.input as ToolInput)
       await updateStage(description)
     }
@@ -1101,6 +1118,16 @@ export async function generateAgenticStrategy(
     }
 
     totalToolTime += Date.now() - toolStartTime
+
+    // Show intermediate processing message between research batches
+    researchBatchCount++
+    const processingMessages = [
+      'Processing findings...',
+      'Analyzing results...',
+      'Synthesizing research...',
+      'Connecting the dots...',
+    ]
+    await updateStage(processingMessages[researchBatchCount % processingMessages.length])
 
     // Add assistant response and tool results to messages
     // IMPORTANT: Must have tool_result for EVERY tool_use in the response
