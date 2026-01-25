@@ -47,15 +47,15 @@ More examples → More keywords → More traffic → More customers → More exa
 
 Target industries with search volume:
 
-| Industry | Target Keyword | Priority |
-|----------|---------------|----------|
-| SaaS (B2B) | "saas marketing plan example" | High |
-| Shopify/E-commerce | "shopify store marketing plan" | High |
-| Consulting/Coaching | "consultant marketing plan example" | High |
-| Digital Agency | "agency marketing plan template" | Medium |
-| Newsletter/Creator | "newsletter marketing strategy" | Medium |
+| Industry | Target Keyword | Status |
+|----------|---------------|--------|
+| SaaS (B2B) | "saas marketing plan example" | ✅ `saas-email-productivity` |
+| Shopify/E-commerce | "shopify store marketing plan" | ✅ `shopify-candles-growth` |
+| Consulting/Coaching | "consultant marketing plan example" | ✅ `leadership-coaching-pipeline` |
+| Digital Agency | "agency marketing plan template" | Pending |
+| Newsletter/Creator | "newsletter marketing strategy" | Pending |
 
-**Goal**: 5-7 live examples by end of Phase 1
+**Goal**: 5-7 live examples by end of Phase 1 (3 done)
 
 ### 1.4 Example Card Enhancement
 
