@@ -9,6 +9,7 @@ const cspDirectives = [
   "img-src 'self' data: https: blob: https://www.facebook.com",
   "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.stripe.com https://*.posthog.com https://www.facebook.com",
   "frame-src https://js.stripe.com",
+  "worker-src 'self' blob:",
   "frame-ancestors 'self'",
 ].join("; ");
 
