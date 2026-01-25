@@ -61,18 +61,6 @@ export function Footer() {
             />
           </a>
           <a
-            href="https://www.uneed.best/tool/actionboost"
-            target="_blank"
-            rel="noopener"
-          >
-            <Image
-              src="https://www.uneed.best/EMBED1B.png"
-              alt="Featured on Uneed"
-              width={120}
-              height={28}
-            />
-          </a>
-          <a
             href="https://auraplusplus.com/projects/boost-market-research-strategy"
             target="_blank"
             rel="noopener"
