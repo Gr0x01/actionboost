@@ -40,7 +40,7 @@ export default function MarketingPlanGuidePage() {
               The Complete Guide
             </p>
             <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground mb-4">
-              How to Create a Marketing Plan That Actually Works
+              How to Create a Marketing Plan That Actually&nbsp;Works
             </h1>
             <p className="text-lg text-foreground/70 max-w-xl lg:mx-auto leading-relaxed">
               Most marketing plans fail before they start. Not because the
