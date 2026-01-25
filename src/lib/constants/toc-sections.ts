@@ -58,3 +58,16 @@ export const FREE_TIER_LOCKED_SECTIONS = [
   "metrics-dashboard",
   "content-templates",
 ];
+
+/**
+ * Sections for the marketing plan guide page (6 sections).
+ * Used by: /marketing-plan-guide
+ */
+export const GUIDE_SECTIONS: TOCSection[] = [
+  { id: "what-to-include", label: "What to Include", shortLabel: "Include" },
+  { id: "why-plans-fail", label: "Why Plans Fail", shortLabel: "Fail" },
+  { id: "competitor-research", label: "Competitor Research", shortLabel: "Research" },
+  { id: "stop-start-continue", label: "Stop/Start/Continue", shortLabel: "Framework" },
+  { id: "30-day-roadmap", label: "30-Day Roadmap", shortLabel: "Roadmap" },
+  { id: "real-examples", label: "Real Examples", shortLabel: "Examples" },
+];

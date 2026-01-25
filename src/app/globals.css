@@ -344,6 +344,11 @@ body {
   color: var(--foreground);
 }
 
+.prose-boost p,
+.prose-boost li {
+  font-family: var(--font-serif);
+}
+
 .prose-boost p {
   margin-bottom: 1.25em;
 }
