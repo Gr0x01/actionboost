@@ -1,13 +1,15 @@
-import { NextRequest, NextResponse, after } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import { getAuthenticatedUserId } from "@/lib/auth/session";
-import { runRefinementPipeline } from "@/lib/ai/pipeline";
 import { trackServerEvent } from "@/lib/analytics";
 import {
   MAX_FREE_REFINEMENTS,
   MIN_CONTEXT_LENGTH,
   MAX_CONTEXT_LENGTH,
 } from "@/lib/types/database";
+import { inngest } from "@/lib/inngest";
+
+// No longer need extended timeout - Inngest handles the refinement pipeline
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -224,14 +226,15 @@ export async function POST(
     context_length: additionalContext.length,
   });
 
-  // Trigger refinement pipeline in background
-  after(async () => {
-    try {
-      await runRefinementPipeline(newRun.id);
-    } catch (err) {
-      console.error("Refinement pipeline failed for run:", newRun.id, err);
-    }
-  });
+  // Trigger refinement pipeline via Inngest
+  try {
+    await inngest.send({
+      name: "run/refinement.requested",
+      data: { runId: newRun.id },
+    });
+  } catch (err) {
+    console.error(`[API] Failed to trigger Inngest for refinement ${newRun.id}:`, err);
+  }
 
   return NextResponse.json({
     runId: newRun.id,

@@ -1,8 +1,7 @@
-import { NextRequest, NextResponse, after } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createServiceClient } from "@/lib/supabase/server";
 import { Json } from "@/lib/types/database";
-import { runPipeline, runFreePipeline } from "@/lib/ai/pipeline";
 import { sendMagicLink } from "@/lib/auth/send-magic-link";
 import { sendReceiptEmail, sendAbandonedCheckoutEmail } from "@/lib/email/resend";
 import { trackServerEvent, identifyUser } from "@/lib/analytics";
@@ -10,7 +9,10 @@ import { config } from "@/lib/config";
 import { applyContextDeltaToBusiness } from "@/lib/context/accumulate";
 import { createBusiness, getOrCreateDefaultBusiness, verifyBusinessOwnership } from "@/lib/business";
 import { isValidEmail } from "@/lib/validation";
+import { inngest } from "@/lib/inngest";
 import type { FocusArea } from "@/lib/types/form";
+
+// Webhook itself is fast - Inngest handles the long-running pipeline
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -41,10 +43,8 @@ export async function POST(request: NextRequest) {
   // Cart abandonment: when checkout expires, send free audit
   if (event.type === "checkout.session.expired") {
     const session = event.data.object as Stripe.Checkout.Session;
-    // Handle in background to not block webhook response
-    after(async () => {
-      await handleCheckoutExpired(session);
-    });
+    // Fast DB operations + Inngest event - no need for after()
+    await handleCheckoutExpired(session);
   }
 
   return NextResponse.json({ received: true });
@@ -246,14 +246,15 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     run_id: run.id,
   });
 
-  // Trigger AI pipeline in background (after() keeps function alive until complete)
-  after(async () => {
-    try {
-      await runPipeline(run.id);
-    } catch (err) {
-      console.error("Pipeline failed for run:", run.id, err);
-    }
-  });
+  // Trigger AI pipeline via Inngest (handles long-running tasks beyond Vercel's 300s limit)
+  try {
+    await inngest.send({
+      name: "run/created",
+      data: { runId: run.id },
+    });
+  } catch (err) {
+    console.error(`[Webhook] Failed to trigger Inngest for run ${run.id}:`, err);
+  }
 
   // Send receipt + magic link for dashboard access (fire and forget)
   if (email) {
@@ -441,10 +442,15 @@ async function handleCheckoutExpired(session: Stripe.Checkout.Session) {
     email_domain: displayEmail.split("@")[1],
   });
 
-  // Run free pipeline - the pipeline will send the appropriate email based on source
-  runFreePipeline(freeAudit.id, runInput).catch((err) => {
-    console.error("[Webhook] Free pipeline failed for abandoned checkout audit:", freeAudit.id, err);
-  });
+  // Trigger free pipeline via Inngest
+  try {
+    await inngest.send({
+      name: "free-audit/created",
+      data: { freeAuditId: freeAudit.id, input: runInput },
+    });
+  } catch (err) {
+    console.error(`[Webhook] Failed to trigger Inngest for free audit ${freeAudit.id}:`, err);
+  }
 
   // Send magic link for dashboard access
   sendMagicLink(displayEmail, "/dashboard").catch((err) => {

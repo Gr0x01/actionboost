@@ -1,11 +1,13 @@
-import { NextRequest, NextResponse, after } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { FormInput, validateForm } from "@/lib/types/form";
 import { Json, MAX_CONTEXT_LENGTH } from "@/lib/types/database";
-import { runPipeline } from "@/lib/ai/pipeline";
 import { trackServerEvent } from "@/lib/analytics";
 import { applyContextDeltaToBusiness } from "@/lib/context/accumulate";
 import { createBusiness, getOrCreateDefaultBusiness, verifyBusinessOwnership } from "@/lib/business";
+import { inngest } from "@/lib/inngest";
+
+// No longer need extended timeout - Inngest handles long-running pipeline
 
 export async function POST(request: NextRequest) {
   try {
@@ -212,14 +214,17 @@ export async function POST(request: NextRequest) {
       focus_area: input.focusArea,
     });
 
-    // Trigger AI pipeline in background (after() keeps function alive until complete)
-    after(async () => {
-      try {
-        await runPipeline(run.id);
-      } catch (err) {
-        console.error("Pipeline failed for run:", run.id, err);
-      }
-    });
+    // Trigger AI pipeline via Inngest (handles long-running tasks beyond Vercel's 300s limit)
+    try {
+      await inngest.send({
+        name: "run/created",
+        data: { runId: run.id },
+      });
+    } catch (err) {
+      // Run was created - don't fail the request if Inngest is unavailable
+      // Pipeline can be triggered manually or via retry mechanism
+      console.error(`[API] Failed to trigger Inngest for run ${run.id}:`, err);
+    }
 
     return NextResponse.json({ runId: run.id });
   } catch (error) {

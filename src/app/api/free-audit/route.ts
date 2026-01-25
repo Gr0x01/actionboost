@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import { FormInput, validateForm, FOCUS_AREAS } from "@/lib/types/form";
 import { Json } from "@/lib/types/database";
-import { runFreePipeline } from "@/lib/ai/pipeline";
 import { trackServerEvent } from "@/lib/analytics";
 import { isValidEmail } from "@/lib/validation";
 import { sendMagicLink } from "@/lib/auth/send-magic-link";
 import { signAuditToken } from "@/lib/auth/audit-token";
 import { createBusiness } from "@/lib/business";
+import { inngest } from "@/lib/inngest";
+
+// No longer need extended timeout - Inngest handles the pipeline
 
 // Field length limits for server-side validation
 const MAX_FIELD_LENGTHS: Record<string, number> = {
@@ -181,14 +183,15 @@ export async function POST(request: NextRequest) {
       focus_area: input.focusArea,
     });
 
-    // Trigger free pipeline (fire and forget, but track failures)
-    runFreePipeline(freeAudit.id, runInput).catch((err) => {
-      console.error("Free pipeline failed for audit:", freeAudit.id, err);
-      trackServerEvent(distinctId, "free_audit_pipeline_failed", {
-        free_audit_id: freeAudit.id,
-        error: err instanceof Error ? err.message : String(err),
+    // Trigger free pipeline via Inngest
+    try {
+      await inngest.send({
+        name: "free-audit/created",
+        data: { freeAuditId: freeAudit.id, input: runInput },
       });
-    });
+    } catch (err) {
+      console.error(`[API] Failed to trigger Inngest for free audit ${freeAudit.id}:`, err);
+    }
 
     // Send magic link for dashboard access (fire and forget)
     sendMagicLink(displayEmail, "/dashboard").catch((err) => {
