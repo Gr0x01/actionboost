@@ -69,18 +69,20 @@ Make examples feel discovered, not prescribed:
 
 ## Phase 2: Content Infrastructure (Week 3-4)
 
-### 2.1 Pillar Page: Marketing Plan Guide
+### 2.1 Pillar Page: Marketing Plan Guide ✅
 
-**URL**: `/marketing-plan-guide` or `/guide`
+**URL**: `/marketing-plan-guide`
+**Status**: DONE
 
 **Structure**:
 1. What a marketing plan should include
 2. Why most templates fail (they're generic)
 3. How to research competitors (what Boost does)
 4. Framework: Stop/Start/Continue
-5. CTA: "See real examples" → /in-action
+5. Real examples by industry (links to /in-action)
+6. CTA: Get my 30-day marketing plan
 
-This becomes the main SEO landing page, linking to all examples.
+~2500 words, SEO-optimized, links to all example pages.
 
 ### 2.2 Programmatic Industry Pages
 

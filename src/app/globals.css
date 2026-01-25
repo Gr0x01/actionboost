@@ -336,3 +336,68 @@ body {
 .diagonal-bottom {
   clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
 }
+
+/* ===== Prose Styles for Guide Pages ===== */
+.prose-boost {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--foreground);
+}
+
+.prose-boost p {
+  margin-bottom: 1.25em;
+}
+
+.prose-boost h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-top: 2.5em;
+  margin-bottom: 0.75em;
+  color: var(--foreground);
+  letter-spacing: -0.02em;
+}
+
+.prose-boost h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.75em;
+  margin-bottom: 0.5em;
+  color: var(--foreground);
+}
+
+.prose-boost ul {
+  margin-top: 0.75em;
+  margin-bottom: 1.25em;
+  padding-left: 1.5em;
+}
+
+.prose-boost ul li {
+  margin-bottom: 0.5em;
+  position: relative;
+}
+
+.prose-boost ul li::marker {
+  color: var(--cta);
+}
+
+.prose-boost hr {
+  margin-top: 2.5em;
+  margin-bottom: 2.5em;
+  border: none;
+  border-top: 2px solid var(--border);
+}
+
+.prose-boost strong {
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.prose-boost a {
+  color: var(--cta);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose-boost a:hover {
+  color: var(--cta-hover);
+}
