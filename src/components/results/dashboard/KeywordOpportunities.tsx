@@ -1,6 +1,5 @@
 'use client'
 
-import { TrendingUp } from 'lucide-react'
 import type { KeywordOpportunity as KeywordOpportunityType } from '@/lib/ai/formatter-types'
 
 interface KeywordOpportunitiesProps {
@@ -55,20 +54,13 @@ export function KeywordOpportunities({ opportunities }: KeywordOpportunitiesProp
 
   return (
     <section className="scroll-mt-32">
-      {/* Section header */}
-      <div className="flex items-center gap-3 mb-4">
-        <div className="shrink-0 w-8 h-8 rounded-full bg-cta/10 flex items-center justify-center">
-          <TrendingUp className="w-4 h-4 text-cta" />
-        </div>
-        <div>
-          <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block">
-            KEYWORD OPPORTUNITIES
-          </span>
-          <p className="text-sm text-foreground/60">
-            Keywords your competitors rank for that you don&apos;t
-          </p>
-        </div>
-      </div>
+      {/* Section label */}
+      <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-1">
+        KEYWORD OPPORTUNITIES
+      </span>
+      <p className="text-sm text-foreground/60 mb-4">
+        Keywords your competitors rank for that you don&apos;t
+      </p>
 
       {/* Table */}
       <div

@@ -104,35 +104,49 @@ export default async function ExampleDetailPage({ params }: PageProps) {
 
       <main className="flex-1 px-4 py-12">
         <div className="max-w-5xl mx-auto">
-          {/* Breadcrumb */}
-          <nav className="mb-6">
-            <ol className="flex items-center gap-2 text-sm">
-              <li>
-                <Link
-                  href="/in-action"
-                  className="text-foreground/60 hover:text-cta transition-colors"
-                >
-                  Boost in Action
-                </Link>
-              </li>
-              <li className="text-foreground/40">/</li>
-              <li className="text-foreground font-medium truncate">
-                {typedExample.industry}
-              </li>
-            </ol>
-          </nav>
+          {/* Page header */}
+          <div className="mb-10">
+            {/* Breadcrumb row with CTA card */}
+            <div className="flex items-center justify-between gap-4 mb-4">
+              <nav>
+                <ol className="flex items-center gap-2 text-sm">
+                  <li>
+                    <Link
+                      href="/in-action"
+                      className="text-foreground/60 hover:text-cta transition-colors"
+                    >
+                      Boost in Action
+                    </Link>
+                  </li>
+                  <li className="text-foreground/40">/</li>
+                  <li className="text-foreground font-medium truncate">
+                    {typedExample.industry}
+                  </li>
+                </ol>
+              </nav>
 
-          {/* Badges */}
-          <div className="flex items-center gap-2 mb-8">
-            <span className="px-3 py-1 text-xs font-semibold uppercase tracking-wide bg-cta/10 text-cta rounded-full">
-              {typedExample.industry}
-            </span>
-            <span className="px-3 py-1 text-xs font-medium uppercase tracking-wide border border-foreground/15 text-foreground/60 rounded-full">
-              {typedExample.stage}
-            </span>
-            <span className="px-3 py-1 text-xs font-medium uppercase tracking-wide border border-foreground/15 text-foreground/50 rounded-full">
-              Example Plan
-            </span>
+              {/* CTA card */}
+              <Link
+                href="/start"
+                className="hidden sm:flex items-center gap-2 rounded-lg border-2 border-foreground/20 bg-surface px-4 py-2 shadow-[3px_3px_0_rgba(44,62,80,0.08)] hover:shadow-[4px_4px_0_rgba(44,62,80,0.12)] hover:-translate-y-0.5 transition-all"
+              >
+                <span className="text-sm text-foreground/70">Your turn.</span>
+                <span className="text-sm font-semibold text-cta">Build yours - $29 &rarr;</span>
+              </Link>
+            </div>
+
+            {/* Badges */}
+            <div className="flex items-center gap-2">
+              <span className="px-3 py-1 text-xs font-semibold uppercase tracking-wide bg-cta/10 text-cta rounded-full">
+                {typedExample.industry}
+              </span>
+              <span className="px-3 py-1 text-xs font-medium uppercase tracking-wide border border-foreground/15 text-foreground/60 rounded-full">
+                {typedExample.stage}
+              </span>
+              <span className="px-3 py-1 text-xs font-medium uppercase tracking-wide border border-foreground/15 text-foreground/50 rounded-full">
+                Example Plan
+              </span>
+            </div>
           </div>
 
           {/* Content - Dashboard or Markdown */}
