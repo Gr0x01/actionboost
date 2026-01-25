@@ -10,6 +10,7 @@ import { parseStrategy, type ParsedStrategy } from "@/lib/markdown/parser";
 import type { StructuredOutput } from "@/lib/ai/formatter-types";
 import { useResultsTab } from "@/lib/hooks/useResultsTab";
 import { isInternalUser } from "@/lib/config";
+import { trackFBPurchase } from "@/components/FacebookPixel";
 
 type RunStatus = "pending" | "processing" | "complete" | "failed";
 
@@ -406,7 +407,27 @@ function DashboardResults({
   isShareAccess: boolean;
   userEmail?: string | null;
 }) {
+  const router = useRouter();
   const [otherPlans, setOtherPlans] = useState<Plan[]>([]);
+  const fbPurchaseTracked = useRef(false);
+
+  // Track Facebook Pixel Purchase event for new checkouts
+  useEffect(() => {
+    if (isNewCheckout && !fbPurchaseTracked.current) {
+      fbPurchaseTracked.current = true;
+
+      // Track purchase with run ID as event ID for deduplication
+      trackFBPurchase({
+        value: 29,
+        eventId: `purchase_${run.id}`,
+        contentName: productName || "Boost 30-Day Marketing Plan",
+      });
+
+      // Clear ?new=1 from URL to prevent duplicate tracking on refresh
+      // Use replace to avoid adding to browser history
+      router.replace(`/results/${run.id}`, { scroll: false });
+    }
+  }, [isNewCheckout, run.id, productName, router]);
 
   // Check if calendar feature should be shown (internal users only)
   const showCalendar = isInternalUser(userEmail);

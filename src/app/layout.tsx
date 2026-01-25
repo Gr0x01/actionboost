@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { Toaster } from "sonner";
 import "./globals.css";
 import { PHProvider } from "./providers";
+import { FacebookPixel } from "@/components/FacebookPixel";
 
 // EU + EEA + UK (similar cookie laws)
 const GDPR_COUNTRIES = new Set([
@@ -77,6 +78,7 @@ export default async function RootLayout({
         <PHProvider cookieless={isGdprCountry}>{children}</PHProvider>
         <Toaster position="bottom-center" />
         <Analytics />
+        {!isGdprCountry && <FacebookPixel />}
       </body>
     </html>
   );
