@@ -16,50 +16,38 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-// Sample businesses matching new target audience
+// Sample businesses matching new target audience (SEO targets)
 const EXAMPLE_INPUTS: Array<{
   slug: string
   industry: string
   stage: string
   input: RunInput
 }> = [
+  // Already generated:
+  // - saas-email-productivity (SaaS)
+  // - shopify-candles-growth (E-commerce)
+
+  // Retry consulting with simpler competitor URLs
   {
-    slug: 'saas-analytics-growth',
-    industry: 'SaaS',
-    stage: 'Early traction',
+    slug: 'leadership-coaching-pipeline',
+    industry: 'Consulting',
+    stage: 'Early-stage',
     input: {
-      productDescription: `PixelMetrics - a privacy-first web analytics tool for indie hackers and small SaaS teams. We're an alternative to Google Analytics that's simpler, privacy-compliant, and doesn't require cookie banners.
+      productDescription: `Leadership coaching for tech managers making the jump to director/VP roles. 1:1 coaching program, 6 months, $8K. I have 15 years experience as an engineering leader at companies like Stripe and Airbnb.
 
-Currently at $800 MRR with 45 paying customers. Most come from word of mouth and a few Product Hunt upvotes from our launch 3 months ago. We've tried cold outreach on Twitter but it feels spammy. Posted on r/SaaS once but got removed for self-promotion.
+Currently have 5 clients, all from referrals. $40K in revenue this year but pipeline is empty. No website, no LinkedIn presence, no content. I know I need to build online presence but not sure where to start.
 
-Main differentiator is we're much simpler than Plausible or Fathom - one-click setup, no config needed. But we're struggling to communicate that.`,
-      currentTraction: '100-1K users',
+I've tried:
+- Asked for referrals (awkward, inconsistent)
+- Thought about writing but haven't started
+- Looked at coaching platforms but they take huge cut
+
+Competing against big exec coaching firms and solo coaches who have been building audience for years. Not sure how to differentiate.`,
+      currentTraction: 'Pre-revenue',
       focusArea: 'acquisition',
-      alternatives: ['Google Analytics (free)', 'Plausible', 'Fathom', 'Just check Stripe dashboard'],
-      websiteUrl: 'https://pixelmetrics.io',
-      competitorUrls: ['https://plausible.io', 'https://usefathom.com'],
-    },
-  },
-  {
-    slug: 'ecommerce-retention-fix',
-    industry: 'E-commerce',
-    stage: 'Plateau',
-    input: {
-      productDescription: `Brew & Bean Co - specialty coffee subscription for home brewers. We source single-origin beans and ship fresh-roasted every 2 weeks.
-
-$12K MRR but churning hard. Getting new subscribers from Instagram ads (~$35 CAC) but 60% cancel within 3 months. "Too much coffee" or "didn't like the roast" are top reasons.
-
-We've tried:
-- Exit surveys (low response)
-- Skip-a-month option (helps a bit)
-- Roast preference quiz (half don't complete it)
-
-Not sure if it's product-market fit issue or we're just bad at retention.`,
-      currentTraction: '1K-10K users',
-      focusArea: 'retention',
-      alternatives: ['Buy from local roaster', 'Trade Joe\'s', 'Other subscriptions like Atlas Coffee', 'Just buy whatever at grocery store'],
-      websiteUrl: 'https://brewandbean.co',
-      competitorUrls: ['https://www.atlascoffeeclub.com', 'https://tradecoffeeco.com'],
+      alternatives: ['Executive coaching firms', 'Manager training programs', 'Books and courses', 'Figure it out alone', 'Internal mentorship'],
+      websiteUrl: '',
+      competitorUrls: ['https://coactive.com', 'https://reboot.io'],
     },
   },
 ]
