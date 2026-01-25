@@ -73,7 +73,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: `${BASE_URL}/in-action/${example.slug}`,
     lastModified: example.published_at ? new Date(example.published_at) : new Date(),
     changeFrequency: 'monthly' as const,
-    priority: 0.6,
+    priority: 0.8,
   }))
 
   return [...staticPages, ...examplePages, ...sharedPages]

@@ -36,7 +36,7 @@ Target audience: **Small business owners** — salons, local services, niche e-c
 
 **Model ID**: `claude-opus-4-5-20251101` - DO NOT CHANGE without approval.
 
-**Domain**: actionboo.st (legacy, product name is now just "Boost")
+**Domain**: aboo.st (product name is "Boost")
 
 ## Pricing & Economics
 

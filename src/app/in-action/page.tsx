@@ -10,13 +10,16 @@ export const dynamic = "force-dynamic";
 
 // Metadata for SEO
 export const metadata = {
-  title: "Boost in Action | Real Strategies, Real Businesses",
+  title: "Marketing Plan Examples | Boost in Action",
   description:
-    "See what a Boost plan actually looks like. Real competitor research and specific tactics for SaaS, e-commerce, and service businesses.",
+    "See real Boost outputs: competitor research, traffic analysis, and 30-day marketing plans for SaaS, e-commerce, and service businesses. Not templates.",
+  alternates: {
+    canonical: "https://aboo.st/in-action",
+  },
   openGraph: {
-    title: "Boost in Action | Real Strategies, Real Businesses",
+    title: "Marketing Plan Examples | Boost in Action",
     description:
-      "See what a Boost plan actually looks like. Real competitor research and specific tactics for SaaS, e-commerce, and service businesses.",
+      "See real Boost outputs: competitor research, traffic analysis, and 30-day marketing plans for SaaS, e-commerce, and service businesses. Not templates.",
   },
 };
 

@@ -22,11 +22,25 @@ import { config } from "@/lib/config";
 import type { Example } from "@/lib/types/database";
 import type { StructuredOutput } from "@/lib/ai/formatter-types";
 
-// Force dynamic rendering
-export const dynamic = "force-dynamic";
+// ISR: revalidate every hour for fresh data while keeping pages static for SEO
+export const revalidate = 3600;
 
 interface PageProps {
   params: Promise<{ slug: string }>;
+}
+
+// Pre-generate pages for all live examples at build time
+export async function generateStaticParams() {
+  const supabase = createServiceClient();
+
+  const { data: examples } = await supabase
+    .from("examples")
+    .select("slug")
+    .eq("is_live", true);
+
+  return (examples ?? []).map((example) => ({
+    slug: example.slug,
+  }));
 }
 
 // Generate metadata for SEO
@@ -47,8 +61,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const title = `${example.industry} Growth Plan | Boost in Action`;
-  const description = example.insight;
+  const title = `${example.industry} Marketing Plan Example | Boost`;
+  const description = `${example.insight} See the full competitor research and 30-day roadmap.`;
   const canonicalUrl = `https://aboo.st/in-action/${slug}`;
 
   return {
@@ -94,7 +108,7 @@ export default async function ExampleDetailPage({ params }: PageProps) {
   return (
     <div className="min-h-screen flex flex-col">
       <ArticleSchema
-        title={`${typedExample.industry} Growth Plan`}
+        title={`${typedExample.industry} Marketing Plan Example`}
         description={typedExample.insight}
         url={`https://aboo.st/in-action/${slug}`}
         publishedAt={typedExample.published_at || undefined}
@@ -131,7 +145,7 @@ export default async function ExampleDetailPage({ params }: PageProps) {
                 className="hidden sm:flex items-center gap-2 rounded-lg border-2 border-foreground/20 bg-surface px-4 py-2 shadow-[3px_3px_0_rgba(44,62,80,0.08)] hover:shadow-[4px_4px_0_rgba(44,62,80,0.12)] hover:-translate-y-0.5 transition-all"
               >
                 <span className="text-sm text-foreground/70">Your turn.</span>
-                <span className="text-sm font-semibold text-cta">Build yours - $29 &rarr;</span>
+                <span className="text-sm font-semibold text-cta">Build yours - {config.singlePrice} &rarr;</span>
               </Link>
             </div>
 
