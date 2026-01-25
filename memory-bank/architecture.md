@@ -7,12 +7,14 @@ Client (Next.js pages)
     ↓
 API Routes (Next.js /api)
     ↓
+Inngest (background jobs)
+    ↓
 Services (business logic)
     ↓
 External: Supabase | Stripe | Claude | Tavily | Resend
 ```
 
-Simple serverless architecture. No queues, no workers - just API routes.
+Serverless architecture with Inngest for long-running AI pipelines (up to 2 hours per step).
 
 ---
 
@@ -522,6 +524,52 @@ All external API calls are tracked to PostHog with latency, success/failure, and
 - API Error Rate (bar)
 - P95 Latency (bar)
 - Anthropic Token Usage (line)
+
+### Inngest
+
+**Status**: ✅ Complete
+
+Background job orchestration for long-running AI pipelines.
+
+**Why Inngest**:
+- Vercel Pro has 300s function timeout limit
+- AI pipelines take 5-10 minutes
+- Inngest allows up to 2 hours per step
+- Free tier: 50K-100K executions/month
+
+**Functions** (`src/lib/inngest/functions.ts`):
+| Function | Event | Purpose |
+|----------|-------|---------|
+| `generate-strategy` | `run/created` | Full paid pipeline |
+| `refine-strategy` | `run/refinement.requested` | Refinement pipeline |
+| `generate-free-audit` | `free-audit/created` | Free mini-audit pipeline |
+
+**Files**:
+```
+src/lib/inngest/
+├── client.ts      # Inngest client with typed events
+├── functions.ts   # Pipeline wrapper functions (3)
+└── index.ts       # Barrel export
+
+src/app/api/inngest/route.ts  # Serve handler
+```
+
+**Flow**:
+1. API route creates run in DB
+2. `inngest.send({ name: "run/created", data: { runId } })`
+3. Inngest calls `/api/inngest` to execute `generate-strategy`
+4. Function wraps entire pipeline in single `step.run()` (up to 2 hours)
+5. Pipeline updates run status in DB as it progresses
+
+**Env vars**:
+```
+INNGEST_EVENT_KEY      # For sending events to Inngest Cloud
+INNGEST_SIGNING_KEY    # For verifying requests from Inngest
+```
+
+**Setup gotcha**: If using Vercel integration, keys may rotate. Ensure keys in Vercel env vars match Inngest dashboard. Manual sync at `https://app.inngest.com` → Apps → add `https://aboo.st/api/inngest`.
+
+---
 
 ### Resend
 

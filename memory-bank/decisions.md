@@ -295,17 +295,15 @@ Can add more account features later if needed.
 
 ---
 
-## Processing: Inline (No Queue)
+## Processing: Inngest Background Jobs (UPDATED Jan 25 2026)
 
-**Decision**: Run AI pipeline directly in API route/webhook handler.
+**Decision**: Run AI pipeline via Inngest background jobs.
 
-**Why**:
-- Simpler architecture
-- Vercel functions support up to 300s on Pro plan
-- Expected processing time: 30-90 seconds
-- Can add queue later if needed
+**Previous approach** (Jan 2026): Run inline with `after()`. Failed when pipelines exceeded Vercel's 300s limit.
 
-**Risk**: If processing exceeds timeout, run fails. Acceptable for MVP.
+**Current approach**: API routes send events to Inngest, which executes pipelines asynchronously with up to 2-hour timeout.
+
+**See**: "Serverless Pipeline: Inngest for Long-Running Jobs" section for full details.
 
 ---
 
@@ -499,40 +497,58 @@ FREE MINI → SINGLE RUN ($9.99) → SUBSCRIPTION (~$30/mo)
 
 ---
 
-## Serverless Pipeline: Use after() Not Fire-and-Forget (Jan 21 2026)
+## Serverless Pipeline: Inngest for Long-Running Jobs (Jan 25 2026)
 
-**Bug**: Runs stuck at "pending" status, pipeline never executed.
+**Problem**: Vercel Pro has a 300-second (5 minute) timeout limit. AI pipelines take 5-10 minutes with agentic tool calling.
 
-**Root cause**: Fire-and-forget pattern doesn't work in Vercel serverless:
+**Evolution**:
+1. **Fire-and-forget** (broken): Vercel kills function after response
+2. **after()** (Jan 21): Worked but still subject to 300s timeout
+3. **Inngest** (Jan 25): Background jobs with up to 2 hours per step
+
+**Solution**: Inngest for background job orchestration.
+
 ```typescript
-// BROKEN - Vercel kills function after response sent
-runPipeline(run.id).catch(console.error);
-return NextResponse.json({ runId });
-```
-
-**Why it failed**: Vercel terminates serverless functions immediately after HTTP response is sent. The unawaited `runPipeline()` promise never gets a chance to execute.
-
-**Fix**: Use Next.js 15+ `after()` API to keep function alive:
-```typescript
-import { after } from "next/server";
-
-after(async () => {
-  await runPipeline(run.id).catch(console.error);
+// API route sends event, returns immediately
+await inngest.send({
+  name: "run/created",
+  data: { runId: run.id },
 });
-return NextResponse.json({ runId });
+return NextResponse.json({ runId: run.id });
+
+// Inngest function wraps pipeline (can run 2 hours)
+export const generateStrategy = inngest.createFunction(
+  { id: "generate-strategy", retries: 2 },
+  { event: "run/created" },
+  async ({ event, step }) => {
+    await step.run("agentic-pipeline", () => runPipeline(event.data.runId));
+  }
+);
 ```
 
-**Files changed**:
-- `src/app/api/runs/create-with-code/route.ts`
-- `src/app/api/runs/create-with-credits/route.ts`
-- `src/app/api/webhooks/stripe/route.ts`
+**Why Inngest over alternatives**:
+- **QStash**: Simpler but less suited for complex pipelines
+- **Inngest**: Natural step structure, built-in retries, up to 2 hours per step
+- **Self-hosted queue**: Overkill for this use case
 
-**Manual retry script**: `scripts/retry-run.ts` for recovering stuck runs:
-```bash
-npx tsx scripts/retry-run.ts <runId>
-```
+**Setup gotchas**:
+1. Add serve route at `/api/inngest`
+2. Set `INNGEST_EVENT_KEY` and `INNGEST_SIGNING_KEY` in Vercel
+3. Sync app in Inngest dashboard: Apps → add `https://aboo.st/api/inngest`
+4. **Key rotation**: If using Vercel integration, keys may rotate automatically. Events won't send if keys mismatch. Always verify keys match between Vercel env vars and Inngest dashboard.
 
-**Lesson**: Never use fire-and-forget in serverless. Always use `after()` for background work that must complete.
+**Files**:
+- `src/lib/inngest/client.ts` - Typed event definitions
+- `src/lib/inngest/functions.ts` - Three pipeline functions
+- `src/app/api/inngest/route.ts` - Serve handler
+- All `create-*` routes use `inngest.send()` instead of `after()`
+
+**Debugging**: Check Inngest dashboard → Events tab. If no events appear, keys don't match.
+
+**Previous approach (SUPERSEDED)**:
+- `after()` worked for pipelines under 5 minutes
+- Failed when pipeline exceeded Vercel's 300s limit
+- User lost credits when runs timed out mid-execution
 
 ---
 
