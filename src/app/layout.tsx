@@ -38,12 +38,12 @@ export const metadata: Metadata = {
   title: "Boost - Your 30-Day Marketing Plan",
   description:
     "Stuck on marketing? Get a custom 30-day plan with real competitor research. We find what's working in your market and show you exactly what to do.",
-  metadataBase: new URL("https://actionboo.st"),
+  metadataBase: new URL("https://aboo.st"),
   openGraph: {
     title: "Boost - Your 30-Day Marketing Plan",
     description:
       "Stuck on marketing? Get a custom 30-day plan with real competitor research. We find what's working in your market and show you exactly what to do.",
-    url: "https://actionboo.st",
+    url: "https://aboo.st",
     siteName: "Boost",
     locale: "en_US",
     type: "website",

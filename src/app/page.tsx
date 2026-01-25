@@ -6,10 +6,13 @@ import {
   Pricing,
   FooterCTA,
 } from "@/components/landing";
+import { OrganizationSchema, ProductSchema } from "@/components/seo";
 
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
+      <OrganizationSchema />
+      <ProductSchema />
       <Header />
 
       <main className="flex-1">

@@ -15,6 +15,7 @@ import {
   LeadDiscovery,
   Discoveries,
 } from "@/components/results/dashboard";
+import { ArticleSchema } from "@/components/seo";
 import { parseStrategy } from "@/lib/markdown/parser";
 import { createServiceClient } from "@/lib/supabase/server";
 import { config } from "@/lib/config";
@@ -48,13 +49,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const title = `${example.industry} Growth Plan | Boost in Action`;
   const description = example.insight;
+  const canonicalUrl = `https://aboo.st/in-action/${slug}`;
 
   return {
     title,
     description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title,
       description,
+      type: "article",
+      url: canonicalUrl,
     },
   };
 }
@@ -86,6 +93,13 @@ export default async function ExampleDetailPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <ArticleSchema
+        title={`${typedExample.industry} Growth Plan`}
+        description={typedExample.insight}
+        url={`https://aboo.st/in-action/${slug}`}
+        publishedAt={typedExample.published_at || undefined}
+        industry={typedExample.industry}
+      />
       <Header />
 
       <main className="flex-1 px-4 py-12">

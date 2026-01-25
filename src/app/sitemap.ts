@@ -18,6 +18,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      url: `${BASE_URL}/in-action`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
       url: `${BASE_URL}/results/demo`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
@@ -37,8 +43,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
-  // Fetch public shared results
   const supabase = await createClient()
+
+  // Fetch public shared results
   const { data: sharedRuns } = await supabase
     .from('runs')
     .select('share_slug, completed_at')
@@ -54,5 +61,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }))
 
-  return [...staticPages, ...sharedPages]
+  // Fetch live examples from in-action
+  const { data: examples } = await supabase
+    .from('examples')
+    .select('slug, published_at')
+    .eq('is_live', true)
+    .order('published_at', { ascending: false })
+    .limit(50)
+
+  const examplePages: MetadataRoute.Sitemap = (examples ?? []).map((example) => ({
+    url: `${BASE_URL}/in-action/${example.slug}`,
+    lastModified: example.published_at ? new Date(example.published_at) : new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
+  }))
+
+  return [...staticPages, ...examplePages, ...sharedPages]
 }

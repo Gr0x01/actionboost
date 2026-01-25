@@ -37,13 +37,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const input = run.input as { productDescription?: string } | null;
   const productDesc = input?.productDescription?.slice(0, 100) || "Action Plan";
 
+  const canonicalUrl = `https://aboo.st/share/${slug}`;
+
   return {
     title: `${productDesc} | Boost`,
     description: "AI-powered action plan for startups and entrepreneurs. Real competitive research, actionable tactics, 30-day roadmap.",
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: `Action Plan: ${productDesc}`,
       description: "AI-powered action plan built with live competitive research.",
       type: "article",
+      url: canonicalUrl,
     },
     twitter: {
       card: "summary_large_image",
