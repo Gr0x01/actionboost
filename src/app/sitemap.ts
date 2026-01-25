@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { createClient } from '@/lib/supabase/server'
+import { INDUSTRY_SLUGS } from '@/lib/constants/industry-pages'
 
 const BASE_URL = 'https://aboo.st'
 
@@ -82,5 +83,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }))
 
-  return [...staticPages, ...examplePages, ...sharedPages]
+  // Industry marketing plan pages
+  const industryPages: MetadataRoute.Sitemap = INDUSTRY_SLUGS.map((slug) => ({
+    url: `${BASE_URL}/marketing-plan/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.8,
+  }))
+
+  return [...staticPages, ...industryPages, ...examplePages, ...sharedPages]
 }

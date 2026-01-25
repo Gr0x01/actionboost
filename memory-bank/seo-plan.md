@@ -38,12 +38,13 @@ More examples → More keywords → More traffic → More customers → More exa
 - [x] Update gallery page metadata for SEO
 - [x] Update detail page metadata pattern: "[Industry] Marketing Plan Example | Boost"
 
-### 1.2 Sitemap Optimization
+### 1.2 Sitemap Optimization [DONE]
 
 - [x] Bump /in-action example priority from 0.6 → 0.8
 - [x] Add `generateStaticParams` to /in-action/[slug] with ISR (revalidate hourly)
+- [x] Add /marketing-plan-guide to sitemap with priority 0.9
 
-### 1.3 Create Initial Examples
+### 1.3 Create Initial Examples [DONE]
 
 Target industries with search volume:
 
@@ -226,14 +227,15 @@ Each post links to relevant /in-action examples.
 
 ### Sitemap
 
-- [ ] Bump example priority to 0.8
+- [x] Bump example priority to 0.8
+- [x] Add pillar page to sitemap
 - [ ] Add blog/content section when created
 - [ ] Ensure all programmatic pages are included
 
 ### Performance
 
+- [x] Add `generateStaticParams` for static generation on /in-action/[slug]
 - [ ] Consider removing `force-dynamic` from /in-action pages for caching
-- [ ] Add `generateStaticParams` for static generation where possible
 
 ---
 
@@ -269,21 +271,25 @@ You don't need to win the market. You need 200-500 customers/month.
 
 ## Quick Reference: Priority Actions
 
-### This Week
+### Completed ✅
 1. ~~Add /in-action to nav~~ [DONE]
 2. ~~Update metadata~~ [DONE]
-3. Create 3 examples: SaaS, e-commerce, consulting
-4. Update sitemap priorities
+3. ~~Create 3 examples: SaaS, e-commerce, consulting~~ [DONE]
+4. ~~Update sitemap priorities~~ [DONE]
+5. ~~Write pillar page (/marketing-plan-guide)~~ [DONE]
+   - ~2500 words, serif typography, TOC navigation
+   - Links to all 3 examples
+   - CTA banners top and bottom
 
-### Next 2 Weeks
-5. Write pillar page (/marketing-plan-guide)
+### Next Up
 6. Start Reddit engagement (genuine, value-first)
-7. Create first programmatic industry page
+7. Create first programmatic industry page (/marketing-plan/saas)
+8. Add 2 more examples (agency, newsletter)
 
 ### Next Month
-8. Build out remaining industry pages
-9. Write 3 problem-focused blog posts
-10. Set up Search Console tracking
+9. Build out remaining industry pages
+10. Write 3 problem-focused blog posts
+11. Set up Search Console tracking
 
 ---
 
@@ -291,5 +297,7 @@ You don't need to win the market. You need 200-500 customers/month.
 
 - `/src/app/in-action/page.tsx` — Gallery page
 - `/src/app/in-action/[slug]/page.tsx` — Detail pages
+- `/src/app/marketing-plan-guide/page.tsx` — Pillar page
 - `/src/app/sitemap.ts` — Sitemap config
 - `/src/components/layout/Header.tsx` — Navigation
+- `/src/lib/constants/toc-sections.ts` — TOC sections (includes GUIDE_SECTIONS)

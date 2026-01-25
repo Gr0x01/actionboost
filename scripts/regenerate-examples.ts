@@ -27,27 +27,28 @@ const EXAMPLE_INPUTS: Array<{
   // - saas-email-productivity (SaaS)
   // - shopify-candles-growth (E-commerce)
 
-  // Retry consulting with simpler competitor URLs
+  // Digital agency example
   {
-    slug: 'leadership-coaching-pipeline',
-    industry: 'Consulting',
-    stage: 'Early-stage',
+    slug: 'digital-agency-growth',
+    industry: 'Agency',
+    stage: 'Established',
     input: {
-      productDescription: `Leadership coaching for tech managers making the jump to director/VP roles. 1:1 coaching program, 6 months, $8K. I have 15 years experience as an engineering leader at companies like Stripe and Airbnb.
+      productDescription: `Digital marketing agency specializing in paid social and SEO for DTC e-commerce brands. 5 person team, $600K ARR, 8 retainer clients.
 
-Currently have 5 clients, all from referrals. $40K in revenue this year but pipeline is empty. No website, no LinkedIn presence, no content. I know I need to build online presence but not sure where to start.
+We're good at what we do but terrible at marketing ourselves. All clients came from referrals or my personal network. Now those are drying up and we need a real pipeline.
 
-I've tried:
-- Asked for referrals (awkward, inconsistent)
-- Thought about writing but haven't started
-- Looked at coaching platforms but they take huge cut
+Our website hasn't been updated in 2 years. We have case studies but they're buried. No content strategy, sporadic LinkedIn posts. Competing against thousands of agencies who all say the same things.
 
-Competing against big exec coaching firms and solo coaches who have been building audience for years. Not sure how to differentiate.`,
-      currentTraction: 'Pre-revenue',
+Main challenges:
+- Everyone claims to be a "growth agency" - hard to stand out
+- Potential clients ghost after first call
+- We're always too busy with client work to market ourselves
+- Not sure if we should niche down further or stay broad`,
+      currentTraction: '$100K-500K ARR',
       focusArea: 'acquisition',
-      alternatives: ['Executive coaching firms', 'Manager training programs', 'Books and courses', 'Figure it out alone', 'Internal mentorship'],
+      alternatives: ['Hire in-house', 'Other agencies', 'Freelancers', 'DIY with tools', 'Do nothing'],
       websiteUrl: '',
-      competitorUrls: ['https://coactive.com', 'https://reboot.io'],
+      competitorUrls: ['https://singlegrain.com', 'https://growthassistant.com'],
     },
   },
 ]
