@@ -182,6 +182,7 @@ body {
   }
 }
 
+
 /* ===== Utility Classes ===== */
 
 /* Staggered animation delays */
@@ -210,6 +211,7 @@ body {
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
+
 
 /* Marquee animations for Problem section */
 .animate-marquee-left {

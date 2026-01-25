@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import "./globals.css";
 import { PHProvider } from "./providers";
 import { FacebookPixel } from "@/components/FacebookPixel";
+import { CookieBanner } from "@/components/CookieBanner";
 
 // EU + EEA + UK (similar cookie laws)
 const GDPR_COUNTRIES = new Set([
@@ -79,6 +80,7 @@ export default async function RootLayout({
         <Toaster position="bottom-center" />
         <Analytics />
         {!isGdprCountry && <FacebookPixel />}
+        <CookieBanner />
       </body>
     </html>
   );
