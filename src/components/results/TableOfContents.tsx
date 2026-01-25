@@ -64,10 +64,16 @@ export function TableOfContents({
 }: TableOfContentsProps) {
   const [activeSection, setActiveSection] = useState<string>("");
   const [mobileNavVisible, setMobileNavVisible] = useState(true);
+  const [mounted, setMounted] = useState(false);
   const mobileNavRef = useRef<HTMLDivElement>(null);
   const lastScrollY = useRef(0);
   const keepVisibleUntilScroll = useRef(false);
   const initialActiveSectionSet = useRef(false);
+
+  // Track mount state for DOM-dependent filtering
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Determine which sections to use based on mode
   const baseSections = sections || STRATEGY_SECTIONS;
@@ -81,11 +87,12 @@ export function TableOfContents({
         return strategyKey ? !!strategy[strategyKey] : false;
       });
     } else if (sections) {
-      // Static mode: filter based on DOM presence
+      // Static mode: filter based on DOM presence (only after mount)
+      if (!mounted) return sections; // Show all sections initially
       return sections.filter((section) => document.getElementById(section.id));
     }
     return [];
-  }, [strategy, sections, baseSections]);
+  }, [strategy, sections, baseSections, mounted]);
 
   // Set initial active section only once
   useEffect(() => {
