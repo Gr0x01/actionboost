@@ -65,7 +65,12 @@ export default function MarketingPlanGuidePage() {
           </div>
 
           {/* Main content with sidebar TOC */}
-          <div className="lg:grid lg:grid-cols-[1fr_200px] lg:gap-12">
+          <div className="lg:grid lg:grid-cols-[200px_1fr] lg:gap-12">
+            {/* Desktop TOC sidebar */}
+            <aside className="hidden lg:block">
+              <TableOfContents sections={GUIDE_SECTIONS} variant="desktop" />
+            </aside>
+
             {/* Content */}
             <article className="prose-boost">
               <p>
@@ -600,11 +605,6 @@ export default function MarketingPlanGuidePage() {
                 with Boost.
               </p>
             </article>
-
-            {/* Desktop TOC sidebar */}
-            <aside className="hidden lg:block">
-              <TableOfContents sections={GUIDE_SECTIONS} variant="desktop" />
-            </aside>
           </div>
 
           {/* Bottom CTA Section */}
@@ -675,7 +675,7 @@ export default function MarketingPlanGuidePage() {
           <p className="mt-8 text-center text-sm text-foreground/50">
             Boost is built for founders who&apos;d rather execute than research. We
             handle the competitive analysis so you can focus on the work that
-            actually grows your business.
+            actually grows your&nbsp;business.
           </p>
         </div>
       </main>
