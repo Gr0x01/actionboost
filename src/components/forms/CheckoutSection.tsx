@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Check, Loader2, Mail, ChevronLeft, ArrowRight } from "lucide-react";
 import { usePostHog } from "posthog-js/react";
+import { Turnstile } from "@marsidev/react-turnstile";
 import { isValidEmail } from "@/lib/validation";
 import { config } from "@/lib/config";
 import type { FormInput } from "@/lib/types/form";
@@ -59,6 +60,10 @@ export function CheckoutSection({
   const [freeSubmitting, setFreeSubmitting] = useState(false);
   const [freeError, setFreeError] = useState<string | null>(null);
   const freeSubmitRef = useRef(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [honeypot, setHoneypot] = useState(""); // Bot trap - should stay empty
+
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_KEY;
 
   const emailValid = isValidEmail(email);
   const canSubmitWithCode = hasValidCode && emailValid;
@@ -80,6 +85,8 @@ export function CheckoutSection({
           email: freeEmail,
           input: formData,
           posthogDistinctId: posthog?.get_distinct_id(),
+          turnstileToken: turnstileToken || undefined,
+          website: honeypot || undefined, // Honeypot field
         }),
       });
 
@@ -289,6 +296,34 @@ export function CheckoutSection({
             />
             {freeEmailValid && <Check className="w-5 h-5 text-green-500" />}
           </div>
+
+          {/* Honeypot field - hidden from users, bots auto-fill it */}
+          <input
+            type="text"
+            name="website"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+            style={{ position: "absolute", left: "-9999px", opacity: 0 }}
+            tabIndex={-1}
+            aria-hidden="true"
+            autoComplete="off"
+          />
+
+          {/* Turnstile invisible CAPTCHA */}
+          {turnstileSiteKey && (
+            <div className="mt-2">
+              <Turnstile
+                siteKey={turnstileSiteKey}
+                onSuccess={(token) => setTurnstileToken(token)}
+                onError={() => setTurnstileToken(null)}
+                onExpire={() => setTurnstileToken(null)}
+                options={{
+                  theme: "light",
+                  size: "invisible",
+                }}
+              />
+            </div>
+          )}
 
           {freeError && <p className="mt-2 text-sm text-red-500 font-bold">{freeError}</p>}
 

@@ -3,7 +3,7 @@ import { createServiceClient } from "@/lib/supabase/server";
 import { FormInput, validateForm, FOCUS_AREAS } from "@/lib/types/form";
 import { Json } from "@/lib/types/database";
 import { trackServerEvent } from "@/lib/analytics";
-import { isValidEmail } from "@/lib/validation";
+import { isValidEmail, isDisposableEmail } from "@/lib/validation";
 import { sendMagicLink } from "@/lib/auth/send-magic-link";
 import { signAuditToken } from "@/lib/auth/audit-token";
 import { createBusiness } from "@/lib/business";
@@ -20,30 +20,148 @@ const MAX_FIELD_LENGTHS: Record<string, number> = {
   constraints: 1000,
 };
 
+// IP rate limiting for free audits
+// NOTE: In-memory storage - resets on deploy/restart, doesn't sync across serverless instances.
+// Acceptable for MVP. For production scale, move to Redis or database.
+const freeAuditCounts = new Map<string, { count: number; resetAt: number }>();
+const IP_RATE_LIMIT = 5; // max free audits per IP per window
+const IP_RATE_WINDOW = 24 * 60 * 60 * 1000; // 24 hours
+
+function checkIPRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const record = freeAuditCounts.get(ip);
+
+  if (!record || now > record.resetAt) {
+    freeAuditCounts.set(ip, { count: 1, resetAt: now + IP_RATE_WINDOW });
+    return true;
+  }
+
+  if (record.count >= IP_RATE_LIMIT) {
+    return false;
+  }
+
+  record.count++;
+  return true;
+}
+
+function getClientIP(request: NextRequest): string {
+  return (
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    request.headers.get("x-real-ip") ||
+    "unknown"
+  );
+}
+
 /**
- * Normalize email for rate limiting - strips Gmail plus addressing
+ * Verify Cloudflare Turnstile token
+ * Skips verification in dev if env vars not set
+ */
+async function verifyTurnstile(token: string): Promise<boolean> {
+  const secret = process.env.CLOUDFLARE_TURNSTILE_SECRET;
+  if (!secret) {
+    // Skip in dev if not configured
+    console.log("[FreeAudit] Turnstile secret not configured, skipping verification");
+    return true;
+  }
+
+  try {
+    const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ secret, response: token }),
+    });
+
+    const data = await response.json();
+    return data.success === true;
+  } catch (error) {
+    console.error("[FreeAudit] Turnstile verification failed:", error);
+    // Fail closed - security over convenience
+    return false;
+  }
+}
+
+/**
+ * Normalize email for rate limiting - strips plus addressing for all domains
  * e.g., "test+spam@gmail.com" -> "test@gmail.com"
+ * e.g., "user+tag@outlook.com" -> "user@outlook.com"
  */
 function normalizeEmailForRateLimit(email: string): string {
   const [local, domain] = email.toLowerCase().trim().split("@");
+  // Strip +suffix for all domains (common alias pattern)
+  const normalizedLocal = local.split("+")[0];
+  // For Gmail specifically, also remove dots (they're ignored by Gmail)
   if (domain === "gmail.com" || domain === "googlemail.com") {
-    // Strip +suffix and dots for Gmail
-    return local.split("+")[0].replace(/\./g, "") + "@gmail.com";
+    return normalizedLocal.replace(/\./g, "") + "@gmail.com";
   }
-  return email.toLowerCase().trim();
+  return normalizedLocal + "@" + domain;
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, input, posthogDistinctId } = (await request.json()) as {
+    const { email, input, posthogDistinctId, turnstileToken, website } = (await request.json()) as {
       email: string;
       input: FormInput;
       posthogDistinctId?: string;
+      turnstileToken?: string;
+      website?: string; // Honeypot field
     };
 
-    // Validate email
+    // 1. Honeypot check - if filled, return fake success (don't tip off bots)
+    if (website) {
+      console.log("[FreeAudit] Honeypot triggered, returning fake success");
+      trackServerEvent("bot-trap", "honeypot_triggered", { ip: getClientIP(request) });
+      // Return fake success with random-looking IDs to avoid detection
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const fakeId = `fa_${crypto.randomUUID().slice(0, 8)}`;
+      const fakeToken = crypto.randomUUID();
+      return NextResponse.json({ freeAuditId: fakeId, token: fakeToken });
+    }
+
+    // 2. IP rate limit check
+    const clientIP = getClientIP(request);
+    if (!checkIPRateLimit(clientIP)) {
+      console.log(`[FreeAudit] IP rate limit exceeded for ${clientIP}`);
+      trackServerEvent("rate-limit", "free_audit_ip_limit", { ip: clientIP });
+      return NextResponse.json(
+        { error: "Too many free audit requests. Please try again tomorrow." },
+        { status: 429 }
+      );
+    }
+
+    // 3. Turnstile verification (bot protection)
+    if (turnstileToken) {
+      const turnstileValid = await verifyTurnstile(turnstileToken);
+      if (!turnstileValid) {
+        console.log("[FreeAudit] Turnstile verification failed");
+        trackServerEvent("bot-trap", "turnstile_failed", { ip: clientIP });
+        return NextResponse.json(
+          { error: "Bot verification failed. Please try again." },
+          { status: 400 }
+        );
+      }
+    } else if (process.env.CLOUDFLARE_TURNSTILE_SECRET) {
+      // Turnstile is configured but no token provided
+      console.log("[FreeAudit] No Turnstile token provided");
+      return NextResponse.json(
+        { error: "Bot verification required. Please try again." },
+        { status: 400 }
+      );
+    }
+
+    // 4. Validate email format
     if (!email || typeof email !== "string" || !isValidEmail(email)) {
       return NextResponse.json({ error: "Valid email is required" }, { status: 400 });
+    }
+
+    // 5. Check for disposable email
+    const disposableDomain = isDisposableEmail(email);
+    if (disposableDomain) {
+      console.log(`[FreeAudit] Disposable email blocked: ${disposableDomain}`);
+      trackServerEvent("abuse-prevention", "disposable_email_blocked", { domain: disposableDomain });
+      return NextResponse.json(
+        { error: "Please use a permanent email address. Temporary email services are not accepted." },
+        { status: 400 }
+      );
     }
 
     // Validate form input
