@@ -3,94 +3,67 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 
-// Business type content - positioning-first approach
-// Priority order: SaaS/tech → E-commerce → Service businesses (per Jan 24 pivot)
+// Real businesses with real Boost reports
+// These link to actual companies and full reports on /in-action
 const BUSINESS_TYPES = {
-  saas: {
-    label: "SaaS Product",
+  inkdex: {
+    label: "Inkdex",
+    url: "https://inkdex.io",
+    inActionSlug: "inkdex",
     positioning: {
       verdict: "needs-work" as const,
-      summary: "You're positioned as generic 'project management for teams' but your unique async-first workflow could own the remote team niche. Lead with the differentiator.",
-      differentiator: "Async-first workflow, built for remote",
-      targetSegment: "Remote-first teams tired of sync meetings",
+      summary: "Your visual search is genuinely differentiated — but 'find tattoo artists' positioning undersells it. Lead with what makes you the only: upload any image, find artists who work in that exact style.",
+      differentiator: "Visual search — find artists by uploading reference images",
+      targetSegment: "People with a specific tattoo vision ready to book, not browse",
     },
     discovery: {
-      title: "Your top competitor spends $47K/mo on 'project management' keywords",
-      type: "competitive_intel",
-      content: "They're winning broad terms you can't afford. But 'async project management' and 'remote team workflow' have 4K monthly searches with almost no competition.",
-      source: "Ahrefs keyword analysis + ad spend data",
-      significance: "You're fighting the wrong battle. Own the niche first.",
-    },
-    sources: ["google-analytics", "hubspot", "linkedin", "youtube"],
-  },
-  ecommerce: {
-    label: "E-commerce",
-    positioning: {
-      verdict: "unclear" as const,
-      summary: "You're selling 'premium skincare' in a sea of premium skincare. Your ingredient transparency and cruelty-free testing could differentiate — but it's buried in the footer.",
-      differentiator: "Full ingredient transparency, cruelty-free",
-      targetSegment: "Clean beauty enthusiasts, 25-40, who read labels",
-    },
-    discovery: {
-      title: "3 competitors get 40% of traffic from TikTok Shop",
+      title: "Pinterest is where people PLAN tattoos. Reddit is where they BROWSE.",
       type: "pattern",
-      content: "They're not running ads — they're doing live shopping events 2x/week. Average order value from TikTok is 23% higher than their website.",
-      source: "SimilarWeb + TikTok Shop analysis",
-      significance: "The channel shift already happened. You're late but not too late.",
+      content: "Your Reddit ad experiment got exposure but minimal conversions. Meanwhile, Pinterest has thousands of monthly saves on tattoo style searches — high-intent users actively planning. You're invisible there.",
+      source: "Traffic analysis + Pinterest Trends",
+      significance: "You're spending on channels that can't convert while ignoring where your customers actually plan.",
     },
-    sources: ["google-analytics", "tiktok", "instagram", "mailchimp"],
+    sources: ["google-analytics", "pinterest", "instagram", "youtube"],
   },
-  agency: {
-    label: "Agency",
+  cheft: {
+    label: "Cheft",
+    url: "https://cheft.app",
+    inActionSlug: "cheft",
     positioning: {
       verdict: "clear" as const,
-      summary: "Your 'conversion-focused design for B2B SaaS' positioning is tight. Nobody else in your price range is this specific. Now you need to be findable.",
-      differentiator: "B2B SaaS focus, conversion expertise",
-      targetSegment: "B2B SaaS startups, Series A-B, $2-10M ARR",
+      summary: "You own the gap between watching a chef on TV and figuring out where to actually eat their food. Narrow but defensible — and nobody else is there.",
+      differentiator: "Comprehensive database across Top Chef, Tournament of Champions, Chef's Table",
+      targetSegment: "Food enthusiasts who watch cooking shows and want to eat at the restaurants",
     },
     discovery: {
-      title: "Top 5 agencies in your space all run a weekly newsletter",
-      type: "competitive_intel",
-      content: "They're building audiences while you chase cold leads. The agencies with newsletters close 3x more inbound deals and charge 40% higher rates.",
-      source: "LinkedIn + competitor content analysis",
-      significance: "Content is the new cold outreach. You're leaving money on the table.",
-    },
-    sources: ["linkedin", "google-analytics", "hubspot", "youtube"],
-  },
-  consultant: {
-    label: "Consultant",
-    positioning: {
-      verdict: "needs-work" as const,
-      summary: "Your coaching framework is unique, but it's buried. Lead with 'From overwhelmed founder to 3-day workweek' — not 'business coaching services'.",
-      differentiator: "Proven framework, undersold outcome",
-      targetSegment: "Burned-out founders ready to work less",
-    },
-    discovery: {
-      title: "Your ICP is asking questions in r/Entrepreneur daily",
+      title: "r/BravoTopChef sidebar has a resource link — get added for permanent passive traffic",
       type: "opportunity",
-      content: "47 posts this month asking about 'scaling without burning out' or 'founder time management'. These are perfect-fit prospects actively seeking help.",
-      source: "Reddit research + sentiment analysis",
-      significance: "Your customers are assembled and asking. Go answer them.",
+      content: "The subreddit sidebar has a 'Contestant Restaurant List' resource section. Getting your site added would provide permanent passive traffic from engaged users who already want exactly what you built.",
+      source: "Reddit community analysis",
+      significance: "One outreach message to moderators could unlock consistent traffic from your core audience.",
     },
-    sources: ["linkedin", "google-analytics", "hubspot", "youtube"],
+    sources: ["google-analytics", "youtube", "instagram", "hubspot"],
   },
-  shopify: {
-    label: "Shopify Store",
+  tripledmap: {
+    label: "Tripledmap",
+    url: "https://tripledmap.com",
+    inActionSlug: "tripledmap",
     positioning: {
       verdict: "clear" as const,
-      summary: "Your 'sustainable pet supplies' niche is well-defined. Eco-conscious pet parents are a real and growing segment. You just need more of them to find you.",
-      differentiator: "Sustainable materials, eco-conscious pet parents",
-      targetSegment: "Urban millennials who treat pets like family",
+      summary: "You're the only DDD directory with true route planning and verified-open status. That second part is the differentiator — fans hate driving 200 miles to a closed restaurant.",
+      differentiator: "Route planner + real-time open/closed tracking for 1,540+ restaurants",
+      targetSegment: "RV travelers and DDD superfans planning multi-stop food trips",
     },
     discovery: {
-      title: "Pinterest drives 34% of competitor traffic (you're not on it)",
+      title: "RV LIFE Pro affiliate found — 25% commission, 180-day cookie, perfect audience fit",
       type: "opportunity",
-      content: "'Eco-friendly dog toys' and 'sustainable pet products' pins get 15K saves/month. This audience researches on Pinterest before buying on Shopify.",
-      source: "Pinterest Trends + competitor traffic analysis",
-      significance: "You're invisible on the platform where your customers browse.",
+      content: "RV LIFE Pro offers 25% commission with a 180-day cookie window. Your road trip planning audience aligns perfectly with their RV traveler customer base.",
+      source: "Monetization research",
+      significance: "Non-spammy revenue that actually serves your users instead of annoying them.",
     },
-    sources: ["google-analytics", "pinterest", "instagram", "mailchimp"],
+    sources: ["google-analytics", "pinterest", "youtube", "mailchimp"],
   },
 };
 
@@ -134,7 +107,7 @@ interface HeroSummaryCardProps {
 }
 
 export function HeroSummaryCard({ visible }: HeroSummaryCardProps) {
-  const [selectedType, setSelectedType] = useState<BusinessType>("saas");
+  const [selectedType, setSelectedType] = useState<BusinessType>("inkdex");
   const businessData = BUSINESS_TYPES[selectedType];
   const verdictStyle = getVerdictStyle(businessData.positioning.verdict);
 
@@ -154,23 +127,34 @@ export function HeroSummaryCard({ visible }: HeroSummaryCardProps) {
           boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)",
         }}
       >
-        {/* Header with business type selector */}
+        {/* Header with real business tabs */}
         <div className="px-4 sm:px-6 pt-4 sm:pt-5 pb-3 sm:pb-4 border-b border-foreground/10">
           <div className="flex flex-wrap gap-2">
             {BUSINESS_KEYS.map((key) => (
-              <button
+              <a
                 key={key}
-                onClick={() => setSelectedType(key)}
+                href={BUSINESS_TYPES[key].url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => {
+                  // Left click selects tab, doesn't navigate
+                  // Right click / cmd+click still opens link
+                  if (!e.metaKey && !e.ctrlKey && e.button === 0) {
+                    e.preventDefault();
+                    setSelectedType(key);
+                  }
+                }}
                 className={`
-                  px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-100
+                  px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-100 cursor-pointer
                   ${selectedType === key
                     ? "bg-foreground text-white shadow-sm"
                     : "bg-foreground/5 text-foreground/60 border border-foreground/15 hover:border-foreground/30 hover:text-foreground"
                   }
                 `}
+                title={`Click to view report • Cmd+click to visit ${BUSINESS_TYPES[key].label}`}
               >
                 {BUSINESS_TYPES[key].label}
-              </button>
+              </a>
             ))}
           </div>
         </div>
@@ -231,10 +215,10 @@ export function HeroSummaryCard({ visible }: HeroSummaryCardProps) {
               Key Discovery
             </span>
 
-            {/* Discovery card - matching LeadDiscovery styling */}
+            {/* Discovery card - highlighted with CTA border */}
             <div
-              className="bg-background border-2 border-foreground/20 rounded-md p-4 sm:p-5 relative"
-              style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.08)" }}
+              className="bg-white border-2 border-cta/60 rounded-md p-4 sm:p-5 relative"
+              style={{ boxShadow: "4px 4px 0 rgba(230, 126, 34, 0.15)" }}
             >
               {/* Type badge - inline on mobile, absolute on desktop */}
               <span className="sm:absolute sm:top-3 sm:right-3 inline-block sm:inline mb-2 sm:mb-0 font-mono text-[9px] uppercase tracking-wider text-foreground/30 bg-surface px-2 py-0.5 rounded">
@@ -264,25 +248,35 @@ export function HeroSummaryCard({ visible }: HeroSummaryCardProps) {
             </div>
           </div>
 
-          {/* === SOURCES - condensed footer === */}
-          <div className="pt-4 border-t border-foreground/10 flex items-center justify-end gap-2">
-            <span className="text-xs font-medium text-foreground/50">Built from:</span>
-            {businessData.sources.map((source) => (
-              <div
-                key={source}
-                className="w-5 h-5 rounded bg-white border border-foreground/10 flex items-center justify-center"
-                title={source}
-              >
-                <Image
-                  src={SOURCE_LOGOS[source]}
-                  alt=""
-                  width={12}
-                  height={12}
-                  className="w-3 h-3"
-                />
+          {/* === FOOTER - link to full report === */}
+          <div className="pt-4 border-t border-foreground/10 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-foreground/50">Built from:</span>
+              <div className="flex items-center gap-1">
+                {businessData.sources.slice(0, 4).map((source) => (
+                  <div
+                    key={source}
+                    className="w-5 h-5 rounded bg-white border border-foreground/10 flex items-center justify-center"
+                    title={source}
+                  >
+                    <Image
+                      src={SOURCE_LOGOS[source]}
+                      alt=""
+                      width={12}
+                      height={12}
+                      className="w-3 h-3"
+                    />
+                  </div>
+                ))}
+                <span className="text-xs font-medium text-foreground/30 ml-0.5">+8</span>
               </div>
-            ))}
-            <span className="text-xs font-semibold text-foreground/30">+8</span>
+            </div>
+            <Link
+              href={`/in-action/${businessData.inActionSlug}`}
+              className="text-xs font-semibold text-cta hover:underline"
+            >
+              See full report &rarr;
+            </Link>
           </div>
         </div>
       </div>

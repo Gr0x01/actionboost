@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
+import { motion, useScroll, useTransform, useReducedMotion, MotionValue } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ChevronDown } from "lucide-react";
@@ -105,14 +105,185 @@ const NOISE_POSITIONS = [
   { x: 92, y: 54 },
 ];
 
+// Scroll takeover configuration
+const TAKEOVER_DURATION = 1.2; // seconds for the smooth scroll
+
+/**
+ * Custom hook for scroll takeover.
+ * Instead of locking scroll, we smoothly scroll the page over a fixed duration.
+ * This lets the normal scroll-linked animations work while controlling the speed.
+ */
+function useScrollTakeover(
+  containerRef: React.RefObject<HTMLDivElement | null>,
+  enabled: boolean
+) {
+  const isAnimatingRef = useRef(false);
+  const hasCompletedRef = useRef(false);
+  const [, forceUpdate] = useState(0);
+
+  useEffect(() => {
+    if (!enabled) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (!containerRef.current || hasCompletedRef.current || isAnimatingRef.current) return;
+
+      const container = containerRef.current;
+      const rect = container.getBoundingClientRect();
+
+      // Only activate when near the top of the page
+      const nearTop = window.scrollY < 200;
+      if (!nearTop) return;
+
+      // Only capture downward scroll
+      if (e.deltaY <= 0) return;
+
+      // Prevent the natural scroll
+      e.preventDefault();
+
+      // Start smooth scroll animation
+      isAnimatingRef.current = true;
+
+      const startScroll = window.scrollY;
+      // Target: scroll to show the explainer section (about 80% of viewport height)
+      const targetScroll = container.offsetTop + window.innerHeight * 0.7;
+      const distance = targetScroll - startScroll;
+
+      const startTime = performance.now();
+
+      const animateScroll = (currentTime: number) => {
+        const elapsed = (currentTime - startTime) / 1000; // in seconds
+        const progress = Math.min(elapsed / TAKEOVER_DURATION, 1);
+
+        // Ease out cubic for smooth deceleration
+        const eased = 1 - Math.pow(1 - progress, 3);
+
+        window.scrollTo(0, startScroll + distance * eased);
+
+        if (progress < 1) {
+          requestAnimationFrame(animateScroll);
+        } else {
+          isAnimatingRef.current = false;
+          hasCompletedRef.current = true;
+          forceUpdate(n => n + 1);
+        }
+      };
+
+      requestAnimationFrame(animateScroll);
+    };
+
+    // Touch handling
+    let touchStartY = 0;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!containerRef.current || hasCompletedRef.current || isAnimatingRef.current) return;
+
+      const nearTop = window.scrollY < 200;
+      if (!nearTop) return;
+
+      const touchY = e.touches[0].clientY;
+      const scrollingDown = touchStartY - touchY > 20; // 20px threshold
+
+      if (!scrollingDown) return;
+
+      e.preventDefault();
+
+      isAnimatingRef.current = true;
+
+      const container = containerRef.current;
+      const startScroll = window.scrollY;
+      const targetScroll = container.offsetTop + window.innerHeight * 0.7;
+      const distance = targetScroll - startScroll;
+
+      const startTime = performance.now();
+
+      const animateScroll = (currentTime: number) => {
+        const elapsed = (currentTime - startTime) / 1000;
+        const progress = Math.min(elapsed / TAKEOVER_DURATION, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+
+        window.scrollTo(0, startScroll + distance * eased);
+
+        if (progress < 1) {
+          requestAnimationFrame(animateScroll);
+        } else {
+          isAnimatingRef.current = false;
+          hasCompletedRef.current = true;
+          forceUpdate(n => n + 1);
+        }
+      };
+
+      requestAnimationFrame(animateScroll);
+    };
+
+    // Block wheel events during animation
+    const blockWheel = (e: WheelEvent) => {
+      if (isAnimatingRef.current) {
+        e.preventDefault();
+      }
+    };
+
+    // Reset when scrolling back to top
+    const handleScrollReset = () => {
+      if (window.scrollY < 50 && hasCompletedRef.current && !isAnimatingRef.current) {
+        hasCompletedRef.current = false;
+        forceUpdate(n => n + 1);
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('wheel', blockWheel, { passive: false });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
+    window.addEventListener('scroll', handleScrollReset, { passive: true });
+
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('wheel', blockWheel);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('scroll', handleScrollReset);
+    };
+  }, [enabled, containerRef]);
+
+  return {
+    hasCompleted: hasCompletedRef.current,
+  };
+}
+
 export function HeroWithExplainer() {
   const containerRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
 
+  // Standard scroll-linked progress - this drives all animations
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"],
   });
+
+  // Scroll takeover: smoothly scrolls the page over a fixed duration
+  // instead of letting the user scroll at any speed
+  useScrollTakeover(containerRef, !prefersReducedMotion);
+
+  // All animations use scrollYProgress directly since we're actually scrolling
+  const animationProgress = scrollYProgress;
+
+  // Pre-compute transforms for HERO section (fades out and moves up as user scrolls)
+  // Overlaps with explainer fade-in for smooth cross-fade
+  const heroOpacity = useTransform(animationProgress, [0.05, 0.3], [1, 0]);
+  const heroY = useTransform(animationProgress, [0, 0.35], [0, -80]);
+
+  // Pre-compute transforms for EXPLAINER section elements (fade in as hero fades out)
+  // Starts earlier to overlap with hero fade-out
+  const headerOpacity = useTransform(animationProgress, [0.1, 0.25], [0, 1]);
+  const headerY = useTransform(animationProgress, [0.1, 0.25], [40, 0]);
+  const cardOpacity = useTransform(animationProgress, [0.12, 0.28], [0, 1]);
+  const cardScale = useTransform(animationProgress, [0.12, 0.3], [0.9, 1]);
+  const cardY = useTransform(animationProgress, [0.12, 0.3], [50, 0]);
+  const bottomTextOpacity = useTransform(animationProgress, [0.35, 0.5], [0, 1]);
 
   return (
     <div ref={containerRef} className="relative">
@@ -156,8 +327,14 @@ export function HeroWithExplainer() {
           }}
         />
 
-        {/* Hero content - centered */}
-        <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
+        {/* Hero content - centered, animates out during scroll */}
+        <motion.div
+          className="relative z-10 mx-auto max-w-4xl px-6 text-center"
+          style={{
+            opacity: heroOpacity,
+            y: heroY,
+          }}
+        >
           <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-medium tracking-tight text-foreground leading-[1.05]">
             You didn&apos;t start a business
             <br />
@@ -190,7 +367,7 @@ export function HeroWithExplainer() {
           <p className="mt-8 text-sm text-foreground/70 font-medium">
             $29 once · Real competitor research, not AI guessing · <span className="text-foreground">Full refund if it doesn&apos;t help</span>
           </p>
-        </div>
+        </motion.div>
       </section>
 
       {/* ===== EXPLAINER SECTION - where logos converge TO ===== */}
@@ -199,17 +376,17 @@ export function HeroWithExplainer() {
         <motion.div
           className="relative z-10 mx-auto max-w-3xl px-6 text-center mb-12"
           style={{
-            opacity: useTransform(scrollYProgress, [0.15, 0.3], [0, 1]),
-            y: useTransform(scrollYProgress, [0.15, 0.3], [30, 0]),
+            opacity: headerOpacity,
+            y: headerY,
           }}
         >
           <p className="font-mono text-xs tracking-[0.12em] text-foreground/60 uppercase mb-4">
             How it works
           </p>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-foreground tracking-tight leading-tight">
-            We researched.
+            We&apos;ll handle it.
             <br />
-            <span className="font-black text-cta">Here&apos;s what we found.</span>
+            <span className="font-black text-cta">Get back to building.</span>
           </h2>
         </motion.div>
 
@@ -217,9 +394,9 @@ export function HeroWithExplainer() {
         <motion.div
           className="relative z-10 mx-auto max-w-4xl px-6"
           style={{
-            opacity: useTransform(scrollYProgress, [0.2, 0.3], [0, 1]),
-            scale: useTransform(scrollYProgress, [0.2, 0.35], [0.95, 1]),
-            y: useTransform(scrollYProgress, [0.2, 0.35], [30, 0]),
+            opacity: cardOpacity,
+            scale: cardScale,
+            y: cardY,
           }}
         >
           <HeroSummaryCard visible={true} />
@@ -229,7 +406,7 @@ export function HeroWithExplainer() {
         <motion.div
           className="relative z-10 mx-auto max-w-2xl px-6 text-center mt-12"
           style={{
-            opacity: useTransform(scrollYProgress, [0.4, 0.55], [0, 1]),
+            opacity: bottomTextOpacity,
           }}
         >
           <p className="text-xl text-foreground font-medium mb-2">
@@ -249,7 +426,7 @@ export function HeroWithExplainer() {
               key={logo.name}
               logo={logo}
               startPos={LOGO_POSITIONS[i]}
-              scrollProgress={scrollYProgress}
+              scrollProgress={animationProgress}
               index={i}
             />
           ))}
@@ -258,7 +435,7 @@ export function HeroWithExplainer() {
               key={card.text}
               card={card}
               startPos={NOISE_POSITIONS[i]}
-              scrollProgress={scrollYProgress}
+              scrollProgress={animationProgress}
               index={i}
             />
           ))}
@@ -276,7 +453,7 @@ function ConvergingLogo({
 }: {
   logo: { name: string; src: string; hasBackground?: boolean };
   startPos: { x: number; y: number };
-  scrollProgress: ReturnType<typeof useScroll>["scrollYProgress"];
+  scrollProgress: MotionValue<number>;
   index: number;
 }) {
   const targetX = 50;
@@ -354,7 +531,7 @@ function ConvergingNoise({
 }: {
   card: { text: string; type: string };
   startPos: { x: number; y: number };
-  scrollProgress: ReturnType<typeof useScroll>["scrollYProgress"];
+  scrollProgress: MotionValue<number>;
   index: number;
 }) {
   const targetX = 50;
