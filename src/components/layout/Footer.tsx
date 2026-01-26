@@ -75,12 +75,13 @@ export function Footer() {
             href="https://peerpush.net/p/actionboost"
             target="_blank"
             rel="noopener"
+            style={{ width: 230 }}
           >
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src="https://peerpush.net/p/actionboost/badge.png"
-              alt="Boost on PeerPush"
-              width={120}
-              height={28}
+              alt="Boost badge"
+              style={{ width: 230 }}
             />
           </a>
           <a
