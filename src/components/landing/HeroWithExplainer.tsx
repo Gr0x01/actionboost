@@ -355,19 +355,19 @@ export function HeroWithExplainer() {
               <ArrowRight className="w-5 h-5" />
             </Link>
 
-            {/* Secondary: Free sample */}
+            {/* Secondary: Free insights */}
             <Link
               href="/start?free=true"
               onClick={() => posthog?.capture("hero_cta_clicked", { type: "free" })}
               className="inline-flex items-center gap-2 rounded-xl px-6 py-4 bg-white/80 text-foreground text-lg font-semibold border-2 border-foreground/20 shadow-[3px_3px_0_rgba(44,62,80,0.06)] hover:border-cta/60 hover:text-cta hover:shadow-[4px_4px_0_rgba(230,126,34,0.12)] hover:-translate-y-0.5 transition-all duration-100"
             >
-              See a Sample First
+              Get Free Insights
             </Link>
           </div>
 
           {/* Trust line */}
           <p className="mt-8 text-sm text-foreground/50 text-center">
-            $29 for the full plan · Try a sample if you&apos;re not sure · <span className="text-foreground/70 font-medium">Full refund guarantee</span>
+            $29 for the full plan · Get free insights first · <span className="text-foreground/70 font-medium">Full refund guarantee</span>
           </p>
         </motion.div>
       </section>
