@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform, useReducedMotion, MotionValue } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion, animate, MotionValue } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ChevronDown } from "lucide-react";
@@ -106,69 +106,96 @@ const NOISE_POSITIONS = [
 ];
 
 // Scroll takeover configuration
-const TAKEOVER_DURATION = 1.2; // seconds for the smooth scroll
+const TAKEOVER_DURATION_DOWN = 1.4; // seconds for scroll down
+const TAKEOVER_DURATION_UP = 1.0; // slightly faster for scroll up
 
 /**
  * Custom hook for scroll takeover.
- * Instead of locking scroll, we smoothly scroll the page over a fixed duration.
- * This lets the normal scroll-linked animations work while controlling the speed.
+ * Uses Framer Motion's animate for butter-smooth scrolling in both directions.
  */
 function useScrollTakeover(
   containerRef: React.RefObject<HTMLDivElement | null>,
   enabled: boolean
 ) {
   const isAnimatingRef = useRef(false);
-  const hasCompletedRef = useRef(false);
+  const directionRef = useRef<'none' | 'down' | 'up'>('none');
+  const animationRef = useRef<ReturnType<typeof animate> | null>(null);
   const [, forceUpdate] = useState(0);
 
   useEffect(() => {
     if (!enabled) return;
 
-    const handleWheel = (e: WheelEvent) => {
-      if (!containerRef.current || hasCompletedRef.current || isAnimatingRef.current) return;
+    const startSmoothScrollDown = () => {
+      if (isAnimatingRef.current) return;
 
-      const container = containerRef.current;
-      const rect = container.getBoundingClientRect();
-
-      // Only activate when near the top of the page
-      const nearTop = window.scrollY < 200;
-      if (!nearTop) return;
-
-      // Only capture downward scroll
-      if (e.deltaY <= 0) return;
-
-      // Prevent the natural scroll
-      e.preventDefault();
-
-      // Start smooth scroll animation
       isAnimatingRef.current = true;
+      directionRef.current = 'down';
 
       const startScroll = window.scrollY;
-      // Target: scroll to show the explainer section (about 80% of viewport height)
-      const targetScroll = container.offsetTop + window.innerHeight * 0.7;
-      const distance = targetScroll - startScroll;
+      const targetScroll = window.innerHeight * 1.05;
 
-      const startTime = performance.now();
-
-      const animateScroll = (currentTime: number) => {
-        const elapsed = (currentTime - startTime) / 1000; // in seconds
-        const progress = Math.min(elapsed / TAKEOVER_DURATION, 1);
-
-        // Ease out cubic for smooth deceleration
-        const eased = 1 - Math.pow(1 - progress, 3);
-
-        window.scrollTo(0, startScroll + distance * eased);
-
-        if (progress < 1) {
-          requestAnimationFrame(animateScroll);
-        } else {
+      animationRef.current = animate(startScroll, targetScroll, {
+        duration: TAKEOVER_DURATION_DOWN,
+        ease: [0.32, 0.72, 0, 1],
+        onUpdate: (value) => {
+          window.scrollTo(0, value);
+        },
+        onComplete: () => {
           isAnimatingRef.current = false;
-          hasCompletedRef.current = true;
           forceUpdate(n => n + 1);
-        }
-      };
+        },
+      });
+    };
 
-      requestAnimationFrame(animateScroll);
+    const startSmoothScrollUp = () => {
+      if (isAnimatingRef.current) return;
+
+      isAnimatingRef.current = true;
+      directionRef.current = 'up';
+
+      const startScroll = window.scrollY;
+      const targetScroll = 0; // Back to top
+
+      animationRef.current = animate(startScroll, targetScroll, {
+        duration: TAKEOVER_DURATION_UP,
+        ease: [0.32, 0.72, 0, 1],
+        onUpdate: (value) => {
+          window.scrollTo(0, value);
+        },
+        onComplete: () => {
+          isAnimatingRef.current = false;
+          directionRef.current = 'none';
+          forceUpdate(n => n + 1);
+        },
+      });
+    };
+
+    const handleWheel = (e: WheelEvent) => {
+      if (!containerRef.current) return;
+
+      // Block during animation
+      if (isAnimatingRef.current) {
+        e.preventDefault();
+        return;
+      }
+
+      const scrollY = window.scrollY;
+      const triggerZoneDown = scrollY < 150;
+      const triggerZoneUp = scrollY > window.innerHeight * 0.7 && scrollY < window.innerHeight * 1.3;
+
+      // Scroll DOWN from hero
+      if (triggerZoneDown && e.deltaY > 0 && directionRef.current !== 'down') {
+        e.preventDefault();
+        startSmoothScrollDown();
+        return;
+      }
+
+      // Scroll UP back to hero
+      if (triggerZoneUp && e.deltaY < 0 && directionRef.current !== 'up') {
+        e.preventDefault();
+        startSmoothScrollUp();
+        return;
+      }
     };
 
     // Touch handling
@@ -179,79 +206,48 @@ function useScrollTakeover(
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (!containerRef.current || hasCompletedRef.current || isAnimatingRef.current) return;
+      if (!containerRef.current) return;
 
-      const nearTop = window.scrollY < 200;
-      if (!nearTop) return;
-
-      const touchY = e.touches[0].clientY;
-      const scrollingDown = touchStartY - touchY > 20; // 20px threshold
-
-      if (!scrollingDown) return;
-
-      e.preventDefault();
-
-      isAnimatingRef.current = true;
-
-      const container = containerRef.current;
-      const startScroll = window.scrollY;
-      const targetScroll = container.offsetTop + window.innerHeight * 0.7;
-      const distance = targetScroll - startScroll;
-
-      const startTime = performance.now();
-
-      const animateScroll = (currentTime: number) => {
-        const elapsed = (currentTime - startTime) / 1000;
-        const progress = Math.min(elapsed / TAKEOVER_DURATION, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-
-        window.scrollTo(0, startScroll + distance * eased);
-
-        if (progress < 1) {
-          requestAnimationFrame(animateScroll);
-        } else {
-          isAnimatingRef.current = false;
-          hasCompletedRef.current = true;
-          forceUpdate(n => n + 1);
-        }
-      };
-
-      requestAnimationFrame(animateScroll);
-    };
-
-    // Block wheel events during animation
-    const blockWheel = (e: WheelEvent) => {
       if (isAnimatingRef.current) {
         e.preventDefault();
+        return;
       }
-    };
 
-    // Reset when scrolling back to top
-    const handleScrollReset = () => {
-      if (window.scrollY < 50 && hasCompletedRef.current && !isAnimatingRef.current) {
-        hasCompletedRef.current = false;
-        forceUpdate(n => n + 1);
+      const touchY = e.touches[0].clientY;
+      const deltaY = touchStartY - touchY;
+      const scrollY = window.scrollY;
+
+      const triggerZoneDown = scrollY < 150;
+      const triggerZoneUp = scrollY > window.innerHeight * 0.7 && scrollY < window.innerHeight * 1.3;
+
+      // Scroll DOWN from hero
+      if (triggerZoneDown && deltaY > 15 && directionRef.current !== 'down') {
+        e.preventDefault();
+        startSmoothScrollDown();
+        return;
+      }
+
+      // Scroll UP back to hero
+      if (triggerZoneUp && deltaY < -15 && directionRef.current !== 'up') {
+        e.preventDefault();
+        startSmoothScrollUp();
+        return;
       }
     };
 
     window.addEventListener('wheel', handleWheel, { passive: false });
-    window.addEventListener('wheel', blockWheel, { passive: false });
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: false });
-    window.addEventListener('scroll', handleScrollReset, { passive: true });
 
     return () => {
       window.removeEventListener('wheel', handleWheel);
-      window.removeEventListener('wheel', blockWheel);
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('scroll', handleScrollReset);
+      animationRef.current?.stop();
     };
   }, [enabled, containerRef]);
 
-  return {
-    hasCompleted: hasCompletedRef.current,
-  };
+  return {};
 }
 
 export function HeroWithExplainer() {
