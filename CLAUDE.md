@@ -122,6 +122,16 @@ Keep docs lean. Intent over implementation. Agents can generate code from descri
   - Model: Opus (for strategic decisions)
   - **Highly relevant for Boost** - combines positioning clarity with tactical execution
 
+- **copywriter**: Direct-response copywriting for conversion
+  - Use for: Headlines, landing pages, email sequences, CTAs, product copy, ad copy, any customer-facing text
+  - Expertise:
+    - **Classic direct response**: Ogilvy (research-driven), Halbert (emotional hooks), Schwartz (awareness levels, market sophistication), Sugarman (slippery slide)
+    - **Frameworks**: PAS, AIDA, Before-After-Bridge, headline formulas
+    - **Modern conversion copy**: VoC research, specificity over vagueness, clarity over cleverness
+  - Tools: Write, Read, MultiEdit, WebSearch, WebFetch, Grep, Glob
+  - Model: Opus (for quality copy)
+  - **Key for Boost** - all customer-facing copy should go through this agent
+
 - **instagram-curator**: Instagram content strategy and growth
   - Use for: Reels scripting, content planning, hashtag strategy
   - Expertise: Algorithm signals (2026), story strategy, viral content
@@ -147,9 +157,10 @@ Subagents are helpful but not mandatory for every tiny change. Use judgment:
 4. **frontend-developer**: Use for complex UI or performance issues (not simple component edits)
 5. **ui-designer**: **MANDATORY for new frontend features/elements** - consult before implementing new components, pages, or UI patterns
 6. **growth-hacker**: Use for growth strategy, experiments, and optimization (key for this project)
-7. **legal-compliance-checker**: Use before launch or when handling user data
-8. **Complex Research**: Use general-purpose subagent for multi-step investigations
-9. **Reference Generation**: Use subagents to create documentation or architectural diagrams
+7. **copywriter**: Use for any customer-facing copy - headlines, CTAs, emails, landing page text, error messages
+8. **legal-compliance-checker**: Use before launch or when handling user data
+9. **Complex Research**: Use general-purpose subagent for multi-step investigations
+10. **Reference Generation**: Use subagents to create documentation or architectural diagrams
 
 ### Integration Workflow (Solo Dev Adapted)
 - **NEW BACKEND FEATURES**:

@@ -50,3 +50,6 @@ next-env.d.ts
 # test outputs
 /scripts/output/
 
+# n8n workflows (contain API keys)
+n8n-*.json
+
