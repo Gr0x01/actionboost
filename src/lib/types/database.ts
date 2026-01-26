@@ -94,6 +94,7 @@ export type Database = {
           business_id: string | null
           input: Json
           output: string | null
+          structured_output: Json | null
           status: string
           source: string | null
           created_at: string
@@ -106,6 +107,7 @@ export type Database = {
           business_id?: string | null
           input: Json
           output?: string | null
+          structured_output?: Json | null
           status?: string
           source?: string | null
           created_at?: string
@@ -118,6 +120,7 @@ export type Database = {
           business_id?: string | null
           input?: Json
           output?: string | null
+          structured_output?: Json | null
           status?: string
           source?: string | null
           created_at?: string

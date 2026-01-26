@@ -24,7 +24,7 @@ export async function GET(
 
   const { data: freeAudit, error } = await supabase
     .from("free_audits")
-    .select("id, email, input, output, status, created_at, completed_at")
+    .select("id, email, input, output, structured_output, status, created_at, completed_at")
     .eq("id", id)
     .single();
 
@@ -48,6 +48,7 @@ export async function GET(
       status: freeAudit.status,
       created_at: freeAudit.created_at,
       completed_at: freeAudit.completed_at,
+      structured_output: freeAudit.structured_output,
     },
   });
 }
