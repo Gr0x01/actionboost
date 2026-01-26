@@ -24,6 +24,10 @@ Target audience: **Small business owners** — salons, local services, niche e-c
 2. **Real research on YOUR competitors** - Tavily searches, DataForSEO metrics. Not templated advice.
 3. **No friction** - No account, no subscription. Email for receipt + magic link to access later.
 
+## Traction
+
+- **#1 App of the Week** on PeerPush (Jan 2026)
+
 ## The Core Tech
 
 | Service | Purpose | Why It Matters |
