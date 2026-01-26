@@ -21,16 +21,10 @@ interface FreeInsightsViewProps {
  * Everything else is locked behind the paywall.
  */
 export function FreeInsightsView({ structuredOutput, freeAuditId, token }: FreeInsightsViewProps) {
-  const { positioning, discoveries, topPriorities } = structuredOutput
+  const { positioning, discoveries } = structuredOutput
 
   // Get lead discovery (first one = highest surpriseScore per formatter)
   const leadDiscovery = discoveries?.[0]
-
-  // Preview priorities for blurred cards (if available)
-  const previewPriorities = topPriorities?.slice(0, 3).map((p) => ({
-    title: p.title,
-    rank: p.rank,
-  }))
 
   return (
     <div className="space-y-16">
@@ -41,11 +35,7 @@ export function FreeInsightsView({ structuredOutput, freeAuditId, token }: FreeI
       {leadDiscovery && <LeadDiscovery discovery={leadDiscovery} />}
 
       {/* 3. PAYWALL */}
-      <FreePreviewPaywall
-        freeAuditId={freeAuditId}
-        token={token}
-        previewPriorities={previewPriorities}
-      />
+      <FreePreviewPaywall freeAuditId={freeAuditId} token={token} />
     </div>
   )
 }
