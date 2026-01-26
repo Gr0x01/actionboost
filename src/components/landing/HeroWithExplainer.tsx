@@ -4,7 +4,8 @@ import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, useReducedMotion, animate, MotionValue } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { usePostHog } from "posthog-js/react";
+import { ArrowRight } from "lucide-react";
 import { HeroSummaryCard } from "./HeroSummaryCard";
 
 // Platform logos - the chaos (23 unique platforms)
@@ -253,6 +254,7 @@ function useScrollTakeover(
 export function HeroWithExplainer() {
   const containerRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
+  const posthog = usePostHog();
 
   // Standard scroll-linked progress - this drives all animations
   const { scrollYProgress } = useScroll({
@@ -341,27 +343,31 @@ export function HeroWithExplainer() {
             Yet here you are, drowning in advice about algorithms, engagement rates, and &quot;just be consistent.&quot; You need a plan, not more noise.
           </p>
 
-          {/* CTA Buttons */}
+          {/* Dual CTA Buttons */}
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+            {/* Primary: Paid */}
             <Link
               href="/start"
+              onClick={() => posthog?.capture("hero_cta_clicked", { type: "paid" })}
               className="inline-flex items-center gap-2 rounded-xl px-8 py-4 bg-cta text-white text-lg font-bold border-2 border-cta shadow-[4px_4px_0_rgba(44,62,80,0.4)] hover:shadow-[5px_5px_0_rgba(44,62,80,0.45)] hover:-translate-y-0.5 active:shadow-[2px_2px_0_rgba(44,62,80,0.4)] active:translate-y-0.5 transition-all duration-100"
             >
               Get Your Plan
               <ArrowRight className="w-5 h-5" />
             </Link>
-            <a
-              href="#how-it-works"
-              className="inline-flex items-center gap-2 text-foreground/70 hover:text-foreground font-medium transition-colors"
+
+            {/* Secondary: Free sample */}
+            <Link
+              href="/start?free=true"
+              onClick={() => posthog?.capture("hero_cta_clicked", { type: "free" })}
+              className="inline-flex items-center gap-2 rounded-xl px-6 py-4 bg-white/80 text-foreground text-lg font-semibold border-2 border-foreground/20 shadow-[3px_3px_0_rgba(44,62,80,0.06)] hover:border-cta/60 hover:text-cta hover:shadow-[4px_4px_0_rgba(230,126,34,0.12)] hover:-translate-y-0.5 transition-all duration-100"
             >
-              See how it works
-              <ChevronDown className="w-4 h-4" />
-            </a>
+              See a Sample First
+            </Link>
           </div>
 
           {/* Trust line */}
-          <p className="mt-8 text-sm text-foreground/70 font-medium">
-            $29 once · Real competitor research, not AI guessing · <span className="text-foreground">Full refund if it doesn&apos;t help</span>
+          <p className="mt-8 text-sm text-foreground/50 text-center">
+            $29 for the full plan · Try a sample if you&apos;re not sure · <span className="text-foreground/70 font-medium">Full refund guarantee</span>
           </p>
         </motion.div>
       </section>

@@ -26,6 +26,7 @@ interface CheckoutSectionProps {
   userCredits?: number;
   isLoggedIn?: boolean;
   error?: string | null;
+  defaultShowFreeOption?: boolean;
 }
 
 export function CheckoutSection({
@@ -45,6 +46,7 @@ export function CheckoutSection({
   userCredits = 0,
   isLoggedIn = false,
   error: externalError,
+  defaultShowFreeOption = false,
 }: CheckoutSectionProps) {
   const hasCredits = userCredits > 0;
   const router = useRouter();
@@ -52,7 +54,7 @@ export function CheckoutSection({
   const [showCode, setShowCode] = useState(false);
   const hasTrackedView = useRef(false);
 
-  const [showFreeOption, setShowFreeOption] = useState(false);
+  const [showFreeOption, setShowFreeOption] = useState(defaultShowFreeOption);
   const [freeEmail, setFreeEmail] = useState(formData?.email || "");
   const [freeSubmitting, setFreeSubmitting] = useState(false);
   const [freeError, setFreeError] = useState<string | null>(null);

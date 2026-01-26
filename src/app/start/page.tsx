@@ -105,6 +105,9 @@ function StartPageContent() {
   // Entry source for analytics (hero, footer, or direct)
   const entrySource = searchParams.get("source") || "direct";
 
+  // Free audit mode - auto-expand free option at checkout
+  const freeMode = searchParams.get("free") === "true";
+
   // Business selection for multi-business users
   const { businesses, selectedBusinessId, setSelectedBusinessId, hasBusinesses, isLoading: isLoadingBusinesses } = useBusinesses();
 
@@ -533,6 +536,7 @@ function StartPageContent() {
                   userCredits={userCredits}
                   isLoggedIn={isLoggedIn}
                   error={error}
+                  defaultShowFreeOption={freeMode}
                 />
               </motion.div>
             )}

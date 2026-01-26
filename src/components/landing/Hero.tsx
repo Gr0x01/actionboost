@@ -1,11 +1,14 @@
 "use client";
 
+import Link from "next/link";
 import { useReducedMotion } from "framer-motion";
-import { HeroForm } from "./HeroForm";
+import { usePostHog } from "posthog-js/react";
+import { ArrowRight } from "lucide-react";
 import { HeroChaos } from "./HeroChaos";
 
 export function Hero() {
   const prefersReducedMotion = useReducedMotion();
+  const posthog = usePostHog();
 
   return (
     <section className="relative min-h-screen py-16 lg:py-24 overflow-hidden">
@@ -40,17 +43,31 @@ export function Hero() {
           </p>
         </div>
 
-        {/* Form */}
-        <div className="max-w-xl mx-auto">
-          <p className="text-center text-sm text-foreground/50 mb-3">
-            Let&apos;s start simple
-          </p>
-          <HeroForm />
+        {/* Dual CTA Buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          {/* Primary: Paid */}
+          <Link
+            href="/start"
+            onClick={() => posthog?.capture("hero_cta_clicked", { type: "paid" })}
+            className="inline-flex items-center gap-2 rounded-xl px-8 py-4 bg-cta text-white text-lg font-bold border-2 border-cta shadow-[4px_4px_0_rgba(44,62,80,0.4)] hover:shadow-[5px_5px_0_rgba(44,62,80,0.45)] hover:-translate-y-0.5 active:shadow-[2px_2px_0_rgba(44,62,80,0.4)] active:translate-y-0.5 transition-all duration-100"
+          >
+            Get Your Plan
+            <ArrowRight className="w-5 h-5" />
+          </Link>
+
+          {/* Secondary: Free sample */}
+          <Link
+            href="/start?free=true"
+            onClick={() => posthog?.capture("hero_cta_clicked", { type: "free" })}
+            className="inline-flex items-center gap-2 rounded-xl px-6 py-4 bg-white/80 text-foreground text-lg font-semibold border-2 border-foreground/20 shadow-[3px_3px_0_rgba(44,62,80,0.06)] hover:border-cta/60 hover:text-cta hover:shadow-[4px_4px_0_rgba(230,126,34,0.12)] hover:-translate-y-0.5 transition-all duration-100"
+          >
+            See a Sample First
+          </Link>
         </div>
 
-        {/* Trust line with price */}
-        <p className="mt-6 text-sm text-foreground/50 text-center">
-          $29 one-time. A real plan, not a template. Money back if it doesn&apos;t help.
+        {/* Trust line */}
+        <p className="mt-8 text-sm text-foreground/50 text-center">
+          $29 for the full plan · Try a sample if you&apos;re not sure · <span className="text-foreground/70 font-medium">Full refund guarantee</span>
         </p>
       </div>
     </section>
