@@ -174,6 +174,7 @@ export const DiscoverySchema = z.object({
   content: z.string(), // The insight itself (1-3 sentences)
   source: z.string().optional(), // Where it came from, if mentioned
   significance: z.string(), // Why this matters to the client's strategy
+  surpriseScore: z.number().min(1).max(10).optional(), // 1 = obvious, 10 = "I never would've found this"; optional for backward compat
 })
 
 export type Discovery = z.infer<typeof DiscoverySchema>
@@ -312,6 +313,22 @@ For each discovery found:
 - content: The insight itself (1-3 sentences)
 - source: Where it came from, if mentioned
 - significance: Why this matters to the client's strategy
+- surpriseScore: 1-10 rating (see below)
+
+DISCOVERY RANKING (CRITICAL):
+ORDER discoveries by surpriseScore descending — first discovery = most surprising.
+
+Score each 1-10:
+- 9-10: "I never would have found this myself" (hidden affiliates, sidebar links, niche community terms, unexpected revenue sources)
+- 7-8: "I knew this existed but didn't know the specifics" (competitor weakness with data, specific traffic numbers)
+- 5-6: "Confirms what I suspected" (episode timing, obvious SEO gaps, common knowledge validated)
+- 1-4: Generic advice anyone could give (basic social media tips, "post consistently")
+
+The PRIMARY discovery (index 0) MUST be:
+1. Unexpected — not common knowledge or obvious to anyone in the industry
+2. Actionable — user can do something THIS WEEK with this information
+3. Specific — concrete names, numbers, or tactics, not vague generalizations
+4. Researched — found from tool calls, not generated from training data
 
 If Opus found something interesting and novel, capture it. Don't let insights get lost.
 
@@ -426,18 +443,28 @@ OUTPUT FORMAT:
   },
   "discoveries": [
     {
+      "type": "opportunity",
+      "title": "r/BravoTopChef Sidebar Has Permanent Link Slot",
+      "content": "The subreddit sidebar has a 'Contestant Restaurant List' link section. Getting added means permanent passive traffic from 50K+ subscribers.",
+      "source": "Reddit r/BravoTopChef",
+      "significance": "One-time outreach to mods could yield ongoing traffic — low effort, high leverage",
+      "surpriseScore": 9
+    },
+    {
       "type": "competitive_intel",
       "title": "Major Competitor Cancelled Key Feature",
       "content": "Tattoodo recently cancelled their artist discovery feature, leaving artists frustrated with no way to be found by local clients.",
       "source": "Reddit r/TattooArtists",
-      "significance": "Opens a positioning opportunity as the reliable alternative for artist discovery"
+      "significance": "Opens a positioning opportunity as the reliable alternative for artist discovery",
+      "surpriseScore": 7
     },
     {
       "type": "pattern",
       "title": "City Subreddits Drive Tattoo Referrals",
       "content": "Users consistently ask for artist recommendations in city-specific subreddits rather than tattoo-focused ones.",
       "source": "SEO research",
-      "significance": "Distribution channel opportunity - engage in local subreddits rather than competing on broad tattoo keywords"
+      "significance": "Distribution channel opportunity - engage in local subreddits rather than competing on broad tattoo keywords",
+      "surpriseScore": 6
     }
   ]
 }`

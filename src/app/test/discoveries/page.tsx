@@ -4,7 +4,7 @@ import { LeadDiscovery } from '@/components/results/dashboard/LeadDiscovery'
 import { Discoveries } from '@/components/results/dashboard/Discoveries'
 import type { Discovery } from '@/lib/ai/formatter-types'
 
-// Test data from the Inkdex run
+// Test data from the Inkdex run - ordered by surpriseScore descending
 const testDiscoveries: Discovery[] = [
   {
     type: 'competitive_intel',
@@ -12,6 +12,7 @@ const testDiscoveries: Discovery[] = [
     content: "Tattoodo killed their booking platform in 2023, with artists reporting they lost '60% of my clients from there' and actively seeking alternatives.",
     source: 'Reddit r/TattooArtists research',
     significance: 'Creates market void - artists lost major client acquisition channel and are actively seeking replacements',
+    surpriseScore: 9,
   },
   {
     type: 'pattern',
@@ -19,13 +20,7 @@ const testDiscoveries: Discovery[] = [
     content: "Every major city subreddit gets multiple 'tattoo artist recommendations' posts weekly, with users desperately seeking style-specific local artists.",
     source: 'Reddit research across city subs',
     significance: 'Distribution channel opportunity - hundreds of high-intent posts monthly that nobody is systematically answering with a tool',
-  },
-  {
-    type: 'opportunity',
-    title: 'Instagram Search Problem Validated',
-    content: "Users consistently complain that Instagram isn't helpful for finding artists because it's 'not location-based' and has poor search functionality.",
-    source: 'Reddit r/tattoo posts',
-    significance: 'Direct validation of core value proposition - users articulating the exact problem Inkdex solves',
+    surpriseScore: 8,
   },
   {
     type: 'finding',
@@ -33,6 +28,7 @@ const testDiscoveries: Discovery[] = [
     content: "Several Reddit posts from 2024 show users saying 'I'm thinking of creating a platform where people can search for tattoos based on style, price point, and location.'",
     source: 'Reddit research',
     significance: 'Strong market demand signal - people independently proposing the exact solution, market hasn\'t found answer yet',
+    surpriseScore: 8,
   },
   {
     type: 'competitive_intel',
@@ -40,6 +36,15 @@ const testDiscoveries: Discovery[] = [
     content: 'TattoosWizard gets 318K monthly visitors with 70K ranking keywords using just basic filtering - no AI or visual search.',
     source: 'SEO analysis',
     significance: 'Proves programmatic SEO works in this space - and Inkdex has better technology (visual search) to differentiate',
+    surpriseScore: 7,
+  },
+  {
+    type: 'opportunity',
+    title: 'Instagram Search Problem Validated',
+    content: "Users consistently complain that Instagram isn't helpful for finding artists because it's 'not location-based' and has poor search functionality.",
+    source: 'Reddit r/tattoo posts',
+    significance: 'Direct validation of core value proposition - users articulating the exact problem Inkdex solves',
+    surpriseScore: 6,
   },
   {
     type: 'risk',
@@ -47,6 +52,7 @@ const testDiscoveries: Discovery[] = [
     content: 'Sites with thin programmatic content have been hit by recent Google updates. Quality custom text on each page is essential.',
     source: 'SEO industry analysis',
     significance: 'Current approach of custom generated text per page is correct - but must maintain quality as pages scale',
+    surpriseScore: 5,
   },
 ]
 
