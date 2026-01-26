@@ -45,7 +45,8 @@ export function FreeAuditPending() {
   const currentStage = STAGES.find(
     (s) => elapsedSeconds >= s.delay && elapsedSeconds < s.delay + s.duration
   );
-  const currentStageText = currentStage?.text || "Finalizing...";
+  const currentStageText = currentStage?.text ||
+    (elapsedSeconds < 45 ? "Finalizing..." : "Still working, almost there...");
 
   // Typewriter effect - matches StatusMessage pattern
   useEffect(() => {

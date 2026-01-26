@@ -1,5 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 
+// Use port 3000 for CI, allow override locally via TEST_PORT env var
+const port = process.env.TEST_PORT || '3000';
+const baseURL = `http://localhost:${port}`;
+
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
@@ -8,7 +12,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:3001',
+    baseURL,
     trace: 'on-first-retry',
   },
   projects: [
@@ -26,8 +30,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3001',
+    command: `npm run dev -- -p ${port}`,
+    url: baseURL,
     reuseExistingServer: !process.env.CI,
   },
 });

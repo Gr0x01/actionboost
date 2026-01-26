@@ -55,7 +55,7 @@ export function CheckoutSection({
   const hasTrackedView = useRef(false);
 
   const [showFreeOption, setShowFreeOption] = useState(defaultShowFreeOption);
-  const [freeEmail, setFreeEmail] = useState(formData?.email || "");
+  const [freeEmail, setFreeEmail] = useState("");
   const [freeSubmitting, setFreeSubmitting] = useState(false);
   const [freeError, setFreeError] = useState<string | null>(null);
   const freeSubmitRef = useRef(false);
@@ -283,6 +283,7 @@ export function CheckoutSection({
                 }
               }}
               placeholder="your@email.com"
+              aria-label="Email address for free preview"
               className="flex-1 bg-transparent text-lg text-foreground placeholder:text-foreground/30 outline-none"
               autoFocus
             />
