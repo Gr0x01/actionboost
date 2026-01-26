@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { signAuditToken } from "@/lib/auth/audit-token";
 
 // Lazy-load Resend client to avoid throwing on import when API key is missing
 let _resend: Resend | null = null;
@@ -565,7 +566,9 @@ export async function sendFreeAuditUpsellEmail(
 ): Promise<void> {
   try {
     const { to, freeAuditId } = data;
-    const freeResultsUrl = `${process.env.NEXT_PUBLIC_APP_URL}/free-results/${freeAuditId}`;
+    // Generate signed token for secure access to results
+    const token = signAuditToken(freeAuditId);
+    const freeResultsUrl = `${process.env.NEXT_PUBLIC_APP_URL}/free-results/${freeAuditId}?token=${encodeURIComponent(token)}`;
     const upgradeUrl = `${process.env.NEXT_PUBLIC_APP_URL}/start`;
 
     const resend = getResend();
@@ -714,7 +717,9 @@ export async function sendAbandonedCheckoutEmail(
 ): Promise<void> {
   try {
     const { to, freeAuditId } = data;
-    const freeResultsUrl = `${process.env.NEXT_PUBLIC_APP_URL}/free-results/${freeAuditId}`;
+    // Generate signed token for secure access to results
+    const token = signAuditToken(freeAuditId);
+    const freeResultsUrl = `${process.env.NEXT_PUBLIC_APP_URL}/free-results/${freeAuditId}?token=${encodeURIComponent(token)}`;
     const upgradeUrl = `${process.env.NEXT_PUBLIC_APP_URL}/start`;
 
     const resend = getResend();
