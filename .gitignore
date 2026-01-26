@@ -53,3 +53,4 @@ next-env.d.ts
 # n8n workflows (contain API keys)
 n8n-*.json
 
+memory-bank/test-outputs/

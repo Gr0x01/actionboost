@@ -726,27 +726,36 @@ function truncate(text: string, maxLength: number): string {
 // POSITIONING PREVIEW GENERATION (Free tier V2 - focused on positioning + discovery)
 // =============================================================================
 
-const PREVIEW_MODEL = 'claude-opus-4-5-20251101'
+// Free audit uses Sonnet for cost efficiency (64% cheaper than Opus, quality is good)
+// See memory-bank/decisions.md for model testing results (Jan 27, 2026)
+export const FREE_AUDIT_MODEL = 'claude-sonnet-4-20250514'
+const PREVIEW_MODEL = FREE_AUDIT_MODEL
 const PREVIEW_MAX_TOKENS = 2000 // Shorter than mini - just positioning + discovery
 
 /**
  * Generate a positioning preview (free tier V2)
  * Focused output: positioning analysis + 1-2 key discoveries
  * Designed to prove "we understand YOUR business" before paywall
+ *
+ * @param input - User's form input
+ * @param research - Research context from Tavily
+ * @param options - Optional config (model override for testing)
  */
 export async function generatePositioningPreview(
   input: RunInput,
-  research: ResearchContext
+  research: ResearchContext,
+  options?: { model?: string }
 ): Promise<string> {
   const client = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY!,
   })
 
+  const model = options?.model || PREVIEW_MODEL
   const systemPrompt = buildPositioningPreviewPrompt()
   const userMessage = buildPositioningPreviewUserMessage(input, research)
 
   const response = await client.messages.create({
-    model: PREVIEW_MODEL,
+    model,
     max_tokens: PREVIEW_MAX_TOKENS,
     system: systemPrompt,
     messages: [{ role: 'user', content: userMessage }],

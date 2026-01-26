@@ -195,25 +195,58 @@ Key architectural and product decisions. Reference this when you need to underst
 
 ---
 
-## LLM Model: Claude Opus 4.5
+## LLM Model: Claude Opus 4.5 (Paid) / Sonnet 4 (Free)
 
-**Decision**: Use `claude-opus-4-5-20251101` for strategy generation.
+**Decision**: Use Opus for paid runs, Sonnet for free audits.
 
-**Why**: Best reasoning capabilities for complex strategic analysis. The nuance in competitive analysis and unexpected/creative recommendations is the key differentiator.
+**Why**:
+- **Paid runs**: Opus's nuanced analysis justifies the cost. The depth of insight is the core product value.
+- **Free audits**: Sonnet provides good quality at 64% lower cost. Free audits are lead generation, not the full product.
 
-**Sonnet vs Opus Comparison** (tested Jan 2025):
+**Model assignments (Jan 27, 2026)**:
+| Pipeline | Model | Cost |
+|----------|-------|------|
+| Paid strategy (agentic) | Opus 4.5 | ~$0.15-0.20 |
+| Free positioning preview | Sonnet 4 | ~$0.02 |
+| Formatter (all pipelines) | Sonnet 4 | ~$0.02 |
+| Refinements | Opus 4.5 | ~$0.10-0.15 |
 
-| Aspect | Sonnet 4 | Opus 4.5 |
-|--------|----------|----------|
-| Competitive analysis | Solid but surface-level | Deeper, more nuanced |
-| Recommendations | "By the book" | More creative/unexpected |
-| Speed | Faster | Slower |
+**Free audit model testing (Jan 27, 2026)**:
+Tested three combinations on same input:
 
-**Conclusion**: Opus's nuanced analysis justifies the marginal cost increase. The depth of insight is the product's core value.
+| Combo | Gen | Fmt | Total Cost | Quality |
+|-------|-----|-----|------------|---------|
+| opus-sonnet (baseline) | Opus | Sonnet | $0.10 | Honest, accurate, specific |
+| sonnet-sonnet | Sonnet | Sonnet | $0.04 | Good quality, slightly more critical |
+| sonnet-haiku | Sonnet | Haiku | $0.02 | Haiku formatter had extraction issues |
 
-**Update (Jan 21, 2026)**: Upgraded ALL pipelines to Opus 4.5 - paid runs, free mini-audits, and First Impressions. Cost difference is minimal (~$0.01 more for free runs) but quality improvement is noticeable.
+**Decision**: Switched to Sonnet-Sonnet for free audits. 64% cost savings ($0.10 → $0.04), quality remains good. Sonnet's slightly more critical tone actually works well for free audits - creates urgency to upgrade.
 
-**Constraint**: Do NOT change the model name without explicit user approval. This is documented in CLAUDE.md as a critical rule.
+**Constraint**: Do NOT change model names without explicit user approval. This is documented in CLAUDE.md as a critical rule.
+
+---
+
+## Free-to-Paid Upgrade: Context Continuity (Jan 27 2026)
+
+**Decision**: When user upgrades from free audit to paid, pass the free audit output as context to the paid pipeline.
+
+**Why**:
+- Free audit already told them about positioning and gave one discovery
+- Paid run should BUILD on that, not repeat it
+- Creates better user experience - feels like continuous conversation
+- Claude instructed: "Build on it, don't repeat the same insights, go deeper"
+
+**Implementation**:
+1. Stripe webhook checks for `upgrade_from_free_audit_id` in metadata
+2. Fetches free audit output from DB
+3. Stores in `runs.additional_context` with framing instructions
+4. `runAgenticPipeline()` passes this to `generateStrategyAgentic()`
+5. Claude receives it as part of the user message
+
+**Files changed**:
+- `src/app/api/webhooks/stripe/route.ts` - Fetch and store free audit context
+- `src/lib/ai/pipeline.ts` - Pass `additional_context` to generator
+- `src/lib/ai/pipeline-agentic.ts` - Accept and use `priorContext` parameter
 
 ---
 

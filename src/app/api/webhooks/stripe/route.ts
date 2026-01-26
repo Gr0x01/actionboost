@@ -220,6 +220,28 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     }
   }
 
+  // If this is an upgrade from free audit, fetch the free audit output to pass as context
+  // IMPORTANT: Verify ownership by checking email matches to prevent info disclosure
+  let freeAuditContext: string | null = null;
+  const upgradeFromFreeAuditId = metadata.upgrade_from_free_audit_id;
+  if (upgradeFromFreeAuditId && email) {
+    const normalizedEmail = normalizeEmailForRateLimit(email);
+    const { data: freeAudit } = await supabase
+      .from("free_audits")
+      .select("output")
+      .eq("id", upgradeFromFreeAuditId)
+      .eq("email", normalizedEmail)  // Verify ownership
+      .single();
+
+    if (freeAudit?.output) {
+      // Wrap the free audit output as context for the full pipeline
+      freeAuditContext = `## Prior Analysis (Free Preview)\n\nThe user already received this positioning preview. Build on it - don't repeat the same insights, go deeper:\n\n${freeAudit.output}`;
+      console.log(`[Webhook] Upgrade from free audit ${upgradeFromFreeAuditId}, passing prior context (${freeAuditContext.length} chars)`);
+    } else {
+      console.warn(`[Webhook] Free audit ${upgradeFromFreeAuditId} not found or doesn't belong to ${email}`);
+    }
+  }
+
   // Create the run
   const { data: run, error: runError } = await supabase
     .from("runs")
@@ -230,6 +252,8 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       status: "pending",
       stripe_session_id: session.id,
       source: "stripe",
+      // Pass free audit output as additional_context if upgrading
+      additional_context: freeAuditContext,
     })
     .select("id")
     .single();

@@ -722,7 +722,7 @@ No emojis. Be direct. Challenge flawed assumptions. Say "unknown" rather than gu
 // USER MESSAGE BUILDER
 // =============================================================================
 
-function buildUserMessage(input: RunInput): string {
+function buildUserMessage(input: RunInput, priorContext?: string | null): string {
   const focusLabel =
     input.focusArea === 'custom' && input.customFocusArea
       ? `Custom: ${input.customFocusArea}`
@@ -757,6 +757,11 @@ ${input.tacticsAndResults || 'Not specified'}
 
   if (input.constraints) {
     message += `\n## Constraints\n${input.constraints}\n`
+  }
+
+  // Add prior context if user upgraded from free audit
+  if (priorContext) {
+    message += `\n---\n\n${priorContext}\n`
   }
 
   return message
@@ -805,7 +810,8 @@ export async function generateAgenticStrategy(
   userHistory?: UserHistoryContext | null,
   onStageUpdate?: StageCallback,
   runId?: string,
-  userId?: string
+  userId?: string,
+  priorContext?: string | null
 ): Promise<AgenticResult> {
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
   const toolCalls: string[] = []
@@ -835,9 +841,9 @@ export async function generateAgenticStrategy(
   // Tracking distinctId
   const distinctId = userId || runId || 'anonymous'
 
-  // Build messages
+  // Build messages (include prior context if upgrading from free audit)
   const systemPrompt = buildSystemPrompt(userHistory)
-  const userMessage = buildUserMessage(input)
+  const userMessage = buildUserMessage(input, priorContext)
   let messages: Anthropic.MessageParam[] = [{ role: 'user', content: userMessage }]
 
   const startTime = Date.now()
@@ -1181,9 +1187,10 @@ export async function generateStrategyAgentic(
   userHistory?: UserHistoryContext | null,
   onStageUpdate?: StageCallback,
   runId?: string,
-  userId?: string
+  userId?: string,
+  priorContext?: string | null
 ): Promise<AgenticStrategyResult> {
-  const result = await generateAgenticStrategy(input, userHistory, onStageUpdate, runId, userId)
+  const result = await generateAgenticStrategy(input, userHistory, onStageUpdate, runId, userId, priorContext)
 
   if (!result.success || !result.output) {
     throw new Error(result.error || 'Agentic generation failed')

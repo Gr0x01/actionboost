@@ -15,6 +15,13 @@ const FORMATTER_MODEL = 'claude-sonnet-4-20250514'
 const FORMATTER_MAX_TOKENS = 16000 // Set high - extraction includes 28 days + priorities + positioning + metrics
 const FORMATTER_TIMEOUT_MS = 150000 // 150s - some extractions timeout at 90s
 
+// Model-specific max tokens (Haiku has lower limit)
+const MODEL_MAX_TOKENS: Record<string, number> = {
+  'claude-3-5-haiku-20241022': 8192,
+  'claude-sonnet-4-20250514': 16000,
+  'claude-opus-4-5-20251101': 16000,
+}
+
 /**
  * Build research data section for the prompt
  */
@@ -66,10 +73,12 @@ function formatResearchDataForPrompt(researchData: ResearchData): string {
  *
  * @param markdown - The strategy markdown to extract from
  * @param researchData - Optional structured research data from tool calls
+ * @param options - Optional config (model override for testing)
  */
 export async function extractStructuredOutput(
   markdown: string,
-  researchData?: ResearchData
+  researchData?: ResearchData,
+  options?: { model?: string }
 ): Promise<StructuredOutput | null> {
   // Early validation - don't fail hard if key is missing during lazy backfill
   if (!process.env.ANTHROPIC_API_KEY) {
@@ -107,7 +116,13 @@ export async function extractStructuredOutput(
   }
 
   try {
-    console.log(`[Formatter] Starting Sonnet extraction (with research: ${hasResearchData})...`)
+    const model = options?.model || FORMATTER_MODEL
+    const maxTokens = MODEL_MAX_TOKENS[model]
+    if (!maxTokens) {
+      console.warn(`[Formatter] Unknown model "${model}", using default max_tokens ${FORMATTER_MAX_TOKENS}`)
+    }
+    const effectiveMaxTokens = maxTokens || FORMATTER_MAX_TOKENS
+    console.log(`[Formatter] Starting extraction with ${model} (max_tokens: ${effectiveMaxTokens}, research: ${hasResearchData})...`)
     const startTime = Date.now()
 
     // Use Promise.race for timeout since Anthropic SDK doesn't support AbortSignal
@@ -117,8 +132,8 @@ export async function extractStructuredOutput(
 
     const response = await Promise.race([
       client.messages.create({
-        model: FORMATTER_MODEL,
-        max_tokens: FORMATTER_MAX_TOKENS,
+        model,
+        max_tokens: effectiveMaxTokens,
         system: FORMATTER_SYSTEM_PROMPT,
         messages: [
           {
@@ -131,7 +146,7 @@ export async function extractStructuredOutput(
     ])
 
     const elapsed = Date.now() - startTime
-    console.log(`[Formatter] Sonnet responded in ${elapsed}ms, tokens: ${response.usage.input_tokens} in / ${response.usage.output_tokens} out`)
+    console.log(`[Formatter] ${model} responded in ${elapsed}ms, tokens: ${response.usage.input_tokens} in / ${response.usage.output_tokens} out`)
 
     // Extract text content
     const textContent = response.content.find((block) => block.type === 'text')

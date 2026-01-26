@@ -217,25 +217,30 @@ This keeps costs proportional to how useful SEO data is for each problem type.
 - Total time: ~2 minutes
 - Graceful degradation: Research fails → proceed with limited context
 
-### Free Pipeline (Mini-Audit)
+### Free Pipeline (Positioning Preview)
 Lighter-weight pipeline for lead generation:
-- Model: Claude Opus 4.5 (upgraded from Sonnet for better quality, only +$0.01)
+- Model: Claude Sonnet 4 (switched from Opus Jan 27 2026 - 64% cost savings, quality still good)
 - Research: Tavily only (no DataForSEO)
-- Output: 4 sections (Executive Summary, Your Situation, Competitive Landscape, Channel Strategy)
-- Locked sections shown as upsell: Stop Doing, Start Doing, This Week, 30-Day Roadmap, Metrics Dashboard, Content Templates
+- Output: Positioning analysis + 1-2 key discoveries
+- Locked sections shown as upsell: Full competitive analysis, 30-day roadmap, metrics dashboard, content templates
 - No RAG/user history
 - Rate limit: 1 per email (normalized for Gmail aliases)
 - Polling: Recursive setTimeout every 2s until complete
 
-**Free Run Cost (Opus 4.5):**
+**Free Run Cost (Sonnet 4) - Updated Jan 27 2026:**
 | Component | Calculation | Cost |
 |-----------|-------------|------|
-| Claude Opus input | ~1,150 tokens × $5/MTok | $0.006 |
-| Claude Opus output | ~630 tokens × $25/MTok | $0.016 |
-| Tavily | 3 searches × 2 credits × $0.008 | $0.048 |
-| **Total** | | **~$0.07** |
+| Claude Sonnet input | ~2,500 tokens × $3/MTok | $0.008 |
+| Claude Sonnet output | ~700 tokens × $15/MTok | $0.011 |
+| Formatter (Sonnet) | ~3,500 tokens in, ~500 out | $0.018 |
+| Tavily | minimal research | $0.01 |
+| **Total** | | **~$0.04** |
 
-Files: `runFreePipeline()` in pipeline.ts, `generateMiniStrategy()` in generate.ts
+**Previous cost (Opus 4.5)**: ~$0.10/audit - switched to Sonnet for 64% savings
+
+**Upgrade Flow**: When user upgrades from free audit, the free preview output is passed as context to the paid pipeline. Claude is instructed to "build on it, don't repeat the same insights, go deeper."
+
+Files: `runFreePipeline()` in pipeline.ts, `generatePositioningPreview()` in generate.ts
 Routes: `POST /api/free-audit`, `GET /api/free-audit/[id]`
 Page: `/free-results/[id]` with auto-polling and upsell UI
 

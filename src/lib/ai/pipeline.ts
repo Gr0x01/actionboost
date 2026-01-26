@@ -395,6 +395,12 @@ export async function runAgenticPipeline(runId: string): Promise<PipelineResult>
   }
 
   // 4. Generate strategy with agentic Claude (AI fetches data as needed)
+  // If user upgraded from free audit, pass the prior context so Claude builds on it
+  const priorContext = run.additional_context as string | null
+  if (priorContext) {
+    console.log(`[AgenticPipeline] Found prior context (${priorContext.length} chars) - will build on free audit`)
+  }
+
   try {
     console.log(`[AgenticPipeline] Starting agentic generation for run ${runId}`)
     const { output, researchData } = await generateStrategyAgentic(
@@ -403,7 +409,8 @@ export async function runAgenticPipeline(runId: string): Promise<PipelineResult>
       userHistory,
       onStageUpdate,
       runId,
-      run.user_id || undefined
+      run.user_id || undefined,
+      priorContext
     )
     console.log(`[AgenticPipeline] Strategy generated: ${output.length} characters`)
 
@@ -566,6 +573,7 @@ export async function runFreePipeline(
   }
 
   // Generate positioning preview (focused prompt for positioning + discoveries)
+  // Default model is Sonnet for cost efficiency - see generate.ts FREE_AUDIT_MODEL
   try {
     console.log(`[FreePipeline] Generating positioning preview`)
     const output = await generatePositioningPreview(input, research)
