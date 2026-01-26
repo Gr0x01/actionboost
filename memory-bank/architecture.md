@@ -95,6 +95,20 @@ auth.users (Supabase Auth)     public.users (our table)
 
 ---
 
+## Analytics & Privacy
+
+**Geo-based tracking** (in `layout.tsx`):
+- EU/EEA/UK visitors (`x-vercel-ip-country` header) get cookieless PostHog
+- Non-EU visitors get full PostHog + Facebook Pixel
+
+**Cookie banner** (`src/components/CookieBanner.tsx`):
+- Informational notice, not consent mechanics (tracking already geo-gated)
+- Shows once after 1s delay, dismisses forever via localStorage
+- Framer Motion animations, respects `prefers-reduced-motion`
+- Storage key: `boost_cookie_notice_dismissed`
+
+---
+
 ## AI Pipeline
 
 **Status**: ✅ Complete (Agentic + RAG)
@@ -639,5 +653,117 @@ Runs on every PR to `main`:
 - `vitest.config.ts` - Vitest configuration
 - `vitest.setup.ts` - Environment mocks
 - `playwright.config.ts` - E2E configuration
+
+---
+
+## n8n Reddit Outreach
+
+**Status**: ✅ Active
+
+Automated Reddit monitoring workflow that finds founders asking marketing questions and generates helpful comments.
+
+### Overview
+```
+Every 30 Min (trigger)
+    ↓
+Subreddits (20 subs)
+    ↓
+Fetch Reddit (via ScrapingDog)
+    ↓
+Parse & Filter (posts < 2hrs old)
+    ↓
+Deduplicate (check Supabase)
+    ↓
+AI Score + Archetype (Claude Haiku)
+    ↓
+Generate Comment (Claude Haiku)
+    ↓
+Filter & Batch (score >= 7, save to Supabase)
+    ↓
+Send to Discord
+```
+
+### Files
+```
+n8n-reddit-v13.json                    # Workflow export
+memory-bank/reddit-comment-prompt.md   # Comment generation prompt
+memory-bank/n8n-supabase-dedup.js      # Dedup node code
+```
+
+### Database Table
+```sql
+CREATE TABLE reddit_sent_posts (
+  post_id TEXT PRIMARY KEY,
+  subreddit TEXT,
+  title TEXT,
+  sent_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+Auto-cleanup function removes posts older than 7 days.
+
+### Scoring Prompt (Claude Haiku)
+Scores posts 0-10 based on fit for Boost:
+- **9-10**: Founder with product asking for marketing help
+- **6-8**: Good fit, has product but less urgent
+- **3-5**: Weak fit, no product context
+- **0-2**: Filter out (pitching, job seeking, pricing questions, etc.)
+
+Also matches to one of 7 archetypes (pre-generated Boosts).
+
+### Comment Generation Prompt
+```
+You're writing a Reddit comment as a marketing strategist who's
+genuinely good at this and slightly allergic to bullshit.
+
+Your voice:
+- Direct. Answer the actual question.
+- Specific. Name the real problem.
+- Peer energy. Smart friend at a bar.
+- Slightly opinionated.
+
+You built Boost (aboo.st). For $29, it creates a personalized
+30 day marketing plan based on their specific product, market,
+and competitors. Not generic advice.
+
+Mention Boost if:
+- They're asking for a tool/resource directly, OR
+- Your advice leads to "here's how to do that" and Boost does it
+
+NEVER:
+- Recommend competitor tools by name
+- Make up personal founder stories
+- Say "Pro tip:" or "This."
+- Use emojis or dashes
+
+MAX 70 WORDS. Two short paragraphs.
+```
+
+### 7 Archetypes
+Pre-generated Boosts at `/in-action/[slug]`:
+| Slug | Persona |
+|------|---------|
+| `pre-revenue-saas-first-100-users` | Zero users, just built |
+| `side-project-to-business-marketing-plan` | Has MRR but stuck |
+| `ecommerce-first-sales-marketing-plan` | Shopify, no sales |
+| `consultant-freelancer-client-acquisition-plan` | Services, feast/famine |
+| `b2b-saas-customer-acquisition-plan` | B2B tools, longer sales cycles |
+| `local-business-digital-marketing-plan` | Local services, Google Maps |
+| `product-market-fit-marketing-plan` | Low engagement, pivot question |
+
+### Costs
+| Component | Cost |
+|-----------|------|
+| Scoring (per post) | ~$0.001 (Haiku) |
+| Comment (per post) | ~$0.002 (Haiku) |
+| ScrapingDog | Free tier |
+| **Per run (20 subs)** | **~$0.10-0.20** |
+
+### Discord Output
+Posts scoring 7+ sent to Discord with:
+- Post title + snippet
+- Score + reason
+- Matched archetype
+- Generated comment (ready to copy)
+- Link to archetype page
 
 ---

@@ -53,10 +53,10 @@ Target industries with search volume:
 | SaaS (B2B) | "saas marketing plan example" | ✅ `saas-email-productivity` |
 | Shopify/E-commerce | "shopify store marketing plan" | ✅ `shopify-candles-growth` |
 | Consulting/Coaching | "consultant marketing plan example" | ✅ `leadership-coaching-pipeline` |
-| Digital Agency | "agency marketing plan template" | Pending |
-| Newsletter/Creator | "newsletter marketing strategy" | Pending |
+| Digital Agency | "agency marketing plan template" | ✅ `digital-agency-growth` |
+| Newsletter/Creator | "newsletter marketing strategy" | ✅ `newsletter-growth-strategy` |
 
-**Goal**: 5-7 live examples by end of Phase 1 (3 done)
+**Goal**: 5-7 live examples by end of Phase 1 ✅ (5 done)
 
 ### 1.4 Example Card Enhancement
 
@@ -85,16 +85,17 @@ Make examples feel discovered, not prescribed:
 
 ~2500 words, SEO-optimized, links to all example pages.
 
-### 2.2 Programmatic Industry Pages
+### 2.2 Programmatic Industry Pages ✅
 
 **Pattern**: `/marketing-plan/[industry]`
+**Status**: DONE
 
 ```
-/marketing-plan/saas
-/marketing-plan/ecommerce
-/marketing-plan/consulting
-/marketing-plan/agency
-/marketing-plan/newsletter
+/marketing-plan/saas        ✅
+/marketing-plan/ecommerce   ✅
+/marketing-plan/consulting  ✅
+/marketing-plan/agency      ✅
+/marketing-plan/newsletter  ✅
 ```
 
 **Each page includes**:
@@ -274,22 +275,32 @@ You don't need to win the market. You need 200-500 customers/month.
 ### Completed ✅
 1. ~~Add /in-action to nav~~ [DONE]
 2. ~~Update metadata~~ [DONE]
-3. ~~Create 3 examples: SaaS, e-commerce, consulting~~ [DONE]
+3. ~~Create 5 examples: SaaS, e-commerce, consulting, agency, newsletter~~ [DONE]
 4. ~~Update sitemap priorities~~ [DONE]
 5. ~~Write pillar page (/marketing-plan-guide)~~ [DONE]
    - ~2500 words, serif typography, TOC navigation
-   - Links to all 3 examples
+   - Links to all examples
    - CTA banners top and bottom
+6. ~~Create 5 programmatic industry pages~~ [DONE]
+   - saas, ecommerce, consulting, agency, newsletter
+   - All linking to matching /in-action examples
 
 ### Next Up
-6. Start Reddit engagement (genuine, value-first)
-7. Create first programmatic industry page (/marketing-plan/saas)
-8. Add 2 more examples (agency, newsletter)
+7. Set up Search Console tracking
+8. Submit pages for indexing (9 key pages)
+9. Start Reddit engagement (genuine, value-first)
+
+### Internal Linking ✅
+Footer updated with 4-column layout linking to all key SEO pages:
+- Product: See the Output, Marketing Guide
+- Industries: SaaS, E-commerce, Consultants, Agencies, Newsletters
+- Company: About, Blog
+- Legal: Terms, Privacy
 
 ### Next Month
-9. Build out remaining industry pages
 10. Write 3 problem-focused blog posts
-11. Set up Search Console tracking
+11. Add structured data (HowTo, Product, FAQ schemas)
+12. Consider stage-based pages (/marketing-plan/pre-launch)
 
 ---
 
@@ -298,6 +309,9 @@ You don't need to win the market. You need 200-500 customers/month.
 - `/src/app/in-action/page.tsx` — Gallery page
 - `/src/app/in-action/[slug]/page.tsx` — Detail pages
 - `/src/app/marketing-plan-guide/page.tsx` — Pillar page
+- `/src/app/marketing-plan/[industry]/page.tsx` — Industry landing pages
+- `/src/lib/constants/industry-pages.ts` — Industry page content
 - `/src/app/sitemap.ts` — Sitemap config
 - `/src/components/layout/Header.tsx` — Navigation
+- `/src/components/layout/Footer.tsx` — Footer with internal links (4-column)
 - `/src/lib/constants/toc-sections.ts` — TOC sections (includes GUIDE_SECTIONS)

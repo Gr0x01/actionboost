@@ -37,6 +37,7 @@ Target audience: **Small business owners** — salons, local services, niche e-c
 | **DataForSEO** | SEO/traffic data | Competitor traffic estimates, keyword gaps |
 | **Stripe** | Payments | $29 one-shot, $49/mo subscription |
 | **Supabase** | DB + Auth | Magic links, run storage, credits |
+| **Inngest** | Background jobs | Async pipeline execution, retries |
 
 **Model ID**: `claude-opus-4-5-20251101` - DO NOT CHANGE without approval.
 
@@ -62,6 +63,7 @@ Cost breakdown in `architecture.md`. Dashboard sells subscription via integratio
 **Commands**:
 ```bash
 npm run dev          # localhost:3000
+npm run inngest:dev  # Inngest Dev Server on :8288 (run alongside dev)
 npm run build        # production build
 npm run test:run     # Unit tests (Vitest)
 npm run test:e2e     # E2E tests (Playwright)

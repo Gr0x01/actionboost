@@ -144,8 +144,85 @@ Chill day. Didn't feel like posting 4 threads or promoting hard. Just built.
 
 ---
 
+## Day 4 - Jan 24
+
+### Completed
+| Activity | Result |
+|----------|--------|
+| Homepage story refinement | ✅ Made sure the story was properly told |
+| Target audience pivot | ✅ SMBs → Tech-adjacent entrepreneurs (SaaS, e-commerce, consultants) |
+| Brand voice update | ✅ Friendly hand-holding → Direct strategist |
+
+### Wins
+- **#1 App of the Week on PeerPush** - The little PeerPush investment paying off
+
+### Product Work
+- **Audience pivot**: Realized SMBs (salons, local services) are hard to reach online. Pivoted to SaaS founders, e-commerce, consultants who actually hang out on Reddit and Twitter.
+- **Voice shift**: Dropped the warm "let's figure it out together" for direct "here's what to do" - matches founder personality better.
+
+### Spend
+| Date | Item | Cost |
+|------|------|------|
+| Jan 24 | Nothing | $0 |
+| **Running Total** | | **$40** |
+
+---
+
+## Day 5 - Jan 25
+
+### Completed
+| Activity | Result |
+|----------|--------|
+| n8n Reddit workflow | ✅ 10x comment generation ability |
+| Example plans page | ✅ Live at /in-action |
+| X posts (BIP) | ✅ Shared the n8n workflow |
+
+### Product Work
+- **n8n Reddit automation**: Built workflow that monitors subreddits, scores posts, generates relevant comments. Only need to edit 1 in 5, and it's just a tweak.
+- **Example plans**: Added curated examples to demonstrate output quality at boo.st/in-action
+
+### Vibe
+Light Sunday. Automation work + showcasing the product.
+
+### Spend
+| Date | Item | Cost |
+|------|------|------|
+| Jan 25 | Nothing | $0 |
+| **Running Total** | | **$40** |
+
+---
+
+## Day 6 - Jan 26
+
+### Completed
+| Activity | Result |
+|----------|--------|
+| SEO infrastructure | ✅ Pillar page + 5 industry pages + 5 examples |
+| Sitemap update | ✅ All pages included with priorities |
+| Internal linking | ✅ Footer links to all SEO pages |
+| Real examples in How It Works | ✅ Replaced fake examples with real business reports |
+
+### Product Work
+- **Pillar page**: `/marketing-plan-guide` (~2500 words, serif typography, TOC)
+- **Industry pages**: `/marketing-plan/[saas|ecommerce|consulting|agency|newsletter]`
+- **Internal linking**: 4-column footer layout linking to all SEO content
+- **How It Works**: Swapped placeholder content for real Boost outputs - shows actual value
+
+### Next Up
+- Set up Google Search Console
+- Submit 9 key pages for indexing
+- Continue Reddit engagement
+
+### Spend
+| Date | Item | Cost |
+|------|------|------|
+| Jan 26 | Nothing | $0 |
+| **Running Total** | | **$40** |
+
+---
+
 ## Next Actions
-1. Finish output format improvements
-2. Test new homepage with fresh eyes
-3. Continue X engagement
-4. Monitor conversion on new design
+1. Set up Google Search Console
+2. Submit pages for indexing
+3. Continue Reddit engagement (r/SaaS, r/solopreneur)
+4. Monitor SEO rankings over time
