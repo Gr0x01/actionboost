@@ -37,11 +37,7 @@ test.describe("Checkout Flow", () => {
     await expect(page.getByText("competitors")).toBeVisible()
     await page.getByRole("button", { name: /skip/i }).click()
 
-    // Step 7: Email (optional - skip)
-    await expect(page.getByText("Where should we send")).toBeVisible()
-    await page.getByRole("button", { name: /skip/i }).click()
-
-    // Should be at checkout
+    // Should be at checkout (email step removed - Stripe/checkout handles email collection)
     await expect(page.getByText("Ready to")).toBeVisible()
   }
 

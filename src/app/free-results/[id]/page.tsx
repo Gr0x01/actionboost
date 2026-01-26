@@ -6,7 +6,7 @@ import { usePostHog } from "posthog-js/react";
 import { ArrowRight } from "lucide-react";
 import { config } from "@/lib/config";
 import { Header, Footer } from "@/components/layout";
-import { StatusMessage, MagicLinkBanner, ResultsHeader } from "@/components/results";
+import { StatusMessage, MagicLinkBanner, ResultsHeader, FreeAuditPending } from "@/components/results";
 import { FreeInsightsView } from "@/components/results/free";
 import type { StructuredOutput } from "@/lib/ai/formatter-types";
 
@@ -239,13 +239,25 @@ function FreeResultsPageContent() {
 
   // Status states (pending/processing/failed)
   if (freeAudit.status !== "complete") {
+    // Failed state uses StatusMessage for error display
+    if (freeAudit.status === "failed") {
+      return (
+        <div className="min-h-screen flex flex-col bg-mesh">
+          <Header />
+          <main className="flex-1 flex items-center justify-center">
+            <StatusMessage status="failed" />
+          </main>
+          <Footer />
+        </div>
+      );
+    }
+
+    // Pending/processing - engaging loading state with simulated progress
     return (
       <div className="min-h-screen flex flex-col bg-mesh">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <StatusMessage
-            status={freeAudit.status as "pending" | "processing" | "failed"}
-          />
+          <FreeAuditPending />
         </main>
         <Footer />
       </div>

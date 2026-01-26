@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Check, Loader2, Mail, Sparkles, ChevronLeft, ArrowRight } from "lucide-react";
+import { Check, Loader2, Mail, ChevronLeft, ArrowRight } from "lucide-react";
 import { usePostHog } from "posthog-js/react";
 import { isValidEmail } from "@/lib/validation";
 import { config } from "@/lib/config";
@@ -259,60 +259,72 @@ export function CheckoutSection({
         </div>
       )}
 
-      {/* Free mini-audit expanded form */}
+      {/* Free mini-audit section - standard input layout */}
       {!hasValidCode && formData && !isLoggedIn && showFreeOption && (
-        <div className="pt-2">
-          <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="max-w-lg mx-auto rounded-xl p-6 border-2 border-foreground/20 bg-background space-y-4"
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative"
+        >
+          <div className={`flex items-center gap-3 rounded-xl border-2 bg-background px-4 py-4 transition-colors ${
+            freeEmailValid
+              ? "border-green-500"
+              : "border-foreground/30 focus-within:border-foreground"
+          }`}>
+            <Mail className={`w-5 h-5 ${freeEmailValid ? "text-green-500" : "text-foreground/40"}`} />
+            <input
+              type="email"
+              value={freeEmail}
+              onChange={(e) => setFreeEmail(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && freeEmailValid) {
+                  e.preventDefault();
+                  handleFreeAuditSubmit();
+                }
+              }}
+              placeholder="your@email.com"
+              className="flex-1 bg-transparent text-lg text-foreground placeholder:text-foreground/30 outline-none"
+              autoFocus
+            />
+            {freeEmailValid && <Check className="w-5 h-5 text-green-500" />}
+          </div>
+
+          {freeError && <p className="mt-2 text-sm text-red-500 font-bold">{freeError}</p>}
+
+          <p className="mt-2 text-sm text-foreground/50">
+            We&apos;ll send your free preview here
+          </p>
+
+          <div className="flex items-center justify-between mt-4">
+            {onBack ? (
+              <button
+                type="button"
+                onClick={onBack}
+                className="flex items-center gap-1 text-sm font-medium text-foreground/50 hover:text-foreground transition-colors"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Back
+              </button>
+            ) : (
+              <div />
+            )}
+            <button
+              type="button"
+              onClick={handleFreeAuditSubmit}
+              disabled={!freeEmailValid || freeSubmitting}
+              className="flex items-center gap-1.5 rounded-xl px-4 py-2 bg-cta text-white text-sm font-bold border-2 border-cta shadow-[3px_3px_0_0_rgba(44,62,80,1)] hover:shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[3px_3px_0_0_rgba(44,62,80,1)] disabled:hover:translate-y-0"
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-cta">
-                  <Sparkles className="w-4 h-4" />
-                  <span className="text-sm font-bold">Free Mini-Audit</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowFreeOption(false)}
-                  className="text-foreground/40 hover:text-foreground transition-colors text-xl leading-none font-bold"
-                  aria-label="Close"
-                >
-                  ×
-                </button>
-              </div>
-              <p className="text-sm text-foreground/60">
-                Get a condensed 5-section audit to preview our analysis style
-              </p>
-              <div className="flex gap-2">
-                <div className="flex-1 flex items-center gap-2 rounded-xl border-2 border-foreground/30 bg-background px-4 py-3 focus-within:border-foreground transition-colors">
-                  <Mail className="w-4 h-4 text-foreground/40" />
-                  <input
-                    type="email"
-                    value={freeEmail}
-                    onChange={(e) => setFreeEmail(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && freeEmailValid) {
-                        e.preventDefault();
-                        handleFreeAuditSubmit();
-                      }
-                    }}
-                    placeholder="your@email.com"
-                    className="flex-1 bg-transparent text-sm text-foreground placeholder:text-foreground/30 outline-none"
-                  />
-                </div>
-                <button
-                  type="button"
-                  onClick={handleFreeAuditSubmit}
-                  disabled={!freeEmailValid || freeSubmitting}
-                  className="rounded-xl px-5 py-3 bg-cta text-white text-sm font-bold border-2 border-cta hover:bg-cta-hover transition-colors disabled:opacity-50"
-                >
-                  {freeSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Get It"}
-                </button>
-              </div>
-              {freeError && <p className="text-sm text-red-500 font-bold">{freeError}</p>}
-          </motion.div>
-        </div>
+              {freeSubmitting ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <>
+                  Get Free Preview
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </>
+              )}
+            </button>
+          </div>
+        </motion.div>
       )}
 
       {/* Promo code - click to expand */}

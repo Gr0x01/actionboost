@@ -94,7 +94,12 @@ export async function GET(request: Request): Promise<NextResponse<UserContextRes
   const sessionUser = await getSessionUser()
 
   if (!sessionUser) {
-    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    // Return empty context for anonymous users (no 401 to avoid console noise)
+    return NextResponse.json({
+      context: {},
+      lastUpdated: null,
+      suggestedQuestions: [],
+    })
   }
 
   if (!sessionUser.publicUserId) {

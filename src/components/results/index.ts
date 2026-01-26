@@ -1,6 +1,7 @@
 // Main components
 export { ResultsContent } from "./ResultsContent";
 export { StatusMessage } from "./StatusMessage";
+export { FreeAuditPending } from "./FreeAuditPending";
 export { ExportBar } from "./ExportBar";
 export { ShareModal } from "./ShareModal";
 export { SectionCard } from "./SectionCard";

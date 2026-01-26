@@ -14,7 +14,6 @@ import {
   TractionInput,
   AlternativesInput,
   FocusInput,
-  EmailInput,
   CompetitorInput,
   CheckoutSection,
   WelcomeBack,
@@ -79,13 +78,6 @@ const QUESTIONS: Question[] = [
     question: "Any competitors I should study?",
     acknowledgment: null,
     type: "competitors",
-    optional: true,
-  },
-  {
-    id: "email",
-    question: "Where should we send your strategy?",
-    acknowledgment: null,
-    type: "email",
     optional: true,
   },
 ];
@@ -192,23 +184,6 @@ function StartPageContent() {
       setViewState((hasContext || hasBusinesses) ? "welcome_back" : "questions");
     }
   }, [isLoadingContext, isLoadingBusinesses, hasContext, hasBusinesses, viewState]);
-
-  // Auto-skip email step for logged-in users (we already have their email)
-  const emailStepIndex = QUESTIONS.findIndex(q => q.id === "email");
-  const [hasAutoSkippedEmail, setHasAutoSkippedEmail] = useState(false);
-  useEffect(() => {
-    if (
-      viewState === "questions" &&
-      currentQuestion === emailStepIndex &&
-      isLoggedIn &&
-      email &&
-      !hasAutoSkippedEmail &&
-      !showAcknowledgment
-    ) {
-      setHasAutoSkippedEmail(true);
-      goToNext(true); // Skip this step (true = mark as skipped for analytics)
-    }
-  }, [currentQuestion, viewState, isLoggedIn, email, emailStepIndex, goToNext, hasAutoSkippedEmail, showAcknowledgment]);
 
   // Fetch user credits on mount
   useEffect(() => {
@@ -632,16 +607,6 @@ function StartPageContent() {
                       onBack={currentQuestion > 0 ? goBack : undefined}
                       customChallenge={form.constraints}
                       onCustomChallengeChange={(v) => updateField("constraints", v)}
-                    />
-                  )}
-
-                  {question.type === "email" && (
-                    <EmailInput
-                      value={form.email}
-                      onChange={(v) => updateField("email", v)}
-                      onSubmit={() => goToNext(false)}
-                      onSkip={question.optional ? () => goToNext(true) : undefined}
-                      onBack={currentQuestion > 0 ? goBack : undefined}
                     />
                   )}
 
