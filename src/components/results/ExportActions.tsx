@@ -23,6 +23,8 @@ interface ExportActionsProps {
   runId: string
   shareSlug: string | null
   productName?: string
+  /** Disable all export actions (grayed out) */
+  disabled?: boolean
 }
 
 /**
@@ -36,6 +38,7 @@ export function ExportActions({
   runId,
   shareSlug,
   productName,
+  disabled = false,
 }: ExportActionsProps) {
   const posthog = usePostHog()
   const [copied, setCopied] = useState(false)
@@ -43,6 +46,7 @@ export function ExportActions({
   const [showShareModal, setShowShareModal] = useState(false)
 
   const handleCopy = async () => {
+    if (disabled) return
     posthog?.capture('export_copy_clicked', { run_id: runId })
     await navigator.clipboard.writeText(markdown)
     setCopied(true)
@@ -51,6 +55,7 @@ export function ExportActions({
   }
 
   const handlePDF = () => {
+    if (disabled) return
     posthog?.capture('export_pdf_clicked', { run_id: runId })
     const printWindow = window.open('', '_blank')
     if (printWindow) {
@@ -100,24 +105,27 @@ export function ExportActions({
   }
 
   const handleShare = () => {
+    if (disabled) return
     setShowShareModal(true)
     setShowMenu(false)
   }
 
+  const disabledClass = disabled ? 'opacity-30 cursor-not-allowed' : ''
+
   return (
     <>
       {/* Desktop: Icon-only buttons */}
-      <div className="hidden sm:flex items-center gap-1">
+      <div className={`hidden sm:flex items-center gap-1 ${disabledClass}`}>
         <button
           onClick={handleCopy}
-          title={copied ? "Copied!" : "Copy to clipboard"}
-          className="
+          disabled={disabled}
+          title={disabled ? "Upgrade to export" : copied ? "Copied!" : "Copy to clipboard"}
+          className={`
             p-2 rounded-lg
             text-foreground/50
-            hover:text-foreground
-            hover:bg-foreground/5
+            ${!disabled && 'hover:text-foreground hover:bg-foreground/5'}
             transition-colors duration-100
-          "
+          `}
         >
           {copied ? (
             <Check className="h-4 w-4 text-green-600" />
@@ -128,37 +136,38 @@ export function ExportActions({
 
         <button
           onClick={handlePDF}
-          title="Export as PDF"
-          className="
+          disabled={disabled}
+          title={disabled ? "Upgrade to export" : "Export as PDF"}
+          className={`
             p-2 rounded-lg
             text-foreground/50
-            hover:text-foreground
-            hover:bg-foreground/5
+            ${!disabled && 'hover:text-foreground hover:bg-foreground/5'}
             transition-colors duration-100
-          "
+          `}
         >
           <Download className="h-4 w-4" />
         </button>
 
         <button
           onClick={handleShare}
-          title="Share plan"
-          className="
+          disabled={disabled}
+          title={disabled ? "Upgrade to share" : "Share plan"}
+          className={`
             p-2 rounded-lg
             text-foreground/50
-            hover:text-foreground
-            hover:bg-foreground/5
+            ${!disabled && 'hover:text-foreground hover:bg-foreground/5'}
             transition-colors duration-100
-          "
+          `}
         >
           <Share2 className="h-4 w-4" />
         </button>
       </div>
 
       {/* Mobile: Condensed menu */}
-      <div className="sm:hidden relative">
+      <div className={`sm:hidden relative ${disabledClass}`}>
         <button
-          onClick={() => setShowMenu(!showMenu)}
+          onClick={() => !disabled && setShowMenu(!showMenu)}
+          disabled={disabled}
           aria-expanded={showMenu}
           aria-haspopup="menu"
           className="

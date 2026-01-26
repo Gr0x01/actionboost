@@ -722,16 +722,19 @@ function truncate(text: string, maxLength: number): string {
 // =============================================================================
 // MINI STRATEGY GENERATION (Free tier - uses Sonnet)
 // =============================================================================
+// =============================================================================
+// POSITIONING PREVIEW GENERATION (Free tier V2 - focused on positioning + discovery)
+// =============================================================================
 
-const MINI_MODEL = 'claude-opus-4-5-20251101' // Upgraded from Sonnet - only +$0.01/run
-const MINI_MAX_TOKENS = 3000
+const PREVIEW_MODEL = 'claude-opus-4-5-20251101'
+const PREVIEW_MAX_TOKENS = 2000 // Shorter than mini - just positioning + discovery
 
 /**
- * Generate a mini growth strategy (free tier) using Claude Sonnet
- * Produces 4 sections: Executive Summary, Your Situation, Competitive Landscape, Channel Strategy
- * Omits: Stop/Start Doing, This Week, Roadmap, Metrics, Templates (upsell hook)
+ * Generate a positioning preview (free tier V2)
+ * Focused output: positioning analysis + 1-2 key discoveries
+ * Designed to prove "we understand YOUR business" before paywall
  */
-export async function generateMiniStrategy(
+export async function generatePositioningPreview(
   input: RunInput,
   research: ResearchContext
 ): Promise<string> {
@@ -739,12 +742,12 @@ export async function generateMiniStrategy(
     apiKey: process.env.ANTHROPIC_API_KEY!,
   })
 
-  const systemPrompt = buildMiniSystemPrompt(input.focusArea)
-  const userMessage = buildMiniUserMessage(input, research)
+  const systemPrompt = buildPositioningPreviewPrompt()
+  const userMessage = buildPositioningPreviewUserMessage(input, research)
 
   const response = await client.messages.create({
-    model: MINI_MODEL,
-    max_tokens: MINI_MAX_TOKENS,
+    model: PREVIEW_MODEL,
+    max_tokens: PREVIEW_MAX_TOKENS,
     system: systemPrompt,
     messages: [{ role: 'user', content: userMessage }],
   })
@@ -757,74 +760,138 @@ export async function generateMiniStrategy(
   return textContent.text
 }
 
-function buildMiniSystemPrompt(focusArea: FocusArea): string {
-  const focusLabel = focusArea === 'custom' ? 'Custom Challenge' : focusArea.charAt(0).toUpperCase() + focusArea.slice(1)
+function buildPositioningPreviewPrompt(): string {
+  return `You are an elite Growth Strategist creating a POSITIONING PREVIEW.
 
-  return `You are an elite Growth Strategist generating a MINI growth audit.
-This is a free teaser - give real value but leave room for the full paid version.
+This is a free preview to prove you understand their specific business. Your job:
+1. Analyze their positioning with surgical precision
+2. Find 1-2 surprising discoveries from the research that they couldn't find themselves
 
 ## Your Approach
-- **Specific** to their product, market, and constraints
-- **Positioning-aware** - if their positioning is unclear, say so directly
-- **Prioritized** using the ICE framework (Impact, Confidence, Ease)
-- **Actionable** with clear insights they can act on
-- **Research-backed** using the competitive intelligence provided
-- **NEVER use emojis** - not in headers, not in lists, not anywhere. This is non-negotiable.
+- **Hyper-specific** - reference their actual product, competitors, market
+- **Positioning-focused** - use April Dunford's framework to assess clarity
+- **Discovery-driven** - find something surprising from the research data
+- **NEVER use emojis** - not anywhere. Non-negotiable.
 
-## Key Framework: Positioning (April Dunford)
-Before tactics, assess: What alternatives exist? What makes them different? Who cares most?
-If positioning is unclear, flag it as the #1 issue to solve.
+## Positioning Framework (April Dunford)
+Assess:
+1. What alternatives exist? (competitors, DIY, do nothing)
+2. What makes them different from those alternatives?
+3. What value do those differences enable?
+4. Who cares most about that value?
+5. What market category frames them best?
 
-## Core Framework: ICE Prioritization
-For every recommendation, you score:
-- **Impact** (1-10): How much will this move the needle?
-- **Confidence** (1-10): How sure are you this will work?
-- **Ease** (1-10): How quickly can they implement this?
+Verdict:
+- **Clear**: Strong differentiation, obvious target, compelling value
+- **Needs work**: Some clarity but gaps in differentiation or targeting
+- **Unclear**: Confused positioning, trying to be everything to everyone
 
-ICE Score = Impact + Confidence + Ease (max 30)
+## Discovery Guidelines
+A good discovery is:
+- **Unexpected** - not common knowledge, not obvious from their input
+- **Specific** - names, numbers, concrete facts
+- **Actionable** - they can use this insight
+- **Sourced** - from the research data provided
 
-## Focus: ${focusLabel.toUpperCase()}
-Analyze their situation through this lens and prioritize recommendations accordingly.
+Bad discoveries (avoid):
+- Generic advice ("post consistently", "improve SEO")
+- Things they already told you
+- Vague observations without specifics
 
 ## Output Format
 
-Structure your response as a markdown document with EXACTLY these sections:
-
-## Executive Summary
-2-3 paragraphs covering:
-- The core insight about their situation
-- The biggest opportunity you see
-- The strategic direction you recommend
+Structure your response as markdown with EXACTLY these sections:
 
 ## Your Situation
-Full analysis:
-- **Positioning clarity**: Is it clear what they do, for whom, and why it's different? (Be direct if it's unclear)
-- What they're doing right (celebrate wins first)
-- Where the gaps are
-- How their situation compares to successful companies at this stage
 
-## Competitive Landscape
-CONDENSED - 1 paragraph overview:
-- How competitors approach similar challenges
-- Key opportunities competitors are missing
+**Positioning Assessment**
 
-## Channel Strategy
-CONDENSED - Top 4 channels only:
-| Channel | Why It Fits | Effort | Priority |
-1-2 sentences explaining the top recommendation.
+[2-3 paragraphs analyzing their positioning:]
+- Current state: How clearly are they positioned? What's working?
+- Key insight: The most important thing about their market position
+- Verdict: Clear / Needs work / Unclear
+
+**What Makes You Different**
+[1-2 sentences on their unique value vs alternatives]
+
+**Who You Serve Best**
+[1-2 sentences on their ideal customer segment]
+
+## Key Discoveries
+
+### [Discovery 1 Title - 5-10 words, specific]
+[1-3 sentences explaining the discovery]
+
+*Source: [Where this came from - Reddit, competitor site, etc.]*
+
+**Why it matters:** [1 sentence on strategic significance]
+
+### [Discovery 2 Title - optional, only if genuinely surprising]
+[Same format as above]
 
 ---
 
-**STOP HERE.** Do NOT include these sections (they are part of the full paid version):
-- Stop Doing
-- Start Doing
-- This Week
-- 30-Day Roadmap
-- Metrics Dashboard
-- Content Templates
+**STOP HERE.** This is a preview. The full analysis includes priority actions, 30-day roadmap, competitive comparison, keyword opportunities, and more.`
+}
 
-End with exactly this text:
-"Want the complete playbook? The full analysis includes Stop Doing, Start Doing with ICE scores, This Week actions, your 30-Day Roadmap, Metrics Dashboard, and ready-to-use Content Templates."`
+function buildPositioningPreviewUserMessage(input: RunInput, research: ResearchContext): string {
+  const sections: string[] = []
+
+  // Business context
+  sections.push('## Business Information')
+  if (input.websiteUrl) {
+    sections.push(`Website: ${input.websiteUrl}`)
+  }
+  if (input.productDescription) {
+    sections.push(`\nProduct/Service:\n${input.productDescription.slice(0, 1000)}`)
+  }
+  // Check legacy fields for tactics info
+  const tacticsTried = input.tacticsAndResults || input.whatYouTried || input.whatsWorking
+  if (tacticsTried) {
+    sections.push(`\nWhat they've tried:\n${tacticsTried.slice(0, 500)}`)
+  }
+  if (input.alternatives && input.alternatives.length > 0) {
+    sections.push(`\nAlternatives customers might choose: ${input.alternatives.join(', ')}`)
+  }
+  if (input.competitorUrls && input.competitorUrls.length > 0) {
+    sections.push(`\nCompetitors: ${input.competitorUrls.join(', ')}`)
+  }
+
+  // Research data
+  sections.push('\n## Research Data')
+
+  if (research.competitorInsights.length > 0) {
+    sections.push('\n### Competitor & Market Insights')
+    research.competitorInsights.slice(0, 5).forEach((insight) => {
+      sections.push(`- ${insight.title}: ${insight.content?.slice(0, 300) || 'No content'}`)
+      if (insight.url) sections.push(`  Source: ${insight.url}`)
+    })
+  }
+
+  if (research.marketTrends.length > 0) {
+    sections.push('\n### Market Trends')
+    research.marketTrends.slice(0, 3).forEach((trend) => {
+      sections.push(`- ${trend.title}: ${trend.content?.slice(0, 200) || 'No content'}`)
+    })
+  }
+
+  if (research.redditDiscussions && research.redditDiscussions.length > 0) {
+    sections.push('\n### Reddit Discussions')
+    research.redditDiscussions.slice(0, 3).forEach((discussion) => {
+      sections.push(`- r/${discussion.subreddit}: "${discussion.title}"`)
+      if (discussion.content) {
+        sections.push(`  Content: "${discussion.content.slice(0, 150)}..."`)
+      }
+    })
+  }
+
+  if (research.errors && research.errors.length > 0) {
+    sections.push(`\n(Research notes: ${research.errors.slice(0, 2).join('; ')})`)
+  }
+
+  sections.push('\n---\nAnalyze their positioning and find 1-2 surprising discoveries from this research.')
+
+  return sections.join('\n')
 }
 
 // =============================================================================
@@ -1069,78 +1136,6 @@ ${tacticsContent}
       if (m.topRankedKeywords?.length) {
         message += `- **Top Keywords**: ${m.topRankedKeywords.slice(0, 3).map(k => `"${k.keyword}"`).join(', ')}\n`
       }
-    }
-  }
-
-  return message
-}
-function buildMiniUserMessage(input: RunInput, research: ResearchContext): string {
-  const focusLabel = input.focusArea === 'custom' && input.customFocusArea
-    ? `Custom: ${input.customFocusArea}`
-    : input.focusArea.charAt(0).toUpperCase() + input.focusArea.slice(1)
-
-  // Support both new (tacticsAndResults) and legacy (whatYouTried + whatsWorking) fields
-  const tacticsContent = input.tacticsAndResults ||
-    [input.whatYouTried, input.whatsWorking].filter(Boolean).join('\n\n') ||
-    ''
-
-  let message = `# Growth Strategy Request
-
-## Focus Area
-**${focusLabel}**
-
-## About My Product
-${input.productDescription}
-
-## Current Traction
-${input.currentTraction}
-`
-
-  // Add competitive alternatives if provided
-  if (input.alternatives && input.alternatives.length > 0) {
-    message += `
-## What People Do Instead
-${input.alternatives.map(alt => `- ${alt}`).join('\n')}
-`
-  }
-
-  // Add tactics if provided
-  if (tacticsContent) {
-    message += `
-## What I've Tried
-${tacticsContent}
-`
-  }
-
-  if (input.websiteUrl) {
-    message += `\n## My Website\n${input.websiteUrl}\n`
-  }
-
-  if (input.competitorUrls?.length) {
-    message += `\n## Competitors\n${input.competitorUrls.join('\n')}\n`
-  }
-
-  // Add research (condensed for mini version)
-  message += `\n---\n\n# Research Data\n`
-
-  if (research.competitorInsights.length) {
-    message += `\n## Competitor Insights\n`
-    for (const r of research.competitorInsights.slice(0, 3)) {
-      message += `- **${r.title}**: ${truncate(r.content, 400)}\n`
-    }
-  }
-
-  if (research.marketTrends.length) {
-    message += `\n## Market Trends\n`
-    for (const r of research.marketTrends.slice(0, 3)) {
-      message += `- **${r.title}**: ${truncate(r.content, 150)}\n`
-    }
-  }
-
-  if (research.growthTactics.length) {
-    message += `\n## Growth Tactics\n`
-    for (const r of research.growthTactics.slice(0, 3)) {
-      message += `- **${r.title}**: ${truncate(r.content, 150)}\n`
     }
   }
 

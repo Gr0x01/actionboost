@@ -1,6 +1,6 @@
 import { createServiceClient } from '@/lib/supabase/server'
 import { runResearch, runTavilyOnlyResearch } from './research'
-import { generateStrategy, generateMiniStrategy } from './generate'
+import { generateStrategy, generatePositioningPreview } from './generate'
 import { generateStrategyAgentic, generateAgenticRefinement, type ResearchData } from './pipeline-agentic'
 import { extractStructuredOutput } from './formatter'
 import { tavily } from '@tavily/core'
@@ -513,25 +513,25 @@ export async function runAgenticPipeline(runId: string): Promise<PipelineResult>
 }
 
 // =============================================================================
-// FREE PIPELINE (Mini audit with Sonnet + Tavily only)
+// FREE PIPELINE (Positioning Preview - focused on positioning + discoveries)
 // =============================================================================
 
 export type FreePipelineResult = {
   success: boolean
   output?: string
+  structuredOutput?: import('./formatter-types').StructuredOutput | null
   error?: string
   freeAuditId?: string
 }
 
 /**
- * Run the free mini-audit pipeline
+ * Run the free positioning preview pipeline
  *
- * Differences from full pipeline:
- * - Uses Sonnet instead of Opus
- * - Tavily research only (no DataForSEO)
- * - No RAG/user history
- * - Stores in free_audits table (not runs)
- * - 5 sections instead of 8
+ * V2 approach - focused on proving "we understand YOUR business":
+ * - Positioning analysis (verdict, unique value, target segment)
+ * - 1-2 key discoveries from research
+ * - Tavily research only (no DataForSEO) for cost efficiency
+ * - Extracts structured output for dashboard-style rendering
  */
 export async function runFreePipeline(
   freeAuditId: string,
@@ -565,18 +565,32 @@ export async function runFreePipeline(
     }
   }
 
-  // Generate mini strategy with Sonnet
+  // Generate positioning preview (focused prompt for positioning + discoveries)
   try {
-    console.log(`[FreePipeline] Generating mini strategy with Sonnet`)
-    const output = await generateMiniStrategy(input, research)
-    console.log(`[FreePipeline] Strategy generated: ${output.length} characters`)
+    console.log(`[FreePipeline] Generating positioning preview`)
+    const output = await generatePositioningPreview(input, research)
+    console.log(`[FreePipeline] Preview generated: ${output.length} characters`)
 
-    // Save output and mark complete
+    // Extract structured output for dashboard rendering
+    let structuredOutput: import('./formatter-types').StructuredOutput | null = null
+    try {
+      console.log(`[FreePipeline] Extracting structured output`)
+      structuredOutput = await extractStructuredOutput(output)
+      console.log(
+        `[FreePipeline] Structured output extracted: positioning=${!!structuredOutput?.positioning}, discoveries=${structuredOutput?.discoveries?.length || 0}`
+      )
+    } catch (extractErr) {
+      console.warn('[FreePipeline] Structured output extraction failed (non-fatal):', extractErr)
+      // Continue without structured output - will fall back to markdown
+    }
+
+    // Save output and mark complete (including structured_output like main pipeline)
     const { error: updateError } = await supabase
       .from('free_audits')
       .update({
         status: 'complete',
         output,
+        structured_output: structuredOutput,
         completed_at: new Date().toISOString(),
       })
       .eq('id', freeAuditId)
@@ -621,7 +635,7 @@ export async function runFreePipeline(
     })()
 
     console.log(`[FreePipeline] Free audit ${freeAuditId} completed successfully`)
-    return { success: true, output, freeAuditId }
+    return { success: true, output, structuredOutput, freeAuditId }
   } catch (err) {
     const errorMsg = err instanceof Error ? err.message : String(err)
     console.error('[FreePipeline] Generation failed:', errorMsg)

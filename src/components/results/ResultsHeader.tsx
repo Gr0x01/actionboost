@@ -1,9 +1,13 @@
 'use client'
 
+import { ArrowRight } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { usePostHog } from 'posthog-js/react'
 import { PlanSwitcher } from './PlanSwitcher'
 import { ResultsTabNavigation } from './ResultsTabNavigation'
 import { ExportActions } from './ExportActions'
 import { RefinementIndicator } from './RefinementIndicator'
+import { config } from '@/lib/config'
 import type { TabType } from '@/lib/storage/visitTracking'
 
 interface Plan {
@@ -22,12 +26,17 @@ interface ResultsHeaderProps {
     runId: string
     shareSlug: string | null
     productName?: string
+    disabled?: boolean
   }
   refinementProps?: {
     refinementsUsed: number
     isOwner: boolean
   }
   showCalendar?: boolean
+  /** Tabs to show as disabled (grayed out) */
+  disabledTabs?: TabType[]
+  /** Show upgrade CTA button */
+  showUpgradeCta?: boolean
 }
 
 /**
@@ -48,7 +57,17 @@ export function ResultsHeader({
   exportProps,
   refinementProps,
   showCalendar = false,
+  disabledTabs = [],
+  showUpgradeCta = false,
 }: ResultsHeaderProps) {
+  const router = useRouter()
+  const posthog = usePostHog()
+
+  const handleUpgrade = () => {
+    posthog?.capture('free_results_header_cta_clicked')
+    router.push('/start')
+  }
+
   return (
     <div className="sticky top-14 z-40 bg-background border-b border-foreground/10">
       <div className="mx-auto max-w-5xl px-6">
@@ -65,6 +84,7 @@ export function ResultsHeader({
               activeTab={activeTab}
               onTabChange={onTabChange}
               showCalendar={showCalendar}
+              disabledTabs={disabledTabs}
             />
           </div>
 
@@ -77,6 +97,23 @@ export function ResultsHeader({
               />
             )}
             <ExportActions {...exportProps} />
+            {showUpgradeCta && (
+              <button
+                onClick={handleUpgrade}
+                className="
+                  inline-flex items-center gap-1.5
+                  bg-cta text-white font-semibold
+                  px-3 py-1.5 rounded-md text-sm
+                  border-b-2 border-b-[#B85D10]
+                  hover:-translate-y-0.5 hover:shadow-md
+                  active:translate-y-0.5 active:border-b-0
+                  transition-all duration-100
+                "
+              >
+                Upgrade · {config.singlePrice}
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
         </div>
 
@@ -86,6 +123,7 @@ export function ResultsHeader({
             activeTab={activeTab}
             onTabChange={onTabChange}
             showCalendar={showCalendar}
+            disabledTabs={disabledTabs}
           />
         </div>
       </div>

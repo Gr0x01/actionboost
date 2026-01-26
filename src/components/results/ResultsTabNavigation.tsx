@@ -7,6 +7,8 @@ interface ResultsTabNavigationProps {
   activeTab: TabType
   onTabChange: (tab: TabType) => void
   showCalendar?: boolean
+  /** Tabs to show as disabled (grayed out, not clickable) */
+  disabledTabs?: TabType[]
 }
 
 /**
@@ -17,6 +19,7 @@ export function ResultsTabNavigation({
   activeTab,
   onTabChange,
   showCalendar = false,
+  disabledTabs = [],
 }: ResultsTabNavigationProps) {
   const navRef = useRef<HTMLDivElement>(null)
   const [underlineStyle, setUnderlineStyle] = useState({ left: 0, width: 0 })
@@ -51,6 +54,7 @@ export function ResultsTabNavigation({
     >
       {tabs.map(({ id, label }) => {
         const isActive = activeTab === id
+        const isDisabled = disabledTabs.includes(id)
 
         return (
           <button
@@ -59,14 +63,17 @@ export function ResultsTabNavigation({
             role="tab"
             aria-selected={isActive}
             aria-controls={`${id}-panel`}
-            onClick={() => onTabChange(id)}
+            aria-disabled={isDisabled}
+            onClick={() => !isDisabled && onTabChange(id)}
             className={`
               pb-3
               font-semibold text-base
               transition-colors duration-150
-              ${isActive
-                ? 'text-foreground'
-                : 'text-foreground/50 hover:text-foreground/70'
+              ${isDisabled
+                ? 'text-foreground/30 cursor-not-allowed'
+                : isActive
+                  ? 'text-foreground'
+                  : 'text-foreground/50 hover:text-foreground/70'
               }
             `}
           >
