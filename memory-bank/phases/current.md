@@ -1,6 +1,50 @@
 # Current Phase
 
-## Latest Update: SEO Infrastructure Complete
+## Latest Update: Facebook Ads Test Launched
+
+**Jan 27, 2026** - First $100 FB ads test campaign live.
+
+### What's Implemented
+
+**Facebook Pixel + Conversion API**:
+- `src/components/FacebookPixel.tsx` - Client-side pixel with explicit SDK loading
+- `src/app/api/fb/conversion/route.ts` - Server-side Conversion API for iOS attribution
+- Event deduplication via shared `eventID` between client + server
+- GDPR-compliant: Pixel only loads for non-GDPR countries
+- CSP updated in `next.config.ts` to allow Facebook domains
+
+**Env vars added**:
+- `NEXT_PUBLIC_FB_PIXEL_ID` - Pixel ID
+- `FB_ACCESS_TOKEN` - Conversion API token
+
+**Purchase tracking**:
+- Fires on `/results/[runId]?new=1` (post-checkout redirect)
+- Uses `purchase_${runId}` as event ID for deduplication
+- URL param cleared after tracking to prevent duplicates on refresh
+
+### Ad Campaign Details
+
+**Budget**: $100 test, $10/day for ~10 days
+
+**Creative**: Real dashboard screenshot showing a specific task ("Set up Reddit monitoring for r/tattoo..."). Native-looking, not designed.
+
+**Copy**:
+- Headline: "Boost Marketing Plans"
+- Description: "Stop guessing. Start growing."
+- Button: "Learn more"
+
+**Targeting**: SMB founders, solopreneurs (Facebook's Advantage+ with conversion optimization)
+
+**Custom Conversion**: URL contains `/results/` with $29 value (until Purchase events fire)
+
+### Next Steps
+1. Monitor ad performance in FB Ads Manager
+2. Once Purchase events fire, switch to standard Purchase conversion
+3. A/B test creative variants if initial results promising
+
+---
+
+## Previous: SEO Infrastructure Complete
 
 **Jan 26, 2026** - Phase 1 & 2 of SEO plan complete. Ready for indexing.
 

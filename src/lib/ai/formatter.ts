@@ -220,6 +220,8 @@ export async function extractStructuredOutput(
  */
 function normalizePartialOutput(partial: PartialStructuredOutput): StructuredOutput {
   return {
+    // Business identifier
+    businessName: partial.businessName,
     thisWeek: partial.thisWeek || { days: [] },
     topPriorities: partial.topPriorities || [],
     metrics: partial.metrics || [],

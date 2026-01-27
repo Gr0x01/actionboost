@@ -187,6 +187,9 @@ export type Discovery = z.infer<typeof DiscoverySchema>
  * Full structured output schema
  */
 export const StructuredOutputSchema = z.object({
+  // Business identifier - clean name for display in UI
+  businessName: z.string().optional(),
+
   // Legacy fields (kept for backward compatibility)
   thisWeek: z.object({
     days: z.array(DayActionSchema),
@@ -220,6 +223,9 @@ export type StructuredOutput = z.infer<typeof StructuredOutputSchema>
  * Partial schema for graceful degradation - allows missing sections
  */
 export const PartialStructuredOutputSchema = z.object({
+  // Business identifier - clean name for display in UI
+  businessName: z.string().optional(),
+
   thisWeek: z.object({
     days: z.array(DayActionSchema),
     totalHours: z.number().optional(),
@@ -249,7 +255,7 @@ export const PartialStructuredOutputSchema = z.object({
 export type PartialStructuredOutput = z.infer<typeof PartialStructuredOutputSchema>
 
 // =============================================================================
-// EXTRACTION PROMPT - Instructions for Haiku to extract structured data
+// EXTRACTION PROMPT - Instructions for Sonnet to extract structured data
 // =============================================================================
 
 export const FORMATTER_SYSTEM_PROMPT = `You are a precise data extractor. Your job is to parse markdown strategy documents and extract structured JSON data. You may also receive research data from tool calls to enhance your extraction.
@@ -263,6 +269,14 @@ IMPORTANT RULES:
 6. Extract ALL 4 weeks from the Week sections (Week 1, Week 2, Week 3, Week 4)
 7. Extract ALL days from each week's table (7 days per week, 28 total)
 8. Extract ALL priorities from Start Doing section (typically 5-8 items)
+
+BUSINESS NAME EXTRACTION (REQUIRED):
+Extract "businessName" - a clean, short label for this business (2-4 words max).
+Priority order:
+1. Company/product name if mentioned (e.g., "Cheft", "Triple D Map", "Inkdex")
+2. Domain name from website URL - capitalize and drop TLD (e.g., "cheft.io" → "Cheft", "triple-d-map.com" → "Triple D Map")
+3. Short descriptor only if no name/domain exists (e.g., "AI Study Tool", "Tattoo Directory")
+- NEVER use the full product description or user's verbose input text
 
 WEEK EXTRACTION (CRITICAL):
 - Look for "## Week 1:", "## Week 2:", "## Week 3:", "## Week 4:" sections
@@ -334,6 +348,7 @@ If Opus found something interesting and novel, capture it. Don't let insights ge
 
 OUTPUT FORMAT:
 {
+  "businessName": "Acme Corp",
   "thisWeek": {
     "days": [
       { "day": 1, "action": "...", "timeEstimate": "2 hrs", "successMetric": "..." },

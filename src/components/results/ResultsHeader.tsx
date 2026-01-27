@@ -72,7 +72,8 @@ export function ResultsHeader({
     <div className="sticky top-14 z-40 bg-background border-b border-foreground/10">
       <div className="mx-auto max-w-5xl px-6">
         {/* Grid layout: Plan name | Tabs (centered) | Actions */}
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
+        {/* Mobile: 2-col (left + right), Desktop: 3-col with centered tabs */}
+        <div className="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_1fr] items-center gap-4">
           {/* Left: Plan Switcher */}
           <div className="py-3">
             <PlanSwitcher currentPlan={plan} otherPlans={otherPlans} />
@@ -89,7 +90,7 @@ export function ResultsHeader({
           </div>
 
           {/* Right: Actions */}
-          <div className="py-3 flex justify-end items-center gap-2">
+          <div className="py-3 flex justify-end items-center gap-3">
             {refinementProps && (
               <RefinementIndicator
                 refinementsUsed={refinementProps.refinementsUsed}

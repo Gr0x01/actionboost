@@ -270,10 +270,21 @@ function ResultsPageContent() {
   }
 
   // Extract product name for PDF title and plan display
-  const productName =
-    typeof run.input === "object" && run.input !== null
-      ? (run.input as { productDescription?: string }).productDescription
-      : undefined;
+  // Priority: structured_output.businessName > domain from URL > productDescription
+  const productName = (() => {
+    const structured = run.structured_output as { businessName?: string } | null;
+    if (structured?.businessName) {
+      return structured.businessName;
+    }
+
+    const input = run.input as { websiteUrl?: string; productDescription?: string } | null;
+    if (input?.websiteUrl) {
+      const domainName = extractDomainName(input.websiteUrl);
+      if (domainName) return domainName;
+    }
+
+    return input?.productDescription;
+  })();
 
   // Legacy run without structured output - show apology page
   if (!run.structured_output) {
@@ -318,10 +329,56 @@ function ResultsPageContent() {
 interface UserRun {
   id: string;
   status: string;
-  input: { productDescription?: string } | null;
+  input: { productDescription?: string; websiteUrl?: string } | null;
+  businessName: string | null; // Extracted from structured_output->>businessName by API
   created_at: string;
   completed_at: string | null;
   parent_run_id: string | null;
+}
+
+/**
+ * Extract a clean display name from a URL
+ * e.g., "https://triple-d-map.com" → "Triple D Map"
+ */
+function extractDomainName(websiteUrl: string): string | null {
+  try {
+    const url = new URL(
+      websiteUrl.startsWith("http") ? websiteUrl : `https://${websiteUrl}`
+    );
+    const hostname = url.hostname.replace(/^www\./, "");
+    const name = hostname.split(".")[0];
+
+    // Guard against empty or whitespace-only names (e.g., ".example.com")
+    if (!name || !name.trim()) return null;
+
+    // Convert kebab-case and snake_case to Title Case
+    return name
+      .split(/[-_]/)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Extract a clean plan name from run data
+ * Priority: businessName > domain from URL > truncated description
+ */
+function getPlanName(run: UserRun): string {
+  // 1. Use AI-extracted business name if available
+  if (run.businessName) {
+    return run.businessName;
+  }
+
+  // 2. Extract domain from website URL
+  if (run.input?.websiteUrl) {
+    const domainName = extractDomainName(run.input.websiteUrl);
+    if (domainName) return domainName;
+  }
+
+  // 3. Fall back to truncated product description
+  return run.input?.productDescription || "Marketing Plan";
 }
 
 /**
@@ -370,7 +427,7 @@ function getLatestPlans(runs: UserRun[], currentRunId: string): Plan[] {
 
     latestPlans.push({
       id: current.id,
-      name: current.input?.productDescription || "Marketing Plan",
+      name: getPlanName(current),
       updatedAt: current.completed_at || current.created_at,
     });
   });

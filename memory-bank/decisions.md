@@ -4,6 +4,34 @@ Key architectural and product decisions. Reference this when you need to underst
 
 ---
 
+## Facebook Pixel + Conversion API (Jan 27 2026)
+
+**Decision**: Implement both client-side Pixel and server-side Conversion API for purchase tracking.
+
+**Why both**:
+- Client-side pixel alone misses ~30-40% of iOS conversions due to ATT
+- Server-side Conversion API provides better attribution for iOS users
+- Event deduplication via shared `eventID` prevents double-counting
+
+**Implementation choices**:
+1. **Explicit SDK loading**: Used `<Script src="...fbevents.js">` instead of inline snippet. More reliable, easier to debug.
+2. **GDPR conditional**: Pixel only renders for non-GDPR countries (checked in layout.tsx)
+3. **URL param for tracking**: `?new=1` triggers purchase event, then cleared to prevent duplicates on refresh
+4. **Event ID format**: `purchase_${runId}` - deterministic, unique per purchase
+
+**Files**:
+- `src/components/FacebookPixel.tsx` - Client-side initialization + tracking functions
+- `src/app/api/fb/conversion/route.ts` - Server-side Conversion API endpoint
+- `src/app/results/[runId]/page.tsx` - Purchase event trigger
+- `next.config.ts` - CSP updated for Facebook domains
+
+**CSP additions required**:
+- `script-src`: `https://connect.facebook.net`
+- `connect-src`: `https://www.facebook.com`
+- `img-src`: `https://www.facebook.com`
+
+---
+
 ## Target Audience: Tech-Adjacent Entrepreneurs (Jan 24 2026)
 
 **Decision**: Pivot from pure SMBs to tech-adjacent entrepreneurs who can find and buy tools.

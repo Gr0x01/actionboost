@@ -34,16 +34,16 @@ export function LeadDiscovery({ discovery }: LeadDiscoveryProps) {
 
       {/* Hero card - full width, stronger presence */}
       <div
-        className="bg-background border-2 border-foreground/20 rounded-md p-6 md:p-8 relative"
+        className="bg-background border-2 border-foreground/20 rounded-md p-6 md:p-8 md:relative"
         style={{ boxShadow: '6px 6px 0 rgba(44, 62, 80, 0.12)' }}
       >
-        {/* Type badge - top right */}
-        <span className="absolute top-4 right-4 font-mono text-[10px] uppercase tracking-wider text-foreground/30 bg-surface px-2 py-1 rounded">
+        {/* Type badge - above title on mobile, top-right on desktop */}
+        <span className="inline-block md:absolute md:top-4 md:right-4 font-mono text-[10px] uppercase tracking-wider text-foreground/50 bg-foreground/5 px-2 py-1 rounded mb-3 md:mb-0">
           {discovery.type.replace(/_/g, ' ')}
         </span>
 
         {/* Title - larger, bolder */}
-        <h3 className="text-xl md:text-2xl font-bold text-foreground leading-tight pr-24 md:pr-32">
+        <h3 className="text-xl md:text-2xl font-bold text-foreground leading-tight md:pr-24">
           {discovery.title}
         </h3>
 
@@ -69,7 +69,7 @@ export function LeadDiscovery({ discovery }: LeadDiscoveryProps) {
           {/* Copy button */}
           <button
             onClick={handleCopy}
-            className="p-2 text-foreground/40 hover:text-foreground/60 bg-surface border border-foreground/10 rounded-md transition-colors shrink-0"
+            className="p-2 text-foreground/40 hover:text-foreground/60 bg-surface border border-foreground/10 rounded-md transition-colors shrink-0 self-end"
             aria-label="Copy to clipboard"
           >
             {copied ? (

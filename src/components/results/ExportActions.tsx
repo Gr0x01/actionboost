@@ -170,15 +170,18 @@ export function ExportActions({
           disabled={disabled}
           aria-expanded={showMenu}
           aria-haspopup="menu"
-          className="
+          className={`
             flex items-center gap-2
             px-3 py-2
             rounded-lg
-            border-2 border-foreground/20
-            text-sm font-semibold text-foreground/70
-            hover:border-foreground/40
+            border-2
+            text-sm font-semibold
             transition-colors
-          "
+            ${showMenu
+              ? 'border-foreground/40 bg-foreground/5 text-foreground'
+              : 'border-foreground/20 text-foreground/70 hover:border-foreground/40'
+            }
+          `}
         >
           <MoreHorizontal className="w-4 h-4" />
         </button>
