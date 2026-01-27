@@ -107,7 +107,7 @@ const NOISE_POSITIONS = [
 ];
 
 // Scroll takeover configuration
-const TAKEOVER_DURATION_DOWN = 1.4; // seconds for scroll down
+const TAKEOVER_DURATION_DOWN = 2.0; // seconds for scroll down
 const TAKEOVER_DURATION_UP = 1.0; // slightly faster for scroll up
 
 /**
