@@ -351,23 +351,19 @@ Think beyond direct competitors - include ALL alternatives customers might choos
 Include 2-3 sentences on market trends or opportunities competitors are missing.
 If traffic data is available, note where competitors get their traffic (organic, paid, social, etc.).
 
-## Channel Strategy
-Prioritize 4-6 acquisition/growth channels for their specific situation:
+## The Opportunity
+This is the bridge between your research and your recommendations. In 3-5 sentences, name the SPECIFIC opening the research revealed and why it matters right now. Be concrete — "Your competitors are all fighting over [X] while nobody is addressing [Y pain point] that showed up repeatedly in Reddit discussions" is good. "There's a big opportunity in content marketing" is worthless.
 
-| Channel | Effort/Week | Time to Results | Priority |
-|---------|-------------|-----------------|----------|
-| ...     | X hrs       | Y weeks         | HIGH/MEDIUM/LOW |
-
-Brief explanation (2-3 sentences each) for their top 2 recommended channels.
+Connect the dots between the competitive landscape, market sentiment, and SEO data to identify what this business should exploit. This section is the "therefore" — everything after it should trace back to this opportunity.
 
 ## Stop Doing
 3-5 things to stop, each with one-line reasoning:
-- **[Thing to stop]**: [Why it's draining ROI]
+- **[Thing to stop]**: [Why it's draining ROI or distracting from the opportunity]
 
-Be direct but constructive.
+Be direct but constructive. Only include things that actively hurt their ability to capture the opportunity above.
 
 ## Start Doing (Prioritized by ICE)
-5-8 recommendations, each formatted as:
+5-8 recommendations that all serve the opportunity identified above. Each formatted as:
 
 ### [Recommendation Title]
 - **Impact**: X/10 - [one line why]
@@ -375,12 +371,35 @@ Be direct but constructive.
 - **Ease**: X/10 - [one line why]
 - **ICE Score**: XX
 
-[2-3 paragraph implementation guidance specific to their situation]
+[2-3 paragraph implementation guidance specific to their situation. Explain how this connects to The Opportunity. Weave in channel recommendations here — don't list channels separately, recommend them as part of specific plays.]
 
-Sort by ICE score (highest first).
+Sort by ICE score (highest first). Be honest with scores — most plays are 6-8 range. If everything scores 9+, you're inflating.
 
-## Week 1: [Theme]
-Day-by-day quick wins for days 1-7:
+## 30-Day Plan
+
+BEFORE WRITING THE WEEKLY PLAN, form a strategic thesis internally. The thesis is your diagnosis of what's actually holding this business back and the strategic logic for fixing it. Do NOT write the thesis as a visible section — instead, let it silently drive every week of the plan so that the weeks build on each other coherently rather than being a scattershot task list.
+
+The thesis should:
+- Connect to The Opportunity section above
+- Be specific to THIS business (if you could swap in a different company and the thesis still works, it's too generic)
+- Dictate why these specific actions, in this order, for this business
+
+STRUCTURAL RULES:
+- Each week gets a short imperative verb phrase as its theme (3-6 words, conversational — "Put It In Front of People" not "Distribution Phase")
+- Week 3-4 actions should build on Week 1-2 work. Later tasks should reference or use outputs from earlier tasks.
+- Week 3 should include conditional logic in the actions themselves: "If [Week 2 signal], do X. If not, do Y instead."
+- Each week should represent HIGHER sophistication than the previous. Week 1 = research/build, Week 4 = systematize.
+- Max 2-3 actions per day. Each action 30-60 minutes. These are busy people.
+- Be extremely specific (not "improve onboarding" but "add welcome email that triggers 1 hour after signup").
+- Do not hedge. "Do this" not "consider doing this."
+
+WEEK PROGRESSION LOGIC (adapt the specifics to the business, but follow this escalation):
+- Week 1: Understand and build. Research, positioning clarity, create the raw materials the other weeks use.
+- Week 2: Deploy and test. Put Week 1 assets into the market. Run 2-3 small experiments. Collect signal.
+- Week 3: Read and adapt. Kill what didn't work, double down on what did. Include conditional actions based on Week 2 results.
+- Week 4: Lock it in. Turn winning experiments into repeatable processes. Set up the next 30 days.
+
+## Week 1: [Imperative Verb Phrase]
 
 | Day | Action | Time | Success Metric |
 |-----|--------|------|----------------|
@@ -392,12 +411,11 @@ Day-by-day quick wins for days 1-7:
 | 6   | ... | ... | ... |
 | 7   | ... | ... | ... |
 
-## Week 2: [Theme]
-Day-by-day actions for days 8-14:
+## Week 2: [Imperative Verb Phrase]
 
 | Day | Action | Time | Success Metric |
 |-----|--------|------|----------------|
-| 8   | [Specific action] | X hr | [How to know it worked] |
+| 8   | [Actions that use Week 1 outputs] | X hr | ... |
 | 9   | ... | ... | ... |
 | 10  | ... | ... | ... |
 | 11  | ... | ... | ... |
@@ -405,12 +423,11 @@ Day-by-day actions for days 8-14:
 | 13  | ... | ... | ... |
 | 14  | ... | ... | ... |
 
-## Week 3: [Theme]
-Day-by-day actions for days 15-21:
+## Week 3: [Imperative Verb Phrase]
 
 | Day | Action | Time | Success Metric |
 |-----|--------|------|----------------|
-| 15  | [Specific action] | X hr | [How to know it worked] |
+| 15  | [Actions that adapt based on Week 2 results — include conditional logic] | X hr | ... |
 | 16  | ... | ... | ... |
 | 17  | ... | ... | ... |
 | 18  | ... | ... | ... |
@@ -418,12 +435,11 @@ Day-by-day actions for days 15-21:
 | 20  | ... | ... | ... |
 | 21  | ... | ... | ... |
 
-## Week 4: [Theme]
-Day-by-day actions for days 22-28:
+## Week 4: [Imperative Verb Phrase]
 
 | Day | Action | Time | Success Metric |
 |-----|--------|------|----------------|
-| 22  | [Specific action] | X hr | [How to know it worked] |
+| 22  | [Actions that systematize Week 3 winners] | X hr | ... |
 | 23  | ... | ... | ... |
 | 24  | ... | ... | ... |
 | 25  | ... | ... | ... |
@@ -431,30 +447,25 @@ Day-by-day actions for days 22-28:
 | 27  | ... | ... | ... |
 | 28  | ... | ... | ... |
 
-Be extremely specific (not "improve onboarding" but "add welcome email that triggers 1 hour after signup").
-
 ## Metrics Dashboard
-Track progress with AARRR-aligned metrics:
+Track progress on the opportunity — not generic AARRR metrics. Every metric should connect to the opportunity identified above.
 
 | Stage | Metric | Target | How to Measure |
 |-------|--------|--------|----------------|
-| Acquisition | [Specific metric] | [Target number] | [Tool/method] |
-| Activation | ... | ... | ... |
-| Retention | ... | ... | ... |
-| Referral | ... | ... | ... |
-| Revenue | ... | ... | ... |
+| [AARRR stage or "Goal"] | [Specific metric tied to The Opportunity] | [Target number] | [Tool/method] |
+| ... | ... | ... | ... |
 
-Add 2-3 additional metrics specific to their focus area.
+4-6 metrics max. If a metric doesn't help them know whether they're on track toward the opportunity, cut it.
 
 ## Content Templates
-2-3 ready-to-use templates for their top recommended channel:
+2-3 ready-to-use templates connected to specific actions in the weekly plan:
 
 \`\`\`
 [TEMPLATE NAME - e.g., "REDDIT POST TEMPLATE"]
 [Ready-to-copy content that they can customize and use immediately]
 \`\`\`
 
-Make templates specific to their product and situation, not generic.
+Make templates specific to their product and situation, not generic. Reference which day/action in the plan each template supports.
 
 ---
 
@@ -943,12 +954,12 @@ The user's feedback is NARROW and SPECIFIC. Most sections should be copied uncha
 - ## Your SEO Landscape (copy unless feedback is about SEO)
 - ## Market Sentiment (copy unless feedback is about market/competitors)
 - ## Competitive Landscape (copy unless feedback is about competitors)
-- ## Channel Strategy (copy unless feedback is about channels)
+- ## The Opportunity (update if feedback changes the strategic opening)
 - ## Stop Doing (copy unless feedback says "actually I should keep doing X")
 - ## Start Doing (copy unless feedback changes priorities or adds constraints)
-- ## Week 1 through ## Week 4 (update to reflect any changed recommendations)
-- ## Content Ideas (copy unless feedback is about content)
+- ## Week 1 through ## Week 4 (update to reflect any changed recommendations — maintain named deliverables, week-over-week dependencies, and conditional branching)
 - ## Metrics Dashboard (copy unless feedback changes goals)
+- ## Content Templates (copy unless feedback is about content)
 
 **EXAMPLE of correct behavior:**
 - User feedback: "Actually we have a $5k/month budget I didn't mention"

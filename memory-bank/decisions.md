@@ -4,6 +4,26 @@ Key architectural and product decisions. Reference this when you need to underst
 
 ---
 
+## Thesis-Driven Plan Architecture (Jan 27 2026)
+
+**Decision**: Restructure Opus pipeline prompt around an internal "thesis" — a strategic diagnosis that silently drives plan coherence — instead of a single goal or scattered goals.
+
+**Why not one goal?** Too narrow. A business might need positioning AND acquisition fixes. Forcing "get 50 subscribers" makes the plan feel like it's missing obvious problems.
+
+**Why not multiple goals?** Scattershot. No coherence. Weeks don't build on each other. This was the old problem.
+
+**Why a thesis?** Gives coherence of one goal with breadth of multiple goals. User feels diagnosed, not assigned homework. Backed by research: professionals use OMTM (one metric that matters) as north star but multiple experiments feeding it.
+
+**Thesis is internal.** Not shown to user. Captured in `structured_output.thesis` for future subscription quality scoring. User just sees a plan that happens to be coherent.
+
+**New section: "The Opportunity."** Bridges research → action. Tells user what the research means before prescribing anything. This is the "therefore" that was missing.
+
+**Channel Strategy removed as standalone.** Channels are recommendations, not a taxonomy. Woven into Start Doing (ICE-scored plays).
+
+**Prompt only enforces what UI renders.** Named deliverables, week closers, temptation warnings — all good ideas but no frontend exists. Saved for subscription tier.
+
+---
+
 ## Facebook Pixel + Conversion API (Jan 27 2026)
 
 **Decision**: Implement both client-side Pixel and server-side Conversion API for purchase tracking.

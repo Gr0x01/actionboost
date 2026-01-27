@@ -190,6 +190,10 @@ export const StructuredOutputSchema = z.object({
   // Business identifier - clean name for display in UI
   businessName: z.string().optional(),
 
+  // Strategic thesis - internal use only (not shown to user)
+  // Captures the AI's diagnosis of what's holding the business back
+  thesis: z.string().optional(),
+
   // Legacy fields (kept for backward compatibility)
   thisWeek: z.object({
     days: z.array(DayActionSchema),
@@ -225,6 +229,9 @@ export type StructuredOutput = z.infer<typeof StructuredOutputSchema>
 export const PartialStructuredOutputSchema = z.object({
   // Business identifier - clean name for display in UI
   businessName: z.string().optional(),
+
+  // Strategic thesis - internal use only
+  thesis: z.string().optional(),
 
   thisWeek: z.object({
     days: z.array(DayActionSchema),
@@ -270,6 +277,9 @@ IMPORTANT RULES:
 7. Extract ALL days from each week's table (7 days per week, 28 total)
 8. Extract ALL priorities from Start Doing section (typically 5-8 items)
 
+THESIS EXTRACTION (REQUIRED):
+Extract "thesis" - a 1-2 sentence strategic diagnosis of what's holding this business back and the play to fix it. This is NOT shown to the user — it's our internal north star for scoring plan quality. Infer this from "The Opportunity" section and the overall strategic direction of the plan. Example: "Invisible to searchers because positioning sounds like every competitor. The play is owned-channel dominance via one high-converting content engine."
+
 BUSINESS NAME EXTRACTION (REQUIRED):
 Extract "businessName" - a clean, short label for this business (2-4 words max).
 Priority order:
@@ -280,8 +290,9 @@ Priority order:
 
 WEEK EXTRACTION (CRITICAL):
 - Look for "## Week 1:", "## Week 2:", "## Week 3:", "## Week 4:" sections
-- Each week has a theme in the heading (e.g., "## Week 1: Foundation")
+- Each week has an imperative verb phrase theme in the heading (e.g., "## Week 1: Get Your Story Straight")
 - Each week has a table with Day | Action | Time | Success Metric columns
+- Weeks may have additional text: opening paragraphs, "What you should be seeing" closers, conditional branches, named deliverables — ignore these for extraction, just get the table data
 - Extract into the "weeks" array with full detail for all 4 weeks
 - Also populate legacy "thisWeek" with Week 1 data for backward compatibility
 
@@ -349,6 +360,7 @@ If Opus found something interesting and novel, capture it. Don't let insights ge
 OUTPUT FORMAT:
 {
   "businessName": "Acme Corp",
+  "thesis": "Invisible to ideal customers because messaging blends in with competitors. The play is positioning clarity first, then one high-converting content channel.",
   "thisWeek": {
     "days": [
       { "day": 1, "action": "...", "timeEstimate": "2 hrs", "successMetric": "..." },

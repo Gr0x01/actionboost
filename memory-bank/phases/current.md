@@ -1,6 +1,60 @@
 # Current Phase
 
-## Latest Update: Facebook Ads Test Launched
+## Latest Update: Thesis-Driven Plan Architecture
+
+**Jan 27, 2026** - Major rewrite of the Opus pipeline prompt to produce coherent, thesis-driven 30-day plans instead of scattershot task lists.
+
+### The Problem
+The old prompt produced 4 weeks of day-by-day tables with no instruction for weeks to build on each other. Each week was independently generated — no shared goal, no escalation, no dependencies. Output read like "28 random marketing tasks" not a strategic plan.
+
+### The Solution: Thesis-Driven Plans
+
+Consulted growth-hacker + brand-guardian subagents + web research on professional marketing frameworks. Key findings:
+- Professionals use ONE north star metric with supporting experiments (Lean Analytics OMTM)
+- April Dunford: positioning before tactics, always
+- Agencies structure 30/60/90 as Discovery → Strategy → Execution
+- Growth sprints: Plan → Build → Launch → Learn in 2-4 week cycles
+
+**Decision**: Use a **thesis** (strategic diagnosis), not a single goal or scattered goals. The thesis drives coherence without rigidity. User sees a great plan; the thesis is invisible internal logic.
+
+### What Changed
+
+**`src/lib/ai/generate.ts`** — Output format prompt:
+- **Added**: `The Opportunity` section — bridges research findings to action ("therefore, THIS is the play")
+- **Added**: Internal thesis instruction — Opus forms a diagnosis silently, lets it drive week structure
+- **Removed**: `Channel Strategy` as standalone section — channel recs woven into Start Doing plays
+- **Updated**: Week structural rules — imperative verb themes, escalation logic (build → test → adapt → systematize), conditional branching in Week 3
+- **Updated**: Metrics Dashboard — tracks the opportunity, not generic AARRR
+- **Updated**: Refinement format section list to match new structure
+
+**`src/lib/ai/formatter-types.ts`** — Structured output:
+- **Added**: `thesis` field (optional string) to full + partial schemas
+- **Added**: Thesis extraction instructions in formatter prompt
+- Thesis captured internally for future subscription scoring (not shown to user)
+
+### Key Design Decisions
+
+1. **Thesis is internal, not user-facing.** User sees coherent plan; thesis is our secret sauce for scoring plan quality and future subscription features.
+2. **Prompt only enforces what the UI renders.** Removed named deliverables, "what you should be seeing" closers, "you'll be tempted to" warnings — all good ideas but no frontend component exists yet. Saved for later.
+3. **Week themes stay flexible.** Prompt asks for imperative verb phrases but doesn't hardcode themes. Opus adapts to the business/focus area.
+4. **Channel Strategy merged into Start Doing.** Channels are recommendations, not a separate taxonomy.
+
+### Test Results (Inkdex run)
+- Thesis extracted correctly: "Invisible to tattoo searchers because Google doesn't trust new domains yet..."
+- Weeks build on each other: Reddit presence → content velocity → partnerships → optimize winners
+- The Opportunity section connects research to a specific play
+- Stop Doing tied to thesis (stop ads, stop waiting for Google)
+- ~20K chars output, formatter extraction clean
+
+### Future: Subscription Course Correction
+The thesis architecture sets up the subscription value prop:
+- One-shot ($29): Static plan with thesis-driven coherence
+- Subscription ($49/mo): User checks in after Week 1-2, reports what worked/didn't, AI regenerates remaining weeks using real signal
+- Thesis field in structured_output enables scoring plan quality over time
+
+---
+
+## Previous: Facebook Ads Test Launched
 
 **Jan 27, 2026** - First $100 FB ads test campaign live.
 
