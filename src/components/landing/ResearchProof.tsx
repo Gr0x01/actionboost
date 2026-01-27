@@ -9,9 +9,10 @@
 import { Bot } from "lucide-react";
 
 const CHAT_MESSAGES = [
-  "Focus on creating high-quality content that provides value to your target audience. Post 3-4 times per week.",
-  "Consider investing in SEO to improve your organic rankings. Target long-tail keywords related to your niche.",
-  "Email marketing is one of the most effective channels. Start a newsletter and send weekly updates.",
+  "Focus on creating high-quality content that provides value to your target audience. Post 3-4 times per\u00a0week.",
+  "Consider investing in SEO to improve your organic rankings. Target long-tail keywords related to your\u00a0niche.",
+  "Email marketing is one of the most effective channels. Start a newsletter and send weekly\u00a0updates.",
+  "Build a social media presence on platforms where your audience spends time. Engage authentically and\u00a0consistently.",
 ];
 
 export function ResearchProof() {
@@ -32,17 +33,17 @@ export function ResearchProof() {
         {/* Comparison grid */}
         <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-0">
           {/* Left: Generic AI chat */}
-          <div className="lg:pr-8">
+          <div className="lg:pr-10">
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-foreground/40 mb-4">
               Ask any AI chatbot
             </p>
-            <div className="space-y-4">
+            <div className="space-y-6">
               {CHAT_MESSAGES.map((msg, i) => (
                 <div key={i} className="flex items-start gap-2.5 mb-4 last:mb-0">
                   <div className="w-7 h-7 rounded-full bg-[#ABABAB] flex items-center justify-center shrink-0 mt-0.5">
                     <Bot className="w-3.5 h-3.5 text-white" />
                   </div>
-                  <div className="bg-white rounded-2xl rounded-tl-sm px-3.5 py-2.5 max-w-[85%]">
+                  <div className="bg-white rounded-2xl rounded-tl-sm px-3.5 py-2.5 max-w-full">
                     <p className="text-base text-[#374151] leading-relaxed">
                       {msg}
                     </p>
@@ -70,7 +71,7 @@ export function ResearchProof() {
           </div>
 
           {/* Right: Boost product UI */}
-          <div className="lg:pl-8 space-y-3">
+          <div className="lg:pl-10 space-y-5">
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-cta font-bold mb-4">
               Ask Boost
             </p>
@@ -99,8 +100,8 @@ export function ResearchProof() {
 
             {/* Priority #1 card — matches PriorityCards.tsx */}
             <div
-              className="relative bg-white border-2 border-foreground/25 rounded-md p-5 mt-4"
-              style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)" }}
+              className="relative bg-white border-2 border-foreground/25 rounded-md p-5"
+              style={{ boxShadow: "6px 6px 0 rgba(44, 62, 80, 0.12)" }}
             >
               <div
                 className="absolute -top-3 -left-1 font-mono font-bold px-3 py-1 rounded-md bg-cta text-white text-sm"
