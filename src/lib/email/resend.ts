@@ -15,7 +15,7 @@ function getResend(): Resend | null {
 
 const FROM_EMAIL = "Boost <team@aboo.st>";
 
-// Brutalist color palette (matches landing page)
+// Soft brutalist color palette (matches landing page)
 const COLORS = {
   foreground: "#2C3E50", // borders, shadows, text
   cta: "#E67E22", // orange accent
@@ -23,6 +23,9 @@ const COLORS = {
   surface: "#F8F6F3", // receipt details bg
   muted: "#7F8C8D", // secondary text
 };
+
+// Soft brutalism shadow
+const SOFT_SHADOW = "4px 4px 0 rgba(44, 62, 80, 0.15)";
 
 export interface ReceiptEmailData {
   to: string;
@@ -80,100 +83,70 @@ function generateReceiptHtml(data: {
       <td align="center">
         <table width="560" cellpadding="0" cellspacing="0" style="max-width: 560px;">
 
-          <!-- Brutalist card with offset shadow -->
+          <!-- Soft brutalist card -->
           <tr>
             <td>
-              <table cellpadding="0" cellspacing="0" width="100%" style="border-spacing: 0;">
+              <table cellpadding="0" cellspacing="0" width="100%" style="border: 2px solid ${COLORS.foreground}; border-radius: 6px; background-color: #FFFFFF; box-shadow: ${SOFT_SHADOW};">
                 <tr>
-                  <td>
-                    <table cellpadding="0" cellspacing="0" width="100%" style="border: 3px solid ${COLORS.foreground}; background-color: #FFFFFF;">
+                  <td style="padding: 48px 40px 40px;">
+
+                    <!-- Logo -->
+                    <img src="https://aboo.st/logo.png" alt="Boost" width="120" height="28" style="display: block; margin: 0 0 32px; width: 120px; height: 28px;" />
+
+                    <!-- Big headline -->
+                    <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
+                      Your action plan is brewing.
+                    </h1>
+
+                    <p style="margin: 0 0 32px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
+                      We're analyzing your competitors, researching your market, and crafting a growth playbook tailored to your situation. Give us a few minutes.
+                    </p>
+
+                    <!-- Receipt details (soft brutalist box) -->
+                    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 32px; border: 2px solid ${COLORS.foreground}; border-radius: 4px; background-color: ${COLORS.surface};">
                       <tr>
-                        <td style="padding: 48px 40px 40px;">
-
-                          <!-- Logo text (mono, uppercase, tracked) -->
-                          <p style="margin: 0 0 32px; font-family: 'JetBrains Mono', Consolas, Monaco, monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.15em; color: ${COLORS.foreground}; text-transform: uppercase;">
-                            BOOST
-                          </p>
-
-                          <!-- Big headline -->
-                          <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
-                            Your action plan is brewing.
-                          </h1>
-
-                          <p style="margin: 0 0 32px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
-                            We're analyzing your competitors, researching your market, and crafting a growth playbook tailored to your situation. Give us a few minutes.
-                          </p>
-
-                          <!-- Receipt details (brutalist box) -->
-                          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 32px; border: 2px solid ${COLORS.foreground}; background-color: ${COLORS.surface};">
+                        <td style="padding: 20px;">
+                          <table width="100%" cellpadding="0" cellspacing="0">
                             <tr>
-                              <td style="padding: 20px;">
-                                <table width="100%" cellpadding="0" cellspacing="0">
-                                  <tr>
-                                    <td style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted}; text-transform: uppercase; padding-bottom: 6px;">
-                                      PRODUCT
-                                    </td>
-                                    <td style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted}; text-transform: uppercase; text-align: right; padding-bottom: 6px;">
-                                      AMOUNT
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td style="font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; font-weight: 600; color: ${COLORS.foreground};">
-                                      ${productName}
-                                    </td>
-                                    <td style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 16px; font-weight: 700; color: ${COLORS.foreground}; text-align: right;">
-                                      ${amount}
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td colspan="2" style="padding-top: 12px;">
-                                      <span style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.05em; color: ${COLORS.muted};">
-                                        ${date} · Paid
-                                      </span>
-                                    </td>
-                                  </tr>
-                                </table>
+                              <td style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted}; text-transform: uppercase; padding-bottom: 6px;">
+                                PRODUCT
+                              </td>
+                              <td style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted}; text-transform: uppercase; text-align: right; padding-bottom: 6px;">
+                                AMOUNT
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style="font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; font-weight: 600; color: ${COLORS.foreground};">
+                                ${productName}
+                              </td>
+                              <td style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 16px; font-weight: 700; color: ${COLORS.foreground}; text-align: right;">
+                                ${amount}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td colspan="2" style="padding-top: 12px;">
+                                <span style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.05em; color: ${COLORS.muted};">
+                                  ${date} · Paid
+                                </span>
                               </td>
                             </tr>
                           </table>
-
-                          <!-- CTA Button with offset shadow -->
-                          <table cellpadding="0" cellspacing="0" style="border-spacing: 0;">
-                            <tr>
-                              <td>
-                                <table cellpadding="0" cellspacing="0" style="border: 2px solid ${COLORS.foreground};">
-                                  <tr>
-                                    <td style="background-color: ${COLORS.cta};">
-                                      <a href="${dashboardUrl}" style="display: inline-block; padding: 16px 32px; color: #FFFFFF; text-decoration: none; font-family: 'Source Sans 3', -apple-system, sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        Go to Dashboard
-                                      </a>
-                                    </td>
-                                  </tr>
-                                </table>
-                              </td>
-                              <td style="width: 4px; background-color: ${COLORS.foreground};"></td>
-                            </tr>
-                            <tr>
-                              <td style="padding-left: 4px;">
-                                <div style="height: 4px; background-color: ${COLORS.foreground};"></div>
-                              </td>
-                              <td></td>
-                            </tr>
-                          </table>
-
                         </td>
                       </tr>
                     </table>
+
+                    <!-- CTA Button with soft shadow -->
+                    <table cellpadding="0" cellspacing="0" style="border: 2px solid ${COLORS.foreground}; border-radius: 6px; box-shadow: ${SOFT_SHADOW};">
+                      <tr>
+                        <td style="background-color: ${COLORS.cta}; border-radius: 4px;">
+                          <a href="${dashboardUrl}" style="display: inline-block; padding: 16px 32px; color: #FFFFFF; text-decoration: none; font-family: 'Source Sans 3', -apple-system, sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em;">
+                            Go to Dashboard
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+
                   </td>
-                  <!-- Right shadow -->
-                  <td style="width: 6px; background-color: ${COLORS.foreground}; vertical-align: top;"></td>
-                </tr>
-                <tr>
-                  <!-- Bottom shadow -->
-                  <td style="padding-left: 6px;">
-                    <div style="height: 6px; background-color: ${COLORS.foreground};"></div>
-                  </td>
-                  <td></td>
                 </tr>
               </table>
             </td>
@@ -182,8 +155,8 @@ function generateReceiptHtml(data: {
           <!-- Footer -->
           <tr>
             <td style="padding: 32px 0; text-align: center;">
-              <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted}; text-transform: uppercase;">
-                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">BOOST</a>
+              <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted};">
+                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">Boost</a>
               </p>
             </td>
           </tr>
@@ -216,71 +189,41 @@ export function generateMagicLinkTemplate(): string {
       <td align="center">
         <table width="560" cellpadding="0" cellspacing="0" style="max-width: 560px;">
 
-          <!-- Brutalist card with offset shadow -->
+          <!-- Soft brutalist card -->
           <tr>
             <td>
-              <table cellpadding="0" cellspacing="0" width="100%" style="border-spacing: 0;">
+              <table cellpadding="0" cellspacing="0" width="100%" style="border: 2px solid ${COLORS.foreground}; border-radius: 6px; background-color: #FFFFFF; box-shadow: ${SOFT_SHADOW};">
                 <tr>
-                  <td>
-                    <table cellpadding="0" cellspacing="0" width="100%" style="border: 3px solid ${COLORS.foreground}; background-color: #FFFFFF;">
+                  <td style="padding: 48px 40px 40px;">
+
+                    <!-- Logo -->
+                    <img src="https://aboo.st/logo.png" alt="Boost" width="120" height="28" style="display: block; margin: 0 0 32px; width: 120px; height: 28px;" />
+
+                    <!-- Big headline -->
+                    <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
+                      Sign in to your account
+                    </h1>
+
+                    <p style="margin: 0 0 32px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
+                      Click the button below to securely access your dashboard. This link expires in 1 hour.
+                    </p>
+
+                    <!-- CTA Button with soft shadow -->
+                    <table cellpadding="0" cellspacing="0" style="border: 2px solid ${COLORS.foreground}; border-radius: 6px; box-shadow: ${SOFT_SHADOW}; margin-bottom: 32px;">
                       <tr>
-                        <td style="padding: 48px 40px 40px;">
-
-                          <!-- Logo text (mono, uppercase, tracked) -->
-                          <p style="margin: 0 0 32px; font-family: 'JetBrains Mono', Consolas, Monaco, monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.15em; color: ${COLORS.foreground}; text-transform: uppercase;">
-                            BOOST
-                          </p>
-
-                          <!-- Big headline -->
-                          <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
-                            Sign in to your account
-                          </h1>
-
-                          <p style="margin: 0 0 32px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
-                            Click the button below to securely access your dashboard. This link expires in 1 hour.
-                          </p>
-
-                          <!-- CTA Button with offset shadow -->
-                          <table cellpadding="0" cellspacing="0" style="border-spacing: 0; margin-bottom: 32px;">
-                            <tr>
-                              <td>
-                                <table cellpadding="0" cellspacing="0" style="border: 2px solid ${COLORS.foreground};">
-                                  <tr>
-                                    <td style="background-color: ${COLORS.cta};">
-                                      <a href="{{ .ConfirmationURL }}" style="display: inline-block; padding: 16px 32px; color: #FFFFFF; text-decoration: none; font-family: 'Source Sans 3', -apple-system, sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        Sign In
-                                      </a>
-                                    </td>
-                                  </tr>
-                                </table>
-                              </td>
-                              <td style="width: 4px; background-color: ${COLORS.foreground};"></td>
-                            </tr>
-                            <tr>
-                              <td style="padding-left: 4px;">
-                                <div style="height: 4px; background-color: ${COLORS.foreground};"></div>
-                              </td>
-                              <td></td>
-                            </tr>
-                          </table>
-
-                          <p style="margin: 0; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 14px; color: ${COLORS.muted};">
-                            If you didn't request this, you can safely ignore this email.
-                          </p>
-
+                        <td style="background-color: ${COLORS.cta}; border-radius: 4px;">
+                          <a href="{{ .ConfirmationURL }}" style="display: inline-block; padding: 16px 32px; color: #FFFFFF; text-decoration: none; font-family: 'Source Sans 3', -apple-system, sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em;">
+                            Sign In
+                          </a>
                         </td>
                       </tr>
                     </table>
+
+                    <p style="margin: 0; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 14px; color: ${COLORS.muted};">
+                      If you didn't request this, you can safely ignore this email.
+                    </p>
+
                   </td>
-                  <!-- Right shadow -->
-                  <td style="width: 6px; background-color: ${COLORS.foreground}; vertical-align: top;"></td>
-                </tr>
-                <tr>
-                  <!-- Bottom shadow -->
-                  <td style="padding-left: 6px;">
-                    <div style="height: 6px; background-color: ${COLORS.foreground};"></div>
-                  </td>
-                  <td></td>
                 </tr>
               </table>
             </td>
@@ -289,8 +232,8 @@ export function generateMagicLinkTemplate(): string {
           <!-- Footer -->
           <tr>
             <td style="padding: 32px 0; text-align: center;">
-              <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted}; text-transform: uppercase;">
-                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">BOOST</a>
+              <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted};">
+                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">Boost</a>
               </p>
             </td>
           </tr>
@@ -358,62 +301,34 @@ function generateRunReadyHtml(data: { resultsUrl: string }): string {
         <table width="560" cellpadding="0" cellspacing="0" style="max-width: 560px;">
           <tr>
             <td>
-              <table cellpadding="0" cellspacing="0" width="100%" style="border-spacing: 0;">
+              <table cellpadding="0" cellspacing="0" width="100%" style="border: 2px solid ${COLORS.foreground}; border-radius: 6px; background-color: #FFFFFF; box-shadow: ${SOFT_SHADOW};">
                 <tr>
-                  <td>
-                    <table cellpadding="0" cellspacing="0" width="100%" style="border: 3px solid ${COLORS.foreground}; background-color: #FFFFFF;">
+                  <td style="padding: 48px 40px 40px;">
+                    <img src="https://aboo.st/logo.png" alt="Boost" width="120" height="28" style="display: block; margin: 0 0 32px; width: 120px; height: 28px;" />
+                    <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
+                      Your growth strategy is ready.
+                    </h1>
+                    <p style="margin: 0 0 32px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
+                      We've finished analyzing your competitors, researching your market, and crafting a personalized growth playbook. Your strategy includes quick wins, a 30-day roadmap, and specific tactics to start growing.
+                    </p>
+                    <table cellpadding="0" cellspacing="0" style="border: 2px solid ${COLORS.foreground}; border-radius: 6px; box-shadow: ${SOFT_SHADOW};">
                       <tr>
-                        <td style="padding: 48px 40px 40px;">
-                          <p style="margin: 0 0 32px; font-family: 'JetBrains Mono', Consolas, Monaco, monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.15em; color: ${COLORS.foreground}; text-transform: uppercase;">
-                            BOOST
-                          </p>
-                          <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
-                            Your growth strategy is ready.
-                          </h1>
-                          <p style="margin: 0 0 32px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
-                            We've finished analyzing your competitors, researching your market, and crafting a personalized growth playbook. Your strategy includes quick wins, a 30-day roadmap, and specific tactics to start growing.
-                          </p>
-                          <table cellpadding="0" cellspacing="0" style="border-spacing: 0;">
-                            <tr>
-                              <td>
-                                <table cellpadding="0" cellspacing="0" style="border: 2px solid ${COLORS.foreground};">
-                                  <tr>
-                                    <td style="background-color: ${COLORS.cta};">
-                                      <a href="${resultsUrl}" style="display: inline-block; padding: 16px 32px; color: #FFFFFF; text-decoration: none; font-family: 'Source Sans 3', -apple-system, sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        View Your Strategy
-                                      </a>
-                                    </td>
-                                  </tr>
-                                </table>
-                              </td>
-                              <td style="width: 4px; background-color: ${COLORS.foreground};"></td>
-                            </tr>
-                            <tr>
-                              <td style="padding-left: 4px;">
-                                <div style="height: 4px; background-color: ${COLORS.foreground};"></div>
-                              </td>
-                              <td></td>
-                            </tr>
-                          </table>
+                        <td style="background-color: ${COLORS.cta}; border-radius: 4px;">
+                          <a href="${resultsUrl}" style="display: inline-block; padding: 16px 32px; color: #FFFFFF; text-decoration: none; font-family: 'Source Sans 3', -apple-system, sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em;">
+                            View Your Strategy
+                          </a>
                         </td>
                       </tr>
                     </table>
                   </td>
-                  <td style="width: 6px; background-color: ${COLORS.foreground}; vertical-align: top;"></td>
-                </tr>
-                <tr>
-                  <td style="padding-left: 6px;">
-                    <div style="height: 6px; background-color: ${COLORS.foreground};"></div>
-                  </td>
-                  <td></td>
                 </tr>
               </table>
             </td>
           </tr>
           <tr>
             <td style="padding: 32px 0; text-align: center;">
-              <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted}; text-transform: uppercase;">
-                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">BOOST</a>
+              <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted};">
+                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">Boost</a>
               </p>
             </td>
           </tr>
@@ -477,65 +392,37 @@ function generateRunFailedHtml(): string {
         <table width="560" cellpadding="0" cellspacing="0" style="max-width: 560px;">
           <tr>
             <td>
-              <table cellpadding="0" cellspacing="0" width="100%" style="border-spacing: 0;">
+              <table cellpadding="0" cellspacing="0" width="100%" style="border: 2px solid ${COLORS.foreground}; border-radius: 6px; background-color: #FFFFFF; box-shadow: ${SOFT_SHADOW};">
                 <tr>
-                  <td>
-                    <table cellpadding="0" cellspacing="0" width="100%" style="border: 3px solid ${COLORS.foreground}; background-color: #FFFFFF;">
+                  <td style="padding: 48px 40px 40px;">
+                    <img src="https://aboo.st/logo.png" alt="Boost" width="120" height="28" style="display: block; margin: 0 0 32px; width: 120px; height: 28px;" />
+                    <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
+                      We hit a snag.
+                    </h1>
+                    <p style="margin: 0 0 24px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
+                      Something went wrong while generating your growth strategy. We're looking into it and will refund your credit automatically.
+                    </p>
+                    <p style="margin: 0 0 32px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
+                      If you'd like to try again or have questions, just reply to this email.
+                    </p>
+                    <table cellpadding="0" cellspacing="0" style="border: 2px solid ${COLORS.foreground}; border-radius: 6px; box-shadow: ${SOFT_SHADOW};">
                       <tr>
-                        <td style="padding: 48px 40px 40px;">
-                          <p style="margin: 0 0 32px; font-family: 'JetBrains Mono', Consolas, Monaco, monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.15em; color: ${COLORS.foreground}; text-transform: uppercase;">
-                            BOOST
-                          </p>
-                          <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
-                            We hit a snag.
-                          </h1>
-                          <p style="margin: 0 0 24px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
-                            Something went wrong while generating your growth strategy. We're looking into it and will refund your credit automatically.
-                          </p>
-                          <p style="margin: 0 0 32px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
-                            If you'd like to try again or have questions, just reply to this email.
-                          </p>
-                          <table cellpadding="0" cellspacing="0" style="border-spacing: 0;">
-                            <tr>
-                              <td>
-                                <table cellpadding="0" cellspacing="0" style="border: 2px solid ${COLORS.foreground};">
-                                  <tr>
-                                    <td style="background-color: ${COLORS.foreground};">
-                                      <a href="mailto:team@aboo.st" style="display: inline-block; padding: 16px 32px; color: #FFFFFF; text-decoration: none; font-family: 'Source Sans 3', -apple-system, sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        Contact Support
-                                      </a>
-                                    </td>
-                                  </tr>
-                                </table>
-                              </td>
-                              <td style="width: 4px; background-color: ${COLORS.foreground};"></td>
-                            </tr>
-                            <tr>
-                              <td style="padding-left: 4px;">
-                                <div style="height: 4px; background-color: ${COLORS.foreground};"></div>
-                              </td>
-                              <td></td>
-                            </tr>
-                          </table>
+                        <td style="background-color: ${COLORS.foreground}; border-radius: 4px;">
+                          <a href="mailto:team@aboo.st" style="display: inline-block; padding: 16px 32px; color: #FFFFFF; text-decoration: none; font-family: 'Source Sans 3', -apple-system, sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em;">
+                            Contact Support
+                          </a>
                         </td>
                       </tr>
                     </table>
                   </td>
-                  <td style="width: 6px; background-color: ${COLORS.foreground}; vertical-align: top;"></td>
-                </tr>
-                <tr>
-                  <td style="padding-left: 6px;">
-                    <div style="height: 6px; background-color: ${COLORS.foreground};"></div>
-                  </td>
-                  <td></td>
                 </tr>
               </table>
             </td>
           </tr>
           <tr>
             <td style="padding: 32px 0; text-align: center;">
-              <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted}; text-transform: uppercase;">
-                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">BOOST</a>
+              <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted};">
+                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">Boost</a>
               </p>
             </td>
           </tr>
@@ -610,82 +497,54 @@ function generateFreeAuditUpsellHtml(data: {
         <table width="560" cellpadding="0" cellspacing="0" style="max-width: 560px;">
           <tr>
             <td>
-              <table cellpadding="0" cellspacing="0" width="100%" style="border-spacing: 0;">
+              <table cellpadding="0" cellspacing="0" width="100%" style="border: 2px solid ${COLORS.foreground}; border-radius: 6px; background-color: #FFFFFF; box-shadow: ${SOFT_SHADOW};">
                 <tr>
-                  <td>
-                    <table cellpadding="0" cellspacing="0" width="100%" style="border: 3px solid ${COLORS.foreground}; background-color: #FFFFFF;">
+                  <td style="padding: 48px 40px 40px;">
+                    <img src="https://aboo.st/logo.png" alt="Boost" width="120" height="28" style="display: block; margin: 0 0 32px; width: 120px; height: 28px;" />
+                    <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
+                      Want the full picture?
+                    </h1>
+                    <p style="margin: 0 0 24px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
+                      Your <a href="${freeResultsUrl}" style="color: ${COLORS.cta}; text-decoration: none;">free audit</a> scratched the surface. The full growth strategy goes deeper:
+                    </p>
+                    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 32px;">
                       <tr>
-                        <td style="padding: 48px 40px 40px;">
-                          <p style="margin: 0 0 32px; font-family: 'JetBrains Mono', Consolas, Monaco, monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.15em; color: ${COLORS.foreground}; text-transform: uppercase;">
-                            BOOST
-                          </p>
-                          <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
-                            Want the full picture?
-                          </h1>
-                          <p style="margin: 0 0 24px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
-                            Your <a href="${freeResultsUrl}" style="color: ${COLORS.cta}; text-decoration: none;">free audit</a> scratched the surface. The full growth strategy goes deeper:
-                          </p>
-                          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 32px;">
-                            <tr>
-                              <td style="padding: 12px 0; border-bottom: 1px solid ${COLORS.surface};">
-                                <span style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 700; color: ${COLORS.cta};">01</span>
-                                <span style="font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 15px; color: ${COLORS.foreground}; margin-left: 12px;">Deep competitive research with traffic data</span>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td style="padding: 12px 0; border-bottom: 1px solid ${COLORS.surface};">
-                                <span style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 700; color: ${COLORS.cta};">02</span>
-                                <span style="font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 15px; color: ${COLORS.foreground}; margin-left: 12px;">Specific tactics tailored to your situation</span>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td style="padding: 12px 0;">
-                                <span style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 700; color: ${COLORS.cta};">03</span>
-                                <span style="font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 15px; color: ${COLORS.foreground}; margin-left: 12px;">30-day roadmap with quick wins</span>
-                              </td>
-                            </tr>
-                          </table>
-                          <table cellpadding="0" cellspacing="0" style="border-spacing: 0;">
-                            <tr>
-                              <td>
-                                <table cellpadding="0" cellspacing="0" style="border: 2px solid ${COLORS.foreground};">
-                                  <tr>
-                                    <td style="background-color: ${COLORS.cta};">
-                                      <a href="${upgradeUrl}" style="display: inline-block; padding: 16px 32px; color: #FFFFFF; text-decoration: none; font-family: 'Source Sans 3', -apple-system, sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        Get Full Strategy — $9.99
-                                      </a>
-                                    </td>
-                                  </tr>
-                                </table>
-                              </td>
-                              <td style="width: 4px; background-color: ${COLORS.foreground};"></td>
-                            </tr>
-                            <tr>
-                              <td style="padding-left: 4px;">
-                                <div style="height: 4px; background-color: ${COLORS.foreground};"></div>
-                              </td>
-                              <td></td>
-                            </tr>
-                          </table>
+                        <td style="padding: 12px 0; border-bottom: 1px solid ${COLORS.surface};">
+                          <span style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 700; color: ${COLORS.cta};">01</span>
+                          <span style="font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 15px; color: ${COLORS.foreground}; margin-left: 12px;">Deep competitive research with traffic data</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 12px 0; border-bottom: 1px solid ${COLORS.surface};">
+                          <span style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 700; color: ${COLORS.cta};">02</span>
+                          <span style="font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 15px; color: ${COLORS.foreground}; margin-left: 12px;">Specific tactics tailored to your situation</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 12px 0;">
+                          <span style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 700; color: ${COLORS.cta};">03</span>
+                          <span style="font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 15px; color: ${COLORS.foreground}; margin-left: 12px;">30-day roadmap with quick wins</span>
+                        </td>
+                      </tr>
+                    </table>
+                    <table cellpadding="0" cellspacing="0" style="border: 2px solid ${COLORS.foreground}; border-radius: 6px; box-shadow: ${SOFT_SHADOW};">
+                      <tr>
+                        <td style="background-color: ${COLORS.cta}; border-radius: 4px;">
+                          <a href="${upgradeUrl}" style="display: inline-block; padding: 16px 32px; color: #FFFFFF; text-decoration: none; font-family: 'Source Sans 3', -apple-system, sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em;">
+                            Get Full Strategy — $29
+                          </a>
                         </td>
                       </tr>
                     </table>
                   </td>
-                  <td style="width: 6px; background-color: ${COLORS.foreground}; vertical-align: top;"></td>
-                </tr>
-                <tr>
-                  <td style="padding-left: 6px;">
-                    <div style="height: 6px; background-color: ${COLORS.foreground};"></div>
-                  </td>
-                  <td></td>
                 </tr>
               </table>
             </td>
           </tr>
           <tr>
             <td style="padding: 32px 0; text-align: center;">
-              <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted}; text-transform: uppercase;">
-                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">BOOST</a>
+              <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted};">
+                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">Boost</a>
               </p>
             </td>
           </tr>
@@ -761,72 +620,44 @@ function generateAbandonedCheckoutHtml(data: {
         <table width="560" cellpadding="0" cellspacing="0" style="max-width: 560px;">
           <tr>
             <td>
-              <table cellpadding="0" cellspacing="0" width="100%" style="border-spacing: 0;">
+              <table cellpadding="0" cellspacing="0" width="100%" style="border: 2px solid ${COLORS.foreground}; border-radius: 6px; background-color: #FFFFFF; box-shadow: ${SOFT_SHADOW};">
                 <tr>
-                  <td>
-                    <table cellpadding="0" cellspacing="0" width="100%" style="border: 3px solid ${COLORS.foreground}; background-color: #FFFFFF;">
+                  <td style="padding: 48px 40px 40px;">
+                    <img src="https://aboo.st/logo.png" alt="Boost" width="120" height="28" style="display: block; margin: 0 0 32px; width: 120px; height: 28px;" />
+                    <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
+                      We saved something for you.
+                    </h1>
+                    <p style="margin: 0 0 24px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
+                      While you were deciding, we went ahead and did a quick analysis of your business. Consider it a preview of what we can do.
+                    </p>
+                    <p style="margin: 0 0 32px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
+                      No strings attached. If you like what you see, the full strategy goes much deeper.
+                    </p>
+
+                    <!-- Primary CTA: View Free Audit -->
+                    <table cellpadding="0" cellspacing="0" style="border: 2px solid ${COLORS.foreground}; border-radius: 6px; box-shadow: ${SOFT_SHADOW}; margin-bottom: 16px;">
                       <tr>
-                        <td style="padding: 48px 40px 40px;">
-                          <p style="margin: 0 0 32px; font-family: 'JetBrains Mono', Consolas, Monaco, monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.15em; color: ${COLORS.foreground}; text-transform: uppercase;">
-                            BOOST
-                          </p>
-                          <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
-                            We saved something for you.
-                          </h1>
-                          <p style="margin: 0 0 24px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
-                            While you were deciding, we went ahead and did a quick analysis of your business. Consider it a preview of what we can do.
-                          </p>
-                          <p style="margin: 0 0 32px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
-                            No strings attached. If you like what you see, the full strategy goes much deeper.
-                          </p>
-
-                          <!-- Primary CTA: View Free Audit -->
-                          <table cellpadding="0" cellspacing="0" style="border-spacing: 0; margin-bottom: 16px;">
-                            <tr>
-                              <td>
-                                <table cellpadding="0" cellspacing="0" style="border: 2px solid ${COLORS.foreground};">
-                                  <tr>
-                                    <td style="background-color: ${COLORS.cta};">
-                                      <a href="${freeResultsUrl}" style="display: inline-block; padding: 16px 32px; color: #FFFFFF; text-decoration: none; font-family: 'Source Sans 3', -apple-system, sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        View Your Free Audit
-                                      </a>
-                                    </td>
-                                  </tr>
-                                </table>
-                              </td>
-                              <td style="width: 4px; background-color: ${COLORS.foreground};"></td>
-                            </tr>
-                            <tr>
-                              <td style="padding-left: 4px;">
-                                <div style="height: 4px; background-color: ${COLORS.foreground};"></div>
-                              </td>
-                              <td></td>
-                            </tr>
-                          </table>
-
-                          <!-- Secondary link -->
-                          <p style="margin: 0; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 14px; color: ${COLORS.muted};">
-                            Ready for the full picture? <a href="${upgradeUrl}" style="color: ${COLORS.cta}; text-decoration: none; font-weight: 600;">Get your complete strategy for $9.99</a>
-                          </p>
+                        <td style="background-color: ${COLORS.cta}; border-radius: 4px;">
+                          <a href="${freeResultsUrl}" style="display: inline-block; padding: 16px 32px; color: #FFFFFF; text-decoration: none; font-family: 'Source Sans 3', -apple-system, sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em;">
+                            View Your Free Audit
+                          </a>
                         </td>
                       </tr>
                     </table>
+
+                    <!-- Secondary link -->
+                    <p style="margin: 0; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 14px; color: ${COLORS.muted};">
+                      Ready for the full picture? <a href="${upgradeUrl}" style="color: ${COLORS.cta}; text-decoration: none; font-weight: 600;">Get your complete strategy for $29</a>
+                    </p>
                   </td>
-                  <td style="width: 6px; background-color: ${COLORS.foreground}; vertical-align: top;"></td>
-                </tr>
-                <tr>
-                  <td style="padding-left: 6px;">
-                    <div style="height: 6px; background-color: ${COLORS.foreground};"></div>
-                  </td>
-                  <td></td>
                 </tr>
               </table>
             </td>
           </tr>
           <tr>
             <td style="padding: 32px 0; text-align: center;">
-              <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted}; text-transform: uppercase;">
-                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">BOOST</a>
+              <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted};">
+                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">Boost</a>
               </p>
             </td>
           </tr>
@@ -900,65 +731,37 @@ function generateFeedbackRequestHtml(data: {
         <table width="560" cellpadding="0" cellspacing="0" style="max-width: 560px;">
           <tr>
             <td>
-              <table cellpadding="0" cellspacing="0" width="100%" style="border-spacing: 0;">
+              <table cellpadding="0" cellspacing="0" width="100%" style="border: 2px solid ${COLORS.foreground}; border-radius: 6px; background-color: #FFFFFF; box-shadow: ${SOFT_SHADOW};">
                 <tr>
-                  <td>
-                    <table cellpadding="0" cellspacing="0" width="100%" style="border: 3px solid ${COLORS.foreground}; background-color: #FFFFFF;">
+                  <td style="padding: 48px 40px 40px;">
+                    <img src="https://aboo.st/logo.png" alt="Boost" width="120" height="28" style="display: block; margin: 0 0 32px; width: 120px; height: 28px;" />
+                    <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
+                      How did we do?
+                    </h1>
+                    <p style="margin: 0 0 24px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
+                      You received your <a href="${resultsUrl}" style="color: ${COLORS.cta}; text-decoration: none;">growth strategy</a> a couple days ago. We'd love to hear how it's working for you.
+                    </p>
+                    <p style="margin: 0 0 32px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
+                      Your feedback helps us improve and means more than you know.
+                    </p>
+                    <table cellpadding="0" cellspacing="0" style="border: 2px solid ${COLORS.foreground}; border-radius: 6px; box-shadow: ${SOFT_SHADOW};">
                       <tr>
-                        <td style="padding: 48px 40px 40px;">
-                          <p style="margin: 0 0 32px; font-family: 'JetBrains Mono', Consolas, Monaco, monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.15em; color: ${COLORS.foreground}; text-transform: uppercase;">
-                            BOOST
-                          </p>
-                          <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
-                            How did we do?
-                          </h1>
-                          <p style="margin: 0 0 24px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
-                            You received your <a href="${resultsUrl}" style="color: ${COLORS.cta}; text-decoration: none;">growth strategy</a> a couple days ago. We'd love to hear how it's working for you.
-                          </p>
-                          <p style="margin: 0 0 32px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
-                            Your feedback helps us improve and means more than you know.
-                          </p>
-                          <table cellpadding="0" cellspacing="0" style="border-spacing: 0;">
-                            <tr>
-                              <td>
-                                <table cellpadding="0" cellspacing="0" style="border: 2px solid ${COLORS.foreground};">
-                                  <tr>
-                                    <td style="background-color: ${COLORS.cta};">
-                                      <a href="${feedbackUrl}" style="display: inline-block; padding: 16px 32px; color: #FFFFFF; text-decoration: none; font-family: 'Source Sans 3', -apple-system, sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        Leave Feedback
-                                      </a>
-                                    </td>
-                                  </tr>
-                                </table>
-                              </td>
-                              <td style="width: 4px; background-color: ${COLORS.foreground};"></td>
-                            </tr>
-                            <tr>
-                              <td style="padding-left: 4px;">
-                                <div style="height: 4px; background-color: ${COLORS.foreground};"></div>
-                              </td>
-                              <td></td>
-                            </tr>
-                          </table>
+                        <td style="background-color: ${COLORS.cta}; border-radius: 4px;">
+                          <a href="${feedbackUrl}" style="display: inline-block; padding: 16px 32px; color: #FFFFFF; text-decoration: none; font-family: 'Source Sans 3', -apple-system, sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em;">
+                            Leave Feedback
+                          </a>
                         </td>
                       </tr>
                     </table>
                   </td>
-                  <td style="width: 6px; background-color: ${COLORS.foreground}; vertical-align: top;"></td>
-                </tr>
-                <tr>
-                  <td style="padding-left: 6px;">
-                    <div style="height: 6px; background-color: ${COLORS.foreground};"></div>
-                  </td>
-                  <td></td>
                 </tr>
               </table>
             </td>
           </tr>
           <tr>
             <td style="padding: 32px 0; text-align: center;">
-              <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted}; text-transform: uppercase;">
-                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">BOOST</a>
+              <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted};">
+                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">Boost</a>
               </p>
             </td>
           </tr>
