@@ -23,7 +23,7 @@ const DELIVERABLES = [
     icon: RefreshCw,
     title: "2 refinements included",
     description:
-      '"Actually, we already tried that" — no problem. Tell us what\'s different and we\'ll adjust the plan.',
+      '"Actually, we already tried that" — no problem. Tell us what\'s different and we\'ll adjust your Boost.',
   },
 ];
 
@@ -37,7 +37,7 @@ export function WhatYouGet() {
             What you get
           </p>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-foreground tracking-tight">
-            A plan you can <span className="font-black">actually use.</span>
+            A Boost you can <span className="font-black">actually use.</span>
           </h2>
         </div>
 

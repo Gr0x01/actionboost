@@ -11,10 +11,10 @@ import type { StructuredOutput } from "@/lib/ai/formatter-types";
 
 export const metadata: Metadata = {
   title: "Our Growth Plan | Boost",
-  description: "We ran Boost on itself. Here's the AI-generated action plan for our own product - real competitive research, actionable tactics, and a 30-day roadmap.",
+  description: "We ran Boost on itself. Here's the AI-generated Boost for our own product - real competitive research, actionable tactics, and a 30-day roadmap.",
   openGraph: {
     title: "We Ran Boost on Itself - Our Growth Plan",
-    description: "See what happens when an AI growth strategist analyzes its own product. Real action plan, real research, real results.",
+    description: "See what happens when an AI growth strategist analyzes its own product. Real Boost, real research, real results.",
     type: "article",
   },
   twitter: {
@@ -66,7 +66,7 @@ export default async function GrowthPlanPage() {
             </h1>
             <p className="text-lg text-foreground/70 max-w-xl lg:mx-auto leading-relaxed">
               What happens when an AI growth strategist analyzes its own product?
-              Here&apos;s the <span className="text-foreground font-semibold">real action plan</span> we&apos;re following to grow Boost.
+              Here&apos;s the <span className="text-foreground font-semibold">real Boost</span> we&apos;re following to grow Boost.
             </p>
             <div className="flex flex-wrap items-center gap-4 mt-6 text-sm lg:justify-center">
               <span className="text-foreground/50">January 2026</span>
@@ -86,12 +86,12 @@ export default async function GrowthPlanPage() {
           <div className="rounded-lg mb-10 border-2 border-foreground/20 bg-background p-6 shadow-[4px_4px_0_rgba(44,62,80,0.1)]">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
-                <p className="font-semibold text-foreground">Want a marketing plan like this for your business?</p>
+                <p className="font-semibold text-foreground">Want a Boost like this for your business?</p>
                 <p className="text-sm text-foreground/60">Get AI-powered growth recommendations with live competitive research.</p>
               </div>
               <Link href="/start">
                 <button className="rounded-md whitespace-nowrap px-6 py-3 bg-cta text-white font-semibold border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 hover:shadow-md active:translate-y-0.5 active:border-b-0 transition-all duration-100">
-                  Get your plan - {config.singlePrice}
+                  Get your Boost - {config.singlePrice}
                 </button>
               </Link>
             </div>
@@ -112,7 +112,7 @@ export default async function GrowthPlanPage() {
               Your turn
             </p>
             <h2 className="text-2xl font-bold text-foreground">
-              Ready to get your own marketing plan?
+              Ready to get your own Boost?
             </h2>
             <p className="text-foreground/70 max-w-md mx-auto">
               Boost uses live competitive research and AI to create

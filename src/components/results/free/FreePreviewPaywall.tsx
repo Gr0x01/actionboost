@@ -68,7 +68,7 @@ export function FreePreviewPaywall({
       <div className="text-center max-w-xl mx-auto">
         {/* Section label */}
         <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block">
-          Your Plan
+          Your Boost
         </span>
 
         {/* Headline */}
@@ -78,7 +78,7 @@ export function FreePreviewPaywall({
 
         {/* Subhead */}
         <p className="text-foreground/60 mb-10 text-base">
-          A 30-day execution plan built on real research. Not generic advice.
+          A 30-day Boost built on real research. Not generic advice.
         </p>
 
         {/* Value bullets */}
@@ -124,7 +124,7 @@ export function FreePreviewPaywall({
             "
             style={{ boxShadow: '4px 4px 0 rgba(44, 62, 80, 0.1)' }}
           >
-            {isLoading ? 'Processing...' : `Get my 30-day plan · ${config.singlePrice}`}
+            {isLoading ? 'Processing...' : `Get my 30-day Boost · ${config.singlePrice}`}
           </button>
 
           {/* Error message */}

@@ -29,7 +29,7 @@ export default function NotFound() {
             href="/start"
             className="inline-flex items-center justify-center px-6 py-3 border border-border text-foreground font-medium rounded-lg hover:bg-surface transition-colors"
           >
-            Get your action plan
+            Get your Boost
           </Link>
         </div>
       </div>

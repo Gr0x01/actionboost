@@ -30,31 +30,31 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const run = await getSharedRun(slug);
 
   if (!run || run.status !== "complete") {
-    return { title: "Action Plan Not Found | Boost" };
+    return { title: "Boost Not Found" };
   }
 
   // Extract product description for meta
   const input = run.input as { productDescription?: string } | null;
-  const productDesc = input?.productDescription?.slice(0, 100) || "Action Plan";
+  const productDesc = input?.productDescription?.slice(0, 100) || "Boost";
 
   const canonicalUrl = `https://aboo.st/share/${slug}`;
 
   return {
     title: `${productDesc} | Boost`,
-    description: "AI-powered action plan for startups and entrepreneurs. Real competitive research, actionable tactics, 30-day roadmap.",
+    description: "AI-powered Boost for startups and entrepreneurs. Real competitive research, actionable tactics, 30-day roadmap.",
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `Action Plan: ${productDesc}`,
-      description: "AI-powered action plan built with live competitive research.",
+      title: `Boost: ${productDesc}`,
+      description: "AI-powered Boost built with live competitive research.",
       type: "article",
       url: canonicalUrl,
     },
     twitter: {
       card: "summary_large_image",
-      title: `Action Plan: ${productDesc}`,
-      description: "AI-powered action plan built with live competitive research.",
+      title: `Boost: ${productDesc}`,
+      description: "AI-powered Boost built with live competitive research.",
     },
   };
 }
@@ -73,7 +73,7 @@ export default async function SharePage({ params }: PageProps) {
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center space-y-4">
-            <p className="text-muted">This action plan is still being generated.</p>
+            <p className="text-muted">This Boost is still being generated.</p>
             <p className="text-sm text-muted">Check back in a few minutes.</p>
           </div>
         </main>
@@ -96,20 +96,20 @@ export default async function SharePage({ params }: PageProps) {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                 <p className="text-sm text-foreground/70">
-                  This marketing plan was created with Boost
+                  This Boost was created with live competitor research
                 </p>
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-foreground/20 hidden sm:inline">|</span>
                   <SocialShareButtons
                     url={`https://aboo.st/share/${slug}`}
-                    text="Interesting marketing plan I found on Boost"
+                    text="Check out this Boost — real competitor research and a 30-day roadmap"
                     source="share_page"
                   />
                 </div>
               </div>
               <Link href="/start">
                 <button className="rounded-md whitespace-nowrap px-4 py-2 bg-cta text-white font-semibold text-sm border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 hover:shadow-md active:translate-y-0.5 active:border-b-0 transition-all duration-100">
-                  Get your own plan
+                  Get your own Boost
                 </button>
               </Link>
             </div>
@@ -130,7 +130,7 @@ export default async function SharePage({ params }: PageProps) {
               Your turn
             </p>
             <h2 className="text-2xl font-bold text-foreground">
-              Want a marketing plan for your business?
+              Want a Boost for your business?
             </h2>
             <p className="text-foreground/70 max-w-md mx-auto">
               Boost uses live competitive research and AI to create actionable strategies for small businesses.

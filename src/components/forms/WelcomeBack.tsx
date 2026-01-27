@@ -60,7 +60,7 @@ export function WelcomeBack({
             Welcome back!
           </h2>
           <p className="text-foreground/60 text-sm mt-1 font-medium">
-            You&apos;ve run {totalRuns} {totalRuns === 1 ? 'action plan' : 'action plans'} so far
+            You&apos;ve run {totalRuns} {totalRuns === 1 ? 'Boost' : 'Boosts'} so far
           </p>
         </div>
       </div>
@@ -133,7 +133,7 @@ export function WelcomeBack({
 
         {lastRunDate && (
           <p className="text-xs text-foreground/50 font-mono">
-            Last action plan: {formatDate(lastRunDate)}
+            Last Boost: {formatDate(lastRunDate)}
           </p>
         )}
       </div>
@@ -187,7 +187,7 @@ export function ContextUpdateForm({
           What&apos;s changed?
         </h2>
         <p className="text-foreground/60 text-sm font-medium">
-          Tell us what&apos;s new since your last action plan. We&apos;ll build on what we know.
+          Tell us what&apos;s new since your last Boost. We&apos;ll build on what we know.
         </p>
       </div>
 
@@ -224,7 +224,7 @@ export function ContextUpdateForm({
           const focusArea = formData.get('focusArea') as string
 
           if (!delta) {
-            setError('Please tell us what\'s new since your last action plan.')
+            setError('Please tell us what\'s new since your last Boost.')
             return
           }
 
@@ -295,7 +295,7 @@ export function ContextUpdateForm({
             type="submit"
             className="flex items-center gap-2 rounded-xl px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[4px_4px_0_0_rgba(44,62,80,1)] hover:shadow-[6px_6px_0_0_rgba(44,62,80,1)] hover:-translate-y-0.5 active:shadow-none active:translate-y-1 transition-all duration-100"
           >
-            Generate Updated Action Plan
+            Generate Updated Boost
             <ArrowRight className="h-4 w-4" />
           </button>
         </div>

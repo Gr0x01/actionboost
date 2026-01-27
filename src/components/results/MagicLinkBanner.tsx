@@ -31,7 +31,7 @@ export function MagicLinkBanner() {
           Check your email for a login link
         </p>
         <p className="text-xs text-foreground/60 mt-0.5">
-          Access your dashboard anytime to view this action plan again
+          Access your dashboard anytime to view this Boost again
         </p>
       </div>
       <button

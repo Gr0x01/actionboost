@@ -7,7 +7,7 @@ const COMPACT_OBJECTIONS = [
   {
     question: "What if my business is too weird or niche?",
     answer:
-      "We've run plans for SaaS, e-commerce, consultants, a small business salon, and lip balm for equestrians.",
+      "We've run Boosts for SaaS, e-commerce, consultants, a small business salon, and lip balm for equestrians.",
   },
   {
     question: "$29 seems cheap. Is it actually useful?",

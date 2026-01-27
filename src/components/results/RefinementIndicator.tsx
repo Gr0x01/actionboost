@@ -88,7 +88,7 @@ export function RefinementIndicator({
                 You&apos;re ready to go.
               </p>
               <p className="text-xs text-foreground/60">
-                Both refinements used. Your strategy is solid — time to focus on doing instead of planning.
+                Both refinements used. Your strategy is solid — time to focus on doing.
               </p>
             </div>
           </>
@@ -100,8 +100,8 @@ export function RefinementIndicator({
   return (
     <button
       onClick={handleClick}
-      aria-label={`${remaining} refinement${remaining === 1 ? '' : 's'} remaining. Click to refine your plan.`}
-      title={`Refine plan (${remaining} left)`}
+      aria-label={`${remaining} refinement${remaining === 1 ? '' : 's'} remaining. Click to refine your Boost.`}
+      title={`Refine Boost (${remaining} left)`}
       className="
         relative p-2 rounded-lg
         text-foreground/50

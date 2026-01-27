@@ -60,7 +60,7 @@ export function ExportActions({
     const printWindow = window.open('', '_blank')
     if (printWindow) {
       const safeProductName = productName ? escapeHTML(productName) : null
-      const title = safeProductName ? `Action Plan - ${safeProductName}` : 'Action Plan'
+      const title = safeProductName ? `Boost - ${safeProductName}` : 'Your Boost'
       const safeContent = markdownToHTML(markdown)
       printWindow.document.write(`
         <!DOCTYPE html>
@@ -151,7 +151,7 @@ export function ExportActions({
         <button
           onClick={handleShare}
           disabled={disabled}
-          title={disabled ? "Upgrade to share" : "Share plan"}
+          title={disabled ? "Upgrade to share" : "Share Boost"}
           className={`
             p-2 rounded-lg
             text-foreground/50
@@ -222,7 +222,7 @@ export function ExportActions({
               className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-foreground/[0.03] transition-colors"
             >
               <Share2 className="w-4 h-4 text-cta" />
-              <span className="text-sm font-medium text-cta">Share plan</span>
+              <span className="text-sm font-medium text-cta">Share Boost</span>
             </button>
           </div>
         )}

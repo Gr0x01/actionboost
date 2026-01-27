@@ -22,7 +22,7 @@ export function ExplainerSection() {
           <span className="font-black">all that noise</span>
           <br />
           into{" "}
-          <span className="font-black text-cta">one clear plan.</span>
+          <span className="font-black text-cta">one clear Boost.</span>
         </h2>
       </motion.div>
 

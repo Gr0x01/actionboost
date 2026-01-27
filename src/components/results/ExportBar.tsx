@@ -47,7 +47,7 @@ export function ExportBar({
     const printWindow = window.open("", "_blank");
     if (printWindow) {
       const safeProductName = productName ? escapeHTML(productName) : null;
-      const title = safeProductName ? `Action Plan - ${safeProductName}` : "Action Plan";
+      const title = safeProductName ? `Boost - ${safeProductName}` : "Your Boost";
       // markdownToHTML already outputs safe HTML since it only transforms markdown syntax
       // The AI-generated content is plain text that gets wrapped in HTML tags
       const safeContent = markdownToHTML(markdown);
@@ -97,7 +97,7 @@ export function ExportBar({
       <div className="lg:sticky lg:top-14 z-40 py-4 bg-white border-b-[3px] border-foreground">
         <div className="flex items-center justify-between">
           <span className="font-mono text-xs tracking-[0.1em] text-foreground/60 uppercase">
-            Your Action Plan
+            Your Boost
           </span>
 
           <div className="flex items-center gap-2">

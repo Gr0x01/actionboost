@@ -114,11 +114,11 @@ function ResultsPageContent() {
             status_code: res.status,
           });
           if (res.status === 403) {
-            setError("You don't have access to this action plan");
+            setError("You don't have access to this Boost");
           } else if (res.status === 404) {
-            setError("Action plan not found");
+            setError("Boost not found");
           } else {
-            setError("Failed to load action plan");
+            setError("Failed to load Boost");
           }
           setLoading(false);
           return;
@@ -146,7 +146,7 @@ function ResultsPageContent() {
           run_id: runId,
           error_type: "network_error",
         });
-        setError("Failed to load action plan");
+        setError("Failed to load Boost");
         setLoading(false);
       }
     };
@@ -168,7 +168,7 @@ function ResultsPageContent() {
       // Stop polling after max attempts
       if (pollCount >= MAX_POLLS) {
         clearInterval(interval);
-        setError("Action plan generation is taking longer than expected. Please refresh the page.");
+        setError("Boost generation is taking longer than expected. Please refresh the page.");
         return;
       }
 

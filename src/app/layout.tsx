@@ -37,14 +37,14 @@ const tienne = Tienne({
 });
 
 export const metadata: Metadata = {
-  title: "Boost - Your 30-Day Marketing Plan",
+  title: "Boost - Your 30-Day Marketing Boost",
   description:
-    "Stuck on marketing? Get a custom 30-day plan with real competitor research. We find what's working in your market and show you exactly what to do.",
+    "Stuck on marketing? Get a custom 30-day Boost with real competitor research. We find what's working in your market and show you exactly what to do.",
   metadataBase: new URL("https://aboo.st"),
   openGraph: {
-    title: "Boost - Your 30-Day Marketing Plan",
+    title: "Boost - Your 30-Day Marketing Boost",
     description:
-      "Stuck on marketing? Get a custom 30-day plan with real competitor research. We find what's working in your market and show you exactly what to do.",
+      "Stuck on marketing? Get a custom 30-day Boost with real competitor research. We find what's working in your market and show you exactly what to do.",
     url: "https://aboo.st",
     siteName: "Boost",
     locale: "en_US",
@@ -52,9 +52,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Boost - Your 30-Day Marketing Plan",
+    title: "Boost - Your 30-Day Marketing Boost",
     description:
-      "Stuck on marketing? Get a custom 30-day plan with real competitor research. We find what's working in your market and show you exactly what to do.",
+      "Stuck on marketing? Get a custom 30-day Boost with real competitor research. We find what's working in your market and show you exactly what to do.",
   },
   robots: {
     index: true,

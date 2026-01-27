@@ -6,18 +6,18 @@ import { ArrowRight, Check } from "lucide-react";
 export const metadata: Metadata = {
   title: "About | Boost",
   description:
-    "Real competitor research. A 30-day marketing plan you can actually execute. Built for founders who know marketing matters but need to know what to do next.",
+    "Real competitor research. A 30-day Boost you can actually execute. Built for founders who know marketing matters but need to know what to do next.",
   openGraph: {
     title: "About Boost",
     description:
-      "Real competitor research. A 30-day marketing plan you can actually execute. Built for founders who know marketing matters but need to know what to do next.",
+      "Real competitor research. A 30-day Boost you can actually execute. Built for founders who know marketing matters but need to know what to do next.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "About Boost",
     description:
-      "Real competitor research. A 30-day marketing plan you can actually execute. Built for founders who know marketing matters but need to know what to do next.",
+      "Real competitor research. A 30-day Boost you can actually execute. Built for founders who know marketing matters but need to know what to do next.",
   },
 };
 
@@ -31,7 +31,7 @@ export default function AboutPage() {
           {/* Hero Section */}
           <section className="mb-12">
             <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground mb-6">
-              Real competitor research. A plan you can&nbsp;execute.
+              Real competitor research. A Boost you can&nbsp;execute.
             </h1>
             <p className="text-xl text-foreground/70 leading-relaxed max-w-2xl">
               You know marketing matters. You just need to know what to do next.
@@ -59,7 +59,7 @@ export default function AboutPage() {
                   Boost fills the gap.
                 </strong>{" "}
                 We research your actual competitors and market, then give you a
-                specific 30-day plan. What to stop. What to start. What to do this week.
+                specific 30-day Boost. What to stop. What to start. What to do this week.
               </p>
             </div>
           </section>
@@ -194,7 +194,7 @@ export default function AboutPage() {
                     10+ years in product design, helping companies figure out
                     what to build. Now I&apos;m applying that same research-first
                     approach to marketing strategy. Boost does the competitive
-                    research and gives you a specific plan. If it doesn&apos;t
+                    research and gives you a specific Boost. If it doesn&apos;t
                     help, full refund.
                   </p>
                 </div>
@@ -215,10 +215,10 @@ export default function AboutPage() {
                       See real examples
                     </p>
                     <h3 className="text-xl font-bold text-foreground">
-                      What does a Boost plan look like?
+                      What does a Boost look like?
                     </h3>
                     <p className="text-foreground/60 mt-1">
-                      Browse real plans we&apos;ve created for different
+                      Browse real Boosts we&apos;ve created for different
                       businesses.
                     </p>
                   </div>
@@ -235,10 +235,10 @@ export default function AboutPage() {
               style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)" }}
             >
               <h2 className="text-2xl font-black text-foreground">
-                Stop guessing. Get a plan.
+                Stop guessing. Get a Boost.
               </h2>
               <p className="text-foreground/70 max-w-md mx-auto">
-                Real competitor research. A 30-day plan you can execute.
+                Real competitor research. A 30-day Boost you can execute.
                 Money back if it doesn&apos;t help.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
@@ -250,7 +250,7 @@ export default function AboutPage() {
                                active:translate-y-0.5 active:border-b-0
                                transition-all duration-100"
                   >
-                    Get my 30-day plan — $29
+                    Get my 30-day Boost — $29
                   </button>
                 </Link>
               </div>

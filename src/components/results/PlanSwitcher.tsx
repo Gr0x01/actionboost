@@ -159,7 +159,7 @@ export function PlanSwitcher({ currentPlan, otherPlans = [] }: PlanSwitcherProps
               <div className="py-1 border-b border-foreground/10">
                 <div className="px-4 py-1.5">
                   <span className="text-[10px] font-semibold uppercase tracking-wide text-foreground/40">
-                    Other plans
+                    Other Boosts
                   </span>
                 </div>
                 {otherPlans.map((plan) => (
@@ -199,7 +199,7 @@ export function PlanSwitcher({ currentPlan, otherPlans = [] }: PlanSwitcherProps
                 "
               >
                 <Plus className="w-4 h-4" />
-                Create new plan
+                Create new Boost
               </Link>
             </div>
           </motion.div>

@@ -340,7 +340,7 @@ export function HeroWithExplainer() {
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl lg:text-2xl text-foreground/70 max-w-2xl mx-auto font-medium">
-            Yet here you are, drowning in advice about algorithms, engagement rates, and &quot;just be consistent.&quot; You need a plan, not more noise.
+            Yet here you are, drowning in advice about algorithms, engagement rates, and &quot;just be consistent.&quot; You need a Boost, not more noise.
           </p>
 
           {/* Dual CTA Buttons */}
@@ -351,7 +351,7 @@ export function HeroWithExplainer() {
               onClick={() => posthog?.capture("hero_cta_clicked", { type: "paid" })}
               className="inline-flex items-center gap-2 rounded-xl px-8 py-4 bg-cta text-white text-lg font-bold border-2 border-cta shadow-[4px_4px_0_rgba(44,62,80,0.4)] hover:shadow-[5px_5px_0_rgba(44,62,80,0.45)] hover:-translate-y-0.5 active:shadow-[2px_2px_0_rgba(44,62,80,0.4)] active:translate-y-0.5 transition-all duration-100"
             >
-              Get Your Plan
+              Get Your Boost
               <ArrowRight className="w-5 h-5" />
             </Link>
 
@@ -367,7 +367,7 @@ export function HeroWithExplainer() {
 
           {/* Trust line */}
           <p className="mt-8 text-sm text-foreground/50 text-center">
-            $29 for the full plan · Get free insights first · <span className="text-foreground/70 font-medium">Full refund guarantee</span>
+            $29 for the full Boost · Get free insights first · <span className="text-foreground/70 font-medium">Full refund guarantee</span>
           </p>
         </motion.div>
       </section>
@@ -415,7 +415,7 @@ export function HeroWithExplainer() {
             That&apos;s what we discovered. And what to do about it.
           </p>
           <p className="text-lg text-foreground/60">
-            The full plan digs deeper: positioning gaps, channel-by-channel strategy, and a complete 30-day roadmap.
+            The full Boost digs deeper: positioning gaps, channel-by-channel strategy, and a complete 30-day roadmap.
           </p>
         </motion.div>
       </section>

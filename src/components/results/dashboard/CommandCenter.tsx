@@ -101,7 +101,7 @@ export function CommandCenter({
 
             <p className="text-foreground/60 text-sm mt-1">
               {isWeek1
-                ? 'Your action plan for the next 7 days'
+                ? 'Your Boost for the next 7 days'
                 : 'Strategic milestones for this week'}
             </p>
           </div>

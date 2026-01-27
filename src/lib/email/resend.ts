@@ -51,7 +51,7 @@ export async function sendReceiptEmail(data: ReceiptEmailData): Promise<void> {
     await resend.emails.send({
       from: FROM_EMAIL,
       to,
-      subject: `Your action plan is cooking`,
+      subject: `Your Boost is cooking`,
       html: generateReceiptHtml({ productName, amount, date, dashboardUrl }),
     });
 
@@ -95,7 +95,7 @@ function generateReceiptHtml(data: {
 
                     <!-- Big headline -->
                     <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
-                      Your action plan is brewing.
+                      Your Boost is brewing.
                     </h1>
 
                     <p style="margin: 0 0 32px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">

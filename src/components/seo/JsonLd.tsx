@@ -13,7 +13,7 @@ interface OrganizationSchemaProps {
 
 export function OrganizationSchema({
   name = "Boost",
-  description = "AI-powered marketing plans for small businesses. Real competitor research, actionable tactics, 30-day roadmap.",
+  description = "AI-powered marketing Boosts for small businesses. Real competitor research, actionable tactics, 30-day roadmap.",
   url = BASE_URL,
 }: OrganizationSchemaProps = {}) {
   const schema = {
@@ -44,7 +44,7 @@ interface ProductSchemaProps {
 }
 
 export function ProductSchema({
-  name = "Boost Marketing Plan",
+  name = "Boost",
   description = "Get a custom 30-day marketing plan built with live competitive research. Includes competitor analysis, channel strategy, and actionable weekly roadmap.",
   price = "29",
   currency = "USD",

@@ -63,11 +63,11 @@ export function ShareModal({ runId, shareSlug, onClose }: ShareModalProps) {
         </button>
 
         <h2 className="text-lg font-bold text-foreground mb-4">
-          Share Your Action Plan
+          Share Your Boost
         </h2>
 
         <p className="text-sm text-muted mb-6">
-          Anyone with this link can view your action plan (read-only).
+          Anyone with this link can view your Boost (read-only).
         </p>
 
         {error && (
@@ -102,7 +102,7 @@ export function ShareModal({ runId, shareSlug, onClose }: ShareModalProps) {
               <span className="text-sm font-medium text-foreground">Share on:</span>
               <SocialShareButtons
                 url={shareUrl}
-                text="Check out this AI-generated action plan from Boost"
+                text="Check out this AI-generated Boost"
                 source="share_modal"
               />
             </div>

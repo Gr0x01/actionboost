@@ -143,7 +143,7 @@ export function CheckoutSection({
       {/* Header */}
       <div className="space-y-4">
         <h2 className="text-3xl sm:text-4xl font-light text-foreground tracking-tight">
-          Ready to <span className="font-black">generate your plan</span>
+          Ready to <span className="font-black">generate your Boost</span>
         </h2>
         <p className="text-foreground/60 text-lg max-w-lg mx-auto">
           Our AI will analyze your inputs and create a custom growth playbook
@@ -416,7 +416,7 @@ export function CheckoutSection({
         >
           <Check className="w-4 h-4" />
           <span className="text-sm">
-            {codeStatus?.credits} free {codeStatus?.credits === 1 ? "action plan" : "action plans"}
+            {codeStatus?.credits} free {codeStatus?.credits === 1 ? "Boost" : "Boosts"}
           </span>
           <button onClick={clearCode} className="text-white/70 hover:text-white ml-1 text-lg leading-none" aria-label="Remove promo code">
             ×

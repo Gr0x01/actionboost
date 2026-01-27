@@ -16,7 +16,7 @@ const ALTERNATIVES = [
   },
   {
     id: "boost",
-    title: "Get a real plan",
+    title: "Get a real Boost",
     price: "$29",
     priceNote: "once",
     time: "Built on real research",
@@ -137,7 +137,7 @@ export function CompetitiveAlternatives() {
                   href="/start"
                   className="mt-8 w-full inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 bg-cta text-white font-bold border-2 border-cta shadow-[3px_3px_0_rgba(44,62,80,0.2)] hover:shadow-[4px_4px_0_rgba(44,62,80,0.25)] hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-100"
                 >
-                  Get Your Plan
+                  Get Your Boost
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               )}

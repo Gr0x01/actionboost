@@ -67,7 +67,7 @@ export const PROCESSING_TIPS: ProcessingTip[] = [
   {
     type: 'preview',
     content:
-      'Your action plan will include a prioritized list of quick wins you can execute this week.',
+      'Your Boost will include a prioritized list of quick wins you can execute this week.',
   },
   {
     type: 'preview',
@@ -76,7 +76,7 @@ export const PROCESSING_TIPS: ProcessingTip[] = [
   {
     type: 'preview',
     content:
-      'The 30-day roadmap in your plan breaks down into weekly themes with specific checkboxes.',
+      'The 30-day roadmap in your Boost breaks down into weekly themes with specific checkboxes.',
   },
   {
     type: 'preview',

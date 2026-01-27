@@ -30,10 +30,10 @@ const FRAMEWORKS: Framework[] = [
   {
     id: "growth",
     label: "The Output",
-    title: "Your Action Plan",
+    title: "Your Boost",
     subtitle: "Real strategy, not generic advice",
     description:
-      "Stop Doing, Start Doing, Quick Wins, 30-Day Roadmap. Research on YOUR competitors. A plan you can actually execute.",
+      "Stop Doing, Start Doing, Quick Wins, 30-Day Roadmap. Research on YOUR competitors. A Boost you can actually execute.",
   },
 ];
 

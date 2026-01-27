@@ -26,7 +26,7 @@ export function Roadmap({ content }: RoadmapProps) {
   return (
     <SectionCard id="roadmap" title="30-Day Roadmap" variant="boxed">
       <p className="text-foreground/80 mb-6">
-        Your week-by-week execution plan. Focus on one week at a time.
+        Your week-by-week roadmap. Focus on one week at a time.
       </p>
 
       <div className="space-y-1">

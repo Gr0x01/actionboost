@@ -189,7 +189,7 @@ export function StatusMessage({
           </div>
         </div>
         <h1 className="text-2xl sm:text-3xl font-black text-foreground mb-3">
-          {message || "Action plan ready!"}
+          {message || "Boost ready!"}
         </h1>
         <p className="text-foreground/60 max-w-md mx-auto">
           {submessage || "Redirecting you to your results"}
@@ -214,7 +214,7 @@ export function StatusMessage({
         <p className="text-foreground/60 mb-8">
           {submessage || (
             <>
-              We encountered an error while generating your action plan.
+              We encountered an error while generating your Boost.
               <br />
               Please try again or contact support.
             </>
@@ -247,7 +247,7 @@ export function StatusMessage({
     <div className="max-w-lg mx-auto text-center py-16 px-6">
       {/* Headline */}
       <h1 className="text-2xl sm:text-3xl font-black text-foreground mb-8">
-        {message || "Building your action plan"}
+        {message || "Building your Boost"}
       </h1>
 
       {/* Dynamic Activity Display - Terminal Style */}
@@ -323,7 +323,7 @@ export function StatusMessage({
           Real research takes real time.
         </p>
         <p className="text-sm text-foreground/50">
-          We&apos;re pulling live competitive data and building your custom 30-day plan.
+          We&apos;re pulling live competitive data and building your custom 30-day Boost.
           <br />
           About 8 minutes. We&apos;ll email you when it&apos;s done.
         </p>

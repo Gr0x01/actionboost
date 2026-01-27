@@ -32,7 +32,7 @@ const BLOG_POSTS: BlogPost[] = [
     slug: "our-growth-plan",
     title: "We Ran Boost on Itself",
     description:
-      "What happens when an AI growth strategist analyzes its own product? Here's the real action plan we're following to grow Boost.",
+      "What happens when an AI growth strategist analyzes its own product? Here's the real Boost we're following to grow our own product.",
     date: "January 2026",
     readTime: "15 min read",
     category: "meta",
@@ -123,7 +123,7 @@ export default function BlogPage() {
           <section className="pb-16">
             <div className="rounded-lg border-2 border-foreground/20 bg-background p-8 shadow-[4px_4px_0_rgba(44,62,80,0.1)] text-center space-y-4">
               <p className="text-xs font-medium tracking-wide text-foreground/50 uppercase">
-                Build your own growth plan
+                Build your own Boost
               </p>
               <h2 className="text-2xl font-bold text-foreground">
                 Ready to stop guessing?

@@ -106,7 +106,7 @@ export function CalendarView({ runId, structuredOutput, planStartDate }: Calenda
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <Circle className="w-8 h-8 text-foreground/30 mb-3" />
-        <p className="text-foreground/70">No tasks in your plan</p>
+        <p className="text-foreground/70">No tasks in your Boost</p>
         <p className="text-sm text-foreground/50 mt-1">
           Check the Tasks tab for your weekly breakdown
         </p>

@@ -128,7 +128,7 @@ function LoginForm() {
                     Sign in to Boost
                   </h1>
                   <p className="text-foreground/60 text-base mt-2">
-                    View your past action plans and credit balance
+                    View your past Boosts and credit balance
                   </p>
                 </div>
 
@@ -186,7 +186,7 @@ function LoginForm() {
                       href="/start"
                       className="text-cta hover:text-cta/80 font-bold underline underline-offset-2"
                     >
-                      Get your first action plan
+                      Get your first Boost
                     </Link>
                   </p>
                 </div>

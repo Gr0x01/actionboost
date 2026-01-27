@@ -125,7 +125,7 @@ export function RefinementInterstitial({
               <p className="text-xs text-foreground/50">
                 {isLastOne
                   ? 'Make it count — tell us exactly what to adjust'
-                  : `${remaining} free refinements included with your plan`
+                  : `${remaining} free refinements included with your Boost`
                 }
               </p>
             </div>
@@ -148,7 +148,7 @@ export function RefinementInterstitial({
         <div className="flex items-center gap-3">
           <SlidersHorizontal className="h-4 w-4 text-foreground/50" />
           <span className="font-mono text-xs font-bold uppercase tracking-wider text-foreground/50">
-            Sharpen Your Plan
+            Sharpen Your Boost
           </span>
         </div>
         <span className="font-mono text-xs text-foreground/40">
@@ -159,11 +159,11 @@ export function RefinementInterstitial({
       {/* Form content */}
       <div className="p-5">
         <p className="text-sm text-foreground/60 mb-4" id="refinement-description">
-          Add details only you know, your secret sauce, local quirks, what has worked before, and we will sharpen the plan.
+          Add details only you know — your secret sauce, local quirks, what has worked before — and we'll sharpen your Boost.
         </p>
 
         <label htmlFor="refinement-context" className="sr-only">
-          Additional context for your plan
+          Additional context for your Boost
         </label>
         <textarea
           id="refinement-context"
@@ -171,7 +171,7 @@ export function RefinementInterstitial({
           value={context}
           onChange={(e) => setContext(e.target.value)}
           disabled={formState === 'submitting'}
-          placeholder="What would make this plan fit your business better? Maybe your bestseller, a slow season coming up, or something that worked in the past..."
+          placeholder="What would make this Boost fit your business better? Maybe your bestseller, a slow season coming up, or something that worked in the past..."
           className="
             w-full h-28 p-4 text-sm rounded-xl
             border-2 border-foreground/15
