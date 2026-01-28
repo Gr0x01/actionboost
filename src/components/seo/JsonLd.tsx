@@ -36,45 +36,6 @@ export function OrganizationSchema({
   );
 }
 
-interface ProductSchemaProps {
-  name?: string;
-  description?: string;
-  price?: string;
-  currency?: string;
-}
-
-export function ProductSchema({
-  name = "Boost",
-  description = "Get a custom 30-day marketing plan built with live competitive research. Includes competitor analysis, channel strategy, and actionable weekly roadmap.",
-  price = "29",
-  currency = "USD",
-}: ProductSchemaProps = {}) {
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name,
-    description,
-    brand: {
-      "@type": "Organization",
-      name: "Boost",
-    },
-    offers: {
-      "@type": "Offer",
-      price,
-      priceCurrency: currency,
-      availability: "https://schema.org/InStock",
-      url: `${BASE_URL}/start`,
-    },
-  };
-
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-    />
-  );
-}
-
 interface ArticleSchemaProps {
   title: string;
   description: string;
@@ -115,6 +76,103 @@ export function ArticleSchema({
         name: industry,
       },
     }),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+interface FAQPageSchemaProps {
+  faqs: FAQItem[];
+}
+
+export function FAQPageSchema({ faqs }: FAQPageSchemaProps) {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
+
+interface BreadcrumbSchemaProps {
+  items: BreadcrumbItem[];
+}
+
+export function BreadcrumbSchema({ items }: BreadcrumbSchemaProps) {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+interface SoftwareApplicationSchemaProps {
+  name?: string;
+  description?: string;
+  price?: string;
+  currency?: string;
+}
+
+export function SoftwareApplicationSchema({
+  name = "Boost",
+  description = "AI-powered marketing plan generator that creates custom 30-day plans for small businesses using live competitor research.",
+  price = "29",
+  currency = "USD",
+}: SoftwareApplicationSchemaProps = {}) {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name,
+    description,
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Web",
+    offers: {
+      "@type": "Offer",
+      price,
+      priceCurrency: currency,
+      availability: "https://schema.org/InStock",
+      url: `${BASE_URL}/start`,
+    },
   };
 
   return (

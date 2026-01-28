@@ -44,3 +44,4 @@ Disallow: /api/
 Allow: /
 
 Sitemap: https://aboo.st/sitemap.xml
+Llms-txt: https://aboo.st/llms.txt

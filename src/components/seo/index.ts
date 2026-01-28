@@ -1,1 +1,7 @@
-export { OrganizationSchema, ProductSchema, ArticleSchema } from "./JsonLd";
+export {
+  OrganizationSchema,
+  ArticleSchema,
+  FAQPageSchema,
+  BreadcrumbSchema,
+  SoftwareApplicationSchema,
+} from "./JsonLd";

@@ -353,6 +353,7 @@ body {
 
 .prose-boost p {
   margin-bottom: 1.25em;
+  text-wrap: pretty;
 }
 
 .prose-boost h2 {
@@ -362,6 +363,7 @@ body {
   margin-bottom: 0.75em;
   color: var(--foreground);
   letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
 .prose-boost h3 {
@@ -370,6 +372,7 @@ body {
   margin-top: 1.75em;
   margin-bottom: 0.5em;
   color: var(--foreground);
+  text-wrap: balance;
 }
 
 .prose-boost ul {

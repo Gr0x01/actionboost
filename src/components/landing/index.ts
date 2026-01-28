@@ -7,6 +7,7 @@ export { CompetitiveAlternatives } from "./CompetitiveAlternatives";
 export { ResearchProof } from "./ResearchProof";
 export { WhatYouGet } from "./WhatYouGet";
 export { Objections } from "./Objections";
+export { FAQSection } from "./FAQSection";
 export { Pricing } from "./Pricing";
 export { Testimonials } from "./Testimonials";
 export { FooterCTA } from "./FooterCTA";

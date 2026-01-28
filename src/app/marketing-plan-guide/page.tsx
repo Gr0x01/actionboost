@@ -5,6 +5,36 @@ import { Button } from "@/components/ui/Button";
 import { TableOfContents } from "@/components/results/TableOfContents";
 import { GUIDE_SECTIONS } from "@/lib/constants/toc-sections";
 import { config } from "@/lib/config";
+import { FAQPageSchema, BreadcrumbSchema, ArticleSchema } from "@/components/seo";
+import { FAQSection } from "@/components/landing";
+
+const GUIDE_FAQS = [
+  {
+    question: "What's the best marketing plan template for small businesses?",
+    answer:
+      "The best marketing plan isn't a template—it's a framework built on competitive research. Templates give you structure but not strategy. A useful marketing plan requires knowing your specific market, your competitors' traffic sources, and where the gaps are. Boost automates this research and generates a custom plan for your business in under 5 minutes.",
+  },
+  {
+    question: "How do I create a marketing plan without hiring an agency?",
+    answer:
+      "Start with competitive research: identify 3-5 competitors, analyze their traffic sources and top content, and find gaps you can own. Then prioritize 1-2 channels based on where your audience is active and competitors are weak. Build a 30-day roadmap with weekly milestones. Tools like Boost can automate the research step, giving you agency-quality competitive analysis at a fraction of the cost.",
+  },
+  {
+    question: "How long should a marketing plan be?",
+    answer:
+      "A marketing plan that gets executed is typically 2-5 pages, not 40. It should include: specific goals with metrics, competitive landscape summary, 1-2 priority channels, a 30-day timeline with weekly actions, and success metrics. Anything longer usually signals overthinking and under-executing.",
+  },
+  {
+    question: "What's the difference between a marketing plan and a marketing strategy?",
+    answer:
+      "A marketing strategy is the 'what' and 'why'—your positioning, target audience, and competitive differentiation. A marketing plan is the 'how' and 'when'—specific tactics, timelines, and metrics. You need both, but most businesses skip the strategy (competitive research, positioning) and jump straight to tactics, which is why their plans fail.",
+  },
+];
+
+const BREADCRUMB_ITEMS = [
+  { name: "Home", url: "https://aboo.st" },
+  { name: "Marketing Plan Guide", url: "https://aboo.st/marketing-plan-guide" },
+];
 
 export const metadata: Metadata = {
   title: "How to Create a Marketing Plan That Actually Works | 30-Day Guide",
@@ -25,6 +55,13 @@ export const metadata: Metadata = {
 export default function MarketingPlanGuidePage() {
   return (
     <div className="min-h-screen flex flex-col">
+      <ArticleSchema
+        title="How to Create a Marketing Plan That Actually Works | 30-Day Guide"
+        description="Skip the generic templates. Learn how to build a marketing plan based on real competitor research, prioritized tactics, and a 30-day roadmap you'll actually execute."
+        url="https://aboo.st/marketing-plan-guide"
+      />
+      <BreadcrumbSchema items={BREADCRUMB_ITEMS} />
+      <FAQPageSchema faqs={GUIDE_FAQS} />
       <Header />
 
       <main className="flex-1">
@@ -36,7 +73,7 @@ export default function MarketingPlanGuidePage() {
         <div className="mx-auto max-w-5xl px-4 md:px-12 py-8 md:py-16">
           {/* Hero */}
           <header className="pb-8 lg:text-center">
-            <p className="text-xs font-semibold tracking-wide text-cta uppercase mb-4">
+            <p className="font-mono text-xs tracking-[0.15em] text-foreground/60 uppercase mb-4">
               The Complete Guide
             </p>
             <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground mb-4">
@@ -607,6 +644,15 @@ export default function MarketingPlanGuidePage() {
             </article>
           </div>
 
+          {/* FAQ Section */}
+          <div className="mt-16">
+            <FAQSection
+              faqs={GUIDE_FAQS}
+              title="Marketing plan FAQs."
+              subtitle="Quick answers"
+            />
+          </div>
+
           {/* Bottom CTA Section */}
           <div className="mt-20 rounded-lg border-2 border-foreground/20 bg-white p-8 shadow-[4px_4px_0_rgba(44,62,80,0.1)] text-center space-y-4">
             <p className="text-xs font-medium tracking-wide text-foreground/50 uppercase">
@@ -664,9 +710,9 @@ export default function MarketingPlanGuidePage() {
                 </Button>
               </Link>
               <Link href="/in-action">
-                <button className="rounded-md px-6 py-3 bg-transparent text-foreground font-semibold border-2 border-foreground/30 hover:bg-foreground/5 hover:border-foreground/50 transition-all duration-100">
+                <Button variant="outline" size="xl">
                   See examples first
-                </button>
+                </Button>
               </Link>
             </div>
           </div>
