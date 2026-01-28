@@ -108,7 +108,6 @@ const NOISE_POSITIONS = [
 
 // Scroll takeover configuration
 const TAKEOVER_DURATION_DOWN = 2.0; // seconds for scroll down
-const TAKEOVER_DURATION_UP = 1.0; // slightly faster for scroll up
 
 /**
  * Custom hook for scroll takeover.
@@ -148,29 +147,6 @@ function useScrollTakeover(
       });
     };
 
-    const startSmoothScrollUp = () => {
-      if (isAnimatingRef.current) return;
-
-      isAnimatingRef.current = true;
-      directionRef.current = 'up';
-
-      const startScroll = window.scrollY;
-      const targetScroll = 0; // Back to top
-
-      animationRef.current = animate(startScroll, targetScroll, {
-        duration: TAKEOVER_DURATION_UP,
-        ease: [0.32, 0.72, 0, 1],
-        onUpdate: (value) => {
-          window.scrollTo(0, value);
-        },
-        onComplete: () => {
-          isAnimatingRef.current = false;
-          directionRef.current = 'none';
-          forceUpdate(n => n + 1);
-        },
-      });
-    };
-
     const handleWheel = (e: WheelEvent) => {
       if (!containerRef.current) return;
 
@@ -182,19 +158,11 @@ function useScrollTakeover(
 
       const scrollY = window.scrollY;
       const triggerZoneDown = scrollY < 150;
-      const triggerZoneUp = scrollY > window.innerHeight * 0.7 && scrollY < window.innerHeight * 1.3;
 
-      // Scroll DOWN from hero
+      // Scroll DOWN from hero (no takeover on scroll up — let user scroll freely)
       if (triggerZoneDown && e.deltaY > 0 && directionRef.current !== 'down') {
         e.preventDefault();
         startSmoothScrollDown();
-        return;
-      }
-
-      // Scroll UP back to hero
-      if (triggerZoneUp && e.deltaY < 0 && directionRef.current !== 'up') {
-        e.preventDefault();
-        startSmoothScrollUp();
         return;
       }
     };
@@ -219,19 +187,11 @@ function useScrollTakeover(
       const scrollY = window.scrollY;
 
       const triggerZoneDown = scrollY < 150;
-      const triggerZoneUp = scrollY > window.innerHeight * 0.7 && scrollY < window.innerHeight * 1.3;
 
-      // Scroll DOWN from hero
+      // Scroll DOWN from hero (no takeover on scroll up — let user scroll freely)
       if (triggerZoneDown && deltaY > 15 && directionRef.current !== 'down') {
         e.preventDefault();
         startSmoothScrollDown();
-        return;
-      }
-
-      // Scroll UP back to hero
-      if (triggerZoneUp && deltaY < -15 && directionRef.current !== 'up') {
-        e.preventDefault();
-        startSmoothScrollUp();
         return;
       }
     };
