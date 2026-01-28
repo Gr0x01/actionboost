@@ -5,6 +5,7 @@ import { BoostLogo } from "@/components/ui";
 const footerLinks = {
   product: [
     { label: "See the Output", href: "/in-action" },
+    { label: "Free Marketing Audit", href: "/tools/marketing-audit" },
     { label: "Marketing Guide", href: "/marketing-plan-guide" },
     { label: "Boost vs Alternatives", href: "/boost-vs-alternatives" },
   ],

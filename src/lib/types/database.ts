@@ -386,6 +386,42 @@ export type Database = {
         }
         Relationships: []
       }
+      marketing_audits: {
+        Row: {
+          id: string
+          slug: string
+          url: string
+          email: string
+          business_description: string
+          output: Json | null
+          status: string
+          created_at: string
+          completed_at: string | null
+        }
+        Insert: {
+          id?: string
+          slug: string
+          url: string
+          email: string
+          business_description: string
+          output?: Json | null
+          status?: string
+          created_at?: string
+          completed_at?: string | null
+        }
+        Update: {
+          id?: string
+          slug?: string
+          url?: string
+          email?: string
+          business_description?: string
+          output?: Json | null
+          status?: string
+          created_at?: string
+          completed_at?: string | null
+        }
+        Relationships: []
+      }
       waitlist: {
         Row: {
           created_at: string | null

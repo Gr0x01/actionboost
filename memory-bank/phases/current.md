@@ -1,6 +1,156 @@
 # Current Phase
 
-## Latest Update: Thesis-Driven Plan Architecture
+## Latest Update: Free Marketing Audit Tool (SEO Lead Gen)
+
+**Jan 29, 2026** - Built and shipped `/tools/marketing-audit` — free SEO tool that audits small business websites using "The 3-Second Test" framework.
+
+### What Was Built
+
+**Free Marketing Audit Tool** — user enters URL + business description + email, gets a diagnostic audit in ~60 seconds. Funnels to $29 Boost. Cost per use: ~$0.02 (Tavily extract + GPT-4.1-mini).
+
+**The 3-Second Test Framework**: When a stranger lands on your site, can they answer in 3 seconds: What do you sell? Who is it for? Why should I pick you? Evaluates through 4 lenses: Clarity, Customer Focus, Proof, Friction.
+
+**Output**: "Biggest Silent Killer" (headline finding) + summary + 3-4 findings with specific fixes. No grades or scores — direct diagnostic voice.
+
+### Architecture
+
+- **Landing page**: `/tools/marketing-audit/page.tsx` — SEO page with wizard form (3 steps: URL → description → email), educational content, FAQ with structured data
+- **Results page**: `/tools/marketing-audit/[slug]/page.tsx` + `results-client.tsx` — SSR if complete, client-side polling if pending
+- **API**: `POST /api/marketing-audit/route.ts` (Turnstile, rate limiting, honeypot) + `GET /api/marketing-audit/[slug]/route.ts`
+- **Pipeline**: `src/lib/ai/marketing-audit.ts` — Tavily extract → GPT-4.1-mini → save to DB
+- **Inngest**: `marketing-audit/created` event triggers async pipeline
+- **DB**: `marketing_audits` table (slug, url, email, business_description, output JSONB, status)
+
+### Design
+
+- **Soft Brutalist** matching insights page typography: `font-mono text-[10px] tracking-[0.25em]` labels, `font-serif text-[17px] leading-[1.75]` prose, `text-xl lg:text-2xl font-bold` headings
+- **Results layout**: Hero silent killer card → section divider → featured first finding (2-column) → remaining findings (2-column grid) → 2-column CTA (value bullets left, price card right)
+- **Loading state**: Terminal-style typewriter (matches FreeAuditPending pattern) + sell section
+- **Landing page**: Homepage-style hero typography, centered form card with orange accent
+
+### SEO & Discoverability
+
+- Added to sitemap.ts (priority 0.9, weekly)
+- Added to footer under Product
+- NOT in header nav (SEO tool, found via search)
+- Meta: "Free Marketing Audit — See What's Costing You Customers in 60 Seconds"
+- FAQPage structured data
+
+### CSP Update
+
+- Added `challenges.cloudflare.com` to `script-src` and `frame-src` in `next.config.ts` for Turnstile
+- Turnstile skipped in dev (`NODE_ENV !== "production"`)
+
+### Files Added
+- `src/app/tools/marketing-audit/page.tsx` — landing page with form
+- `src/app/tools/marketing-audit/layout.tsx` — metadata
+- `src/app/tools/marketing-audit/[slug]/page.tsx` — SSR results page
+- `src/app/tools/marketing-audit/[slug]/results-client.tsx` — client results component
+- `src/app/api/marketing-audit/route.ts` — POST endpoint
+- `src/app/api/marketing-audit/[slug]/route.ts` — GET endpoint
+- `src/lib/ai/marketing-audit.ts` — pipeline logic
+
+### Files Modified
+- `src/lib/inngest/client.ts` — added event type
+- `src/lib/inngest/functions.ts` — added function + export
+- `src/app/sitemap.ts` — added tool URL
+- `src/components/layout/Footer.tsx` — added link
+- `next.config.ts` — CSP for Turnstile
+
+---
+
+## Previous: AI Search Optimization
+
+**Jan 29, 2026** - Optimized for Google AI Overviews, Perplexity, ChatGPT Search.
+
+### What Was Built
+
+**llms.txt + robots.txt** — `public/llms.txt` with product description, pricing, differentiators, key URLs. Robots.txt points to it.
+
+**JSON-LD Schemas** — New components in `src/components/seo/JsonLd.tsx`:
+- `FAQPageSchema` — FAQ structured data (used on homepage, guide, all comparison pages)
+- `BreadcrumbSchema` — Breadcrumb structured data
+- `SoftwareApplicationSchema` — Replaces old ProductSchema on homepage
+- Removed dead `ProductSchema` and fake `aggregateRating`
+
+**Homepage FAQ** — 7-question accordion after Pricing section. First FAQ "What exactly is Boost?" contains full citable definition for AI search. Component: `src/components/landing/FAQSection.tsx` (accessible: aria-expanded, aria-controls, role=region).
+
+**Marketing Plan Guide** — Added 4 FAQs + BreadcrumbSchema + ArticleSchema to `/marketing-plan-guide`.
+
+**Comparison Pages** — 5 new pages for "boost vs X" keywords:
+- `/boost-vs-alternatives` — Hub with comparison table (desktop table + mobile cards), links to 4 sub-pages
+- `/boost-vs-alternatives/chatgpt` — Targets "boost vs chatgpt marketing plan"
+- `/boost-vs-alternatives/diy` — Targets "DIY marketing plan cost"
+- `/boost-vs-alternatives/agency` — Targets "marketing agency vs tool"
+- `/boost-vs-alternatives/enji` — Targets "boost vs enji"
+- Each has: head-to-head comparison card, honest prose, 3 FAQs, breadcrumbs, bottom CTA
+- All added to sitemap (priority 0.8, monthly) and footer
+
+**CSS** — Added `text-wrap: pretty` (paragraphs) and `text-wrap: balance` (headings) to `.prose-boost` in globals.css for orphan prevention.
+
+### Files Added
+- `public/llms.txt`
+- `src/components/landing/FAQSection.tsx`
+- `src/app/boost-vs-alternatives/page.tsx` (hub)
+- `src/app/boost-vs-alternatives/chatgpt/page.tsx`
+- `src/app/boost-vs-alternatives/diy/page.tsx`
+- `src/app/boost-vs-alternatives/agency/page.tsx`
+- `src/app/boost-vs-alternatives/enji/page.tsx`
+
+### Files Modified
+- `public/robots.txt` — Llms-txt directive
+- `src/components/seo/JsonLd.tsx` — 3 new schemas, removed ProductSchema
+- `src/components/seo/index.ts` — Updated exports
+- `src/components/landing/index.ts` — Export FAQSection
+- `src/app/page.tsx` — SoftwareApplicationSchema, FAQPageSchema, FAQSection after Pricing
+- `src/app/marketing-plan-guide/page.tsx` — FAQs + schemas + Button fix
+- `src/app/sitemap.ts` — 5 comparison URLs
+- `src/components/layout/Footer.tsx` — Comparison hub link
+- `src/app/globals.css` — text-wrap orphan prevention
+
+---
+
+## Previous: Supabase Security & Performance Hardening
+
+**Jan 29, 2026** - Fixed all WARN/ERROR-level Supabase advisor issues.
+
+### Migration: `fix_rls_and_security_advisors`
+
+1. **RLS on `examples`** — was completely disabled (ERROR). Enabled RLS + added `SELECT` policy for `is_live = true`.
+2. **Overly permissive policies** — `businesses` and `reddit_sent_posts` had `USING (true)` policies granted to `{public}` (all roles). Replaced with `TO service_role` scoped policies.
+3. **RLS initplan fix** — 7 policies on `users`, `runs`, `run_credits`, `user_context_chunks`, `businesses` were re-evaluating `auth.uid()` per row. Wrapped in `(select auth.uid())` for single evaluation.
+4. **Function search_path** — `cleanup_old_reddit_posts` and both `match_user_context_chunks` overloads now set `search_path = ''` to prevent search path injection.
+
+### Remaining (INFO-level, not urgent)
+- `codes`, `free_audits`, `waitlist` — RLS enabled, no policies (locked down)
+- Leaked password protection — toggle in Supabase Auth dashboard
+- `runs` has 2 permissive SELECT policies (intentional: owner + shared link)
+- Unindexed FKs and unused indexes on low-traffic tables
+
+---
+
+## Previous: Reddit Growth Loop in Action
+
+**Jan 28, 2026** - First runs of the "help strangers on Reddit with Boost output" growth loop.
+
+### What Happened
+- Ran Boost on **Herderin** (tall women's sustainable fashion, r/ecommerce) — shared listicle outreach, Pinterest strategy, Reddit thread opportunities. OP replied twice with gratitude, taking action next morning.
+- Ran Boost on **Florence walking tour operator** (r/smallbusiness) — shared Viator listing, Google Business Profile, review engine advice. Offered to share tool "if mods allow it."
+- Helped a B2B SaaS founder on r/SaaS with sales approach advice (not Boost-related, just community building).
+
+### Content Plan Created
+- `memory-bank/herderin-content-plan.md` — Twitter post (today), Twitter thread with screenshots (2-3 days), Reddit build-in-public post (4-5 days)
+- Repeatable loop: find stuck people → run Boost → share findings → screenshot interaction → tweet
+
+### Key Learnings
+- None
+
+### Profile Updated
+- Bio: "Solo dev. Building Boost — competitive marketing research for small businesses (aboo.st). Also Inkdex — tattoo discovery (inkdex.io)."
+
+---
+
+## Previous: Thesis-Driven Plan Architecture
 
 **Jan 27, 2026** - Major rewrite of the Opus pipeline prompt to produce coherent, thesis-driven 30-day plans instead of scattershot task lists.
 
@@ -511,7 +661,7 @@ After Opus generates markdown, Haiku extracts structured JSON for dashboard rend
 Opus → Markdown → Haiku Formatter → Structured JSON → runs.structured_output
 ```
 
-**Cost Impact:** ~$0.006 additional per run (1.2% of Opus cost)
+**Cost Impact:** ~$0.06 additional per run (now uses Sonnet, not Haiku)
 
 **Files Added:**
 - `src/lib/ai/formatter-types.ts` - Zod schemas for structured output

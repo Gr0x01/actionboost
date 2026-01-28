@@ -1,5 +1,6 @@
 import { inngest } from "./client";
 import { runPipeline, runFreePipeline, runRefinementPipeline } from "@/lib/ai/pipeline";
+import { runMarketingAuditPipeline } from "@/lib/ai/marketing-audit";
 import { createServiceClient } from "@/lib/supabase/server";
 import type { RunInput } from "@/lib/ai/types";
 
@@ -139,5 +140,44 @@ export const generateFreeAudit = inngest.createFunction(
   }
 );
 
+/**
+ * Marketing audit pipeline - triggered for free marketing audit tool
+ *
+ * Tavily extract + GPT-4.1-mini analysis. Fast and cheap (~$0.02).
+ */
+export const generateMarketingAudit = inngest.createFunction(
+  {
+    id: "generate-marketing-audit",
+    retries: 2,
+  },
+  { event: "marketing-audit/created" },
+  async ({ event, step }) => {
+    const { auditId } = event.data;
+
+    console.log(`[Inngest] Starting marketing audit ${auditId}`);
+
+    const result = await step.run("marketing-audit-pipeline", async () => {
+      try {
+        return await runMarketingAuditPipeline(auditId);
+      } catch (err) {
+        const supabase = createServiceClient();
+        await supabase
+          .from("marketing_audits")
+          .update({ status: "failed" })
+          .eq("id", auditId);
+        throw err;
+      }
+    });
+
+    if (!result.success) {
+      console.error(`[Inngest] Marketing audit failed for ${auditId}:`, result.error);
+      return { success: false, error: result.error };
+    }
+
+    console.log(`[Inngest] Marketing audit completed for ${auditId}`);
+    return { success: true, auditId };
+  }
+);
+
 // Export all functions for the serve handler
-export const functions = [generateStrategy, refineStrategy, generateFreeAudit];
+export const functions = [generateStrategy, refineStrategy, generateFreeAudit, generateMarketingAudit];

@@ -19,6 +19,11 @@ export type Events = {
       input: RunInput;
     };
   };
+  "marketing-audit/created": {
+    data: {
+      auditId: string;
+    };
+  };
 };
 
 // Create the Inngest client with typed events

@@ -4,14 +4,13 @@
 
 // Map question IDs to funnel step names for analytics
 export const STEP_NAMES: Record<string, string> = {
-  websiteUrl: 'url',
-  productDescription: 'product',
   currentTraction: 'traction',
-  tacticsAndResults: 'tactics',
-  attachments: 'uploads',
   focusArea: 'focus',
-  email: 'email',
+  productDescription: 'product',
+  alternatives: 'alternatives',
+  websiteUrl: 'url',
   competitors: 'competitors',
+  email: 'email',
 }
 
 // Duration for acknowledgment animation between questions (ms)
