@@ -94,7 +94,7 @@ export default function BoostVsChatGPTPage() {
 
               <div className="text-foreground/60">Time</div>
               <div className="text-center">1–2 hours</div>
-              <div className="text-center font-semibold bg-cta/5 rounded px-2 py-1">5 minutes</div>
+              <div className="text-center font-semibold bg-cta/5 rounded px-2 py-1">10 minutes</div>
 
               <div className="text-foreground/60">Competitor data</div>
               <div className="text-center">None</div>

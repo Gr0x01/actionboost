@@ -294,40 +294,39 @@ export function HeroWithExplainer() {
           }}
         >
           <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-medium tracking-tight text-foreground leading-[1.05]">
-            You didn&apos;t start a business
+            A $2,000 marketing strategy&nbsp;session.
             <br />
-            <span className="font-black text-foreground">to become a marketer.</span>
+            <span className="font-black text-foreground">For&nbsp;$29.</span>
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl lg:text-2xl text-foreground/70 max-w-2xl mx-auto font-medium">
-            Yet here you are, drowning in advice about algorithms, engagement rates, and &quot;just be consistent.&quot; You need a Boost, not more noise.
+            Boost runs the same research a consultant would. Positioning analysis, market trends, competitor intel, SEO gaps, and delivers a 30-day action plan built on real&nbsp;data.
           </p>
 
-          {/* Dual CTA Buttons */}
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            {/* Primary: Paid */}
+          {/* Primary CTA */}
+          <div className="mt-10 flex flex-col items-center">
             <Link
               href="/start"
               onClick={() => posthog?.capture("hero_cta_clicked", { type: "paid" })}
               className="inline-flex items-center gap-2 rounded-xl px-8 py-4 bg-cta text-white text-lg font-bold border-2 border-cta shadow-[4px_4px_0_rgba(44,62,80,0.4)] hover:shadow-[5px_5px_0_rgba(44,62,80,0.45)] hover:-translate-y-0.5 active:shadow-[2px_2px_0_rgba(44,62,80,0.4)] active:translate-y-0.5 transition-all duration-100"
             >
-              Get Your Boost
+              Get Your Boost — $29
               <ArrowRight className="w-5 h-5" />
             </Link>
 
-            {/* Secondary: Free insights */}
+            {/* Subordinate free link */}
             <Link
               href="/start?free=true"
               onClick={() => posthog?.capture("hero_cta_clicked", { type: "free" })}
-              className="inline-flex items-center gap-2 rounded-xl px-6 py-4 bg-white/80 text-foreground text-lg font-semibold border-2 border-foreground/20 shadow-[3px_3px_0_rgba(44,62,80,0.06)] hover:border-cta/60 hover:text-cta hover:shadow-[4px_4px_0_rgba(230,126,34,0.12)] hover:-translate-y-0.5 transition-all duration-100"
+              className="mt-4 text-sm text-foreground/50 underline underline-offset-2 hover:text-foreground/70 transition-colors"
             >
-              Get Free Insights
+              or try a free preview first
             </Link>
           </div>
 
           {/* Trust line */}
           <p className="mt-8 text-sm text-foreground/50 text-center">
-            $29 for the full Boost · Get free insights first · <span className="text-foreground/70 font-medium">Full refund guarantee</span>
+            One-time $29 · Full refund guarantee · <span className="text-foreground/70 font-medium">Ready in 10 minutes</span>
           </p>
         </motion.div>
       </section>
@@ -346,9 +345,9 @@ export function HeroWithExplainer() {
             How it works
           </p>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-foreground tracking-tight leading-tight">
-            We&apos;ll handle it.
+            Your market.
             <br />
-            <span className="font-black text-cta">Get back to building.</span>
+            <span className="font-black text-cta">Researched, analyzed, actionable.</span>
           </h2>
         </motion.div>
 
@@ -372,10 +371,10 @@ export function HeroWithExplainer() {
           }}
         >
           <p className="text-xl text-foreground font-medium mb-2">
-            That&apos;s what we discovered. And what to do about it.
+            That&apos;s the preview. The full Boost goes further.
           </p>
           <p className="text-lg text-foreground/60">
-            The full Boost digs deeper: positioning gaps, channel-by-channel strategy, and a complete 30-day roadmap.
+            Positioning gaps. Channel strategy from real traffic data. A 30-day roadmap to act on all of it.
           </p>
         </motion.div>
       </section>

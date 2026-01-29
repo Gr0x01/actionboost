@@ -146,7 +146,7 @@ export default function ComparisonHubPage() {
                   <td className="py-3 px-4">1-2 hours</td>
                   <td className="py-3 px-4">2-4 weeks</td>
                   <td className="py-3 px-4">2-3 hours</td>
-                  <td className="py-3 px-4 bg-cta/5 font-semibold">5 minutes</td>
+                  <td className="py-3 px-4 bg-cta/5 font-semibold">10 minutes</td>
                 </tr>
                 <tr className="border-b border-foreground/10">
                   <td className="py-3 px-4 font-semibold font-sans">Competitor research</td>
@@ -191,7 +191,7 @@ export default function ComparisonHubPage() {
               { name: "ChatGPT", cost: "Free-$20/mo", time: "1-2 hours", research: "None", ongoing: "$0-20/mo" },
               { name: "Agency", cost: "$2,000-10,000+", time: "2-4 weeks", research: "Comprehensive", ongoing: "$500-2,000/mo" },
               { name: "Enji", cost: "$49/mo", time: "2-3 hours", research: "Templates", ongoing: "$49/mo" },
-              { name: "Boost", cost: "$29 one-time", time: "5 minutes", research: "Live data", ongoing: "$0", highlight: true },
+              { name: "Boost", cost: "$29 one-time", time: "10 minutes", research: "Live data", ongoing: "$0", highlight: true },
             ].map((option) => (
               <div
                 key={option.name}
@@ -270,7 +270,7 @@ export default function ComparisonHubPage() {
               </li>
               <li>
                 <strong>Need a plan today, budget under $50:</strong> Boost.
-                Real competitive research, 5 minutes, $29.
+                Real competitive research, 10 minutes, $29.
               </li>
               <li>
                 <strong>Need ongoing execution help:</strong> Enji or a

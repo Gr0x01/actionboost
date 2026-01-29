@@ -25,8 +25,8 @@ export function ResearchProof() {
             The difference
           </p>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-foreground tracking-tight">
-            Generic advice vs.{" "}
-            <span className="font-black">your actual market.</span>
+            ChatGPT guesses.{" "}
+            <span className="font-black">Boost pulls the data.</span>
           </h2>
         </div>
 

@@ -13,14 +13,14 @@ import { FAQSection } from "@/components/landing";
 export const metadata: Metadata = {
   title: "Boost vs DIY Marketing Plans | Skip the $400/mo Tool Subscriptions",
   description:
-    "DIY marketing plans require Ahrefs, SEMrush, and 10-20 hours of research. Boost delivers the same competitive analysis in 5 minutes for $29 one-time.",
+    "DIY marketing plans require Ahrefs, SEMrush, and 10-20 hours of research. Boost delivers the same competitive analysis in 10 minutes for $29 one-time.",
   alternates: {
     canonical: "https://aboo.st/boost-vs-alternatives/diy",
   },
   openGraph: {
     title: "Boost vs DIY Marketing Plans",
     description:
-      "DIY marketing plans require expensive tools and 10-20 hours. Boost delivers the same competitive analysis in 5 minutes for $29.",
+      "DIY marketing plans require expensive tools and 10-20 hours. Boost delivers the same competitive analysis in 10 minutes for $29.",
     type: "article",
     url: "https://aboo.st/boost-vs-alternatives/diy",
   },
@@ -55,7 +55,7 @@ export default function BoostVsDIYPage() {
     <div className="min-h-screen flex flex-col">
       <ArticleSchema
         title="Boost vs DIY Marketing Plans"
-        description="DIY marketing plans require expensive tools and 10-20 hours. Boost delivers the same competitive analysis in 5 minutes for $29."
+        description="DIY marketing plans require expensive tools and 10-20 hours. Boost delivers the same competitive analysis in 10 minutes for $29."
         url="https://aboo.st/boost-vs-alternatives/diy"
       />
       <BreadcrumbSchema items={BREADCRUMB_ITEMS} />
@@ -93,7 +93,7 @@ export default function BoostVsDIYPage() {
 
               <div className="text-foreground/60">Time</div>
               <div className="text-center">10-20 hours</div>
-              <div className="text-center font-semibold bg-cta/5 rounded px-2 py-1">5 minutes</div>
+              <div className="text-center font-semibold bg-cta/5 rounded px-2 py-1">10 minutes</div>
 
               <div className="text-foreground/60">Competitor data</div>
               <div className="text-center">Manual research</div>

@@ -20,8 +20,8 @@ export function Pricing() {
             Pricing
           </p>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-foreground tracking-tight text-balance">
-            No retainer. No fluff.{" "}
-            <span className="font-black">One Boost.</span>
+            $29. Real research.{" "}
+            <span className="font-black">Zero guessing.</span>
           </h2>
         </div>
 
@@ -132,7 +132,7 @@ export function Pricing() {
                 &ldquo;The competitor analysis alone is worth it. Finally know what to focus on.&rdquo;
               </blockquote>
               <p className="mt-2 text-sm text-foreground/50">
-                — Noah P.
+                — Noah P., founder
               </p>
             </div>
 

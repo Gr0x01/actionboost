@@ -17,7 +17,7 @@ const HOMEPAGE_FAQS = [
   {
     question: "What exactly is Boost?",
     answer:
-      "Boost is a marketing plan generator that creates custom 30-day plans for small businesses and solopreneurs. It uses live competitor research—real traffic data, channel analysis, and content performance—to build a specific plan tailored to your business, stage, and market. For a one-time $29 payment, you get a complete marketing plan in under 5 minutes: competitive analysis, prioritized channel strategy, weekly roadmap, and ready-to-use content templates. No subscription. Full refund if it doesn't help.",
+      "Boost is a marketing plan generator that creates custom 30-day plans for small businesses and solopreneurs. It uses live competitor research—real traffic data, channel analysis, and content performance—to build a specific plan tailored to your business, stage, and market. For a one-time $29 payment, you get a complete marketing plan in under 10 minutes: competitive analysis, prioritized channel strategy, weekly roadmap, and ready-to-use content templates. No subscription. Full refund if it doesn't help.",
   },
   {
     question: "How do I create a marketing plan for my small business?",
@@ -37,12 +37,12 @@ const HOMEPAGE_FAQS = [
   {
     question: "How long does it take?",
     answer:
-      "Under 5 minutes from start to finish. You answer a few questions about your business and competitors, we run the research, and your plan is ready. Most of that time is spent waiting for competitor data to load.",
+      "Under 10 minutes from start to finish. You answer a few questions about your business and competitors, we run the research, and your plan is ready. Most of that time is spent waiting for market data to load.",
   },
   {
     question: "What if it doesn't work for my business?",
     answer:
-      "Full refund, no questions asked. We've generated plans for SaaS, e-commerce, consultants, coaches, agencies, and niche businesses like equestrian products. If your plan isn't useful, just email us.",
+      "Full refund, no questions asked. We've generated plans for SaaS, e-commerce, consultants, coaches, agencies, and niche products in markets you'd never expect. If your competitors have websites, Boost can research them. If your plan isn't useful, full refund.",
   },
   {
     question: "Is this a subscription?",

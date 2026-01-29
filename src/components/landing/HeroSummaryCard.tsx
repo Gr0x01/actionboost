@@ -8,25 +8,6 @@ import Link from "next/link";
 // Real businesses with real Boost reports
 // These link to actual companies and full reports on /in-action
 const BUSINESS_TYPES = {
-  inkdex: {
-    label: "Inkdex",
-    url: "https://inkdex.io",
-    inActionSlug: "inkdex",
-    positioning: {
-      verdict: "needs-work" as const,
-      summary: "Your visual search is genuinely differentiated — but 'find tattoo artists' positioning undersells it. Lead with what makes you the only: upload any image, find artists who work in that exact style.",
-      differentiator: "Visual search — find artists by uploading reference images",
-      targetSegment: "People with a specific tattoo vision ready to book, not browse",
-    },
-    discovery: {
-      title: "Pinterest is where people PLAN tattoos. Reddit is where they BROWSE.",
-      type: "pattern",
-      content: "Your Reddit ad experiment got exposure but minimal conversions. Meanwhile, Pinterest has thousands of monthly saves on tattoo style searches — high-intent users actively planning. You're invisible there.",
-      source: "Traffic analysis + Pinterest Trends",
-      significance: "You're spending on channels that can't convert while ignoring where your customers actually plan.",
-    },
-    sources: ["google-analytics", "pinterest", "instagram", "youtube"],
-  },
   cheft: {
     label: "Cheft",
     url: "https://cheft.app",
@@ -45,6 +26,25 @@ const BUSINESS_TYPES = {
       significance: "One outreach message to moderators could unlock consistent traffic from your core audience.",
     },
     sources: ["google-analytics", "youtube", "instagram", "hubspot"],
+  },
+  inkdex: {
+    label: "Inkdex",
+    url: "https://inkdex.io",
+    inActionSlug: "inkdex",
+    positioning: {
+      verdict: "needs-work" as const,
+      summary: "Your visual search is genuinely differentiated — but 'find tattoo artists' positioning undersells it. Lead with what makes you the only: upload any image, find artists who work in that exact style.",
+      differentiator: "Visual search — find artists by uploading reference images",
+      targetSegment: "People with a specific tattoo vision ready to book, not browse",
+    },
+    discovery: {
+      title: "Pinterest is where people PLAN tattoos. Reddit is where they BROWSE.",
+      type: "pattern",
+      content: "Your Reddit ad experiment got exposure but minimal conversions. Meanwhile, Pinterest has thousands of monthly saves on tattoo style searches — high-intent users actively planning. You're invisible there.",
+      source: "Traffic analysis + Pinterest Trends",
+      significance: "You're spending on channels that can't convert while ignoring where your customers actually plan.",
+    },
+    sources: ["google-analytics", "pinterest", "instagram", "youtube"],
   },
   tripledmap: {
     label: "Tripledmap",
@@ -107,7 +107,7 @@ interface HeroSummaryCardProps {
 }
 
 export function HeroSummaryCard({ visible }: HeroSummaryCardProps) {
-  const [selectedType, setSelectedType] = useState<BusinessType>("inkdex");
+  const [selectedType, setSelectedType] = useState<BusinessType>("cheft");
   const businessData = BUSINESS_TYPES[selectedType];
   const verdictStyle = getVerdictStyle(businessData.positioning.verdict);
 

@@ -7,7 +7,7 @@ const COMPACT_OBJECTIONS = [
   {
     question: "What if my business is too weird or niche?",
     answer:
-      "We've run Boosts for SaaS, e-commerce, consultants, a small business salon, and lip balm for equestrians.",
+      "We've run Boosts for SaaS, e-commerce, consultants, local services, and niche products you've never heard of. If your competitors have a website, Boost can research them.",
   },
   {
     question: "$29 seems cheap. Is it actually useful?",
@@ -23,7 +23,7 @@ export function Objections() {
         {/* Section header */}
         <div className="text-center mb-10">
           <p className="font-mono text-xs tracking-[0.15em] text-foreground/60 uppercase mb-4">
-            Fair questions
+            Skeptical? Good.
           </p>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-foreground tracking-tight">
             What you&apos;re probably <span className="font-black">thinking.</span>

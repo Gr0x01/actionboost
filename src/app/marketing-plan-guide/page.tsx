@@ -12,7 +12,7 @@ const GUIDE_FAQS = [
   {
     question: "What's the best marketing plan template for small businesses?",
     answer:
-      "The best marketing plan isn't a template—it's a framework built on competitive research. Templates give you structure but not strategy. A useful marketing plan requires knowing your specific market, your competitors' traffic sources, and where the gaps are. Boost automates this research and generates a custom plan for your business in under 5 minutes.",
+      "The best marketing plan isn't a template—it's a framework built on competitive research. Templates give you structure but not strategy. A useful marketing plan requires knowing your specific market, your competitors' traffic sources, and where the gaps are. Boost automates this research and generates a custom plan for your business in under 10 minutes.",
   },
   {
     question: "How do I create a marketing plan without hiring an agency?",
@@ -638,7 +638,7 @@ export default function MarketingPlanGuidePage() {
               </p>
 
               <p>
-                This research takes 10+ hours with expensive tools—or 5 minutes
+                This research takes 10+ hours with expensive tools—or 10 minutes
                 with Boost.
               </p>
             </article>

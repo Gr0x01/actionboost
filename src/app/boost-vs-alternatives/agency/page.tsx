@@ -13,14 +13,14 @@ import { FAQSection } from "@/components/landing";
 export const metadata: Metadata = {
   title: "Boost vs Marketing Agency | $29 Plan vs $5,000+ Strategy Project",
   description:
-    "Marketing agencies charge $2,000-10,000+ and take 2-4 weeks. Boost delivers competitive research and a 30-day plan in 5 minutes for $29. Here's when each makes sense.",
+    "Marketing agencies charge $2,000-10,000+ and take 2-4 weeks. Boost delivers competitive research and a 30-day plan in 10 minutes for $29. Here's when each makes sense.",
   alternates: {
     canonical: "https://aboo.st/boost-vs-alternatives/agency",
   },
   openGraph: {
     title: "Boost vs Marketing Agency",
     description:
-      "Marketing agencies charge $2,000-10,000+ and take weeks. Boost delivers competitive research in 5 minutes for $29.",
+      "Marketing agencies charge $2,000-10,000+ and take weeks. Boost delivers competitive research in 10 minutes for $29.",
     type: "article",
     url: "https://aboo.st/boost-vs-alternatives/agency",
   },
@@ -55,7 +55,7 @@ export default function BoostVsAgencyPage() {
     <div className="min-h-screen flex flex-col">
       <ArticleSchema
         title="Boost vs Marketing Agency"
-        description="Marketing agencies charge $2,000-10,000+ and take weeks. Boost delivers competitive research in 5 minutes for $29."
+        description="Marketing agencies charge $2,000-10,000+ and take weeks. Boost delivers competitive research in 10 minutes for $29."
         url="https://aboo.st/boost-vs-alternatives/agency"
       />
       <BreadcrumbSchema items={BREADCRUMB_ITEMS} />
@@ -93,7 +93,7 @@ export default function BoostVsAgencyPage() {
 
               <div className="text-foreground/60">Timeline</div>
               <div className="text-center">2-4 weeks</div>
-              <div className="text-center font-semibold bg-cta/5 rounded px-2 py-1">5 minutes</div>
+              <div className="text-center font-semibold bg-cta/5 rounded px-2 py-1">10 minutes</div>
 
               <div className="text-foreground/60">Competitor data</div>
               <div className="text-center">Comprehensive</div>
