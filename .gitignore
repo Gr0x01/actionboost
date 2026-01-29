@@ -54,3 +54,6 @@ next-env.d.ts
 n8n-*.json
 
 memory-bank/test-outputs/
+
+# Fake env for marketing screenshots
+memory-bank/fake.env.local

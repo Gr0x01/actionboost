@@ -189,6 +189,9 @@ Subagents are helpful but not mandatory for every tiny change. Use judgment:
 - **frontend-design**: Guidelines for creating distinctive, high-quality frontend UI
   - Location: `.claude/skills/frontend-design/SKILL.md`
   - **MANDATORY** for all frontend work
+- **copywriter**: Brand voice, copy patterns, and anti-patterns for all customer-facing text
+  - Location: `.claude/skills/copywriter/SKILL.md`
+  - **MANDATORY** for any customer-facing copy (landing pages, CTAs, emails, error messages, social)
 
 ### Frontend Work Requirements - CRITICAL
 **Any change to frontend code MUST follow this workflow:**
