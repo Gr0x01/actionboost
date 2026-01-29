@@ -45,6 +45,9 @@ export type ResearchData = {
     url: string
     contentSummary: string
   }>
+  screenshots?: Array<{
+    url: string
+  }>
 }
 
 export type AgenticResult = {
@@ -138,6 +141,20 @@ Or search without site: for broad results. Be creative - search for:
       required: ['competitor_domain'],
     },
   },
+  {
+    name: 'screenshot',
+    description: `Screenshot any homepage to see what visitors actually see—visual layout, above-the-fold content, trust signals, CTAs, design quality. Use on the user's site and competitor sites to compare visual positioning.`,
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        url: {
+          type: 'string',
+          description: 'Full URL to screenshot (e.g., "https://example.com")',
+        },
+      },
+      required: ['url'],
+    },
+  },
 ]
 
 // =============================================================================
@@ -157,11 +174,13 @@ type ToolInput = {
  */
 type ToolResult = {
   text: string
+  imageContent?: Anthropic.ToolResultBlockParam['content']
   data?:
     | { type: 'search'; query: string; results: Array<{ title: string; url: string; snippet: string }> }
     | { type: 'seo'; domain: string; traffic: number | null; keywords: number | null; topPositions?: { pos1: number; pos2_3: number; pos4_10: number } }
     | { type: 'keyword_gaps'; competitor: string; keywords: Array<{ keyword: string; volume: number; competitorRank: number }> }
     | { type: 'scrape'; url: string; contentSummary: string }
+    | { type: 'screenshot'; url: string }
 }
 
 /**
@@ -273,6 +292,14 @@ async function executeTool(
           return { text: 'Error: competitor_domain is required for keyword_gaps' }
         }
         return await executeKeywordGaps(input.competitor_domain, context.userDomain, context)
+      case 'screenshot':
+        if (!input.url || typeof input.url !== 'string') {
+          return { text: 'Error: url is required for screenshot' }
+        }
+        if (!isAllowedUrl(input.url)) {
+          return { text: 'Error: URL not allowed (must be public http/https URL)' }
+        }
+        return await executeScreenshot(input.url, context)
       default:
         return { text: `Unknown tool: ${name}` }
     }
@@ -663,6 +690,82 @@ async function executeKeywordGaps(
   }
 }
 
+async function executeScreenshot(url: string, context: ToolContext): Promise<ToolResult> {
+  const ssUrl = process.env.SCREENSHOT_SERVICE_URL
+  const ssKey = process.env.SCREENSHOT_API_KEY
+
+  if (!ssUrl || !ssKey) {
+    return { text: 'Screenshot service not configured.' }
+  }
+
+  const distinctId = context.userId || context.runId || 'anonymous'
+  const startTime = Date.now()
+  let success = false
+  let errorMsg: string | undefined
+
+  try {
+    const response = await fetch(
+      `${ssUrl}/screenshot?url=${encodeURIComponent(url)}&width=1280&height=800`,
+      {
+        headers: { 'x-api-key': ssKey },
+        signal: AbortSignal.timeout(20000),
+      }
+    )
+
+    if (!response.ok) {
+      errorMsg = `HTTP ${response.status}`
+      return { text: `Could not capture screenshot: HTTP ${response.status}` }
+    }
+
+    const contentType = response.headers.get('content-type') || ''
+    const ALLOWED_MEDIA_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'] as const
+    const mediaType = contentType.split(';')[0].trim()
+    if (!ALLOWED_MEDIA_TYPES.includes(mediaType as typeof ALLOWED_MEDIA_TYPES[number])) {
+      return { text: `Screenshot returned unsupported image type: ${mediaType || contentType}` }
+    }
+
+    const contentLength = parseInt(response.headers.get('content-length') || '0', 10)
+    if (contentLength > 10 * 1024 * 1024) {
+      return { text: `Screenshot too large (${contentLength} bytes)` }
+    }
+
+    success = true
+    const base64 = Buffer.from(await response.arrayBuffer()).toString('base64')
+
+    return {
+      text: `Homepage screenshot of ${url}`,
+      imageContent: [
+        {
+          type: 'image',
+          source: {
+            type: 'base64',
+            media_type: mediaType as typeof ALLOWED_MEDIA_TYPES[number],
+            data: base64,
+          },
+        },
+        {
+          type: 'text',
+          text: `Homepage screenshot of ${url}`,
+        },
+      ],
+      data: { type: 'screenshot', url },
+    }
+  } catch (err) {
+    errorMsg = err instanceof Error ? err.message : String(err)
+    return { text: `Could not capture screenshot of ${url}: ${errorMsg}` }
+  } finally {
+    trackApiCall(distinctId, {
+      service: 'screenshot',
+      endpoint: 'screenshot',
+      run_id: context.runId,
+      latency_ms: Date.now() - startTime,
+      success,
+      error: errorMsg,
+      estimated_cost_usd: 0,
+    })
+  }
+}
+
 // =============================================================================
 // SYSTEM PROMPT
 // =============================================================================
@@ -688,6 +791,7 @@ You have access to real data:
 - Read any page in full when you need deeper context
 - Look up traffic and keyword rankings for any domain
 - Compare keyword positions between competing domains
+- Screenshot any homepage to see what visitors actually see (visual layout, above-the-fold content, trust signals)
 
 The client will see your strategy alongside the data you gathered—competitive traffic comparisons, keyword opportunities, market quotes, and your key discoveries. Empty data sections signal shallow research. Do the work.
 
@@ -787,6 +891,8 @@ function describeToolCall(name: string, input: ToolInput): string {
       return `Checking SEO for ${input.domain}...`
     case 'keyword_gaps':
       return `Analyzing keyword gaps vs ${input.competitor_domain}...`
+    case 'screenshot':
+      return `Capturing screenshot of ${input.url}...`
     default:
       return 'Processing...'
   }
@@ -823,6 +929,7 @@ export async function generateAgenticStrategy(
     seoMetrics: [],
     keywordGaps: [],
     scrapes: [],
+    screenshots: [] as Array<{ url: string }>,
   }
 
   const updateStage = async (stage: string) => {
@@ -1056,7 +1163,7 @@ export async function generateAgenticStrategy(
     // Execute ALL tools (API requires tool_result for every tool_use)
     // But respect the budget by skipping execution for excess tools
     const toolStartTime = Date.now()
-    const allResults: { id: string; result: string }[] = []
+    const allResults: { id: string; result: string; imageContent?: Anthropic.ToolResultBlockParam['content'] }[] = []
 
     // Process in batches of MAX_PARALLEL_TOOLS
     for (let i = 0; i < toolUseBlocks.length; i += MAX_PARALLEL_TOOLS) {
@@ -1108,6 +1215,11 @@ export async function generateAgenticStrategy(
                   contentSummary: toolResult.data.contentSummary,
                 })
                 break
+              case 'screenshot':
+                (researchData.screenshots ??= []).push({
+                  url: toolResult.data.url,
+                })
+                break
               default:
                 // Defensive: log if we ever add new tool types without updating accumulation
                 console.warn(`[Agentic] Unknown tool data type: ${(toolResult.data as { type: string }).type}`)
@@ -1117,7 +1229,7 @@ export async function generateAgenticStrategy(
             console.warn(`[Agentic] Tool ${block.name} returned no structured data (error path?)`)
           }
 
-          return { id: block.id, result: toolResult.text }
+          return { id: block.id, result: toolResult.text, imageContent: toolResult.imageContent }
         })
       )
       allResults.push(...batchResults.filter(r => r.id !== ''))
@@ -1145,7 +1257,7 @@ export async function generateAgenticStrategy(
         content: allResults.map((r) => ({
           type: 'tool_result' as const,
           tool_use_id: r.id,
-          content: r.result,
+          content: r.imageContent || r.result,
         })),
       },
     ]
@@ -1202,7 +1314,7 @@ export async function generateStrategyAgentic(
 
   return {
     output: result.output,
-    researchData: result.researchData || { searches: [], seoMetrics: [], keywordGaps: [], scrapes: [] },
+    researchData: result.researchData || { searches: [], seoMetrics: [], keywordGaps: [], scrapes: [], screenshots: [] },
   }
 }
 
@@ -1338,6 +1450,7 @@ export async function generateAgenticRefinement(
     seoMetrics: [],
     keywordGaps: [],
     scrapes: [],
+    screenshots: [] as Array<{ url: string }>,
   }
 
   const updateStage = async (stage: string) => {
@@ -1493,7 +1606,7 @@ export async function generateAgenticRefinement(
     // Execute ALL tools (API requires tool_result for every tool_use)
     // But respect the budget by skipping execution for excess tools
     const toolStartTime = Date.now()
-    const allResults: { id: string; result: string }[] = []
+    const allResults: { id: string; result: string; imageContent?: Anthropic.ToolResultBlockParam['content'] }[] = []
 
     for (let i = 0; i < toolUseBlocks.length; i += MAX_PARALLEL_TOOLS) {
       const batch = toolUseBlocks.slice(i, i + MAX_PARALLEL_TOOLS)
@@ -1544,10 +1657,15 @@ export async function generateAgenticRefinement(
                   contentSummary: toolResult.data.contentSummary,
                 })
                 break
+              case 'screenshot':
+                (researchData.screenshots ??= []).push({
+                  url: toolResult.data.url,
+                })
+                break
             }
           }
 
-          return { id: block.id, result: toolResult.text }
+          return { id: block.id, result: toolResult.text, imageContent: toolResult.imageContent }
         })
       )
       allResults.push(...batchResults.filter(r => r.id !== ''))
@@ -1565,7 +1683,7 @@ export async function generateAgenticRefinement(
         content: allResults.map((r) => ({
           type: 'tool_result' as const,
           tool_use_id: r.id,
-          content: r.result,
+          content: r.imageContent || r.result,
         })),
       },
     ]

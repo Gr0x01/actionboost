@@ -62,6 +62,13 @@ function formatResearchDataForPrompt(researchData: ResearchData): string {
     }
   }
 
+  if (researchData.screenshots && researchData.screenshots.length > 0) {
+    sections.push(`\n## Screenshots Captured (${researchData.screenshots.length} homepages)`)
+    for (const ss of researchData.screenshots) {
+      sections.push(`- ${ss.url}`)
+    }
+  }
+
   return sections.join('\n')
 }
 

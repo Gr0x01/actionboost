@@ -12,7 +12,7 @@ const posthog = process.env.NEXT_PUBLIC_POSTHOG_KEY
 // API CALL TRACKING
 // =============================================================================
 
-export type ApiService = 'anthropic' | 'tavily' | 'dataforseo' | 'scrapingdog'
+export type ApiService = 'anthropic' | 'tavily' | 'dataforseo' | 'scrapingdog' | 'screenshot'
 export type ApiEndpoint =
   | 'messages.create'
   | 'search'
@@ -20,6 +20,7 @@ export type ApiEndpoint =
   | 'domain_rank_overview'
   | 'domain_intersection'
   | 'scrape'
+  | 'screenshot'
 
 export type ApiCallProperties = {
   service: ApiService
