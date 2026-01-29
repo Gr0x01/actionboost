@@ -26,7 +26,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "How does the audit work?",
-    a: "We only need your website URL. A short description of your business helps us give more relevant advice. We analyze what's public — homepage copy, meta tags, page structure, trust signals. No logins or access needed.",
+    a: "We screenshot your homepage and analyze what visitors actually see in the first 3 seconds — layout, visual hierarchy, copy clarity, and conversion path. A short description of your business helps us give more relevant advice. No logins or access needed.",
   },
   {
     q: "How long does it take?",

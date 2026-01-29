@@ -23,23 +23,25 @@ The test: When a stranger lands on this site, can they answer three questions in
 
 Your job is to give an honest, proportionate diagnosis. Some sites genuinely fail these questions. Others pass some and miss others. A few nail all three. Your assessment must match reality — don't manufacture problems that aren't there, and don't soften real ones.
 
-You will receive scraped content from a business website and a one-liner about what the business does.
+You will receive a **screenshot** of the homepage AND scraped text content from a business website, plus a one-liner about what the business does. Look at the screenshot first to evaluate the visual experience before reading the scraped text.
+
+If no screenshot is provided, note that you're evaluating text only and cannot assess visual hierarchy, CTA prominence, or above-the-fold layout.
 
 ## Your Diagnostic Lens
 
 Evaluate through these four lenses. For each, determine whether the site is strong, adequate, or weak. Only report a finding when there is a genuine issue worth fixing.
 
 **1. Clarity — Can a Stranger Tell What This Business Does?**
-Evaluate the ENTIRE above-the-fold experience as a unit: headline, subheadline, CTA, and any visible imagery or context. The 3-second test measures whether a first-time visitor can answer "what does this company do?" after seeing the full above-the-fold section — NOT whether the headline alone literally states the product. An emotional or benefit-focused headline (e.g., "Wrestling with projects?") paired with a clear subhead and CTA is a PASS. Only flag clarity as an issue if a visitor would genuinely struggle to understand what the business does after reading the headline AND subhead AND CTA together. Do not penalize headlines for being emotional, aspirational, or benefit-focused — that's good copywriting, not a clarity problem.
+Look at the screenshot first. What's the visual hierarchy? Can you read the headline, subhead, and CTA at a glance? Evaluate the full above-the-fold experience as a visitor would see it — layout, font sizes, whitespace, and how elements guide the eye. The 3-second test measures whether a first-time visitor can answer "what does this company do?" after seeing the full above-the-fold section — NOT whether the headline alone literally states the product. An emotional or benefit-focused headline (e.g., "Wrestling with projects?") paired with a clear subhead and CTA is a PASS. Only flag clarity as an issue if a visitor would genuinely struggle to understand what the business does after reading the headline AND subhead AND CTA together. Do not penalize headlines for being emotional, aspirational, or benefit-focused — that's good copywriting, not a clarity problem.
 
 **2. Customer vs. Company Focus**
 Is the site oriented around the customer's needs, problems, and outcomes — or is it primarily about the company's story, credentials, and history? Don't mechanically count "we" vs. "you" — read for intent. A founder story that explains why they understand the customer's problem IS customer-focused even if it uses "we." An "About Us" page existing is normal, not a red flag. The question is: does the homepage lead with what the customer gets, or with what the company is?
 
 **3. Proof of Transformation**
-Does the site demonstrate results, outcomes, or social proof? Look for: specific customer results, testimonials with outcomes, before/after examples, case studies, portfolio work, review counts, or concrete metrics. Different types of proof work for different businesses — a bakery showing photos of their work IS proof. Client logos for a B2B company IS proof. Don't dismiss valid proof because it isn't in your preferred format. The question is: would a stranger believe this business delivers? If there's no proof at all, that's a real issue. If proof exists but could be stronger, say that proportionately.
+Can you see testimonials, logos, or social proof in the screenshot? Where are they positioned? Look for: specific customer results, testimonials with outcomes, before/after examples, case studies, portfolio work, review counts, or concrete metrics. Different types of proof work for different businesses — a bakery showing photos of their work IS proof. Client logos for a B2B company IS proof. Don't dismiss valid proof because it isn't in your preferred format. The question is: would a stranger believe this business delivers? If there's no proof at all, that's a real issue. If proof exists but could be stronger, say that proportionately.
 
 **4. Friction — What's Stopping the Next Step**
-Is there a clear path to take the next step (buy, book, contact, etc.)? Evaluate whether the primary CTA is visible and compelling. Note: navigation menus, footer links, and social icons are NOT competing CTAs — they're standard website elements. Evaluate only the intentional conversion actions (buttons, forms, booking widgets). A site with one clear primary CTA and a secondary option (e.g., "Book Now" + "Call Us") is fine. A site with no clear action, or where the main CTA is buried below the fold, has friction.
+Is the primary CTA visually prominent in the screenshot? Is it above the fold? What color and size stands out? Evaluate whether the primary CTA is visible and compelling. Note: navigation menus, footer links, and social icons are NOT competing CTAs — they're standard website elements. Evaluate only the intentional conversion actions (buttons, forms, booking widgets). A site with one clear primary CTA and a secondary option (e.g., "Book Now" + "Call Us") is fine. A site with no clear action, or where the main CTA is buried below the fold, has friction.
 
 ## Voice
 
@@ -162,6 +164,27 @@ export async function runMarketingAuditPipeline(auditId: string): Promise<{ succ
       siteContent = siteContent.slice(0, 5000) + "\n[Content truncated]";
     }
 
+    // Step 1b: Screenshot capture
+    let screenshotBase64 = "";
+    try {
+      const ssUrl = process.env.SCREENSHOT_SERVICE_URL;
+      const ssKey = process.env.SCREENSHOT_API_KEY;
+      if (ssUrl && ssKey) {
+        const ssRes = await fetch(
+          `${ssUrl}/screenshot?url=${encodeURIComponent(audit.url)}&width=1280&height=800`,
+          {
+            headers: { "x-api-key": ssKey },
+            signal: AbortSignal.timeout(20000),
+          }
+        );
+        if (ssRes.ok) {
+          screenshotBase64 = Buffer.from(await ssRes.arrayBuffer()).toString("base64");
+        }
+      }
+    } catch (err) {
+      console.error(`[MarketingAudit] Screenshot failed for ${audit.url}:`, err);
+    }
+
     // Step 2: GPT-4.1-mini analysis
     const openai = new OpenAI();
 
@@ -170,15 +193,24 @@ Business description: ${audit.business_description}
 
 ${siteContent ? `--- Scraped website content ---\n${siteContent}` : "Note: Could not scrape website content. Analyze based on the URL and business description only, and note that you couldn't access the site."}`;
 
+    const userContent: Array<{ type: "image_url"; image_url: { url: string } } | { type: "text"; text: string }> = [];
+    if (screenshotBase64) {
+      userContent.push({
+        type: "image_url",
+        image_url: { url: `data:image/jpeg;base64,${screenshotBase64}` },
+      });
+    }
+    userContent.push({ type: "text", text: userMessage });
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4.1-mini",
       response_format: { type: "json_object" },
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
-        { role: "user", content: userMessage },
+        { role: "user", content: userContent },
       ],
       temperature: 0.7,
-      max_tokens: 1500,
+      max_tokens: 2000,
     });
 
     const rawOutput = completion.choices[0]?.message?.content;
