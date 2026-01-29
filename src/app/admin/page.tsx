@@ -23,7 +23,7 @@ export default function AdminHoneypot() {
       <main className="flex-1">
         {/* Hero card */}
         <section className="py-10 sm:py-14 flex items-center justify-center">
-          <div className="mx-auto max-w-lg w-full px-4 sm:px-6">
+          <div className="mx-auto max-w-xl w-full px-4 sm:px-6">
             <div className="rounded-2xl border-2 border-foreground/20 bg-background shadow-[4px_4px_0_0_rgba(44,62,80,0.1)] overflow-hidden">
               {/* Terminal bar */}
               <div className="bg-surface border-b-2 border-foreground/10 px-4 py-2.5 flex items-center gap-2">
@@ -41,11 +41,11 @@ export default function AdminHoneypot() {
                 </p>
 
                 <h1 className="text-2xl sm:text-3xl font-black text-foreground mb-3 leading-tight">
-                  This is one of our marketing ideas.
+                  This is one of our marketing&nbsp;ideas.
                 </h1>
                 <p className="text-foreground/60 text-base leading-relaxed mb-6 max-w-lg">
                   Boost builds 30-day marketing plans with ideas like this
-                  one — competitor research, channel gaps, and specific tactics
+                  one. Competitor research, channel gaps, and specific tactics
                   for your business. Not generic advice. $29, once.
                 </p>
 
