@@ -294,13 +294,13 @@ export function HeroWithExplainer() {
           }}
         >
           <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-medium tracking-tight text-foreground leading-[1.05]">
-            A $2,000 marketing strategy&nbsp;session.
+            Finally know what to do
             <br />
-            <span className="font-black text-foreground">For&nbsp;$29.</span>
+            <span className="font-black text-foreground">with your&nbsp;marketing.</span>
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl lg:text-2xl text-foreground/70 max-w-2xl mx-auto font-medium">
-            Boost runs the same research a consultant would. Positioning analysis, market trends, competitor intel, SEO gaps, and delivers a 30-day action plan built on real&nbsp;data.
+            Your market, competitors, and SEO landscape, researched. Your 30-day plan, built. The same research a consultant does for $2,000. Yours for&nbsp;$29.
           </p>
 
           {/* Primary CTA */}

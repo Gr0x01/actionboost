@@ -2,17 +2,17 @@ const COMPACT_OBJECTIONS = [
   {
     question: "Is this just ChatGPT wrapped in a pretty UI?",
     answer:
-      "No. We pull live competitor data, traffic estimates, and market trends. ChatGPT can't see any of that.",
+      "No. Your plan is built on live competitor data, traffic estimates, and market trends. ChatGPT can't see any of that.",
   },
   {
     question: "What if my business is too weird or niche?",
     answer:
-      "We've run Boosts for SaaS, e-commerce, consultants, local services, and niche products you've never heard of. If your competitors have a website, Boost can research them.",
+      "Boost has worked for SaaS, e-commerce, consultants, local services, and niche products you've never heard of. If your competitors have a website, you're covered.",
   },
   {
     question: "$29 seems cheap. Is it actually useful?",
     answer:
-      "You get a real strategy based on live research. We use the same data APIs bigger agencies use—you're just cutting out their markup.",
+      "You get a real strategy based on live research — the same data APIs bigger agencies use, without their markup.",
   },
 ];
 
