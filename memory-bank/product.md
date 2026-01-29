@@ -136,38 +136,8 @@ Subtle "Just want a taste?" option at checkout → 4-section condensed audit →
 - Trust badges: "Plan ready in 5 minutes. SaaS, e-commerce, consultants."
 - CTA: "Get my 30-day plan"
 
-### Homepage Examples (priority order)
-1. **Tech/SaaS** — first, catches the most reachable audience
-2. **E-commerce/Shopify** — second, tech-savvy buyers
-3. **Service business** — third, consultants/agencies who found us
-
-### Pain → Solution Flow
-1. **Name the problem**: "You know marketing matters. You just don't know what to do next."
-2. **Show the difference**: "We research your competitors and tell you exactly what's working."
-3. **Deliver the outcome**: "A specific plan. What to stop. What to start. What to do this week."
-
-### What You Get
-- Your competitors' actual traffic sources
-- Channel strategy ranked by effort and impact
-- What to stop wasting time on
-- What to start doing (prioritized by impact)
-- This week's quick wins (day-by-day)
-- 30-day roadmap built for your stage
-- Key metrics to track your progress
-- Ready-to-use content templates
-
-### How It Works
-1. Tell us about your business
-2. We research your competitors
-3. Get your plan and start tomorrow
-
-### Pricing
-- $49. Once. No subscription.
-- Free preview to start (see the value before you pay)
-
-### Social Proof
-- Sample output snippet (let quality speak)
-- "Built by @handle" footer
+### Flow
+Pain → Solution → Outcome. Examples: Tech/SaaS first, e-commerce second, service third. How it works: Tell us → We research → Get your plan. Pricing: $49 once, free preview available.
 
 ---
 

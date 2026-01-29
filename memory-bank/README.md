@@ -6,7 +6,7 @@
 
 **Your 30-day marketing plan. Real research, not generic advice.**
 
-Target audience: **Small business owners** — salons, local services, niche e-commerce. People who are stuck on marketing and don't have time to become marketing experts.
+Target audience: **Tech-adjacent entrepreneurs** — SaaS founders, solopreneurs, e-commerce/Shopify, service businesses. People who can find and buy tools but won't build their own.
 
 **v1 (now)**: One-shot runs. Pay $29, tell us about your business, get a real strategy built on live competitive research + Claude Opus 4.5 reasoning. Includes 2 refinements + dashboard access.
 
@@ -16,7 +16,7 @@ Target audience: **Small business owners** — salons, local services, niche e-c
 
 **Output format**: Executive Summary → Your Situation → Competitive Landscape → Stop Doing → Start Doing → Quick Wins → 30-Day Roadmap.
 
-**Brand voice**: Friendly, hand-holding, no jargon. "Let's figure it out together" — not intimidating marketing-speak. Explains frameworks in plain English (AARRR → "Finding you, Trying you, Coming back, Telling friends, Paying you").
+**Brand voice**: Direct strategist. "Stop guessing. Get a marketing plan that works." — confident, specific, respects intelligence. No hand-holding, no startup bro energy, no emojis.
 
 ## Why It Works
 
@@ -38,6 +38,7 @@ Target audience: **Small business owners** — salons, local services, niche e-c
 | **Stripe** | Payments | $29 one-shot, $49/mo subscription |
 | **Supabase** | DB + Auth | Magic links, run storage, credits |
 | **Inngest** | Background jobs | Async pipeline execution, retries |
+| **Screenshot Service** | Homepage capture | Vultr Puppeteer service for visual audit (45.63.3.155, $10/mo) |
 
 **Model ID**: `claude-opus-4-5-20251101` - DO NOT CHANGE without approval.
 
@@ -49,6 +50,7 @@ Target audience: **Small business owners** — salons, local services, niche e-c
 |---------|-------|------|--------|
 | One-shot | $29 | ~$1.50-2.50 | ~91% |
 | Free mini-audit | $0 | ~$0.07 | lead gen |
+| Marketing audit (visual) | $0 | ~$0.04-0.06 | lead gen |
 | Subscription | $49/mo | TBD | TBD |
 | Annual | ~$400/yr ($33/mo) | TBD | TBD |
 

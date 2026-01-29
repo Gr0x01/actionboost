@@ -47,29 +47,23 @@ Anyway if you're solo and doing your first launch, check your env vars before yo
 
 **Target:** r/SaaS or r/solopreneur
 
-**Title:** Spent 6 cents to fix what dozens of hours of coding couldn't
+**Title:** I was giving users 3000 words of strategy. They said "too much to read." Fixed it with a 6 cent summary layer.
 
-Launched my AI thing last week. Generates marketing strategy for founders. Works pretty well — tells you your competitors, channels to try, positioning stuff. Good research quality.
+Launched my AI thing last week. Generates marketing strategy for founders, and it works pretty well. Tells you your competitors, channels to try, positioning stuff.
 
-But 3 different people in the first 48 hours said basically the same thing: "this is a lot to read through"
+But 3 different people in the first 48 hours said basically the same thing, "this is a lot to read through". They were right, the output was like 3000 words of markdown. Comprehensive, but nobody knew where to start.
 
-And they were right. The output was like 3000 words of markdown. Comprehensive, but nobody knew where to start. Just... walls of text.
+I spent the next few days trying different things to figure out the best way to fix it. Thought I'd need to rewrite the whole generation prompt, add user preferences, or let people pick what sections they want.
 
-I spent the weekend trying to figure out the "right" way to fix it. Thought I'd need to rewrite the whole generation prompt. Maybe add user preferences. Maybe let people pick what sections they want. Started designing a whole customization flow.
+Then I just tried something dumb. What if I throw more AI at it to read the report and pull out the actionable stuff? So now I have AI in my AI.
+Extra cost per run: $0.06.
 
-Then I just tried something dumb: what if I use a second AI model to read the report and pull out the actionable stuff? Like literally tell it "extract quick wins and first week tasks, format with checkboxes"
+Put the key insights and action items at the top. Collapsed the analysis sections into accordions below. Same content, just reordered.
+First person to use the new version, "oh this is perfect, I know exactly what to do",
 
-Cost per run: $0.006
+Even though I'm a product designer, I'd been too focused on making the analysis better. More thorough, more accurate. Which matters, but what people actually needed was just to tell me what to do first. They can read the why later if they want.
 
-Did that. Put the action items at the top. Collapsed the analysis sections into accordions below. Same content, just reordered.
-
-First person to use the new version: "oh this is perfect, I know exactly what to do"
-
-I think I'd been too focused on making the analysis better. More thorough, more accurate. Which matters, but what people actually needed was just... tell me what to do first. They can read the why later if they want.
-
-Not really a groundbreaking insight or anything. Just didn't occur to me until I watched someone scroll through the old version looking lost.
-
-Anyway if you're building something that outputs a lot of information, apparently "what do I do with this" is a real question to answer. Even if the information is good.
+Not really a groundbreaking insight, but a good reason to really make sure to think of the right "why".
 
 ---
 
@@ -164,3 +158,129 @@ Launched my AI thing last Monday. Generates marketing plans for $29. Solo dev, b
 The $40 in directories was worth it. PeerPush especially. Uneed was fine but didn't drive much. Everything else was just fixing what was broken and talking to the 5 people who actually tried it.
 
 anyway hope this is useful to someone
+
+---
+
+## 6. Drop Your URL — Free Competitor Intel
+
+**Target:** r/SaaS (primary), then rotate to r/microsaas, r/startups, r/Entrepreneur
+**Type:** Lead gen / case study thread (repeatable)
+**Cap:** 10-15 per thread (~$20-30 cost)
+**Best timing:** Tuesday-Thursday, mid-morning US time
+
+### Learnings (Jan 28, 2026)
+
+Posted to r/microsaas with builder-focused title: "I built a competitive research script — want me to run it on your product?" Got 2 upvotes, 0 comments.
+
+Same day, another user posted: "Drop your SaaS and I'll give you honest feedback for free" — 11 upvotes, 53 comments.
+
+**What worked for them:**
+- Title is about THEM getting something, not about you building something
+- "Honest feedback" > "competitive research" — sounds like a conversation, not a report
+- No mention of tool/script/AI — just a direct offer
+- "Don't tell me what your SaaS is for, I need to know it by looking at your page" — clever constraint that makes it feel more authentic
+
+**Revised approach:** Lead with what they get, not what you built. Mention the tool only in the body as context for why you can deliver.
+
+---
+
+### r/SaaS version (revised)
+
+**Title:** Drop your URL and I'll tell you what your competitors are doing that you're not
+
+I didn't know what to do for marketing my own product. Every guide and chatgpt output was generic stuff I'd already read. So I built a tool that researches my competitors and tells me what to actually do.
+
+It worked way better than I expected. Now I want to stress-test it on different types of businesses and build up some case studies. So I figured I'd offer some free runs here.
+
+What you'd get:
+
+- Your top competitors
+- Traffic estimates
+- Keyword gaps
+- A positioning observation (where you sit relative to them and what angle might be open)
+
+Each run costs me about $2 so I'm capping this at 10 people. Drop your url, a blurb about what you do, and a little about what you're currently tackling in marketing. I'll run it and share what comes back.
+
+Solo so it might take me a day to get through everyone. Genuinely just want to see how it performs across different niches.
+
+### Reply template (public comment)
+
+Keep to 4-6 bullets. Give enough value that lurkers want one too.
+
+> Took a look at [domain]. Here's what jumped out:
+>
+> - Top 3 competitors in your space: X, Y, Z
+> - [One specific insight — e.g. "Y is running ads against your exact brand name"]
+> - [One gap — e.g. "Nobody's targeting [keyword], decent volume there"]
+> - [One positioning observation — e.g. "You and X sound identical on your homepages"]
+>
+> Happy to share the full breakdown if you want — just DM me.
+
+**In the DM:** Send the full output. At the end, one line only: "I built a tool that generates these automatically if you ever want to run one yourself — happy to share the link." Only if they engage. If they don't ask, leave it. Warm lead either way.
+
+### If it blows up (50+ requests)
+
+- Edit post: "Got way more responses than expected. Working through these — will get to as many as I can over the next few days."
+- Prioritize most-upvoted replies.
+- Do your 10-15. For the rest: "Haven't forgotten about you — I'll DM you when I get to yours." (Gives you a reason to DM 30+ people later.)
+- Screenshot the thread. Use for social proof everywhere.
+
+### If it flops (2-3 replies)
+
+- Do NOT delete. Give those 2-3 people maximum effort replies.
+- Repost in a different sub 5-7 days later with a different angle.
+- Check your timing — Sunday night will underperform vs Tuesday morning.
+
+### Varying by subreddit (don't copy-paste)
+
+**Key learning:** Titles about THEM getting something outperform titles about YOU building something. Lead with the offer, not the tool.
+
+| Sub | Title | Tone |
+|---|---|---|
+| r/SaaS | "Drop your URL and I'll tell you what your competitors are doing that you're not" | Direct, tactical |
+| r/microsaas | "Drop your SaaS — I'll tell you what I'd do differently for marketing" | Conversational, peer feedback |
+| r/startups | "Drop your URL — I'll show you the positioning gaps your competitors are missing" | Strategic angle |
+| r/Entrepreneur | "Drop your site and I'll tell you who's eating your lunch online" | Plain language, business-focused |
+
+**Spacing:** One sub per week. Never cross-post the same week. Some users subscribe to multiple subs.
+
+### Content flywheel
+
+After 2-3 threads across subs (20-40 analyses), anonymize the best ones and post: "I analyzed 30 SaaS products' competitive positioning. Here's what I found." That meta-post will outperform all the individual threads combined. Also reuse analyses as Twitter content and /in-action examples.
+
+---
+
+## 7. Organic Comment Replies
+
+**Type:** Value-first replies to existing threads asking about competitor tracking / marketing strategy
+**Target subs:** r/AskMarketing, r/ecommerce, r/SaaS, r/Entrepreneur, r/digital_marketing
+
+When you see someone asking "how do I track competitors" or "what should I do for marketing" — reply with actual useful info first, soft offer at the end.
+
+### Template: Competitor Tracking Question
+
+Example thread: "Do you track your competitor moves in digital marketing?"
+
+**Reply:**
+
+Honestly most "competitor tracking" tools are overkill for what you actually need.
+
+For ads, the simplest thing is Meta Ad Library (ads.facebook.com/ads/library) — just search your competitors by name and you can see every ad they're currently running. Creative, copy, when it started. Free and updated in real time. Google has a similar thing at adstransparency.google.com.
+
+For email, sign up for their lists with a burner email. Make a folder, let them pile up. Once a month skim through and note what promos they ran and when.
+
+For SEO/keywords, the free tier of Ubersuggest or even just googling "[competitor] vs" and seeing autocomplete will show you what people compare them to.
+
+The stuff that's actually useful vs noise: their ad creative (what angles are they testing?), their pricing/promo cadence (do they discount monthly? quarterly?), and what keywords they're bidding on. Everything else is usually vanity metrics.
+
+I built a tool that does this automatically because I got tired of doing it manually for my own product — happy to run your store through it if you want to see what it finds.
+
+---
+
+**Pattern:**
+1. Give genuinely useful free/DIY methods first (3-4 concrete tips)
+2. Answer their actual question
+3. Soft offer at the end: "I built something that does this — happy to run yours through it"
+4. No product name, no URL, no hard CTA
+
+**If they reply interested:** Run Boost, give them a taste in the public reply (2-3 bullets), offer full breakdown via DM. Same conversion path as "drop your URL" threads.

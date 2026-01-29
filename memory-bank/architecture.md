@@ -11,7 +11,7 @@ Inngest (background jobs)
     ↓
 Services (business logic)
     ↓
-External: Supabase | Stripe | Claude | Tavily | Resend
+External: Supabase | Stripe | Claude | Tavily | Resend | Screenshot Service
 ```
 
 Serverless architecture with Inngest for long-running AI pipelines (up to 2 hours per step).
@@ -516,33 +516,11 @@ All external API calls are tracked to PostHog with latency, success/failure, and
 | DataForSEO | domain_rank_overview, domain_intersection | $0.02, $0.05 |
 | ScrapingDog | scrape | $0.001 |
 
-**Event schema** (`api_call`):
-```typescript
-{
-  service: 'anthropic' | 'tavily' | 'dataforseo' | 'scrapingdog',
-  endpoint: string,
-  run_id: string,
-  latency_ms: number,
-  success: boolean,
-  error?: string,
-  input_tokens?: number,   // Anthropic only
-  output_tokens?: number,  // Anthropic only
-  model?: string,          // Anthropic only
-  estimated_cost_usd: number
-}
-```
+**Event**: `api_call` with service, endpoint, run_id, latency_ms, success, estimated_cost_usd (+ Anthropic token fields).
 
-**Files**:
-- `src/lib/analytics.ts` - `trackApiCall()`, `calculateApiCost()`
-- `src/lib/ai/pipeline-agentic.ts` - Tracking in all tool execute functions
+**Files**: `src/lib/analytics.ts` (`trackApiCall()`, `calculateApiCost()`), tracking in `pipeline-agentic.ts`.
 
-**PostHog Dashboard**: "API Usage & Costs" with 6 insights:
-- API Calls by Service (line)
-- Cost by Service (pie)
-- Cost Over Time (line)
-- API Error Rate (bar)
-- P95 Latency (bar)
-- Anthropic Token Usage (line)
+**Dashboard**: "API Usage & Costs" — calls by service, cost breakdown, error rate, latency, token usage.
 
 ### Inngest
 
@@ -584,6 +562,8 @@ src/app/api/inngest/route.ts  # Serve handler
 ```
 INNGEST_EVENT_KEY      # For sending events to Inngest Cloud
 INNGEST_SIGNING_KEY    # For verifying requests from Inngest
+SCREENSHOT_SERVICE_URL # Vultr Puppeteer service (http://45.63.3.155:3333)
+SCREENSHOT_API_KEY     # Shared secret for screenshot service
 ```
 
 **Setup gotcha**: If using Vercel integration, keys may rotate. Ensure keys in Vercel env vars match Inngest dashboard. Manual sync at `https://app.inngest.com` → Apps → add `https://aboo.st/api/inngest`.
@@ -663,112 +643,6 @@ Runs on every PR to `main`:
 
 ## n8n Reddit Outreach
 
-**Status**: ✅ Active
-
-Automated Reddit monitoring workflow that finds founders asking marketing questions and generates helpful comments.
-
-### Overview
-```
-Every 30 Min (trigger)
-    ↓
-Subreddits (20 subs)
-    ↓
-Fetch Reddit (via ScrapingDog)
-    ↓
-Parse & Filter (posts < 2hrs old)
-    ↓
-Deduplicate (check Supabase)
-    ↓
-AI Score + Archetype (Claude Haiku)
-    ↓
-Generate Comment (Claude Haiku)
-    ↓
-Filter & Batch (score >= 7, save to Supabase)
-    ↓
-Send to Discord
-```
-
-### Files
-```
-n8n-reddit-v13.json                    # Workflow export
-memory-bank/reddit-comment-prompt.md   # Comment generation prompt
-memory-bank/n8n-supabase-dedup.js      # Dedup node code
-```
-
-### Database Table
-```sql
-CREATE TABLE reddit_sent_posts (
-  post_id TEXT PRIMARY KEY,
-  subreddit TEXT,
-  title TEXT,
-  sent_at TIMESTAMPTZ DEFAULT NOW()
-);
-```
-Auto-cleanup function removes posts older than 7 days.
-
-### Scoring Prompt (Claude Haiku)
-Scores posts 0-10 based on fit for Boost:
-- **9-10**: Founder with product asking for marketing help
-- **6-8**: Good fit, has product but less urgent
-- **3-5**: Weak fit, no product context
-- **0-2**: Filter out (pitching, job seeking, pricing questions, etc.)
-
-Also matches to one of 7 archetypes (pre-generated Boosts).
-
-### Comment Generation Prompt
-```
-You're writing a Reddit comment as a marketing strategist who's
-genuinely good at this and slightly allergic to bullshit.
-
-Your voice:
-- Direct. Answer the actual question.
-- Specific. Name the real problem.
-- Peer energy. Smart friend at a bar.
-- Slightly opinionated.
-
-You built Boost (aboo.st). For $29, it creates a personalized
-30 day marketing plan based on their specific product, market,
-and competitors. Not generic advice.
-
-Mention Boost if:
-- They're asking for a tool/resource directly, OR
-- Your advice leads to "here's how to do that" and Boost does it
-
-NEVER:
-- Recommend competitor tools by name
-- Make up personal founder stories
-- Say "Pro tip:" or "This."
-- Use emojis or dashes
-
-MAX 70 WORDS. Two short paragraphs.
-```
-
-### 7 Archetypes
-Pre-generated Boosts at `/in-action/[slug]`:
-| Slug | Persona |
-|------|---------|
-| `pre-revenue-saas-first-100-users` | Zero users, just built |
-| `side-project-to-business-marketing-plan` | Has MRR but stuck |
-| `ecommerce-first-sales-marketing-plan` | Shopify, no sales |
-| `consultant-freelancer-client-acquisition-plan` | Services, feast/famine |
-| `b2b-saas-customer-acquisition-plan` | B2B tools, longer sales cycles |
-| `local-business-digital-marketing-plan` | Local services, Google Maps |
-| `product-market-fit-marketing-plan` | Low engagement, pivot question |
-
-### Costs
-| Component | Cost |
-|-----------|------|
-| Scoring (per post) | ~$0.001 (Haiku) |
-| Comment (per post) | ~$0.002 (Haiku) |
-| ScrapingDog | Free tier |
-| **Per run (20 subs)** | **~$0.10-0.20** |
-
-### Discord Output
-Posts scoring 7+ sent to Discord with:
-- Post title + snippet
-- Score + reason
-- Matched archetype
-- Generated comment (ready to copy)
-- Link to archetype page
+**Status**: ✅ Active — Automated Reddit monitoring + comment generation. See `docs/n8n-reddit-workflow.md` for full details.
 
 ---

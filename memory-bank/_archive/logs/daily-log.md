@@ -222,8 +222,150 @@ Light Sunday. Automation work + showcasing the product.
 
 ---
 
+## Day 7 - Jan 27
+
+### Completed
+| Activity | Result |
+|----------|--------|
+| Facebook Pixel + Conversion API | ✅ Client-side + server-side tracking with dedup |
+| First FB ads campaign | ✅ $100 test, $10/day, conversion-optimized |
+| Pipeline prompt rewrite | ✅ Thesis-driven 30-day plans (major quality upgrade) |
+| Growth strategy research | ✅ Consulted growth-hacker + brand-guardian + web research |
+
+### Product Work
+- **Thesis-driven plans**: Rewrote the Opus pipeline prompt. Plans now have an internal strategic thesis driving week coherence. Added "The Opportunity" section bridging research to action. Removed standalone Channel Strategy (woven into Start Doing). Weeks escalate: build → test → adapt → systematize.
+- **FB tracking**: Pixel + Conversion API with event deduplication. GDPR-compliant (pixel only loads for non-GDPR countries). Purchase events fire on post-checkout redirect.
+
+### Marketing
+- **FB ads live**: $10/day targeting SMB founders/solopreneurs. Creative = real dashboard screenshot. Copy = "Stop guessing. Start growing." Conversion-optimized via Advantage+.
+- **Spam DM received**: VentureRadar pitched via fake "fellow struggler" angle. Ignored.
+
+### Key Decision
+Plans are now thesis-driven, not task lists. The thesis is internal (not shown to user) — sets up future subscription scoring. See `decisions.md` for full rationale.
+
+### Spend
+| Date | Item | Cost |
+|------|------|------|
+| Jan 27 | Facebook Ads | $100 (budget, ~$10 spent today) |
+| **Running Total** | | **$140** |
+
+---
+
 ## Next Actions
-1. Set up Google Search Console
-2. Submit pages for indexing
-3. Continue Reddit engagement (r/SaaS, r/solopreneur)
-4. Monitor SEO rankings over time
+1. Monitor FB ad performance (first 3-4 days)
+2. Switch to standard Purchase conversion once events fire
+3. Set up Google Search Console
+4. Submit pages for indexing
+5. Continue Reddit engagement (r/SaaS, r/solopreneur)
+6. **NEW**: Evaluate free tool strategy — see `projects/free-tools-seo.md`
+
+## Day 8 - Jan 28
+
+### Completed
+| Activity | Result |
+|----------|--------|
+| Reddit growth loop | ✅ Helped Herderin (tall women's fashion) + Florence tour operator |
+| Free Marketing Audit tool | ✅ Full implementation complete |
+| Content plan created | ✅ `herderin-content-plan.md` for Twitter/Reddit flywheel |
+
+### Reddit Growth Loop (New Strategy)
+- **Herderin** (r/ecommerce): Ran Boost, shared listicle outreach + Pinterest strategy. OP replied twice with gratitude, taking action next morning.
+- **Florence walking tour** (r/smallbusiness): Shared Viator listing, GBP, review engine advice. 3 upvotes + **26 saves**. Offered tool "if mods allow it."
+- **B2B SaaS founder** (r/SaaS): Helped with sales approach (community building, not Boost-related).
+
+### Key Learning
+Reddit doesn't upvote but **saves** — 26 saves means people bookmarking for themselves. Soft promotion ("if mods allow it, I can share a tool") works better than naming the tool upfront.
+
+### Free Marketing Audit Tool (Major Build)
+Built complete free tool at `/tools/marketing-audit` inspired by M1-Project's 40+ tool SEO strategy.
+
+**What it does:**
+- 3-step wizard: URL → Business description → Email
+- Tavily extracts page content
+- GPT-4.1-mini runs "The 3-Second Test" analysis
+- Returns: Silent Killer + 3-4 findings (Clarity, Customer Focus, Proof, Friction)
+- Cost: ~$0.02 per audit
+
+**Files added:**
+- `src/app/tools/marketing-audit/page.tsx` - Landing page with wizard
+- `src/app/tools/marketing-audit/[slug]/page.tsx` - Results page (SSR)
+- `src/app/tools/marketing-audit/[slug]/results-client.tsx` - Polling + display
+- `src/app/api/marketing-audit/route.ts` - Create audit endpoint
+- `src/app/api/marketing-audit/[slug]/route.ts` - Fetch audit endpoint
+- `src/lib/ai/marketing-audit.ts` - Tavily + GPT pipeline
+- `src/lib/inngest/functions.ts` - Added `generateMarketingAudit` handler
+- `src/lib/inngest/client.ts` - Added `marketing-audit/created` event type
+- `src/lib/types/database.ts` - Added `marketing_audits` table type
+
+**Anti-abuse:**
+- IP rate limit: 5 audits/24h per IP
+- Email rate limit: 1 audit per email (normalized)
+- Turnstile bot verification
+- Disposable email blocking
+- Honeypot field
+
+**Still needed:**
+- Create `marketing_audits` table in Supabase
+- Test full flow end-to-end
+
+### Profile Updated
+Bio: "Solo dev. Building Boost — competitive marketing research for small businesses (aboo.st). Also Inkdex — tattoo discovery (inkdex.io)."
+
+### UTM Tracking
+`aboo.st?utm_source=reddit&utm_medium=social&utm_campaign={subreddit}_{topic}`
+
+### Spend
+| Date | Item | Cost |
+|------|------|------|
+| Jan 28 | Nothing | $0 |
+| **Running Total** | | **$140** |
+
+---
+
+---
+
+## Day 9 - Jan 29
+
+### Completed
+| Activity | Result |
+|----------|--------|
+| Screenshot-based marketing audit | ✅ Vision upgrade — GPT now sees the actual homepage |
+| Screenshot microservice | ✅ New service in `screenshot-service/` |
+| Marketing audit prompt rewrite | ✅ All 4 lenses now reference visual inspection |
+| Reddit playbook expansion | ✅ "Drop your URL" template + organic reply templates |
+| Supabase security hardening | ✅ Fixed all WARN/ERROR advisor issues |
+| AI search optimization | ✅ llms.txt, comparison pages, FAQ structured data |
+| Homepage copy overhaul | ✅ Customer-focused language, removed biases |
+| `/admin` honeypot landing page | ✅ Catches bots scanning for admin panels |
+
+### Product Work
+- **Screenshot vision upgrade**: The free marketing audit now captures a real screenshot of the homepage and sends it to GPT-4.1-mini as a vision input alongside the scraped text. The prompt's 4 diagnostic lenses (Clarity, Customer Focus, Proof, Friction) now explicitly reference what's visible in the screenshot — layout, visual hierarchy, CTA prominence, font sizes, above-the-fold content. FAQ updated to explain "we screenshot your homepage." Max tokens bumped 1500→2000. Cost stays ~$0.02/audit.
+- **Screenshot service**: New microservice in `screenshot-service/` — takes a URL, returns a JPEG screenshot. Used by the audit pipeline via `SCREENSHOT_SERVICE_URL` + `SCREENSHOT_API_KEY` env vars. 20s timeout, graceful fallback if unavailable.
+- **Supabase security**: Fixed RLS on `examples` table, tightened `businesses` + `reddit_sent_posts` policies from `USING (true)` to `TO service_role`, wrapped `auth.uid()` in initplan pattern across 7 policies, set `search_path = ''` on vulnerable functions.
+- **AI search optimization**: Added `llms.txt`, 5 comparison pages (`/boost-vs-alternatives/*`), homepage FAQ with structured data, breadcrumbs, proper JSON-LD schemas.
+
+### Marketing
+- **Reddit playbook**: Added detailed "Drop your URL" thread template for r/SaaS with reply template, DM conversion path, blow-up/flop contingencies, and subreddit rotation strategy. Also added organic comment reply template for competitor tracking questions. Key learning from failed r/microsaas post: titles about THEM getting something outperform titles about YOU building something.
+- **Homepage copy**: Reframed hero + objections to customer-focused language. Removed marketing audit prompt biases for more honest diagnostics.
+
+### Files Changed
+- `src/lib/ai/marketing-audit.ts` — screenshot capture + vision input + prompt rewrite
+- `src/app/tools/marketing-audit/page.tsx` — FAQ update
+- `memory-bank/reddit-posts.md` — expanded playbook
+- `memory-bank/growth.md` — deleted (consolidated into daily-log)
+- `screenshot-service/` — new microservice (untracked)
+
+### Spend
+| Date | Item | Cost |
+|------|------|------|
+| Jan 29 | Nothing | $0 |
+| **Running Total** | | **$140** |
+
+---
+
+## Next Actions
+1. Deploy screenshot service + set env vars on Vercel
+2. Test marketing audit with screenshots end-to-end
+3. Post "Drop your URL" thread on r/SaaS
+4. Continue Reddit growth loop
+5. Monitor FB ad performance
