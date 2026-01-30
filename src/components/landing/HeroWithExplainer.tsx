@@ -310,7 +310,7 @@ export function HeroWithExplainer() {
               onClick={() => posthog?.capture("hero_cta_clicked", { type: "paid" })}
               className="inline-flex items-center gap-2 rounded-xl px-8 py-4 bg-cta text-white text-lg font-bold border-2 border-cta shadow-[4px_4px_0_rgba(44,62,80,0.4)] hover:shadow-[5px_5px_0_rgba(44,62,80,0.45)] hover:-translate-y-0.5 active:shadow-[2px_2px_0_rgba(44,62,80,0.4)] active:translate-y-0.5 transition-all duration-100"
             >
-              Get Your Boost — $29
+              Get Your Boost
               <ArrowRight className="w-5 h-5" />
             </Link>
 
