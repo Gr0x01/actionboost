@@ -47,8 +47,8 @@ export async function GET(
     }
   }
 
-  return NextResponse.json({
-    status: run.status || "pending",
-    stage: run.stage || null,
-  });
+  return NextResponse.json(
+    { status: run.status || "pending", stage: run.stage || null },
+    { headers: { "Cache-Control": "private, max-age=2" } }
+  );
 }

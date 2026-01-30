@@ -1,37 +1,21 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Zap } from 'lucide-react'
+import { useUserData } from '@/lib/hooks/useUserData'
 
 /**
  * CreditBadge - Shows remaining credits in header
  *
- * Fetches from /api/user/credits on mount
+ * Uses shared useUserData hook (deduped across components)
  * Links to /dashboard (user's latest plan)
  * Only shows if user has credits > 0
  */
 export function CreditBadge() {
-  const [credits, setCredits] = useState<number | null>(null)
-
-  useEffect(() => {
-    async function fetchCredits() {
-      try {
-        const res = await fetch('/api/user/credits')
-        if (!res.ok) return
-
-        const data = await res.json()
-        setCredits(data.credits ?? 0)
-      } catch {
-        // Silently fail - badge just won't show
-      }
-    }
-
-    fetchCredits()
-  }, [])
+  const { credits, isLoading } = useUserData()
 
   // Don't show if no credits or still loading
-  if (credits === null || credits === 0) return null
+  if (isLoading || credits === 0) return null
 
   return (
     <Link

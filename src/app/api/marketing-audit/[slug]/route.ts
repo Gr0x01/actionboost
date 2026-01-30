@@ -26,5 +26,9 @@ export async function GET(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  return NextResponse.json({ audit });
+  const headers: HeadersInit = audit.status === "complete"
+    ? { "Cache-Control": "public, max-age=86400, immutable" }
+    : { "Cache-Control": "no-cache, must-revalidate" };
+
+  return NextResponse.json({ audit }, { headers });
 }

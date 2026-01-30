@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
-import { createServiceClient } from "@/lib/supabase/server"
+import { createClient, createServiceClient } from "@/lib/supabase/server"
+import { getRemainingCredits } from "@/lib/credits"
 
 export async function GET() {
   try {
@@ -13,10 +13,9 @@ export async function GET() {
 
     const serviceClient = createServiceClient()
 
-    // Get public user with credits_used
     const { data: publicUser } = await serviceClient
       .from("users")
-      .select("id, credits_used")
+      .select("id")
       .eq("auth_id", user.id)
       .single()
 
@@ -24,21 +23,12 @@ export async function GET() {
       return NextResponse.json({ credits: 0, loggedIn: true })
     }
 
-    // Get total credits from run_credits
-    const { data: creditRecords } = await serviceClient
-      .from("run_credits")
-      .select("credits")
-      .eq("user_id", publicUser.id)
+    const remainingCredits = await getRemainingCredits(publicUser.id)
 
-    const totalCredits = creditRecords?.reduce((sum, c) => sum + c.credits, 0) ?? 0
-    const usedCredits = publicUser.credits_used ?? 0
-    const remainingCredits = Math.max(0, totalCredits - usedCredits)
-
-    return NextResponse.json({
-      credits: remainingCredits,
-      loggedIn: true,
-      email: user.email,
-    })
+    return NextResponse.json(
+      { credits: remainingCredits, loggedIn: true, email: user.email },
+      { headers: { "Cache-Control": "private, max-age=0, stale-while-revalidate=30" } }
+    )
   } catch (error) {
     console.error("Error fetching credits:", error)
     return NextResponse.json({ credits: 0, loggedIn: false })

@@ -7,6 +7,7 @@ import { createBrowserClient } from '@supabase/ssr'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Zap } from 'lucide-react'
 import type { User as AuthUser } from '@supabase/supabase-js'
+import { useUserData } from '@/lib/hooks/useUserData'
 
 interface UserMenuProps {
   user: AuthUser
@@ -31,25 +32,10 @@ export function UserMenu({ user }: UserMenuProps) {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [isSigningOut, setIsSigningOut] = useState(false)
-  const [credits, setCredits] = useState<number | null>(null)
+  const { credits } = useUserData()
   const menuRef = useRef<HTMLDivElement>(null)
 
   const initials = getInitials(user.email || 'U')
-
-  // Fetch credits for mobile display
-  useEffect(() => {
-    async function fetchCredits() {
-      try {
-        const res = await fetch('/api/user/credits')
-        if (!res.ok) return
-        const data = await res.json()
-        setCredits(data.credits ?? 0)
-      } catch {
-        // Silently fail
-      }
-    }
-    fetchCredits()
-  }, [])
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -137,7 +123,7 @@ export function UserMenu({ user }: UserMenuProps) {
               {user.email}
             </p>
             {/* Credits - visible only on mobile */}
-            {credits !== null && credits > 0 && (
+            {credits > 0 && (
               <div className="sm:hidden flex items-center gap-1.5 mt-1.5 text-xs font-medium text-foreground/60">
                 <Zap className="w-3 h-3" />
                 {credits} credit{credits === 1 ? '' : 's'}

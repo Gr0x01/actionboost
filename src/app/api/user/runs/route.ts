@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { getAuthUser } from "@/lib/auth/session"
 import { createServiceClient } from "@/lib/supabase/server"
+import { getRemainingCredits } from "@/lib/credits"
 
 export async function GET() {
   const authUser = await getAuthUser()
@@ -23,25 +24,15 @@ export async function GET() {
     return NextResponse.json({ runs: [], credits: 0 })
   }
 
-  // Get user's runs (include parent_run_id for chain grouping, source to identify refinements)
+  // Get user's runs (include parent_run_id for chain grouping)
   // Use ->> to extract just businessName from JSON, not the whole blob
-  // Alias syntax: newName:json_column->>field
   const { data: runs } = await supabase
     .from("runs")
     .select("id, status, input, businessName:structured_output->>businessName, created_at, completed_at, share_slug, source, parent_run_id")
     .eq("user_id", publicUser.id)
     .order("created_at", { ascending: false })
 
-  // Get credit balance
-  const { data: credits } = await supabase
-    .from("run_credits")
-    .select("credits")
-    .eq("user_id", publicUser.id)
-
-  const totalCredits = credits?.reduce((sum, c) => sum + c.credits, 0) ?? 0
-  // Only count runs that explicitly used credits (not stripe payments, promos, or refinements)
-  const usedCredits = runs?.filter(r => r.source === "credits").length ?? 0
-  const remainingCredits = Math.max(0, totalCredits - usedCredits)
+  const remainingCredits = await getRemainingCredits(publicUser.id)
 
   return NextResponse.json({
     runs: runs ?? [],

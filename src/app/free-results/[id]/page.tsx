@@ -135,17 +135,27 @@ function FreeResultsPageContent() {
     fetchFreeAudit();
   }, [freeAuditId, token, posthog]);
 
-  // Poll for status if pending/processing
+  // Poll for status if pending/processing (skips first iteration since initial fetch already ran)
   useEffect(() => {
     if (!freeAuditId || !token) return;
     if (statusRef.current === "complete" || statusRef.current === "failed") return;
 
     let pollCount = 0;
     let stopped = false;
+    let isFirstPoll = true;
 
     const poll = async () => {
       if (stopped) return;
       pollCount++;
+
+      // Skip first poll — the initial fetch (above) already loaded the data
+      if (isFirstPoll) {
+        isFirstPoll = false;
+        if (!stopped && pollCount < 100) {
+          setTimeout(poll, 2000);
+        }
+        return;
+      }
 
       try {
         const res = await fetch(`/api/free-audit/${freeAuditId}?token=${encodeURIComponent(token)}`);

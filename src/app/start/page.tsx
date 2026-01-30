@@ -33,6 +33,7 @@ import { useFormWizard, Question } from "@/lib/hooks/useFormWizard";
 import { usePromoCode } from "@/lib/hooks/usePromoCode";
 import { useFormPrefill, PrefillResult } from "@/lib/hooks/useFormPrefill";
 import { useFormAnalytics } from "@/lib/hooks/useFormAnalytics";
+import { useUserData } from "@/lib/hooks/useUserData";
 
 const STORAGE_KEY = "actionboost-form-v4"; // v4: added alternatives, removed attachments
 
@@ -121,9 +122,8 @@ function StartPageContent() {
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState("");
 
-  // User credits state
-  const [userCredits, setUserCredits] = useState(0);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // User credits (shared hook — deduped with CreditBadge/UserMenu)
+  const { credits: userCredits, loggedIn: isLoggedIn, email: userEmail } = useUserData();
 
   // Track where checkout was entered from for back navigation
   const [checkoutSource, setCheckoutSource] = useState<"questions" | "context_update">("questions");
@@ -185,23 +185,12 @@ function StartPageContent() {
     }
   }, [isLoadingContext, isLoadingBusinesses, hasContext, hasBusinesses, viewState]);
 
-  // Fetch user credits on mount
+  // Sync email from shared user data
   useEffect(() => {
-    async function fetchCredits() {
-      try {
-        const res = await fetch("/api/user/credits");
-        const data = await res.json();
-        setUserCredits(data.credits || 0);
-        setIsLoggedIn(data.loggedIn || false);
-        if (data.email) {
-          setEmail(data.email);
-        }
-      } catch {
-        // Silently fail - user just won't see credits
-      }
+    if (userEmail) {
+      setEmail(userEmail);
     }
-    fetchCredits();
-  }, []);
+  }, [userEmail]);
 
   // Load from localStorage and track form start on mount
   useEffect(() => {

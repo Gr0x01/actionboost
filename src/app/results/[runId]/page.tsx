@@ -44,7 +44,6 @@ function ResultsPageContent() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [stage, setStage] = useState<string | null>(null);
-  const [userEmail, setUserEmail] = useState<string | null>(null);
   // Track if user is accessing via share link (not the owner)
   const isShareAccess = !!shareSlug;
 
@@ -70,24 +69,6 @@ function ResultsPageContent() {
     if (shareSlug) url.searchParams.set("share", shareSlug);
     return url.toString();
   }, [shareSlug]);
-
-  // Fetch user email for feature flags (calendar tab)
-  useEffect(() => {
-    if (isShareAccess) return; // Don't fetch for share access
-    async function fetchUserEmail() {
-      try {
-        const res = await fetch("/api/user/runs");
-        if (res.ok) {
-          // The runs API response includes email in a consistent place
-          // For now, just rely on isInternalUser's localhost check for development
-          // In production, this will rely on explicit email match
-        }
-      } catch {
-        // Silently fail - feature flag will default to false
-      }
-    }
-    fetchUserEmail();
-  }, [isShareAccess]);
 
   useEffect(() => {
     if (!runId) return;
@@ -321,7 +302,7 @@ function ResultsPageContent() {
       productName={productName}
       isNewCheckout={isNewCheckout}
       isShareAccess={isShareAccess}
-      userEmail={userEmail}
+      userEmail={null}
     />
   );
 }
