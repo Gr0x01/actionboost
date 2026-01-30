@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { usePostHog } from "posthog-js/react";
 import { ArrowRight, Check } from "lucide-react";
 import { config } from "@/lib/config";
 import { AudienceProfileDisplay } from "@/components/target-audience/AudienceProfileDisplay";
@@ -26,7 +27,9 @@ interface Props {
 }
 
 export function TargetAudienceResults({ initialResult }: Props) {
+  const posthog = usePostHog();
   const [result, setResult] = useState(initialResult);
+  const hasTrackedView = useRef(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [completedStages, setCompletedStages] = useState<Array<{ text: string; timestamp: number }>>([]);
   const [displayedText, setDisplayedText] = useState("");
@@ -78,6 +81,14 @@ export function TargetAudienceResults({ initialResult }: Props) {
     poll();
     return () => { stopped = true; };
   }, [result.slug, result.status, result.businessName]);
+
+  // Track results viewed
+  useEffect(() => {
+    if (result.status === "complete" && !hasTrackedView.current) {
+      posthog?.capture("target_audience_viewed", { slug: result.slug });
+      hasTrackedView.current = true;
+    }
+  }, [result.status, result.slug, posthog]);
 
   // Elapsed timer
   useEffect(() => {
@@ -301,6 +312,7 @@ export function TargetAudienceResults({ initialResult }: Props) {
             </p>
             <a
               href="/start"
+              onClick={() => posthog?.capture("target_audience_cta_clicked", { slug: result.slug })}
               className="w-full inline-flex items-center justify-center gap-2 bg-cta text-white font-semibold px-6 py-4 rounded-md text-base border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 active:translate-y-0.5 transition-all"
             >
               Get my Boost

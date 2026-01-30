@@ -2,6 +2,7 @@
 
 import { useState, useCallback, Suspense, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { usePostHog } from "posthog-js/react";
 import { motion } from "framer-motion";
 import { ArrowRight, ChevronLeft, Globe, Loader2 } from "lucide-react";
 import { Header, Footer } from "@/components/layout";
@@ -296,6 +297,8 @@ function WizardDescriptionStep({
 
 function MarketingAuditContent() {
   const router = useRouter();
+  const posthog = usePostHog();
+  const hasTrackedStart = useRef(false);
 
   const [step, setStep] = useState(0);
   const [url, setUrl] = useState("");
@@ -305,10 +308,28 @@ function MarketingAuditContent() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Track page view
+  useEffect(() => {
+    if (!hasTrackedStart.current) {
+      posthog?.capture("marketing_audit_started");
+      hasTrackedStart.current = true;
+    }
+  }, [posthog]);
+
+  const handleStepChange = useCallback((newStep: number, stepName: string) => {
+    posthog?.capture("marketing_audit_step", { step: newStep, step_name: stepName });
+    setStep(newStep);
+  }, [posthog]);
+
   const handleSubmit = useCallback(async () => {
     if (submitting) return;
     setSubmitting(true);
     setError(null);
+
+    posthog?.capture("marketing_audit_submitted", {
+      email_domain: email.split("@")[1],
+      has_description: businessDescription.trim().length > 0,
+    });
 
     try {
       const res = await fetch("/api/marketing-audit", {
@@ -326,16 +347,20 @@ function MarketingAuditContent() {
 
       if (!res.ok) {
         if (res.status === 409 && data.existingSlug) {
+          posthog?.capture("marketing_audit_duplicate");
           router.push(`/tools/marketing-audit/${data.existingSlug}`);
           return;
         }
+        posthog?.capture("marketing_audit_error", { error: data.error });
         setError(data.error || "Something went wrong.");
         setSubmitting(false);
         return;
       }
 
+      posthog?.capture("marketing_audit_success", { slug: data.slug });
       router.push(`/tools/marketing-audit/${data.slug}`);
     } catch {
+      posthog?.capture("marketing_audit_error", { error: "network_error" });
       setError("Network error. Please try again.");
       setSubmitting(false);
     }
@@ -353,12 +378,12 @@ function MarketingAuditContent() {
           <ToolFormCard id="audit-form" step={step} totalSteps={3} error={error}>
             {step === 0 && (
               <motion.div key="url" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
-                <WizardUrlStep value={url} onChange={setUrl} onSubmit={() => setStep(1)} />
+                <WizardUrlStep value={url} onChange={setUrl} onSubmit={() => handleStepChange(1, "description")} />
               </motion.div>
             )}
             {step === 1 && (
               <motion.div key="description" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
-                <WizardDescriptionStep value={businessDescription} onChange={setBusinessDescription} onSubmit={() => setStep(2)} onBack={() => setStep(0)} />
+                <WizardDescriptionStep value={businessDescription} onChange={setBusinessDescription} onSubmit={() => handleStepChange(2, "email")} onBack={() => setStep(0)} />
               </motion.div>
             )}
             {step === 2 && (

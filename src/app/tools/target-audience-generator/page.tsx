@@ -2,6 +2,7 @@
 
 import { useState, useCallback, Suspense, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { usePostHog } from "posthog-js/react";
 import { motion } from "framer-motion";
 import { ArrowRight, ChevronLeft, Loader2 } from "lucide-react";
 import { Header, Footer } from "@/components/layout";
@@ -284,6 +285,8 @@ function WizardCustomerStep({
 
 function TargetAudienceContent() {
   const router = useRouter();
+  const posthog = usePostHog();
+  const hasTrackedStart = useRef(false);
 
   const [step, setStep] = useState(0);
   const [businessName, setBusinessName] = useState("");
@@ -294,10 +297,26 @@ function TargetAudienceContent() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!hasTrackedStart.current) {
+      posthog?.capture("target_audience_started");
+      hasTrackedStart.current = true;
+    }
+  }, [posthog]);
+
+  const handleStepChange = useCallback((newStep: number, stepName: string) => {
+    posthog?.capture("target_audience_step", { step: newStep, step_name: stepName });
+    setStep(newStep);
+  }, [posthog]);
+
   const handleSubmit = useCallback(async () => {
     if (submitting) return;
     setSubmitting(true);
     setError(null);
+
+    posthog?.capture("target_audience_submitted", {
+      email_domain: email.split("@")[1],
+    });
 
     try {
       const res = await fetch("/api/target-audience", {
@@ -316,20 +335,24 @@ function TargetAudienceContent() {
 
       if (!res.ok) {
         if (res.status === 409 && data.existingSlug) {
+          posthog?.capture("target_audience_duplicate");
           router.push(`/tools/target-audience-generator/${data.existingSlug}`);
           return;
         }
+        posthog?.capture("target_audience_error", { error: data.error });
         setError(data.error || "Something went wrong.");
         setSubmitting(false);
         return;
       }
 
+      posthog?.capture("target_audience_success", { slug: data.slug });
       router.push(`/tools/target-audience-generator/${data.slug}`);
     } catch {
+      posthog?.capture("target_audience_error", { error: "network_error" });
       setError("Network error. Please try again.");
       setSubmitting(false);
     }
-  }, [submitting, businessName, whatTheySell, targetCustomer, email, turnstileToken, router]);
+  }, [submitting, businessName, whatTheySell, targetCustomer, email, turnstileToken, router, posthog]);
 
   return (
     <div className="min-h-screen flex flex-col bg-mesh">
@@ -355,7 +378,7 @@ function TargetAudienceContent() {
                   onBusinessNameChange={setBusinessName}
                   whatTheySell={whatTheySell}
                   onWhatTheySellChange={setWhatTheySell}
-                  onSubmit={() => setStep(1)}
+                  onSubmit={() => handleStepChange(1, "customer")}
                 />
               </motion.div>
             )}
@@ -364,7 +387,7 @@ function TargetAudienceContent() {
                 <WizardCustomerStep
                   value={targetCustomer}
                   onChange={setTargetCustomer}
-                  onSubmit={() => setStep(2)}
+                  onSubmit={() => handleStepChange(2, "email")}
                   onBack={() => setStep(0)}
                 />
               </motion.div>

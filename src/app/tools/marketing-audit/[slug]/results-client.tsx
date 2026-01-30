@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { usePostHog } from "posthog-js/react";
 import { ArrowRight, Check } from "lucide-react";
 import { config } from "@/lib/config";
 import type { AuditStatus, MarketingAuditOutput } from "./page";
@@ -33,7 +34,9 @@ interface Props {
 }
 
 export function MarketingAuditResults({ initialAudit }: Props) {
+  const posthog = usePostHog();
   const [audit, setAudit] = useState(initialAudit);
+  const hasTrackedView = useRef(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [completedStages, setCompletedStages] = useState<Array<{ text: string; timestamp: number }>>([]);
   const [displayedText, setDisplayedText] = useState("");
@@ -85,6 +88,14 @@ export function MarketingAuditResults({ initialAudit }: Props) {
     poll();
     return () => { stopped = true; };
   }, [audit.slug, audit.status]);
+
+  // Track results viewed
+  useEffect(() => {
+    if (audit.status === "complete" && !hasTrackedView.current) {
+      posthog?.capture("marketing_audit_viewed", { slug: audit.slug });
+      hasTrackedView.current = true;
+    }
+  }, [audit.status, audit.slug, posthog]);
 
   // Elapsed timer for terminal stages
   useEffect(() => {
@@ -389,6 +400,7 @@ export function MarketingAuditResults({ initialAudit }: Props) {
             </p>
             <a
               href="/start"
+              onClick={() => posthog?.capture("marketing_audit_cta_clicked", { slug: audit.slug })}
               className="w-full inline-flex items-center justify-center gap-2 bg-cta text-white font-semibold px-6 py-4 rounded-md text-base border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 active:translate-y-0.5 transition-all"
             >
               Get my Boost
