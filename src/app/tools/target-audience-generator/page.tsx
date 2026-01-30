@@ -463,11 +463,7 @@ function TargetAudienceContent() {
 
         <ToolCrossLinks
           tools={[
-            {
-              label: "Free Marketing Audit",
-              description: "See what's costing you customers — get a 3-second test of your website's clarity, proof, and friction.",
-              href: "/tools/marketing-audit",
-            },
+            { label: "Free Marketing Audit", href: "/tools/marketing-audit" },
           ]}
         />
 

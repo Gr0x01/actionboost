@@ -454,11 +454,7 @@ function MarketingAuditContent() {
 
         <ToolCrossLinks
           tools={[
-            {
-              label: "Target Audience Generator",
-              description: "Find out exactly who your ideal customer is — demographics, pain points, and where to reach them.",
-              href: "/tools/target-audience-generator",
-            },
+            { label: "Target Audience Generator", href: "/tools/target-audience-generator" },
           ]}
         />
 
