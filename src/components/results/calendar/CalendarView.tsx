@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { parseISO, addDays } from 'date-fns'
+import { parseISO } from 'date-fns'
 import { DndContext, DragOverlay } from '@dnd-kit/core'
 import type { StructuredOutput } from '@/lib/ai/formatter-types'
 import type { CalendarTask as CalendarTaskType } from '@/lib/types/taskSchedule'
@@ -25,6 +25,7 @@ interface CalendarViewProps {
  * CalendarView - Main container for calendar task view
  * Responsive: Desktop shows month grid, mobile shows week list
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function CalendarView({ runId, structuredOutput, planStartDate }: CalendarViewProps) {
   const isMobile = useMediaQuery('(max-width: 768px)')
   const [selectedTask, setSelectedTask] = useState<CalendarTaskType | null>(null)

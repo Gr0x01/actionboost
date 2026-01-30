@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { Upload, X, FileText, Image, Loader2, ArrowRight, ChevronLeft } from "lucide-react";
+import { Upload, X, FileText, Image as ImageIcon, Loader2, ArrowRight, ChevronLeft } from "lucide-react";
 import type { FileAttachment } from "@/lib/types/form";
 
 interface UploadInputProps {
@@ -127,7 +127,7 @@ export function UploadInput({ value, onChange, onSubmit, onSkip, onBack }: Uploa
   };
 
   const getFileIcon = (type: string) => {
-    if (type.startsWith("image/")) return <Image className="w-4 h-4" />;
+    if (type.startsWith("image/")) return <ImageIcon className="w-4 h-4" />;
     return <FileText className="w-4 h-4" />;
   };
 

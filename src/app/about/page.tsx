@@ -178,6 +178,7 @@ export default function AboutPage() {
               style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)" }}
             >
               <div className="flex flex-col sm:flex-row gap-6">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/rbaten.png"
                   alt="Rashaad"

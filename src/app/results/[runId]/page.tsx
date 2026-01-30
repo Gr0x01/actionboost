@@ -133,7 +133,7 @@ function ResultsPageContent() {
     };
 
     fetchRun();
-  }, [runId, getApiUrl, router, posthog]);
+  }, [runId, getApiUrl, router, posthog, shareSlug]);
 
   // Poll for status if pending/processing (max 100 polls = ~5 minutes)
   useEffect(() => {
@@ -206,7 +206,7 @@ function ResultsPageContent() {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [runId, run, getApiUrl]);
+  }, [runId, run, getApiUrl, posthog, shareSlug]);
 
   // Loading state
   if (loading) {

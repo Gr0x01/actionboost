@@ -1,5 +1,3 @@
-import type { Attachment } from '@/lib/types/database'
-
 /**
  * AARRR-based focus areas - each triggers a different analytical lens
  * This drives natural multi-run behavior (do Acquisition, then Retention, etc.)

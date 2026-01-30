@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import { createServiceClient } from "@/lib/supabase/server";
 import { Header, Footer } from "@/components/layout";
 import { TargetAudienceResults } from "./results-client";
@@ -59,12 +60,12 @@ export default async function TargetAudienceResultsPage({ params }: Props) {
             <p className="text-foreground/60 text-sm mb-6">
               This link may be invalid or expired.
             </p>
-            <a
+            <Link
               href="/tools/target-audience-generator"
               className="inline-flex items-center gap-2 bg-cta text-white font-semibold px-6 py-3 rounded-md border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 active:translate-y-0.5 transition-all"
             >
               Generate a new profile
-            </a>
+            </Link>
           </div>
         </main>
         <Footer />

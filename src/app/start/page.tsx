@@ -518,9 +518,11 @@ function StartPageContent() {
                 {/* Prefill context banner */}
                 {prefillMetadata && form.websiteUrl && (
                   <div className="flex items-center justify-center gap-3 mb-6 mx-auto max-w-md p-3 border-2 border-foreground/20 bg-background">
+                    {/* eslint-disable @next/next/no-img-element */}
                     {prefillMetadata.favicon && (
                       <img src={prefillMetadata.favicon} alt="" className="w-5 h-5 shrink-0" />
                     )}
+                    {/* eslint-enable @next/next/no-img-element */}
                     <div className="min-w-0">
                       <p className="text-sm font-bold text-foreground truncate">
                         {prefillMetadata.siteName || new URL(form.websiteUrl).hostname}

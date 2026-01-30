@@ -115,6 +115,7 @@ export function getTotalCharCount(form: FormInput): number {
  * @param form - The form data to validate
  * @param isReturningUser - If true, relaxes validation for fields the user has already provided in previous runs
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function validateForm(form: FormInput, isReturningUser = false): Record<string, string> {
   const errors: Record<string, string> = {};
 

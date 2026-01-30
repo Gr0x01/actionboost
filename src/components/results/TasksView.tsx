@@ -58,8 +58,8 @@ export function TasksView({ runId, structuredOutput }: TasksViewProps) {
   }, [activeWeek, activeWeekKey])
 
   // Use new detailed weeks array if available, fallback to legacy structure
-  const hasDetailedWeeks = structuredOutput.weeks && structuredOutput.weeks.length > 0
-  const detailedWeeks = structuredOutput.weeks || []
+  const detailedWeeks = useMemo(() => structuredOutput.weeks || [], [structuredOutput.weeks])
+  const hasDetailedWeeks = detailedWeeks.length > 0
 
   // Legacy fallback data
   const week1Days = structuredOutput.thisWeek.days

@@ -13,7 +13,7 @@ config({ path: '.env.local' })
 
 import * as fs from 'fs'
 import * as path from 'path'
-import { generateStrategyAgentic, type ResearchData } from '../src/lib/ai/pipeline-agentic'
+import { generateStrategyAgentic } from '../src/lib/ai/pipeline-agentic'
 import { extractStructuredOutput } from '../src/lib/ai/formatter'
 import type { RunInput, ResearchContext } from '../src/lib/ai/types'
 

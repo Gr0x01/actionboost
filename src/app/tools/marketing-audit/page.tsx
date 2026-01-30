@@ -199,11 +199,13 @@ function WizardUrlStep({
         What&apos;s your website?
       </label>
       <div className="flex items-center gap-3 rounded-lg border-2 border-foreground/20 bg-background px-4 py-4 focus-within:border-foreground focus-within:ring-2 focus-within:ring-cta/20 transition-all">
+        {/* eslint-disable @next/next/no-img-element */}
         {favicon ? (
           <img src={favicon} alt="" className="w-6 h-6" />
         ) : (
           <Globe className="w-6 h-6 text-foreground/30" />
         )}
+        {/* eslint-enable @next/next/no-img-element */}
         <input
           ref={inputRef}
           type="url"

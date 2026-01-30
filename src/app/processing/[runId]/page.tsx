@@ -23,7 +23,8 @@ export default function ProcessingPage() {
 
   // If paramId is a Stripe session, we need to resolve it to actual runId
   const isStripeSession = paramId?.startsWith("cs_");
-  const [resolvedRunId, setResolvedRunId] = useState<string | null>(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+const [resolvedRunId, setResolvedRunId] = useState<string | null>(
     isStripeSession ? null : paramId
   );
   const runId = resolvedRunId;

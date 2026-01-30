@@ -300,7 +300,7 @@ export function HeroWithExplainer() {
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl lg:text-2xl text-foreground/70 max-w-2xl mx-auto font-medium">
-            We research your specific market. Real competitors, real data. Then we build the 30-day plan you'd pay a consultant $2,000 for. Yours for&nbsp;$29.
+            We research your specific market. Real competitors, real data. Then we build the 30-day plan you&apos;d pay a consultant $2,000 for. Yours for&nbsp;$29.
           </p>
 
           {/* Primary CTA */}

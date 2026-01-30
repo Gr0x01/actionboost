@@ -57,9 +57,6 @@ export function PlanSwitcher({ currentPlan, otherPlans = [] }: PlanSwitcherProps
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const hasMultiplePlans = otherPlans.length > 0
-  const allPlans = [currentPlan, ...otherPlans]
-
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {

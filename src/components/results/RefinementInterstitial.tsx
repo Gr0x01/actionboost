@@ -159,7 +159,7 @@ export function RefinementInterstitial({
       {/* Form content */}
       <div className="p-5">
         <p className="text-sm text-foreground/60 mb-4" id="refinement-description">
-          Add details only you know — your secret sauce, local quirks, what has worked before — and we'll sharpen your Boost.
+          Add details only you know — your secret sauce, local quirks, what has worked before — and we&apos;ll sharpen your Boost.
         </p>
 
         <label htmlFor="refinement-context" className="sr-only">

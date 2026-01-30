@@ -72,7 +72,7 @@ export function useDragDrop({ onTaskMove }: UseDragDropOptions): UseDragDropRetu
   }, [])
 
   const handleDragEnd = useCallback(async (event: DragEndEvent) => {
-    const { active, over } = event
+    const { over } = event
 
     if (over && activeTask) {
       const newDay = typeof over.id === 'number' ? over.id : parseInt(String(over.id), 10)

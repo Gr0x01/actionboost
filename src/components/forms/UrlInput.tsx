@@ -40,11 +40,13 @@ export function UrlInput({ value, onChange, onSubmit, onSkip, onBack }: UrlInput
   return (
     <div className="relative">
       <div className="flex items-center gap-3 rounded-xl border-2 border-foreground/30 bg-background px-4 py-4 focus-within:border-foreground transition-colors">
+        {/* eslint-disable @next/next/no-img-element */}
         {favicon ? (
           <img src={favicon} alt="" className="w-5 h-5" />
         ) : (
           <Globe className="w-5 h-5 text-foreground/40" />
         )}
+        {/* eslint-enable @next/next/no-img-element */}
         <input
           ref={inputRef}
           type="url"

@@ -24,6 +24,7 @@ export function MobileTaskSheet({
 }: MobileTaskSheetProps) {
   const [notes, setNotes] = useState(task?.notes || '')
   const [isSaving, setIsSaving] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedDay, setSelectedDay] = useState(task?.scheduledDay || 1)
   const [showDayPicker, setShowDayPicker] = useState(false)
 

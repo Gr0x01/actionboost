@@ -1,7 +1,7 @@
 'use client'
 
 import { useDroppable } from '@dnd-kit/core'
-import { format, isSameDay, isToday, isBefore, startOfDay } from 'date-fns'
+import { format, isToday, isBefore, startOfDay } from 'date-fns'
 import type { CalendarTask as CalendarTaskType } from '@/lib/types/taskSchedule'
 import { CalendarTask } from './CalendarTask'
 

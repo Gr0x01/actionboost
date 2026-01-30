@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
 import { config } from "@/lib/config";
 import type { AuditStatus, MarketingAuditOutput } from "./page";
@@ -225,12 +226,12 @@ export function MarketingAuditResults({ initialAudit }: Props) {
           <p className="text-foreground/60 text-sm mb-6">
             This usually happens when a site is unreachable or blocks automated tools. Want to try a different URL?
           </p>
-          <a
+          <Link
             href="/tools/marketing-audit"
             className="inline-flex items-center gap-2 bg-cta text-white font-semibold px-6 py-3 rounded-md border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 active:translate-y-0.5 transition-all"
           >
             Try a different URL
-          </a>
+          </Link>
         </div>
       </div>
     );

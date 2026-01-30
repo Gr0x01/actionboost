@@ -59,6 +59,7 @@ function TweetCard({ tweet }: { tweet: StuckTweet }) {
       {/* Header row: Avatar + Name + Handle + Time */}
       <div className="flex items-start gap-3 flex-1 min-h-0">
         {/* Avatar */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={avatarUrl}
           alt=""

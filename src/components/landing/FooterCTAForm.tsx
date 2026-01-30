@@ -93,6 +93,7 @@ export function FooterCTAForm() {
           style={{ boxShadow: "4px 4px 0 rgba(255, 255, 255, 0.12)" }}
         >
           <div className="flex items-center gap-3 flex-1 px-4 py-3">
+            {/* eslint-disable @next/next/no-img-element */}
             {favicon ? (
               <img
                 src={favicon}
@@ -102,6 +103,7 @@ export function FooterCTAForm() {
             ) : (
               <Globe className="w-5 h-5 text-background/40 shrink-0" />
             )}
+            {/* eslint-enable @next/next/no-img-element */}
             <input
               type="url"
               value={url}

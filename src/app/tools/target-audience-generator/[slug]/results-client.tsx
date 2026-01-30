@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
 import { config } from "@/lib/config";
 import { AudienceProfileDisplay } from "@/components/target-audience/AudienceProfileDisplay";
@@ -216,12 +217,12 @@ export function TargetAudienceResults({ initialResult }: Props) {
           <p className="text-foreground/60 text-sm mb-6">
             Something went wrong on our end. Want to try again?
           </p>
-          <a
+          <Link
             href="/tools/target-audience-generator"
             className="inline-flex items-center gap-2 bg-cta text-white font-semibold px-6 py-3 rounded-md border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 active:translate-y-0.5 transition-all"
           >
             Try again
-          </a>
+          </Link>
         </div>
       </div>
     );

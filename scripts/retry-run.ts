@@ -1,8 +1,6 @@
 // Usage: npx tsx scripts/retry-run.ts <runId>
 import { config } from "dotenv";
 config({ path: ".env.local" });
-import { createClient } from "@supabase/supabase-js";
-
 const runId = process.argv[2];
 if (!runId) {
   console.error("Usage: npx tsx scripts/retry-run.ts <runId>");

@@ -102,6 +102,7 @@ export async function GET(
   }
 
   // Return run without user_id (internal field), include root's refinement count
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { user_id: _, ...runData } = run;
   return NextResponse.json({
     run: {

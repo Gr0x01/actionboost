@@ -42,11 +42,7 @@ export function useUserData() {
   const [isLoading, setIsLoading] = useState(!cachedData);
 
   useEffect(() => {
-    if (cachedData) {
-      setData(cachedData);
-      setIsLoading(false);
-      return;
-    }
+    if (cachedData) return;
 
     fetchUserData().then((result) => {
       setData(result);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { Upload, X, File, Image, Loader2 } from "lucide-react";
+import { Upload, X, File, Image as ImageIcon, Loader2 } from "lucide-react";
 import { FileAttachment } from "@/lib/types/form";
 
 // Re-export for convenience
@@ -112,6 +112,7 @@ export function FileUpload({
 
       setIsUploading(false);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [files, maxFiles, onFilesChange]
   );
 
@@ -146,7 +147,7 @@ export function FileUpload({
 
   const getFileIcon = (type: string) => {
     if (type.startsWith("image/")) {
-      return <Image className="h-5 w-5 text-primary" />;
+      return <ImageIcon aria-hidden className="h-5 w-5 text-primary" />;
     }
     return <File className="h-5 w-5 text-cta" />;
   };
@@ -222,8 +223,9 @@ export function FileUpload({
               key={file.id}
               className="flex items-center gap-3 p-3 rounded-lg bg-surface/50 border border-border/60"
             >
+              {/* eslint-disable @next/next/no-img-element */}
               {file.type.startsWith("image/") ? (
-                <img
+              <img
                   src={file.url}
                   alt={file.name}
                   className="h-10 w-10 rounded-md object-cover"

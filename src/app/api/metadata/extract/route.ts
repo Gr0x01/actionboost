@@ -160,7 +160,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<MetadataR
 
       const decoder = new TextDecoder();
       html = chunks.map((chunk) => decoder.decode(chunk, { stream: true })).join("");
-    } catch (fetchError) {
+    } catch {
       clearTimeout(timeoutId);
       // Return partial success with just favicon from Google
       const domain = parsedUrl.hostname;

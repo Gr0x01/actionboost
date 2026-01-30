@@ -1,9 +1,8 @@
 import { createServiceClient } from '@/lib/supabase/server'
-import { runResearch, runTavilyOnlyResearch } from './research'
-import { generateStrategy, generatePositioningPreview } from './generate'
-import { generateStrategyAgentic, generateAgenticRefinement, type ResearchData } from './pipeline-agentic'
+import { runTavilyOnlyResearch } from './research'
+import { generatePositioningPreview } from './generate'
+import { generateStrategyAgentic, generateAgenticRefinement } from './pipeline-agentic'
 import { extractStructuredOutput } from './formatter'
-import { tavily } from '@tavily/core'
 import { accumulateBusinessContext, accumulateUserContext } from '@/lib/context/accumulate'
 import { getOrCreateDefaultBusiness } from '@/lib/business'
 import { searchUserContext } from './embeddings'
@@ -16,7 +15,7 @@ import {
 import { trackServerEvent, identifyUser } from '@/lib/analytics'
 import type { RunInput, PipelineResult, ResearchContext, UserHistoryContext } from './types'
 import type { UserContext } from '@/lib/types/context'
-import { MAX_CONTEXT_LENGTH, type PipelineStage, type RunSource } from '@/lib/types/database'
+import { MAX_CONTEXT_LENGTH, type RunSource } from '@/lib/types/database'
 import { addDays, format } from 'date-fns'
 
 // Validate critical env vars at module load
@@ -79,17 +78,6 @@ async function updateUserPlanCounts(userId: string, latestSource: RunSource): Pr
     last_plan_source: latestSource,
     last_plan_at: new Date().toISOString(),
   })
-}
-
-/**
- * Update the pipeline stage for progress display
- */
-async function updateStage(runId: string, stage: PipelineStage): Promise<void> {
-  const supabase = createServiceClient()
-  const { error } = await supabase.from('runs').update({ stage }).eq('id', runId)
-  if (error) {
-    console.warn(`[Pipeline] Failed to update stage to ${stage} for run ${runId}:`, error.message)
-  }
 }
 
 /**
@@ -187,156 +175,6 @@ export async function runPipeline(runId: string): Promise<PipelineResult> {
   // Always use agentic pipeline (V2)
   console.log(`[Pipeline] Running agentic pipeline for run ${runId}`)
   return runAgenticPipeline(runId)
-}
-
-/**
- * LEGACY: Original pipeline (kept for reference, not used)
- */
-async function _legacyPipeline(runId: string): Promise<PipelineResult> {
-  // Fail fast if env vars are missing
-  validateEnv()
-
-  const supabase = createServiceClient()
-
-  // 1. Fetch run from DB
-  const { data: run, error: fetchError } = await supabase
-    .from('runs')
-    .select('*')
-    .eq('id', runId)
-    .single()
-
-  if (fetchError || !run) {
-    return { success: false, error: `Run not found: ${fetchError?.message || 'No data'}` }
-  }
-
-  // 2. Update status to processing with initial stage
-  await supabase.from('runs').update({ status: 'processing', stage: 'researching' }).eq('id', runId)
-
-  const input = run.input as RunInput
-  let research: ResearchContext
-
-  // 3. Run research (with graceful degradation)
-  try {
-    console.log(`[Pipeline] Starting research for run ${runId}`)
-    research = await runResearch(input)
-    console.log(
-      `[Pipeline] Research completed: ${research.competitorInsights.length} competitor insights, ${research.marketTrends.length} trends, ${research.seoMetrics.length} SEO metrics`
-    )
-
-    if (research.errors.length) {
-      console.log(`[Pipeline] Research warnings: ${research.errors.join('; ')}`)
-    }
-  } catch (err) {
-    // Research completely failed - proceed with empty context
-    console.error('[Pipeline] Research failed entirely:', err)
-    research = {
-      competitorInsights: [],
-      marketTrends: [],
-      growthTactics: [],
-      seoMetrics: [],
-      researchCompletedAt: new Date().toISOString(),
-      errors: [`Research failed: ${err instanceof Error ? err.message : String(err)}`],
-    }
-  }
-
-  // 4. Retrieve business history for RAG (if returning user with business)
-  await updateStage(runId, 'loading_history')
-  let userHistory: UserHistoryContext | null = null
-  const businessId = run.business_id as string | null
-  if (run.user_id) {
-    try {
-      // Use business-scoped history if available, otherwise fallback
-      userHistory = await retrieveUserHistory(run.user_id, input, businessId || undefined)
-    } catch (err) {
-      console.error('[Pipeline] Business history retrieval failed:', err)
-      // Continue without history - graceful degradation
-    }
-  }
-
-  // 5. Generate strategy with Claude
-  await updateStage(runId, 'generating')
-  try {
-    console.log(`[Pipeline] Starting strategy generation with Claude Opus 4.5`)
-    const output = await generateStrategy(input, research, userHistory)
-    console.log(`[Pipeline] Strategy generated: ${output.length} characters`)
-
-    // 6. Save output and mark complete
-    await updateStage(runId, 'finalizing')
-    const { error: updateError } = await supabase
-      .from('runs')
-      .update({
-        status: 'complete',
-        stage: null,
-        output,
-        completed_at: new Date().toISOString(),
-      })
-      .eq('id', runId)
-
-    if (updateError) {
-      console.error('[Pipeline] Failed to save output:', updateError)
-      return { success: false, error: `Failed to save output: ${updateError.message}` }
-    }
-
-    // Accumulate business context for multi-run support (fire-and-forget)
-    if (run.user_id) {
-      // Use business-scoped accumulation if business_id exists
-      if (businessId) {
-        accumulateBusinessContext(businessId, run.user_id, runId, input, output).catch((err) => {
-          console.error('[Pipeline] Business context accumulation failed:', err)
-        })
-      } else {
-        // Fallback for runs without business_id (will create/assign one)
-        accumulateUserContext(run.user_id, runId, input, output).catch((err) => {
-          console.error('[Pipeline] Context accumulation failed:', err)
-        })
-      }
-
-      // Send "run ready" email (fire-and-forget)
-      getEmailForUser(run.user_id)
-        .then((email) => {
-          if (email) sendRunReadyEmail({ to: email, runId })
-        })
-        .catch((err) => console.error('[Pipeline] Run ready email failed:', err))
-    }
-
-    // Track plan completion with source breakdown (fire-and-forget)
-    const source = (run.source as RunSource) || 'stripe'
-    const distinctId = run.user_id || runId
-    trackServerEvent(distinctId, 'plan_completed', {
-      run_id: runId,
-      source, // stripe, credits, promo, refinement
-      focus_area: input.focusArea,
-      has_competitors: (input.competitorUrls?.length || 0) > 0,
-      is_refinement: source === 'refinement',
-    })
-
-    // Update user properties with plan counts (fire-and-forget)
-    if (run.user_id) {
-      updateUserPlanCounts(run.user_id, source).catch((err) => {
-        console.error('[Pipeline] User plan count update failed:', err)
-      })
-    }
-
-    console.log(`[Pipeline] Run ${runId} completed successfully`)
-    return { success: true, output, researchContext: research }
-  } catch (err) {
-    // Claude failed - mark as failed
-    const errorMsg = err instanceof Error ? err.message : String(err)
-    console.error('[Pipeline] Strategy generation failed:', errorMsg)
-
-    await supabase.from('runs').update({ status: 'failed', stage: null }).eq('id', runId)
-
-    // Send "run failed" email (fire-and-forget)
-    if (run.user_id) {
-      getEmailForUser(run.user_id)
-        .then((email) => {
-          if (email) sendRunFailedEmail({ to: email, runId })
-        })
-        .catch((emailErr) => console.error('[Pipeline] Run failed email failed:', emailErr))
-    }
-
-    return { success: false, error: `Generation failed: ${errorMsg}` }
-  }
 }
 
 // =============================================================================

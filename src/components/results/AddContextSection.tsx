@@ -26,7 +26,6 @@ export function AddContextSection({
   const [error, setError] = useState<string | null>(null);
 
   const refinementsRemaining = MAX_FREE_REFINEMENTS - refinementsUsed;
-  const canRefine = refinementsRemaining > 0 && isOwner;
   const contextLength = context.trim().length;
   const isValidLength = contextLength >= MIN_CONTEXT_LENGTH && contextLength <= MAX_CONTEXT_LENGTH;
 
