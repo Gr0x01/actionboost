@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Header, Footer } from "@/components/layout";
 import {
   HeroWithExplainer,
@@ -65,6 +66,22 @@ export default function Home() {
 
         {/* 2. Real research vs AI guessing */}
         <ResearchProof />
+
+        {/* Boost-lite free CTA bridge */}
+        <div className="w-full border-y-2 border-foreground/10 bg-[#FDF8F3] py-5">
+          <div className="mx-auto max-w-3xl px-6 text-center">
+            <p className="text-base sm:text-lg text-foreground/70">
+              Want to see what Boost finds for your business?{" "}
+              <Link
+                href="/start?free=true"
+                className="font-semibold text-cta underline decoration-cta/40 decoration-2 underline-offset-[3px] transition-all hover:decoration-cta"
+              >
+                Try a free preview
+              </Link>
+              . No payment, no&nbsp;signup.
+            </p>
+          </div>
+        </div>
 
         {/* 3. Handle objections directly */}
         <Objections />

@@ -14,6 +14,11 @@ const COMPACT_OBJECTIONS = [
     answer:
       "You get a real strategy based on live research — the same data APIs bigger agencies use, without their markup.",
   },
+  {
+    question: "What if I get the plan and don't follow through?",
+    answer:
+      "We can't make you execute. But the plan is specific enough that the first step is obvious. Not 'build a content strategy,' but 'post this, here, today.' Momentum comes from clarity, not motivation.",
+  },
 ];
 
 export function Objections() {
