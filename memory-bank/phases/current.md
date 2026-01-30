@@ -1,6 +1,25 @@
 # Current Phase
 
-## Latest Update: Free Marketing Audit Tool (SEO Lead Gen)
+## Latest Update: Target Audience Generator + Shared Free Tool Components
+
+**Jan 30, 2026** - Built `/tools/target-audience-generator` and extracted shared component library for all free tool pages.
+
+**Target Audience Generator** — user enters business name + what they sell + customer description + email, gets audience profile in ~30s. 102 pre-generated niche example pages at `/tools/target-audience-generator/examples/[niche]` for programmatic SEO. Cost: ~$0.02 (GPT-4.1-mini).
+
+**Shared Free Tool Components** — `src/components/free-tools/` (7 components):
+- `ToolFormCard` — wizard wrapper with progress dots, AnimatePresence
+- `ToolEmailStep` — reusable email capture step with Turnstile
+- `ToolHeroSection` — hero with headline/subheadline/form slot
+- `ToolWhatsYouGet` — 2-column features + preview card
+- `ToolMidCTA` — mid-page CTA band (tinted bg, uppercase label)
+- `ToolBoostPitch` — dark upsell card
+- `ToolEducationalSection` — 4 spatial treatments (split-card, big-quote, side-border, tinted-wide) cycling for visual variety at `max-w-6xl`
+
+Both marketing audit and target audience pages rewritten to use shared components. Consistent Soft Brutalist design across all free tools.
+
+---
+
+## Previous: Free Marketing Audit Tool (SEO Lead Gen)
 
 **Jan 29, 2026** - Built and shipped `/tools/marketing-audit` — free SEO tool that audits small business websites using "The 3-Second Test" framework.
 
@@ -57,7 +76,17 @@ Major rewrite of Opus pipeline prompt. Plans now driven by internal thesis (stra
 
 ## What's Next
 
-### Pipeline V2: Competitive Intelligence Upgrade (Priority)
+### Free Tools SEO Expansion (Priority)
+**Full plan:** `memory-bank/projects/free-tools-seo.md`
+
+Build more free tools to replicate M1-Project's 36K/mo organic traffic strategy. Marketing Audit shipped and got good reception. Next up:
+1. **Target Audience Generator** — NOW BUILDING. Named for real search behavior ("target audience" not "ICP"). Programmatic SEO: 100+ pre-generated example pages at `/tools/target-audience-generator/examples/[niche]`
+2. **Headline / Value Prop Analyzer** — highest volume (20-40K/mo), cheapest ($0.02-0.04)
+3. **Email Subject Line Scorer** — cheapest to run ($0.01-0.02), high volume
+
+All fit existing pattern: form → Inngest async → result page with CTA.
+
+### Pipeline V2: Competitive Intelligence Upgrade
 **Full plan:** `memory-bank/projects/pipeline-v2-plan.md`
 
 Major upgrade transforming Boost from "AI growth strategist" to "competitive intelligence platform."

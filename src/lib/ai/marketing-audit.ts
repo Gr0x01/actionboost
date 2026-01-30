@@ -119,7 +119,7 @@ export async function runMarketingAuditPipeline(auditId: string): Promise<{ succ
 
   // Fetch audit record
   const { data: audit, error: fetchError } = await supabase
-    .from("marketing_audits")
+    .from("free_tool_results")
     .select("*")
     .eq("id", auditId)
     .single();
@@ -130,15 +130,15 @@ export async function runMarketingAuditPipeline(auditId: string): Promise<{ succ
   }
 
   // SSRF check
-  if (isPrivateUrl(audit.url)) {
+  if (!audit.url || isPrivateUrl(audit.url)) {
     console.error(`[MarketingAudit] Blocked private URL: ${audit.url}`);
-    await supabase.from("marketing_audits").update({ status: "failed" }).eq("id", auditId);
+    await supabase.from("free_tool_results").update({ status: "failed" }).eq("id", auditId);
     return { success: false, error: "Invalid URL" };
   }
 
   // Mark as processing
   await supabase
-    .from("marketing_audits")
+    .from("free_tool_results")
     .update({ status: "processing" })
     .eq("id", auditId);
 
@@ -223,7 +223,7 @@ ${siteContent ? `--- Scraped website content ---\n${siteContent}` : "Note: Could
 
     // Step 3: Save to DB
     await supabase
-      .from("marketing_audits")
+      .from("free_tool_results")
       .update({
         output: output as unknown as Json,
         status: "complete",
@@ -236,7 +236,7 @@ ${siteContent ? `--- Scraped website content ---\n${siteContent}` : "Note: Could
   } catch (err) {
     console.error(`[MarketingAudit] Pipeline failed for ${auditId}:`, err);
     await supabase
-      .from("marketing_audits")
+      .from("free_tool_results")
       .update({ status: "failed" })
       .eq("id", auditId);
     return { success: false, error: err instanceof Error ? err.message : "Unknown error" };

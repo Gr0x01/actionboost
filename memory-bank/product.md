@@ -2,9 +2,75 @@
 
 ## Value Prop
 
-> "Your 30-day marketing plan. Real research, not generic advice. $49."
+> "Tell us about your business. Get a 30-day marketing plan built on real research. $29."
 
-Tell us about your business. We research your competitors, analyze what's working in your space, and hand you a 30-day plan. What to stop. What to start. What to try this week.
+You describe your business. We research your market, analyze what's working in your space, and hand you a plan: what to stop, what to start, what to do this week.
+
+---
+
+## ICP (Ideal Customer Profile)
+
+### The Person
+
+A solo founder past the building phase who has a working product or service but no reliable way to get customers. Revenue is zero to low. Marketing efforts have been sporadic and directionless. They are one clear plan away from momentum — they just don't know what that plan is.
+
+**Stage**: Post-product, pre-traction. They've built something that works. They haven't figured out acquisition.
+
+**Tech comfort**: Tech-adjacent — can find and buy tools online, but won't build their own.
+
+### Their Internal Monologue
+
+- "I have a good product but nobody knows about it"
+- "I keep doing random marketing stuff and nothing works"
+- "I don't even know where to start"
+- "Should I be on Twitter? TikTok? SEO? Cold email? All of it?"
+- "I can't afford an agency and ChatGPT gives me generic garbage"
+
+### Trigger Moments (What Makes Them Search)
+
+- Just launched and got zero signups
+- Hit a revenue plateau and random tactics stopped working
+- Saw a competitor doing better and panicked
+- Wasted money on ads or an agency that did nothing
+- Got rejected from an accelerator and told "figure out your GTM"
+
+### Who This Is NOT For
+
+- Funded startups with a marketing team (they need execution, not a plan)
+- People without a product yet (they need to build first)
+- People wanting ongoing marketing management (this is a one-shot catalyst)
+- Pure indie hackers who'd rather build it themselves
+
+### Targeting Segments (Channels, Not ICP)
+
+Business type determines where we reach them, not who they are:
+
+1. **SaaS founders / solopreneurs** — r/SaaS, r/solopreneur, Twitter/X, Indie Hackers
+2. **E-commerce / Shopify** — r/ecommerce, r/shopify
+3. **Service businesses** — consultants, freelancers who find us (self-selecting)
+
+**Why these segments (Jan 24 2026 pivot):**
+- SMBs (salons, local services) are hard to reach — Enji.co tried 4+ years with 12 people, still only 1.5K monthly visits
+- SaaS/solopreneur subreddits are FULL of marketing questions — proven demand
+- These audiences can actually FIND tools online (unlike traditional SMBs)
+- **Founder personality fit**: Blunt, direct, helpful — matches this audience
+
+### Messaging Hierarchy (Promise → Proof → Mechanism)
+
+1. **Promise**: You'll know exactly what to do for the next 30 days
+2. **Proof**: Built on real research into your specific market — not templates, not vibes
+3. **Mechanism**: We analyze your competitors, your market, your current presence, then build a custom plan
+
+### Competitive Alternatives (Dunford Positioning)
+
+**What would customers do without us?** (ranked by frequency)
+1. Wing it — keep doing random stuff and hoping (THE real competitor: inertia)
+2. Google it — DIY research, overwhelming, no structure
+3. Ask ChatGPT — generic advice, not tailored to their market
+4. Ask a friend — limited to their experience
+5. Hire an agency — $2K-10K/month, overkill for this stage
+
+**Our differentiation:** A specific 30-day plan built on real research into YOUR market. Not generic. Not expensive. Not overwhelming.
 
 ---
 
@@ -14,24 +80,7 @@ Tell us about your business. We research your competitors, analyze what's workin
 
 **"Stop guessing. Get a marketing plan that actually fits your business."**
 
-The direct strategist who does the research and tells you exactly what to do. Real competitor data, specific recommendations, no fluff.
-
-### Target Audience
-
-**Tech-adjacent entrepreneurs** — people who can find and buy tools, but won't build their own.
-
-**Primary segments (in order):**
-1. **SaaS founders / solopreneurs** — active in r/SaaS, r/solopreneur, Twitter. Know they need marketing help, won't build this themselves
-2. **E-commerce / Shopify** — r/ecommerce, r/shopify. Tech-savvy, comfortable buying tools
-3. **Service businesses** — consultants, agencies, freelancers who find us (self-selecting for tech comfort)
-
-**Why this audience (Jan 24 2026 pivot):**
-- SMBs (salons, local services) are hard to reach — Enji.co tried for 4+ years with 12 people, still only 1.5K monthly visits
-- SaaS/solopreneur subreddits are FULL of marketing questions — proven demand
-- These audiences can actually FIND tools online (unlike traditional SMBs)
-- They won't build their own version (unlike pure indie hackers)
-- Current design already appeals to them
-- **Founder personality fit**: Blunt, direct, helpful — matches this audience better than warm hand-holding
+The action-first, research-backed strategist who tells you exactly what to do. Specific recommendations, no fluff.
 
 ### The Personality
 
@@ -40,20 +89,9 @@ The direct strategist who does the research and tells you exactly what to do. Re
 **5 traits:**
 1. **Direct** — gets to the point, respects your time
 2. **Practical** — focused on what you can actually do this week
-3. **Research-backed** — pulls real data, shows the receipts
+3. **Action-first** — leads with what to do, backs it with research
 4. **Honest** — tells you what's working AND what's not (even if it stings)
 5. **Helpful** — genuinely wants you to succeed, not just sell you something
-
-### Competitive Alternatives (Dunford Positioning)
-
-**What would customers do without us?**
-- Wing it (trial and error, hoping something works)
-- Google it (DIY research, overwhelming)
-- Ask ChatGPT (generic advice, not tailored)
-- Hire an agency ($2K-10K/month, overkill)
-- Ask a friend (limited to their experience)
-
-**Our differentiation:** Real research on YOUR business + structured 30-day plan. Not generic. Not expensive. Not overwhelming.
 
 ### Voice Guidelines
 

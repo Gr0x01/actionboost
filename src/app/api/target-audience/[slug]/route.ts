@@ -15,16 +15,16 @@ export async function GET(
 
   const supabase = createServiceClient();
 
-  const { data: audit, error } = await supabase
+  const { data: result, error } = await supabase
     .from("free_tool_results")
-    .select("slug, url, business_description, output, status, created_at, completed_at")
+    .select("slug, input, output, status, created_at, completed_at")
     .eq("slug", slug)
-    .eq("tool_type", "marketing-audit")
+    .eq("tool_type", "target-audience")
     .single();
 
-  if (error || !audit) {
+  if (error || !result) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  return NextResponse.json({ audit });
+  return NextResponse.json({ result });
 }

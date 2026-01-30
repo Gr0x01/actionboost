@@ -3,12 +3,14 @@ import { createServiceClient } from "@/lib/supabase/server";
 import { isValidEmail, isDisposableEmail } from "@/lib/validation";
 import { inngest } from "@/lib/inngest";
 import { checkHoneypot, getClientIP, checkIPRateLimit, guardTurnstile, normalizeEmail, generateSlug } from "@/lib/api/free-tool-helpers";
+import type { Json } from "@/lib/types/database";
 
 export async function POST(request: NextRequest) {
   try {
-    const { url, businessDescription, email, turnstileToken, website } = (await request.json()) as {
-      url: string;
-      businessDescription: string;
+    const { businessName, whatTheySell, targetCustomer, email, turnstileToken, website } = (await request.json()) as {
+      businessName: string;
+      whatTheySell: string;
+      targetCustomer?: string;
       email: string;
       turnstileToken?: string;
       website?: string; // Honeypot
@@ -32,26 +34,16 @@ export async function POST(request: NextRequest) {
     if (turnstileRes) return turnstileRes;
 
     // 4. Validate inputs
-    if (!url || typeof url !== "string" || url.length < 4 || url.length > 500) {
-      return NextResponse.json({ error: "Valid URL is required" }, { status: 400 });
+    if (!businessName || typeof businessName !== "string" || businessName.length < 2 || businessName.length > 100) {
+      return NextResponse.json({ error: "Business name must be 2-100 characters" }, { status: 400 });
     }
 
-    // URL validation — require valid format with real domain
-    try {
-      const urlToTest = url.trim().startsWith("http") ? url.trim() : `https://${url.trim()}`;
-      const parsed = new URL(urlToTest);
-      if (!["http:", "https:"].includes(parsed.protocol)) {
-        return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
-      }
-      if (!parsed.hostname.includes(".")) {
-        return NextResponse.json({ error: "Please enter a full website URL" }, { status: 400 });
-      }
-    } catch {
-      return NextResponse.json({ error: "Invalid URL format" }, { status: 400 });
+    if (!whatTheySell || typeof whatTheySell !== "string" || whatTheySell.length < 10 || whatTheySell.length > 500) {
+      return NextResponse.json({ error: "Description must be 10-500 characters" }, { status: 400 });
     }
 
-    if (!businessDescription || typeof businessDescription !== "string" || businessDescription.length < 10 || businessDescription.length > 500) {
-      return NextResponse.json({ error: "Business description must be 10-500 characters" }, { status: 400 });
+    if (targetCustomer && (typeof targetCustomer !== "string" || targetCustomer.length > 500)) {
+      return NextResponse.json({ error: "Customer description must be under 500 characters" }, { status: 400 });
     }
 
     if (!email || !isValidEmail(email)) {
@@ -73,29 +65,30 @@ export async function POST(request: NextRequest) {
       .from("free_tool_results")
       .select("slug")
       .eq("email", normalizedEmail)
-      .eq("tool_type", "marketing-audit")
+      .eq("tool_type", "target-audience")
       .single();
 
     if (existing) {
       return NextResponse.json(
-        { error: "You've already received a marketing audit.", existingSlug: existing.slug },
+        { error: "You've already generated a target audience profile.", existingSlug: existing.slug },
         { status: 409 }
       );
     }
 
-    // Normalize URL
-    const normalizedUrl = url.startsWith("http") ? url : `https://${url}`;
-
-    // Create record (insert + select in one query)
     const slug = generateSlug();
+    const inputData = {
+      businessName: businessName.trim(),
+      whatTheySell: whatTheySell.trim(),
+      ...(targetCustomer?.trim() ? { targetCustomer: targetCustomer.trim() } : {}),
+    };
+
     const { data: created, error: insertError } = await supabase
       .from("free_tool_results")
       .insert({
         slug,
-        url: normalizedUrl,
         email: normalizedEmail,
-        business_description: businessDescription,
-        tool_type: "marketing-audit",
+        tool_type: "target-audience",
+        input: inputData as unknown as Json,
         status: "pending",
       })
       .select("id, slug")
@@ -104,27 +97,27 @@ export async function POST(request: NextRequest) {
     if (insertError) {
       if (insertError.code === "23505") {
         return NextResponse.json(
-          { error: "You've already received a marketing audit." },
+          { error: "You've already generated a target audience profile." },
           { status: 409 }
         );
       }
-      console.error("[MarketingAudit] Insert failed:", insertError);
-      return NextResponse.json({ error: "Failed to create audit" }, { status: 500 });
+      console.error("[TargetAudience] Insert failed:", insertError);
+      return NextResponse.json({ error: "Failed to create profile" }, { status: 500 });
     }
 
     // Trigger Inngest pipeline
     try {
       await inngest.send({
-        name: "marketing-audit/created",
-        data: { auditId: created.id },
+        name: "target-audience/created",
+        data: { resultId: created.id },
       });
     } catch (err) {
-      console.error("[MarketingAudit] Failed to trigger Inngest:", err);
+      console.error("[TargetAudience] Failed to trigger Inngest:", err);
     }
 
     return NextResponse.json({ slug: created.slug });
   } catch (error) {
-    console.error("[MarketingAudit] Error:", error);
+    console.error("[TargetAudience] Error:", error);
     return NextResponse.json({ error: "Failed to process request" }, { status: 500 });
   }
 }

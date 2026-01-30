@@ -43,38 +43,58 @@ M1-Project ranks for "acronym generator" and "slogan generator" — tools unrela
 
 ## Key Insight: Calculators Convert 40%+ (vs 2-12% for standard pages)
 
-## Tool Ideas for Boost
+## Competitor: FounderPal (founderpal.ai)
 
-### Tier 0: SHIPPED
-1. **Marketing Audit** (`/tools/marketing-audit`) — "The 3-Second Test." Enter URL → get diagnostic findings + fixes. ~$0.02/use (Tavily + GPT-4.1-mini). Funnels to $29 Boost.
+Closest competitor executing this exact strategy for our exact audience. Free tools (User Persona Generator, Marketing Strategy Generator, Value Prop Generator) → paid plans. **164K monthly visits**. Differentiator: they're generic AI output. We use **live research data** (Tavily, DataForSEO, screenshots).
 
-### Tier 0.5: Next Up (Viral Potential)
-1. **Roast My Site** — Same pipeline as Marketing Audit but with a brutally honest, roast-comedy voice. Users share the roast. Viral loop: funny roasts get screenshotted → shared on Twitter/Reddit → drives traffic. Same CTA: "Want the actual fix? Get your Boost." Could reuse 90% of the audit infrastructure with a different GPT prompt.
+## Tool Ideas for Boost — Prioritized Build Order
 
-### Tier 1: Directly Showcases Boost's Value
-1. **Channel Fit Calculator** — Quick quiz → channel priority ranking. Target: "marketing channel calculator"
-2. **Marketing Strategy Analyzer** — Paste strategy → gap analysis. Target: "marketing strategy analyzer"
-3. **Competitor Positioning Quiz** — "Where do you fit?" → positioning recs
+### SHIPPED
+1. **Marketing Audit** (`/tools/marketing-audit`) — "The 3-Second Test." Enter URL → diagnostic findings + fixes. ~$0.04-0.06/use. Funnels to $29 Boost.
 
-### Tier 2: Standalone High-Traffic
-4. **SaaS Pricing Calculator** — Usage/seat/hybrid estimator (2-5K/month searches)
-5. **CAC Calculator** — Spend ÷ customers with benchmarks (1-3K/month)
-6. **Product-Market Fit Quiz** — Scored assessment (500-1K/month)
-7. **Marketing Budget Allocator** — Budget → channel splits (1-2K/month)
+### Phase 1: Build Next (highest ROI, simplest, Jan 2026)
 
-### Tier 3: Volume Play (Lower Lift)
-8. **ICP Generator** — Quick form → ICP template (2-5K/month)
-9. **Positioning Statement Generator** — Mad-lib inputs → statement (1-2K/month)
-10. **Value Proposition Generator** — Problem/solution → value prop (2-4K/month)
-11. **Marketing Plan Template Generator** — Fill basics → 1-page plan (3-8K/month)
+| # | Tool | Target Keywords | Volume | Cost/Use | Funnel | Complexity |
+|---|------|----------------|--------|----------|--------|------------|
+| 1 | **Target Audience Generator** ✅ SHIPPED | "target audience generator", "find my target audience", "how to find target audience" | MEDIUM-HIGH (5-10K/mo + long-tail) | $0.03-0.05 | "Now you know WHO. Get the HOW for $29" | Simple |
+| 2 | **Headline / Value Prop Analyzer** | "headline analyzer", "value proposition generator" | HIGH (20-40K/mo) | $0.02-0.04 | "Score 62/100. See how competitors do it? $29" | Simple |
+| 3 | **Email Subject Line Scorer** | "email subject line tester" | HIGH (15-25K/mo) | $0.01-0.02 | "Get a complete email strategy in your plan. $29" | Simple |
+
+**Keyword strategy for Target Audience Generator:**
+- Named "Target Audience Generator" NOT "ICP Generator" — "target audience" is what real people search, "ICP" is B2B SaaS jargon (1-3K/mo)
+- "buyer persona generator" owned by HubSpot, "user persona generator" owned by FounderPal — avoid both
+- Page title: "Free Target Audience Generator — Find Your Ideal Customer in Minutes"
+- Secondary keywords woven into FAQ/body: "customer persona", "define target market", "who is my ideal customer", "customer avatar"
+- **Programmatic SEO**: Pre-generate 100+ example pages at `/tools/target-audience-generator/examples/[niche]` (e.g., yoga-studio, shopify-store, saas-startup). Each captures long-tail "target audience for [niche]" queries. FounderPal does this exact play with `/user-persona-examples/[industry]`.
+
+### Phase 2: Leverage Existing Infra
+
+| # | Tool | Target Keywords | Volume | Cost/Use | Funnel | Complexity |
+|---|------|----------------|--------|----------|--------|------------|
+| 4 | **Landing Page Copy Roast** | "landing page analyzer", "website copy review" | MEDIUM (5-10K/mo) | $0.05-0.08 | "Found 7 copy issues. Get full messaging strategy. $29" | Simple (reuses screenshot) |
+| 5 | **Competitor Finder** | "competitor analysis tool free", "find my competitors" | HIGH (15-30K/mo) | $0.08-0.12 | "Here are 5 competitors. Know how to beat them? $29" | Medium (reuses Tavily) |
+
+### Phase 3: Expand Reach
+
+| # | Tool | Target Keywords | Volume | Cost/Use | Funnel | Complexity |
+|---|------|----------------|--------|----------|--------|------------|
+| 6 | **Content Idea Generator** | "content ideas generator", "what to post on LinkedIn" | HIGH (30K+/mo) | $0.02-0.04 | "10 ideas for this week. Full content strategy? $29" | Simple |
+| 7 | **Marketing Channel Recommender** | "best marketing channels", "marketing plan generator" | HIGH (20-40K/mo) | $0.03-0.05 | "Top 3 channels. 30-day execution plan? $29" | Simple |
+| 8 | **AI Visibility / AEO Grader** | "AI search optimization", "AI visibility checker" | MED-HIGH (emerging) | $0.05-0.08 | "Low AI visibility. Full AI-era SEO strategy? $29" | Medium |
+
+### Volume Play (Later)
+- Slogan/Tagline Generator (20-30K/mo, $0.01, weak funnel but high volume)
+- Pricing Page Analyzer (5-10K/mo, $0.04-0.07, reuses screenshot)
+- SaaS Pricing Calculator, CAC Calculator, PMF Quiz
+- Positioning Statement Generator, Value Prop Generator, Marketing Plan Template
 
 ## Implementation Plan
 
-**Phase 1**: Build 1 high-impact tool (Tier 1). No email gate. Instant results. "Want the full 30-day plan?" CTA.
+**Phase 1** (now): Build 3 simple text-in/score-out tools. No email gate. Instant results. Shared `/tools/[slug]` pattern.
 
-**Phase 2**: Add 3-5 calculators. Cross-link. Educational content below each. "Free Tools" section in footer.
+**Phase 2**: Leverage screenshot service + Tavily for richer tools. Cross-link between tools.
 
-**Phase 3**: Template generators for top-of-funnel volume.
+**Phase 3**: Volume play — more generators, calculators. "Free Tools" hub page. Educational content below each tool (500-1000 words).
 
 ## Critical Decisions
 

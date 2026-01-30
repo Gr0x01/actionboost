@@ -64,7 +64,7 @@ Cost breakdown in `architecture.md`. Dashboard sells subscription via integratio
 
 **Commands**:
 ```bash
-npm run dev          # localhost:3000
+npm run dev          # localhost:3001
 npm run inngest:dev  # Inngest Dev Server on :8288 (run alongside dev)
 npm run build        # production build
 npm run test:run     # Unit tests (Vitest)

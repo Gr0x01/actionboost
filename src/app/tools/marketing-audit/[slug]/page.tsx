@@ -9,7 +9,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const supabase = createServiceClient();
   const { data: audit } = await supabase
-    .from("marketing_audits")
+    .from("free_tool_results")
     .select("url, output, status")
     .eq("slug", slug)
     .single();
@@ -35,7 +35,7 @@ export default async function MarketingAuditResultsPage({ params }: Props) {
   const supabase = createServiceClient();
 
   const { data: audit } = await supabase
-    .from("marketing_audits")
+    .from("free_tool_results")
     .select("slug, url, business_description, output, status, created_at, completed_at")
     .eq("slug", slug)
     .single();
@@ -73,8 +73,8 @@ export default async function MarketingAuditResultsPage({ params }: Props) {
         <MarketingAuditResults
           initialAudit={{
             slug: audit.slug,
-            url: audit.url,
-            businessDescription: audit.business_description,
+            url: audit.url || "",
+            businessDescription: audit.business_description || "",
             output: audit.output as MarketingAuditOutput | null,
             status: audit.status as AuditStatus,
           }}

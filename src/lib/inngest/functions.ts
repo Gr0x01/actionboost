@@ -1,6 +1,7 @@
 import { inngest } from "./client";
 import { runPipeline, runFreePipeline, runRefinementPipeline } from "@/lib/ai/pipeline";
 import { runMarketingAuditPipeline } from "@/lib/ai/marketing-audit";
+import { runTargetAudiencePipeline } from "@/lib/ai/target-audience";
 import { createServiceClient } from "@/lib/supabase/server";
 import type { RunInput } from "@/lib/ai/types";
 
@@ -162,7 +163,7 @@ export const generateMarketingAudit = inngest.createFunction(
       } catch (err) {
         const supabase = createServiceClient();
         await supabase
-          .from("marketing_audits")
+          .from("free_tool_results")
           .update({ status: "failed" })
           .eq("id", auditId);
         throw err;
@@ -179,5 +180,44 @@ export const generateMarketingAudit = inngest.createFunction(
   }
 );
 
+/**
+ * Target audience pipeline - triggered for free target audience generator tool
+ *
+ * Single GPT-4.1-mini call. Fast and cheap (~$0.02).
+ */
+export const generateTargetAudience = inngest.createFunction(
+  {
+    id: "generate-target-audience",
+    retries: 2,
+  },
+  { event: "target-audience/created" },
+  async ({ event, step }) => {
+    const { resultId } = event.data;
+
+    console.log(`[Inngest] Starting target audience ${resultId}`);
+
+    const result = await step.run("target-audience-pipeline", async () => {
+      try {
+        return await runTargetAudiencePipeline(resultId);
+      } catch (err) {
+        const supabase = createServiceClient();
+        await supabase
+          .from("free_tool_results")
+          .update({ status: "failed" })
+          .eq("id", resultId);
+        throw err;
+      }
+    });
+
+    if (!result.success) {
+      console.error(`[Inngest] Target audience failed for ${resultId}:`, result.error);
+      return { success: false, error: result.error };
+    }
+
+    console.log(`[Inngest] Target audience completed for ${resultId}`);
+    return { success: true, resultId };
+  }
+);
+
 // Export all functions for the serve handler
-export const functions = [generateStrategy, refineStrategy, generateFreeAudit, generateMarketingAudit];
+export const functions = [generateStrategy, refineStrategy, generateFreeAudit, generateMarketingAudit, generateTargetAudience];

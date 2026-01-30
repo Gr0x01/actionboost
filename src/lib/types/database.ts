@@ -386,39 +386,45 @@ export type Database = {
         }
         Relationships: []
       }
-      marketing_audits: {
+      free_tool_results: {
         Row: {
           id: string
           slug: string
-          url: string
+          url: string | null
           email: string
-          business_description: string
+          business_description: string | null
           output: Json | null
           status: string
           created_at: string
           completed_at: string | null
+          tool_type: string
+          input: Json | null
         }
         Insert: {
           id?: string
           slug: string
-          url: string
+          url?: string | null
           email: string
-          business_description: string
+          business_description?: string | null
           output?: Json | null
           status?: string
           created_at?: string
           completed_at?: string | null
+          tool_type: string
+          input?: Json | null
         }
         Update: {
           id?: string
           slug?: string
-          url?: string
+          url?: string | null
           email?: string
-          business_description?: string
+          business_description?: string | null
           output?: Json | null
           status?: string
           created_at?: string
           completed_at?: string | null
+          tool_type?: string
+          input?: Json | null
         }
         Relationships: []
       }
