@@ -14,6 +14,7 @@ import {
   ToolMidCTA,
   ToolBoostPitch,
   ToolEducationalSection,
+  ToolCrossLinks,
 } from "@/components/free-tools";
 
 // --- Data ---
@@ -449,6 +450,16 @@ function MarketingAuditContent() {
             />
           }
           boostAfterIndex={1}
+        />
+
+        <ToolCrossLinks
+          tools={[
+            {
+              label: "Target Audience Generator",
+              description: "Find out exactly who your ideal customer is — demographics, pain points, and where to reach them.",
+              href: "/tools/target-audience-generator",
+            },
+          ]}
         />
 
         <FAQSection

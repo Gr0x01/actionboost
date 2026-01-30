@@ -14,6 +14,7 @@ import {
   ToolMidCTA,
   ToolBoostPitch,
   ToolEducationalSection,
+  ToolCrossLinks,
 } from "@/components/free-tools";
 
 // --- Data ---
@@ -458,6 +459,16 @@ function TargetAudienceContent() {
             />
           }
           boostAfterIndex={1}
+        />
+
+        <ToolCrossLinks
+          tools={[
+            {
+              label: "Free Marketing Audit",
+              description: "See what's costing you customers — get a 3-second test of your website's clarity, proof, and friction.",
+              href: "/tools/marketing-audit",
+            },
+          ]}
         />
 
         <FAQSection
