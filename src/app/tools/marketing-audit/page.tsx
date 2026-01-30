@@ -12,7 +12,6 @@ import {
   ToolHeroSection,
   ToolWhatsYouGet,
   ToolMidCTA,
-  ToolBoostPitch,
   ToolEducationalSection,
   ToolCrossLinks,
 } from "@/components/free-tools";
@@ -68,7 +67,6 @@ const FEATURES = [
 const EDUCATIONAL_BLOCKS = [
   {
     title: "The 3 silent sales killers on most small business websites",
-    accent: "cta" as const,
     content: (
       <>
         <p>
@@ -92,7 +90,6 @@ const EDUCATIONAL_BLOCKS = [
   },
   {
     title: "You look at your website like an owner. Your customers don't.",
-    accent: "muted" as const,
     content: (
       <>
         <p>
@@ -113,7 +110,6 @@ const EDUCATIONAL_BLOCKS = [
   },
   {
     title: "Why your positioning matters more than your tactics",
-    accent: "cta" as const,
     content: (
       <>
         <p>
@@ -136,7 +132,6 @@ const EDUCATIONAL_BLOCKS = [
   },
   {
     title: "How to do a marketing audit yourself",
-    accent: "muted" as const,
     content: (
       <>
         <p>
@@ -169,47 +164,6 @@ const EDUCATIONAL_BLOCKS = [
     ),
   },
 ];
-
-// --- Hero Preview Mock ---
-
-function HeroAuditPreview() {
-  return (
-    <div
-      className="bg-white border-2 border-foreground/15 rounded-md p-8 md:p-10 max-w-2xl mx-auto"
-      style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.08)" }}
-    >
-      <div className="mb-8">
-        <p className="text-xs font-semibold uppercase tracking-wide text-foreground/40 mb-2">
-          Your marketing audit is ready
-        </p>
-        <p className="text-foreground/30 text-sm font-mono">sweetspot-bakery.com</p>
-      </div>
-
-      <div className="bg-cta/5 rounded-md px-6 py-5 mb-8">
-        <p className="text-xs font-bold uppercase tracking-wider text-cta mb-3">
-          Biggest Silent Killer
-        </p>
-        <p className="text-lg font-bold text-foreground leading-tight">
-          Your site talks about your process for 4 paragraphs before ever mentioning what the customer gets.
-        </p>
-      </div>
-
-      <p className="text-base text-foreground/70 leading-relaxed mb-8">
-        Your homepage has a clear offer, but it&apos;s buried under company-focused copy. Visitors can&apos;t tell why you&apos;re different.
-      </p>
-
-      <div className="border-l-4 border-foreground/15 pl-5">
-        <p className="text-xs font-bold uppercase tracking-wider text-foreground/40 mb-2">Clarity</p>
-        <p className="text-base font-bold text-foreground mb-1">No &quot;only&quot; statement — you sound like every other bakery</p>
-        <p className="text-sm text-foreground/60 leading-relaxed">&quot;Artisan baked goods made fresh daily&quot; describes what you do, but not why someone should pick you.</p>
-      </div>
-
-      <p className="mt-6 text-sm text-foreground/40 font-medium">
-        + Customer focus, proof, friction analysis, specific fixes
-      </p>
-    </div>
-  );
-}
 
 // --- Form Steps ---
 
@@ -432,7 +386,6 @@ function MarketingAuditContent() {
             </p>
           }
           features={FEATURES}
-          preview={<HeroAuditPreview />}
         />
 
         <ToolMidCTA
@@ -443,18 +396,20 @@ function MarketingAuditContent() {
 
         <ToolEducationalSection
           blocks={EDUCATIONAL_BLOCKS}
-          boostPitch={
-            <ToolBoostPitch
-              headline="You've seen what's broken. Here's the plan to fix it."
-              description="The free audit shows you where your site is losing customers. Boost builds you a 30-day action plan to fix it — specific to your business, your market, your budget. Research-backed. No fluff."
-            />
-          }
+          boostPitch={{
+            headline: "You've seen what's broken. Here's the plan to fix it.",
+            description: "The free audit shows you where your site is losing customers. Boost builds you a 30-day action plan to fix it — specific to your business, your market, your budget. Research-backed. No fluff.",
+          }}
           boostAfterIndex={1}
         />
 
         <ToolCrossLinks
           tools={[
-            { label: "Target Audience Generator", href: "/tools/target-audience-generator" },
+            {
+              label: "Target Audience Generator",
+              href: "/tools/target-audience-generator",
+              description: "Find exactly who your ideal customer is — demographics, pain points, and where to reach them.",
+            },
           ]}
         />
 

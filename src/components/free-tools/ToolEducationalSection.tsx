@@ -1,112 +1,77 @@
+import { ArrowRight } from "lucide-react";
+import { config } from "@/lib/config";
+
 interface EducationalBlock {
   title: string;
   content: React.ReactNode;
-  accent?: "cta" | "muted";
 }
 
 interface ToolEducationalSectionProps {
   blocks: EducationalBlock[];
-  boostPitch: React.ReactNode;
+  boostPitch: {
+    headline: string;
+    description: string;
+  };
+  /** Insert the Boost pitch card after this block index (0-based) */
   boostAfterIndex: number;
 }
 
-/** Cycles through 4 spatial treatments for visual variety and width usage */
-const treatments = ["split-card", "big-quote", "side-border", "tinted-wide"] as const;
-
-export function ToolEducationalSection({ blocks, boostPitch, boostAfterIndex }: ToolEducationalSectionProps) {
+/**
+ * Typography-first educational content with numbered headings and orange
+ * left-border accent. ONE consistent treatment for all blocks.
+ */
+export function ToolEducationalSection({
+  blocks,
+  boostPitch,
+  boostAfterIndex,
+}: ToolEducationalSectionProps) {
   return (
-    <section className="max-w-6xl mx-auto px-6 pt-16 md:pt-20 space-y-20">
-      {blocks.map((block, i) => {
-        const treatment = treatments[i % treatments.length];
-
-        return (
-          <div key={block.title}>
-            {/* Treatment 1: Two-column card — big title left, content right */}
-            {treatment === "split-card" && (
-              <div
-                className="bg-white border-2 border-foreground/20 rounded-md p-8 md:p-10 lg:p-12"
-                style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)" }}
-              >
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-8 md:gap-12">
-                  <div className="md:col-span-2">
-                    <div className="text-cta/20 text-7xl font-black leading-none mb-4 select-none">
-                      {String(i + 1).padStart(2, "0")}
-                    </div>
-                    <h2 className="text-2xl md:text-3xl font-bold text-foreground leading-tight">
-                      {block.title}
-                    </h2>
-                  </div>
-                  <div className="md:col-span-3 space-y-4 text-foreground/70 text-base md:text-lg leading-relaxed">
-                    {block.content}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Treatment 2: Oversized title full-width, content pushed right */}
-            {treatment === "big-quote" && (
-              <div className="space-y-8">
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-[1.1] max-w-4xl">
-                  {block.title}
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                  <div className="hidden md:block md:col-span-1">
-                    <div className="w-full h-1 bg-cta/30 mt-3 rounded-full" />
-                  </div>
-                  <div className="md:col-span-7 md:col-start-5 space-y-4 text-foreground/70 text-base md:text-lg leading-relaxed">
-                    <div className="border-l-2 border-foreground/10 pl-6 md:border-l-0 md:pl-0">
-                      {block.content}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Treatment 3: Bold left accent strip with two-column layout */}
-            {treatment === "side-border" && (
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-0">
-                <div
-                  className={`md:col-span-4 md:border-l-4 md:pl-8 py-2 ${
-                    block.accent === "cta"
-                      ? "border-cta"
-                      : block.accent === "muted"
-                        ? "border-foreground/15"
-                        : "border-cta/50"
-                  }`}
-                >
-                  <h2 className="text-2xl md:text-3xl font-bold text-foreground leading-tight">
-                    {block.title}
-                  </h2>
-                </div>
-                <div className="md:col-span-7 md:col-start-6 space-y-4 text-foreground/70 text-base md:text-lg leading-relaxed">
-                  {block.content}
-                </div>
-              </div>
-            )}
-
-            {/* Treatment 4: Full-width tinted card with generous padding */}
-            {treatment === "tinted-wide" && (
-              <div
-                className="bg-cta/5 border-2 border-cta/20 rounded-md p-8 md:p-10 lg:p-14"
-                style={{ boxShadow: "3px 3px 0 rgba(232, 121, 43, 0.15)" }}
-              >
-                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-8 leading-tight max-w-2xl">
-                  {block.title}
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4 text-foreground/70 text-base md:text-lg leading-relaxed">
-                  {block.content}
-                </div>
-              </div>
-            )}
-
-            {i === boostAfterIndex && (
-              <div className="mt-14">
-                {boostPitch}
-              </div>
-            )}
+    <section className="max-w-4xl mx-auto px-6 pt-16 md:pt-24 space-y-20 md:space-y-28">
+      {blocks.map((block, i) => (
+        <div key={block.title}>
+          {/* Numbered heading with left accent */}
+          <div className="border-l-4 border-cta pl-6 md:pl-8 mb-6">
+            <span className="block text-6xl md:text-7xl font-black text-cta/15 leading-none select-none mb-3">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground leading-tight">
+              {block.title}
+            </h2>
           </div>
-        );
-      })}
+
+          {/* Body prose — single column, readable width */}
+          <div className="space-y-4 text-foreground/70 text-base md:text-lg leading-relaxed pl-6 md:pl-8">
+            {block.content}
+          </div>
+
+          {/* Boost pitch after designated block */}
+          {i === boostAfterIndex && (
+            <div className="mt-16 md:mt-20 max-w-xl mx-auto">
+              <div
+                className="bg-foreground text-white rounded-md p-6 md:p-8"
+                style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.2)" }}
+              >
+                <h2 className="text-xl md:text-2xl font-bold mb-3">
+                  {boostPitch.headline}
+                </h2>
+                <p className="text-white/70 text-sm mb-4 leading-relaxed">
+                  {boostPitch.description}
+                </p>
+                <a
+                  href="/start"
+                  className="inline-flex items-center gap-2 bg-cta text-white font-semibold px-6 py-3 rounded-md border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 active:translate-y-0.5 transition-all text-sm"
+                >
+                  Get my full Boost — {config.singlePrice}
+                  <ArrowRight className="w-4 h-4" />
+                </a>
+                <p className="mt-3 text-white/40 text-xs">
+                  One-time payment. No subscription.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
     </section>
   );
 }

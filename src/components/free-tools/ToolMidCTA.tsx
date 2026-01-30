@@ -1,22 +1,25 @@
-import { ArrowRight } from "lucide-react";
-
 interface ToolMidCTAProps {
   text: string;
   buttonLabel: string;
   href: string;
 }
 
+/**
+ * Inline mid-page CTA — just a centered sentence with a text link.
+ * No background band, no uppercase, no visual weight.
+ */
 export function ToolMidCTA({ text, buttonLabel, href }: ToolMidCTAProps) {
   return (
-    <section className="text-center py-12 md:py-16 bg-cta/[0.04] border-y border-foreground/5">
-      <p className="text-base font-semibold text-foreground/70 mb-4 tracking-wide uppercase">{text}</p>
-      <a
-        href={href}
-        className="inline-flex items-center gap-2 bg-cta text-white font-semibold px-5 py-2.5 text-sm rounded-md border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 active:translate-y-0.5 transition-all"
-      >
-        {buttonLabel}
-        <ArrowRight className="w-4 h-4" />
-      </a>
+    <section className="max-w-4xl mx-auto px-6 py-12 md:py-16 text-center">
+      <p className="text-lg md:text-xl text-foreground/70">
+        {text}{" "}
+        <a
+          href={href}
+          className="font-bold text-cta hover:underline underline-offset-4"
+        >
+          {buttonLabel} &rarr;
+        </a>
+      </p>
     </section>
   );
 }

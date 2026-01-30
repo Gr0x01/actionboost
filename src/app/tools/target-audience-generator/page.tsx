@@ -12,7 +12,6 @@ import {
   ToolHeroSection,
   ToolWhatsYouGet,
   ToolMidCTA,
-  ToolBoostPitch,
   ToolEducationalSection,
   ToolCrossLinks,
 } from "@/components/free-tools";
@@ -64,7 +63,6 @@ const FEATURES = [
 const EDUCATIONAL_BLOCKS = [
   {
     title: "Why \"everyone\" is the worst target audience",
-    accent: "cta" as const,
     content: (
       <>
         <p>
@@ -79,7 +77,6 @@ const EDUCATIONAL_BLOCKS = [
   },
   {
     title: "The difference between demographics and psychographics",
-    accent: "muted" as const,
     content: (
       <>
         <p>
@@ -96,7 +93,6 @@ const EDUCATIONAL_BLOCKS = [
   },
   {
     title: "How to use your audience profile",
-    accent: "cta" as const,
     content: (
       <>
         <p>
@@ -116,7 +112,6 @@ const EDUCATIONAL_BLOCKS = [
   },
   {
     title: "Signs you don't know your target audience well enough",
-    accent: "muted" as const,
     content: (
       <>
         <ul className="space-y-1.5 pl-1">
@@ -144,46 +139,6 @@ const EDUCATIONAL_BLOCKS = [
     ),
   },
 ];
-
-// --- Hero Preview Mock ---
-
-function HeroProfilePreview() {
-  return (
-    <div
-      className="bg-white border-2 border-foreground/15 rounded-md p-8 md:p-10 max-w-2xl mx-auto"
-      style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.08)" }}
-    >
-      <div className="mb-8">
-        <p className="text-xs font-semibold uppercase tracking-wide text-foreground/40 mb-2">
-          Your audience profile is ready
-        </p>
-        <p className="text-foreground/30 text-sm font-mono">FreshPress Juice Co.</p>
-      </div>
-
-      <div className="bg-cta/5 rounded-md px-6 py-5 mb-8">
-        <p className="text-xs font-bold uppercase tracking-wider text-cta mb-3">
-          Your Ideal Customer
-        </p>
-        <p className="text-lg font-bold text-foreground leading-tight">
-          Health-conscious millennials (28-38) earning $70-120K who meal-prep on Sundays and feel guilty about their weekday lunch habits.
-        </p>
-      </div>
-
-      <p className="text-base text-foreground/70 leading-relaxed mb-8">
-        They value convenience but won&apos;t compromise on ingredients. They follow wellness influencers and will pay a premium for anything that saves time without feeling processed.
-      </p>
-
-      <div className="border-l-4 border-foreground/15 pl-5">
-        <p className="text-xs font-bold uppercase tracking-wider text-foreground/40 mb-2">Pain Points</p>
-        <p className="text-base text-foreground/80 leading-relaxed">&quot;I know I should eat better but I literally don&apos;t have time to make anything healthy before work.&quot;</p>
-      </div>
-
-      <p className="mt-6 text-sm text-foreground/40 font-medium">
-        + Where to find them, messaging hooks, buying triggers, tone guide
-      </p>
-    </div>
-  );
-}
 
 // --- Form Steps ---
 
@@ -441,7 +396,6 @@ function TargetAudienceContent() {
             </p>
           }
           features={FEATURES}
-          preview={<HeroProfilePreview />}
         />
 
         <ToolMidCTA
@@ -452,18 +406,20 @@ function TargetAudienceContent() {
 
         <ToolEducationalSection
           blocks={EDUCATIONAL_BLOCKS}
-          boostPitch={
-            <ToolBoostPitch
-              headline="You know who to talk to. Now get the plan to reach them."
-              description="The audience profile shows you who your customer is. Boost builds you a 30-day marketing plan to reach them — specific channels, specific tactics, specific content. Research-backed. No fluff."
-            />
-          }
+          boostPitch={{
+            headline: "You know who to talk to. Now get the plan to reach them.",
+            description: "The audience profile shows you who your customer is. Boost builds you a 30-day marketing plan to reach them — specific channels, specific tactics, specific content. Research-backed. No fluff.",
+          }}
           boostAfterIndex={1}
         />
 
         <ToolCrossLinks
           tools={[
-            { label: "Free Marketing Audit", href: "/tools/marketing-audit" },
+            {
+              label: "Free Marketing Audit",
+              href: "/tools/marketing-audit",
+              description: "See what's costing you customers with a 3-second test of your website's clarity, proof, and friction.",
+            },
           ]}
         />
 
