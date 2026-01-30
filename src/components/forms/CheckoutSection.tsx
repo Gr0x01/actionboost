@@ -7,7 +7,6 @@ import { Check, Loader2, Mail, ChevronLeft, ArrowRight } from "lucide-react";
 import { usePostHog } from "posthog-js/react";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { isValidEmail } from "@/lib/validation";
-import { config } from "@/lib/config";
 import type { FormInput } from "@/lib/types/form";
 
 interface CheckoutSectionProps {
@@ -257,7 +256,7 @@ export function CheckoutSection({
                 </>
               ) : (
                 <>
-                  {config.singlePrice}
+                  Generate My Plan
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
