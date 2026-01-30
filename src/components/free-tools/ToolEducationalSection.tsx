@@ -51,7 +51,7 @@ export function ToolEducationalSection({
                 className="bg-foreground text-white rounded-md p-6 md:p-8"
                 style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.2)" }}
               >
-                <h2 className="text-xl md:text-2xl font-bold mb-3">
+                <h2 className="text-2xl md:text-3xl font-bold mb-3 text-balance">
                   {boostPitch.headline}
                 </h2>
                 <p className="text-white/70 text-sm mb-4 leading-relaxed">
