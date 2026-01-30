@@ -107,7 +107,7 @@ const NOISE_POSITIONS = [
 ];
 
 // Scroll takeover configuration
-const TAKEOVER_DURATION_DOWN = 2.0; // seconds for scroll down
+const TAKEOVER_DURATION_DOWN = 1.0; // seconds for scroll down
 
 /**
  * Custom hook for scroll takeover.
@@ -136,7 +136,7 @@ function useScrollTakeover(
 
       animationRef.current = animate(startScroll, targetScroll, {
         duration: TAKEOVER_DURATION_DOWN,
-        ease: [0.32, 0.72, 0, 1],
+        ease: [0.25, 0.1, 0.25, 1],
         onUpdate: (value) => {
           window.scrollTo(0, value);
         },
@@ -300,7 +300,7 @@ export function HeroWithExplainer() {
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl lg:text-2xl text-foreground/70 max-w-2xl mx-auto font-medium">
-            Your market, competitors, and SEO landscape, researched. Your 30-day plan, built. The same research a consultant does for $2,000. Yours for&nbsp;$29.
+            We research your specific market. Real competitors, real data. Then we build the 30-day plan you'd pay a consultant $2,000 for. Yours for&nbsp;$29.
           </p>
 
           {/* Primary CTA */}
