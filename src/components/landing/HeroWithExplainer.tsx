@@ -374,7 +374,7 @@ export function HeroWithExplainer() {
             That&apos;s the preview. The full Boost goes further.
           </p>
           <p className="text-lg text-foreground/60">
-            Positioning gaps. Channel strategy from real traffic data. What to do this week, and why.
+            Positioning gaps. Channel strategy from real traffic data. What to do this week, and&nbsp;why.
           </p>
         </motion.div>
       </section>

@@ -85,15 +85,14 @@ export function ResearchProof() {
                 Competitive intel
               </span>
               <h4 className="text-xl font-bold text-foreground leading-tight">
-                Pinterest drives 3x more tattoo bookings than Instagram DMs
+                Your competitor&apos;s #1 page is a free ROI calculator, receiving 14K visits a&nbsp;month.
               </h4>
               <p className="text-base text-foreground/80 mt-3 leading-relaxed">
-                Your competitors get 40% of traffic from Pinterest. You have
-                zero presence there.
+                One interactive tool page outranks their entire blog. You&apos;re writing articles. They&apos;re capturing&nbsp;leads.
               </p>
               <div className="mt-4 pt-3 border-t border-foreground/10">
                 <cite className="block text-sm text-foreground/50 italic">
-                  Traffic analysis + Pinterest Trends
+                  Page-level traffic analysis + keyword gap data
                 </cite>
               </div>
             </div>
@@ -110,11 +109,11 @@ export function ResearchProof() {
                 #1
               </div>
               <h4 className="text-lg font-bold text-foreground leading-snug mt-1">
-                Create Pinterest boards for your top 5 tattoo styles
+                Build one free tool targeting your highest-intent&nbsp;keyword
               </h4>
               <p className="text-sm text-foreground/70 mt-3 leading-relaxed">
-                Set up boards for each specialty style, pin reference images
-                and finished work. High-intent planners save these before booking.
+                Your competitor proved the model. A single calculator page
+                converts 3x better than blog posts and ranks for 12 keywords you&nbsp;don&apos;t.
               </p>
             </div>
           </div>
