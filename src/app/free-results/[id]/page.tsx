@@ -7,8 +7,9 @@ import { ArrowRight } from "lucide-react";
 import { config } from "@/lib/config";
 import { Header, Footer } from "@/components/layout";
 import { StatusMessage, MagicLinkBanner, ResultsHeader, FreeAuditPending } from "@/components/results";
-import { FreeInsightsView } from "@/components/results/free";
+import { FreeInsightsView, FreeTasksEmptyState } from "@/components/results/free";
 import type { StructuredOutput } from "@/lib/ai/formatter-types";
+import type { TabType } from "@/lib/storage/visitTracking";
 
 type AuditStatus = "pending" | "processing" | "complete" | "failed";
 
@@ -72,6 +73,7 @@ function FreeResultsPageContent() {
     setTokenChecked(true);
   }, [freeAuditId, searchParams]);
 
+  const [activeTab, setActiveTab] = useState<TabType>("insights");
   const [freeAudit, setFreeAudit] = useState<FreeAuditData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -296,15 +298,14 @@ function FreeResultsPageContent() {
           name: planName,
           updatedAt: freeAudit.created_at,
         }}
-        activeTab="insights"
-        onTabChange={() => {}} // No-op for free
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
         exportProps={{
           markdown: "",
           runId: freeAudit.id,
           shareSlug: null,
           disabled: true,
         }}
-        disabledTabs={["dashboard"]}
         showCalendar={false}
       />
 
@@ -313,8 +314,10 @@ function FreeResultsPageContent() {
           {/* Magic link banner for new checkouts */}
           {isNewCheckout && <MagicLinkBanner />}
 
-          {/* Render structured output with new components, or fallback message */}
-          {hasStructuredOutput ? (
+          {/* Render tab content */}
+          {activeTab === "dashboard" ? (
+            <FreeTasksEmptyState freeAuditId={freeAudit.id} token={token!} />
+          ) : hasStructuredOutput ? (
             <FreeInsightsView
               structuredOutput={freeAudit.structured_output!}
               freeAuditId={freeAudit.id}
@@ -348,7 +351,7 @@ function FallbackContent() {
         We&apos;ve analyzed your business
       </h2>
       <p className="text-foreground/70 mb-8 max-w-md mx-auto">
-        Get your full 30-day marketing strategy with prioritized actions, competitor analysis, and weekly tasks.
+        Get your full marketing strategy with prioritized actions, competitor analysis, and weekly tasks.
       </p>
       <button
         onClick={() => {

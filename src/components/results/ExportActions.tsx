@@ -44,9 +44,15 @@ export function ExportActions({
   const [copied, setCopied] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
+  const [showDisabledTooltip, setShowDisabledTooltip] = useState(false)
+
+  const handleDisabledClick = () => {
+    setShowDisabledTooltip(true)
+    setTimeout(() => setShowDisabledTooltip(false), 2500)
+  }
 
   const handleCopy = async () => {
-    if (disabled) return
+    if (disabled) { handleDisabledClick(); return }
     posthog?.capture('export_copy_clicked', { run_id: runId })
     await navigator.clipboard.writeText(markdown)
     setCopied(true)
@@ -55,7 +61,7 @@ export function ExportActions({
   }
 
   const handlePDF = () => {
-    if (disabled) return
+    if (disabled) { handleDisabledClick(); return }
     posthog?.capture('export_pdf_clicked', { run_id: runId })
     const printWindow = window.open('', '_blank')
     if (printWindow) {
@@ -105,26 +111,30 @@ export function ExportActions({
   }
 
   const handleShare = () => {
-    if (disabled) return
+    if (disabled) { handleDisabledClick(); return }
     setShowShareModal(true)
     setShowMenu(false)
   }
 
-  const disabledClass = disabled ? 'opacity-30 cursor-not-allowed' : ''
-
   return (
     <>
       {/* Desktop: Icon-only buttons */}
-      <div className={`hidden sm:flex items-center gap-1 ${disabledClass}`}>
+      <div className="relative hidden sm:flex items-center gap-1">
+        {disabled && showDisabledTooltip && (
+          <div
+            className="absolute top-full left-1/2 -translate-x-1/2 mt-3 px-4 py-2 bg-background border-2 border-foreground/20 rounded-md text-xs font-semibold text-foreground whitespace-nowrap z-50 animate-in fade-in slide-in-from-top-1 duration-150"
+            style={{ boxShadow: '3px 3px 0 rgba(44, 62, 80, 0.1)' }}
+          >
+            Available with the full Boost plan
+          </div>
+        )}
         <button
           onClick={handleCopy}
-          disabled={disabled}
-          title={disabled ? "Upgrade to export" : copied ? "Copied!" : "Copy to clipboard"}
+          title={disabled ? "Available with full Boost" : copied ? "Copied!" : "Copy to clipboard"}
           className={`
             p-2 rounded-lg
-            text-foreground/50
-            ${!disabled && 'hover:text-foreground hover:bg-foreground/5'}
             transition-colors duration-100
+            ${disabled ? 'text-foreground/20' : 'text-foreground/50 hover:text-foreground hover:bg-foreground/5'}
           `}
         >
           {copied ? (
@@ -136,13 +146,11 @@ export function ExportActions({
 
         <button
           onClick={handlePDF}
-          disabled={disabled}
-          title={disabled ? "Upgrade to export" : "Export as PDF"}
+          title={disabled ? "Available with full Boost" : "Export as PDF"}
           className={`
             p-2 rounded-lg
-            text-foreground/50
-            ${!disabled && 'hover:text-foreground hover:bg-foreground/5'}
             transition-colors duration-100
+            ${disabled ? 'text-foreground/20' : 'text-foreground/50 hover:text-foreground hover:bg-foreground/5'}
           `}
         >
           <Download className="h-4 w-4" />
@@ -150,13 +158,11 @@ export function ExportActions({
 
         <button
           onClick={handleShare}
-          disabled={disabled}
-          title={disabled ? "Upgrade to share" : "Share Boost"}
+          title={disabled ? "Available with full Boost" : "Share Boost"}
           className={`
             p-2 rounded-lg
-            text-foreground/50
-            ${!disabled && 'hover:text-foreground hover:bg-foreground/5'}
             transition-colors duration-100
+            ${disabled ? 'text-foreground/20' : 'text-foreground/50 hover:text-foreground hover:bg-foreground/5'}
           `}
         >
           <Share2 className="h-4 w-4" />
@@ -164,7 +170,7 @@ export function ExportActions({
       </div>
 
       {/* Mobile: Condensed menu */}
-      <div className={`sm:hidden relative ${disabledClass}`}>
+      <div className="sm:hidden relative">
         <button
           onClick={() => !disabled && setShowMenu(!showMenu)}
           disabled={disabled}

@@ -12,10 +12,11 @@ const PRICE_SINGLE = process.env.STRIPE_PRICE_SINGLE!;
  */
 export async function POST(request: NextRequest) {
   try {
-    const { freeAuditId, token, posthogDistinctId } = (await request.json()) as {
+    const { freeAuditId, token, posthogDistinctId, coupon } = (await request.json()) as {
       freeAuditId: string;
       token: string;
       posthogDistinctId?: string;
+      coupon?: string;
     };
 
     if (!freeAuditId || !token) {
@@ -70,6 +71,30 @@ export async function POST(request: NextRequest) {
       business_id: freeAudit.business_id || "",
     };
 
+    // If a coupon code is provided, look up the Stripe promotion code
+    let discounts: Stripe.Checkout.SessionCreateParams['discounts'] | undefined;
+    let allowPromotionCodes: boolean | undefined;
+
+    if (coupon) {
+      try {
+        const promoCodes = await stripe.promotionCodes.list({
+          code: coupon,
+          active: true,
+          limit: 1,
+        });
+        if (promoCodes.data.length > 0) {
+          discounts = [{ promotion_code: promoCodes.data[0].id }];
+        }
+      } catch {
+        // If promo code lookup fails, fall back to manual entry
+      }
+    }
+
+    // Allow manual promo code entry if we didn't auto-apply one
+    if (!discounts) {
+      allowPromotionCodes = true;
+    }
+
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
@@ -79,6 +104,7 @@ export async function POST(request: NextRequest) {
           quantity: 1,
         },
       ],
+      ...(discounts ? { discounts } : { allow_promotion_codes: allowPromotionCodes }),
       metadata,
       customer_email: freeAudit.email,
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/processing/{CHECKOUT_SESSION_ID}?new=1&upgraded=1`,

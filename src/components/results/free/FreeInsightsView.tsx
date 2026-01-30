@@ -3,6 +3,7 @@
 import type { StructuredOutput } from '@/lib/ai/formatter-types'
 import { PositioningSummaryV2, LeadDiscovery } from '../dashboard'
 import { FreePreviewPaywall } from './FreePreviewPaywall'
+import { LockedSections } from './LockedSections'
 
 interface FreeInsightsViewProps {
   structuredOutput: StructuredOutput
@@ -13,12 +14,11 @@ interface FreeInsightsViewProps {
 /**
  * FreeInsightsView - Positioning preview for free tier
  *
- * Shows only:
+ * Shows:
  * 1. PositioningSummaryV2 (verdict, summary, unique value, target segment)
  * 2. LeadDiscovery (top discovery)
  * 3. FreePreviewPaywall (conversion CTA)
- *
- * Everything else is locked behind the paywall.
+ * 4. Locked preview sections (faded skeletons of paid content)
  */
 export function FreeInsightsView({ structuredOutput, freeAuditId, token }: FreeInsightsViewProps) {
   const { positioning, discoveries } = structuredOutput
@@ -34,7 +34,10 @@ export function FreeInsightsView({ structuredOutput, freeAuditId, token }: FreeI
       {/* 2. Lead Discovery - FREE */}
       {leadDiscovery && <LeadDiscovery discovery={leadDiscovery} />}
 
-      {/* 3. PAYWALL */}
+      {/* 3. Locked preview sections */}
+      <LockedSections />
+
+      {/* 4. PAYWALL */}
       <FreePreviewPaywall freeAuditId={freeAuditId} token={token} />
     </div>
   )

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { Check } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
 import { config } from '@/lib/config'
 
@@ -19,7 +18,7 @@ interface FreePreviewPaywallProps {
  * - Clear value proposition (what's in the full plan)
  * - CTA to unlock full strategy (goes straight to Stripe)
  *
- * Copy: "You've seen the gap. Here's how to close it."
+ * Copy: "This is what you're here for."
  */
 export function FreePreviewPaywall({
   freeAuditId,
@@ -73,41 +72,16 @@ export function FreePreviewPaywall({
 
         {/* Headline */}
         <h2 className="text-2xl lg:text-3xl font-bold text-foreground tracking-tight mt-2 mb-3">
-          You&apos;ve seen the gap. Here&apos;s how to close it.
+          This is what you&apos;re here for.
         </h2>
 
         {/* Subhead */}
         <p className="text-foreground/60 mb-10 text-base">
-          A 30-day Boost built on real research. Not generic advice.
+          Real research on your market. Clear priorities. Exactly what to do next.
         </p>
-
-        {/* Value bullets */}
-        <div className="inline-block text-left mb-12">
-          <ul className="text-foreground/80 text-sm space-y-4">
-            <li className="flex items-start gap-3">
-              <Check className="w-4 h-4 text-cta mt-0.5 flex-shrink-0" />
-              <span>Priority actions ranked by impact - an execution sequence, not a list</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <Check className="w-4 h-4 text-cta mt-0.5 flex-shrink-0" />
-              <span>The exact channels driving your competitors&apos; traffic</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <Check className="w-4 h-4 text-cta mt-0.5 flex-shrink-0" />
-              <span>Day-by-day tasks for Week 1 - no guessing what to do Monday</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <Check className="w-4 h-4 text-cta mt-0.5 flex-shrink-0" />
-              <span>Weekly checkpoints to measure what&apos;s working</span>
-            </li>
-          </ul>
-        </div>
 
         {/* CTA Zone */}
         <div className="flex flex-col items-center">
-          {/* Accent line */}
-          <div className="w-12 h-0.5 bg-cta/30 mb-8" />
-
           {/* CTA Button */}
           <button
             onClick={handleUnlock}
@@ -124,7 +98,7 @@ export function FreePreviewPaywall({
             "
             style={{ boxShadow: '4px 4px 0 rgba(44, 62, 80, 0.1)' }}
           >
-            {isLoading ? 'Processing...' : `Get my 30-day Boost · ${config.singlePrice}`}
+            {isLoading ? 'Processing...' : `Get Your Boost · ${config.singlePrice}`}
           </button>
 
           {/* Error message */}
@@ -134,7 +108,7 @@ export function FreePreviewPaywall({
 
           {/* Guarantee */}
           <p className="text-sm text-foreground/50 mt-6">
-            If it&apos;s not actionable, full refund. No questions.
+            Didn&apos;t help? Full refund.
           </p>
         </div>
       </div>

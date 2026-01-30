@@ -94,14 +94,14 @@ export function InsightsView({
         <KeywordOpportunities opportunities={keywordOpportunities} />
       )}
 
-      {/* 8. Metrics Snapshot */}
-      {structuredOutput.metrics.length > 0 && (
-        <MetricsSnapshot metrics={structuredOutput.metrics} />
-      )}
-
-      {/* 9. Remaining Discoveries */}
+      {/* 8. Remaining Discoveries */}
       {remainingDiscoveries.length > 0 && (
         <Discoveries discoveries={remainingDiscoveries} />
+      )}
+
+      {/* 9. Metrics Snapshot */}
+      {structuredOutput.metrics.length > 0 && (
+        <MetricsSnapshot metrics={structuredOutput.metrics} />
       )}
 
       {/* 10. Deep Dives */}
