@@ -9,6 +9,8 @@ interface ResultsTabNavigationProps {
   showCalendar?: boolean
   /** Tabs to show as disabled (grayed out, not clickable) */
   disabledTabs?: TabType[]
+  /** Message to show when a disabled tab is clicked */
+  disabledMessage?: string
 }
 
 /**
@@ -20,9 +22,11 @@ export function ResultsTabNavigation({
   onTabChange,
   showCalendar = false,
   disabledTabs = [],
+  disabledMessage = 'Available with the full Boost plan',
 }: ResultsTabNavigationProps) {
   const navRef = useRef<HTMLDivElement>(null)
   const [underlineStyle, setUnderlineStyle] = useState({ left: 0, width: 0 })
+  const [showTooltip, setShowTooltip] = useState<string | null>(null)
 
   const tabs: { id: TabType; label: string }[] = [
     { id: 'insights', label: 'Insights' },
@@ -57,28 +61,41 @@ export function ResultsTabNavigation({
         const isDisabled = disabledTabs.includes(id)
 
         return (
-          <button
-            key={id}
-            data-tab={id}
-            role="tab"
-            aria-selected={isActive}
-            aria-controls={`${id}-panel`}
-            aria-disabled={isDisabled}
-            onClick={() => !isDisabled && onTabChange(id)}
-            className={`
-              pb-3
-              font-semibold text-base
-              transition-colors duration-150
-              ${isDisabled
-                ? 'text-foreground/30 cursor-not-allowed'
-                : isActive
-                  ? 'text-foreground'
-                  : 'text-foreground/50 hover:text-foreground/70'
-              }
-            `}
-          >
-            {label}
-          </button>
+          <div key={id} className="relative">
+            <button
+              data-tab={id}
+              role="tab"
+              aria-selected={isActive}
+              aria-controls={`${id}-panel`}
+              aria-disabled={isDisabled}
+              onClick={() => {
+                if (isDisabled) {
+                  setShowTooltip(id)
+                  setTimeout(() => setShowTooltip(null), 2500)
+                } else {
+                  onTabChange(id)
+                }
+              }}
+              className={`
+                pb-3
+                font-semibold text-base
+                transition-colors duration-150
+                ${isDisabled
+                  ? 'text-foreground/30 cursor-not-allowed'
+                  : isActive
+                    ? 'text-foreground'
+                    : 'text-foreground/50 hover:text-foreground/70'
+                }
+              `}
+            >
+              {label}
+            </button>
+            {isDisabled && showTooltip === id && (
+              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-foreground text-background text-xs font-medium rounded whitespace-nowrap z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                {disabledMessage}
+              </div>
+            )}
+          </div>
         )
       })}
 

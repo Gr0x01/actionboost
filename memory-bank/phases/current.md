@@ -1,6 +1,10 @@
 # Current Phase
 
-## Latest Update: Target Audience Generator + Shared Free Tool Components
+## Latest Update: Disabled Tab Feedback on Free Results
+
+**Jan 30, 2026** - Added tooltip feedback when users click disabled "Tasks" tab on free result pages. Shows "Available with the full Boost plan" message on click (auto-dismisses after 2.5s). `disabledMessage` prop is customizable per page.
+
+## Previous: Target Audience Generator + Shared Free Tool Components
 
 **Jan 30, 2026** - Built `/tools/target-audience-generator` and extracted shared component library for all free tool pages.
 
