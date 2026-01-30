@@ -228,6 +228,38 @@ export default function AboutPage() {
             </Link>
           </section>
 
+          {/* Featured On */}
+          <section className="mb-12">
+            <div className="flex flex-wrap justify-center items-center gap-4 opacity-50">
+              <a
+                href="https://peerpush.net/p/actionboost"
+                target="_blank"
+                rel="noopener"
+                style={{ width: 230 }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://peerpush.net/p/actionboost/badge.png"
+                  alt="Boost badge"
+                  style={{ width: 230 }}
+                />
+              </a>
+              <a
+                href="https://auraplusplus.com/projects/boost-market-research-strategy"
+                target="_blank"
+                rel="noopener"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://auraplusplus.com/images/badges/featured-on-dark.svg"
+                  alt="Featured on Aura++"
+                  width={120}
+                  height={28}
+                />
+              </a>
+            </div>
+          </section>
+
           {/* Bottom CTA */}
           <section>
             <div

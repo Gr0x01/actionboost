@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { BoostLogo } from "@/components/ui";
 
@@ -70,35 +69,6 @@ export function Footer() {
           <FooterColumn title="Industries" links={footerLinks.industries} />
           <FooterColumn title="Company" links={footerLinks.company} />
           <FooterColumn title="Legal" links={footerLinks.legal} />
-        </div>
-
-        {/* Badges row */}
-        <div className="mt-10 flex flex-wrap justify-center items-center gap-3 opacity-40 hover:opacity-60 transition-opacity">
-          <a
-            href="https://peerpush.net/p/actionboost"
-            target="_blank"
-            rel="noopener"
-            style={{ width: 230 }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="https://peerpush.net/p/actionboost/badge.png"
-              alt="Boost badge"
-              style={{ width: 230 }}
-            />
-          </a>
-          <a
-            href="https://auraplusplus.com/projects/boost-market-research-strategy"
-            target="_blank"
-            rel="noopener"
-          >
-            <Image
-              src="https://auraplusplus.com/images/badges/featured-on-dark.svg"
-              alt="Featured on Aura++"
-              width={120}
-              height={28}
-            />
-          </a>
         </div>
 
         {/* Copyright */}
