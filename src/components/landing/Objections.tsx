@@ -2,7 +2,7 @@ const COMPACT_OBJECTIONS = [
   {
     question: "Is this just ChatGPT wrapped in a pretty UI?",
     answer:
-      "No. Your plan is built on live competitor data, traffic estimates, and market trends. ChatGPT can't see any of that.",
+      "No. Your results are built on live competitor data, traffic estimates, and market trends. ChatGPT can't see any of that.",
   },
   {
     question: "What if my business is too weird or niche?",
@@ -12,12 +12,12 @@ const COMPACT_OBJECTIONS = [
   {
     question: "$29 seems cheap. Is it actually useful?",
     answer:
-      "You get a real strategy based on live research — the same data APIs bigger agencies use, without their markup.",
+      "You get a real competitive diagnosis built on live research — the same data sources bigger agencies use, without their markup.",
   },
   {
-    question: "What if I get the plan and don't follow through?",
+    question: "What if I don't follow through?",
     answer:
-      "We can't make you execute. But the plan is specific enough that the first step is obvious. Not 'build a content strategy,' but 'post this, here, today.' Momentum comes from clarity, not motivation.",
+      "We can't make you execute. But the first step is obvious — not 'build a content strategy,' but 'post this, here, today.' Momentum comes from clarity, not motivation.",
   },
 ];
 

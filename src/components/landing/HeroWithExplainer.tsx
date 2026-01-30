@@ -300,7 +300,7 @@ export function HeroWithExplainer() {
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl lg:text-2xl text-foreground/70 max-w-2xl mx-auto font-medium">
-            We research your specific market. Real competitors, real data. Then we build the 30-day plan you&apos;d pay a consultant $2,000 for. Yours for&nbsp;$29.
+            We research your competitors, pull real traffic data, and tell you exactly what to do next. The clarity a $2,000 consultant gives&nbsp;you. Yours for&nbsp;$29.
           </p>
 
           {/* Primary CTA */}
@@ -374,7 +374,7 @@ export function HeroWithExplainer() {
             That&apos;s the preview. The full Boost goes further.
           </p>
           <p className="text-lg text-foreground/60">
-            Positioning gaps. Channel strategy from real traffic data. A 30-day roadmap to act on all of it.
+            Positioning gaps. Channel strategy from real traffic data. What to do this week, and why.
           </p>
         </motion.div>
       </section>

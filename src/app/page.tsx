@@ -18,12 +18,12 @@ const HOMEPAGE_FAQS = [
   {
     question: "What exactly is Boost?",
     answer:
-      "Boost is a marketing plan generator that creates custom 30-day plans for small businesses and solopreneurs. It uses live competitor research—real traffic data, channel analysis, and content performance—to build a specific plan tailored to your business, stage, and market. For a one-time $29 payment, you get a complete marketing plan in under 10 minutes: competitive analysis, prioritized channel strategy, weekly roadmap, and ready-to-use content templates. No subscription. Full refund if it doesn't help.",
+      "Boost researches your competitors and your market — real traffic data, channel analysis, content performance — and tells you exactly what to do next. For a one-time $29 payment, you get a full competitive diagnosis in under 10 minutes: where your competitors get traffic, the gaps they're missing, what channels to focus on, and what to do first. No subscription. Full refund if it doesn't help.",
   },
   {
-    question: "How do I create a marketing plan for my small business?",
+    question: "How do I figure out what marketing to focus on?",
     answer:
-      "Start with competitive research: find out where your competitors get traffic, what content works for them, and where the gaps are. Then pick 1-2 channels, build a 30-day roadmap, and set measurable goals. Boost automates the research part—you answer a few questions about your business, and it generates a complete plan based on live competitor data.",
+      "Boost pulls live data on your competitors — traffic sources, content performance, gaps — and tells you where to focus. You answer a few questions about your business, we do the research and show you which 1-2 channels are actually worth your time.",
   },
   {
     question: "How is this different from ChatGPT?",
@@ -33,22 +33,22 @@ const HOMEPAGE_FAQS = [
   {
     question: "What do I get for $29?",
     answer:
-      "A complete 30-day marketing plan including: competitive landscape analysis with real traffic data, prioritized channel strategy ranked by effort and impact, specific tactics to stop and start, a week-by-week roadmap, and metrics dashboard with targets. One-time payment, no subscription.",
+      "A full competitive diagnosis: where your competitors get traffic, the channels worth your time (ranked by effort and impact), what to stop doing, what to start, and exactly what to do next — in what order and why. One-time payment, no subscription.",
   },
   {
     question: "How long does it take?",
     answer:
-      "Under 10 minutes from start to finish. You answer a few questions about your business and competitors, we run the research, and your plan is ready. Most of that time is spent waiting for market data to load.",
+      "Under 10 minutes from start to finish. You answer a few questions about your business and competitors, we run the research, and your results are ready. Most of that time is spent pulling live market data.",
   },
   {
     question: "What if it doesn't work for my business?",
     answer:
-      "Full refund, no questions asked. We've generated plans for SaaS, e-commerce, consultants, coaches, agencies, and niche products in markets you'd never expect. If your competitors have websites, Boost can research them. If your plan isn't useful, full refund.",
+      "Full refund, no questions asked. We've done this for SaaS, e-commerce, consultants, coaches, agencies, and niche products in markets you'd never expect. If your competitors have websites, Boost can research them. Not useful? Full refund.",
   },
   {
     question: "Is this a subscription?",
     answer:
-      "No. $29 one-time payment. You get your marketing plan and it's yours forever. No monthly fees, no recurring charges, no upsells to a 'pro' tier.",
+      "No. $29 one-time payment. You get your Boost and it's yours forever. No monthly fees, no recurring charges, no upsells to a 'pro' tier.",
   },
 ];
 

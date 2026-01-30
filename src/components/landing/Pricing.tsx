@@ -69,7 +69,7 @@ export function Pricing() {
                 <div className="space-y-3 mb-6">
                   <FeatureItem>Your competitors&apos; actual traffic sources</FeatureItem>
                   <FeatureItem>The gaps they&apos;re missing that you can exploit</FeatureItem>
-                  <FeatureItem>Week-by-week roadmap: what to do and why</FeatureItem>
+                  <FeatureItem>What to do this week, next week, and why</FeatureItem>
                   <FeatureItem>Tactics ranked by effort-to-impact</FeatureItem>
                   <FeatureItem muted>Refine it twice until it feels right</FeatureItem>
                 </div>
