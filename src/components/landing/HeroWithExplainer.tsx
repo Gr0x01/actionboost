@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import { motion, useScroll, useTransform, useReducedMotion, animate, MotionValue } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -215,14 +215,11 @@ export function HeroWithExplainer() {
   const containerRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const posthog = usePostHog();
-  const [freeHero, setFreeHero] = useState(false);
-
-  useEffect(() => {
-    if (!posthog) return;
-    // PostHog feature flag: "free-hero-cta" — test variant shows free as primary CTA
-    const flag = posthog.getFeatureFlag("free-hero-cta");
-    if (flag === "test") setFreeHero(true);
-  }, [posthog]);
+  // PostHog feature flag: "free-hero-cta" — test variant shows free as primary CTA
+  const freeHero = useMemo(
+    () => posthog?.getFeatureFlag("free-hero-cta") === "test",
+    [posthog]
+  );
 
   // Standard scroll-linked progress - this drives all animations
   const { scrollYProgress } = useScroll({
