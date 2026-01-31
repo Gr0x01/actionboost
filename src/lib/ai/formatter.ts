@@ -15,9 +15,7 @@ const FORMATTER_MODEL = 'claude-sonnet-4-20250514'
 const FORMATTER_MAX_TOKENS = 16000 // Set high - extraction includes 28 days + priorities + positioning + metrics
 const FORMATTER_TIMEOUT_MS = 150000 // 150s - some extractions timeout at 90s
 
-// Model-specific max tokens (Haiku has lower limit)
 const MODEL_MAX_TOKENS: Record<string, number> = {
-  'claude-3-5-haiku-20241022': 8192,
   'claude-sonnet-4-20250514': 16000,
   'claude-opus-4-5-20251101': 16000,
 }
