@@ -215,6 +215,14 @@ export function HeroWithExplainer() {
   const containerRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const posthog = usePostHog();
+  const [freeHero, setFreeHero] = useState(false);
+
+  useEffect(() => {
+    if (!posthog) return;
+    // PostHog feature flag: "free-hero-cta" — test variant shows free as primary CTA
+    const flag = posthog.getFeatureFlag("free-hero-cta");
+    if (flag === "test") setFreeHero(true);
+  }, [posthog]);
 
   // Standard scroll-linked progress - this drives all animations
   const { scrollYProgress } = useScroll({
@@ -300,33 +308,60 @@ export function HeroWithExplainer() {
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl lg:text-2xl text-foreground/70 max-w-2xl mx-auto font-medium">
-            We research your competitors, pull real traffic data, and tell you exactly what to do next. The clarity a $2,000 consultant gives&nbsp;you. Yours for&nbsp;$29.
+            {freeHero
+              ? "We research your competitors, pull real traffic data, and show you where to focus. Try it free — no signup, no payment."
+              : "We research your competitors, pull real traffic data, and tell you exactly what to do next. The clarity a $2,000 consultant gives\u00a0you. Yours for\u00a0$29."
+            }
           </p>
 
-          {/* Primary CTA */}
+          {/* Primary CTA — A/B tested via PostHog "free-hero-cta" flag */}
           <div className="mt-10 flex flex-col items-center">
-            <Link
-              href="/start"
-              onClick={() => posthog?.capture("hero_cta_clicked", { type: "paid" })}
-              className="inline-flex items-center gap-2 rounded-xl px-8 py-4 bg-cta text-white text-lg font-bold border-2 border-cta shadow-[4px_4px_0_rgba(44,62,80,0.4)] hover:shadow-[5px_5px_0_rgba(44,62,80,0.45)] hover:-translate-y-0.5 active:shadow-[2px_2px_0_rgba(44,62,80,0.4)] active:translate-y-0.5 transition-all duration-100"
-            >
-              Get Your Boost
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-
-            {/* Subordinate free link */}
-            <Link
-              href="/start?free=true"
-              onClick={() => posthog?.capture("hero_cta_clicked", { type: "free" })}
-              className="mt-4 text-sm text-foreground/50 underline underline-offset-2 hover:text-foreground/70 transition-colors"
-            >
-              or try a free preview first
-            </Link>
+            {freeHero ? (
+              <>
+                <Link
+                  href="/start?free=true"
+                  onClick={() => posthog?.capture("hero_cta_clicked", { type: "free", variant: "free-primary" })}
+                  className="inline-flex items-center gap-2 rounded-xl px-8 py-4 bg-cta text-white text-lg font-bold border-2 border-cta shadow-[4px_4px_0_rgba(44,62,80,0.4)] hover:shadow-[5px_5px_0_rgba(44,62,80,0.45)] hover:-translate-y-0.5 active:shadow-[2px_2px_0_rgba(44,62,80,0.4)] active:translate-y-0.5 transition-all duration-100"
+                >
+                  See what we find — free
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+                <Link
+                  href="/start"
+                  onClick={() => posthog?.capture("hero_cta_clicked", { type: "paid", variant: "free-primary" })}
+                  className="mt-4 text-sm text-foreground/50 underline underline-offset-2 hover:text-foreground/70 transition-colors"
+                >
+                  or get the full plan for $29
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/start"
+                  onClick={() => posthog?.capture("hero_cta_clicked", { type: "paid", variant: "paid-primary" })}
+                  className="inline-flex items-center gap-2 rounded-xl px-8 py-4 bg-cta text-white text-lg font-bold border-2 border-cta shadow-[4px_4px_0_rgba(44,62,80,0.4)] hover:shadow-[5px_5px_0_rgba(44,62,80,0.45)] hover:-translate-y-0.5 active:shadow-[2px_2px_0_rgba(44,62,80,0.4)] active:translate-y-0.5 transition-all duration-100"
+                >
+                  Get Your Boost
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+                <Link
+                  href="/start?free=true"
+                  onClick={() => posthog?.capture("hero_cta_clicked", { type: "free", variant: "paid-primary" })}
+                  className="mt-4 text-sm text-foreground/50 underline underline-offset-2 hover:text-foreground/70 transition-colors"
+                >
+                  or try a free preview first
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Trust line */}
           <p className="mt-8 text-sm text-foreground/50 text-center">
-            One-time $29 · Full refund guarantee · <span className="text-foreground/70 font-medium">Ready in 10 minutes</span>
+            {freeHero ? (
+              <>No signup. No payment. <span className="text-foreground/70 font-medium">Results in 2 minutes.</span></>
+            ) : (
+              <>One-time $29 · Full refund guarantee · <span className="text-foreground/70 font-medium">Ready in 10 minutes</span></>
+            )}
           </p>
         </motion.div>
       </section>
