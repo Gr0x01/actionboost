@@ -77,6 +77,30 @@ app.get("/screenshot", async (req, res) => {
   }
 });
 
+app.get("/reddit-proxy", async (req, res) => {
+  if (req.headers["x-api-key"] !== API_KEY) return res.status(401).end();
+
+  const { sub, sort = "new", limit = 25 } = req.query;
+  if (!sub || !/^[a-zA-Z0-9_]+$/.test(sub)) {
+    return res.status(400).json({ error: "valid sub required" });
+  }
+
+  try {
+    const url = `https://www.reddit.com/r/${sub}/${sort}.json?limit=${limit}`;
+    const resp = await fetch(url, {
+      headers: { "User-Agent": "boost-bot/1.0 (by /u/actionboost)" },
+    });
+    if (!resp.ok) {
+      return res.status(resp.status).json({ error: `Reddit returned ${resp.status}` });
+    }
+    const data = await resp.json();
+    res.json(data);
+  } catch (err) {
+    console.error("Reddit proxy error:", err.message);
+    res.status(500).json({ error: "Reddit fetch failed" });
+  }
+});
+
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
 const PORT = process.env.PORT || 3333;
