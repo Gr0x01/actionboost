@@ -5,6 +5,7 @@ export { ProblemSection } from "./ProblemSection";
 export { FrameworksSection } from "./FrameworksSection";
 export { CompetitiveAlternatives } from "./CompetitiveAlternatives";
 export { ResearchProof } from "./ResearchProof";
+export { PlanFragments } from "./PlanFragments";
 export { WhatYouGet } from "./WhatYouGet";
 export { Objections } from "./Objections";
 export { FAQSection } from "./FAQSection";
