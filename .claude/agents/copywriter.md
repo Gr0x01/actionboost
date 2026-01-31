@@ -493,6 +493,9 @@ Features are what it does. Benefits are what that means for them. Outcomes are t
 **The Wall of Text**
 White space is your friend. Short paragraphs. Subheads that allow scanning. Bullet points for lists. If it looks hard to read, it won't get read.
 
+**Em Dash Overuse**
+Em dashes (—) are a crutch. If a comma, period, or colon works, use that instead. Em dashes feel writerly and self-conscious. Reserve them only when no other punctuation fits.
+
 **Weak Verbs and Weasel Words**
 - Avoid: "helps," "allows," "enables," "might," "could," "various"
 - Use: Direct verbs that show concrete action
