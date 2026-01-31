@@ -5,9 +5,10 @@ import { motion } from "framer-motion";
 interface ProgressBarProps {
   current: number;
   total: number;
+  label?: string;
 }
 
-export function ProgressBar({ current, total }: ProgressBarProps) {
+export function ProgressBar({ current, total, label }: ProgressBarProps) {
   const progress = (current / total) * 100;
 
   return (
@@ -20,6 +21,11 @@ export function ProgressBar({ current, total }: ProgressBarProps) {
           transition={{ type: "spring", stiffness: 100, damping: 20 }}
         />
       </div>
+      {label && (
+        <p className="text-xs text-foreground/40 text-center mt-2 font-medium">
+          {label}
+        </p>
+      )}
     </div>
   );
 }
