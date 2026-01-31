@@ -60,9 +60,17 @@ export function CheckoutSection({
   const [freeError, setFreeError] = useState<string | null>(null);
   const freeSubmitRef = useRef(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileReady, setTurnstileReady] = useState(false);
   const [honeypot, setHoneypot] = useState(""); // Bot trap - should stay empty
 
   const turnstileSiteKey = process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_KEY;
+
+  // If Turnstile doesn't load within 5s (ad blocker, network), skip it
+  useEffect(() => {
+    if (!turnstileSiteKey) { setTurnstileReady(true); return; }
+    const timer = setTimeout(() => setTurnstileReady(true), 5000);
+    return () => clearTimeout(timer);
+  }, [turnstileSiteKey]);
 
   const emailValid = isValidEmail(email);
   const canSubmitWithCode = hasValidCode && emailValid;
@@ -313,7 +321,7 @@ export function CheckoutSection({
             <div className="mt-2">
               <Turnstile
                 siteKey={turnstileSiteKey}
-                onSuccess={(token) => setTurnstileToken(token)}
+                onSuccess={(token) => { setTurnstileToken(token); setTurnstileReady(true); }}
                 onError={() => setTurnstileToken(null)}
                 onExpire={() => setTurnstileToken(null)}
                 options={{

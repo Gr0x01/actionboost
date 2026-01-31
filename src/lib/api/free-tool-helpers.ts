@@ -66,12 +66,11 @@ export async function verifyTurnstile(token: string): Promise<boolean> {
 
 // --- Turnstile guard (returns error response or null if OK) ---
 export async function guardTurnstile(turnstileToken?: string): Promise<NextResponse | null> {
+  // Validate token if provided; skip gracefully if missing (ad blockers, network issues)
   if (turnstileToken) {
     if (!(await verifyTurnstile(turnstileToken))) {
       return NextResponse.json({ error: "Bot verification failed." }, { status: 400 });
     }
-  } else if (process.env.CLOUDFLARE_TURNSTILE_SECRET && process.env.NODE_ENV === "production") {
-    return NextResponse.json({ error: "Bot verification required." }, { status: 400 });
   }
   return null;
 }

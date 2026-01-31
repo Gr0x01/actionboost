@@ -39,7 +39,7 @@ export function TextareaInput({
   }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey && value.trim() && !isOver) {
+    if (e.key === "Enter" && (e.metaKey || e.ctrlKey) && value.trim() && !isOver) {
       e.preventDefault();
       onSubmit();
     }
@@ -93,7 +93,10 @@ export function TextareaInput({
             Back
           </button>
         ) : (
-          <p className="text-xs text-foreground/40 font-mono">Shift+Enter for new line</p>
+          <p className="text-xs text-foreground/40 font-mono">
+            <span className="hidden md:inline">⌘/Ctrl+Enter to continue</span>
+            <span className="md:hidden">Tap Continue below</span>
+          </p>
         )}
         <div className="flex items-center gap-3">
           {onSkip && !value.trim() && (

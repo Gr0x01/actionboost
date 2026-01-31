@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { ArrowRight, ChevronLeft, Loader2, Mail, Check } from "lucide-react";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { isValidEmail } from "@/lib/validation";
@@ -38,6 +38,19 @@ export function ToolEmailStep({
     inputRef.current?.focus();
   }, []);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [turnstileTimedOut, setTurnstileTimedOut] = useState(false);
+
+  // If Turnstile doesn't load within 5s (ad blocker, network), skip it
+  useEffect(() => {
+    if (!turnstileSiteKey) return;
+    const timer = setTimeout(() => setTurnstileTimedOut(true), 5000);
+    return () => clearTimeout(timer);
+  }, [turnstileSiteKey]);
+
+  const handleTurnstileSuccess = useCallback((token: string) => {
+    setTurnstileToken(token);
+    setTurnstileTimedOut(true); // also marks ready
+  }, [setTurnstileToken]);
   const emailValid = isValidEmail(value);
   const showError = hasInteracted && value.trim() && !emailValid;
 
@@ -77,9 +90,13 @@ export function ToolEmailStep({
         We don&apos;t share your data or send spam. Just your results.
       </p>
 
-      {turnstileSiteKey && (
+      {turnstileSiteKey && !turnstileTimedOut && (
         <div className="mt-3 flex justify-center">
-          <Turnstile siteKey={turnstileSiteKey} onSuccess={setTurnstileToken} />
+          <Turnstile
+            siteKey={turnstileSiteKey}
+            onSuccess={handleTurnstileSuccess}
+            options={{ theme: "light", size: "invisible" }}
+          />
         </div>
       )}
 
