@@ -1,22 +1,18 @@
 # Current Phase
 
-## Latest Update: A/B Test — Free-Primary Homepage (50/50)
+## Latest Update: Free-Primary Homepage (Shipped)
 
-**Jan 31, 2026** — Running a PostHog experiment to test whether leading with free converts more cold traffic (especially Facebook).
+**Jan 31, 2026** — Switched homepage to lead with free instead of $29. No A/B test — traffic too low (~200/week) for statistical significance. Just shipping it and watching numbers.
 
-**PostHog experiment**: "Free-First Hero CTA" (ID 326332), feature flag `free-hero-cta`, 50/50 `control`/`test` split.
+**What changed:**
+- **Hero**: Primary CTA is now "See what we find — free" → `/start?free=true`. Paid demoted to secondary text link ("or get the full plan for $29"). Subheadline emphasizes free/no signup/no payment. Trust line: "No signup. No payment. Results in 2 minutes."
+- **Pricing section**: Headline is "Start free. Go deeper for **$29.**" Centered testimonial below headline. Two-tier side-by-side cards (Free $0 left, Full Boost $29 right). Free card shows 3 included + 3 locked features with lock icons. In-Action card replaced with inline text links below tiers.
 
-**What changes in the `test` variant:**
-- **Hero**: Primary CTA becomes "See what we find — free" → `/start?free=true`. Paid demoted to secondary text link. Subheadline and trust line updated (no $29 mention, emphasizes no signup/no payment).
-- **Pricing section**: Headline changes to "Start free. Go deeper for **$29.**" Centered testimonial below headline. Two-tier side-by-side cards (Free $0 left, Full Boost $29 right). Free card shows 3 included + 3 locked features with lock icons. In-Action card replaced with inline text links.
+**PostHog experiment 326332 stopped early** — archive it manually. Feature flag `free-hero-cta` disabled/removed from code.
 
-**Control variant**: Completely unchanged (current production homepage).
+**Why**: 297 visitors/week, only 3.9% CTR to /start. 67% mobile, mostly Facebook. $29 too high for cold social traffic. Free run costs $0.07 — can afford 385 free runs per paid conversion. Watch free start rate over next 1-2 weeks to evaluate.
 
-**Key files modified**: `HeroWithExplainer.tsx`, `Pricing.tsx` (both read `free-hero-cta` flag via `useMemo` + `posthog.getFeatureFlag`).
-
-**Why**: 297 visitors/week, only 3.9% click through to /start. 67% mobile, mostly Facebook. $29 is too high a commitment for cold social traffic on first visit. Free run costs $0.07 — can afford 385 free runs per paid conversion.
-
-**Metrics**: Hero CTA click rate, hero-to-pageview funnel, paid CTA clicks (secondary).
+**Key files**: `HeroWithExplainer.tsx`, `Pricing.tsx` (no more feature flag logic — hardcoded free-primary).
 
 ---
 
