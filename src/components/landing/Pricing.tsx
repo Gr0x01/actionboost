@@ -52,12 +52,12 @@ export function Pricing() {
               </div>
 
               <div className="space-y-3 mb-6">
-                <FeatureItem>Your top competitors identified</FeatureItem>
-                <FeatureItem>Market positioning snapshot</FeatureItem>
-                <FeatureItem>Surface-level gaps &amp; opportunities</FeatureItem>
-                <LockedItem>Full 30-day action plan</LockedItem>
-                <LockedItem>Channel-by-channel strategy</LockedItem>
-                <LockedItem>Tactics ranked by effort-to-impact</LockedItem>
+                <FeatureItem>Your positioning assessed (sharp, close, or fuzzy)</FeatureItem>
+                <FeatureItem>What makes you different &amp; who you serve best</FeatureItem>
+                <FeatureItem>1 key discovery from live research</FeatureItem>
+                <LockedItem>Top 3 priorities ranked by impact</LockedItem>
+                <LockedItem>Competitor traffic comparison</LockedItem>
+                <LockedItem>Full 30-day roadmap</LockedItem>
               </div>
             </div>
 
