@@ -62,7 +62,7 @@ Enji: ~2021, ~12 people, 1.5K monthly visits, $29/mo full suite (strategy, calen
 
 **Decision**: Direct, confident voice that respects the audience's intelligence.
 
-**Core**: "Stop guessing. Get a marketing plan that actually fits your business."
+**Core**: "Finally know what's working — and what to do next."
 
 **Why**: Original warm voice was for SMBs (unreachable). New audience wants answers, not hand-holding. Founder personality is naturally blunt/direct — authentic voice > performed voice.
 
@@ -178,6 +178,23 @@ Prevents unbounded JSONB growth. `.slice(-MAX)` in `accumulate.ts`.
 ## AI Context Limits: Relaxed for Quality (Jan 21 2026)
 
 Increased truncation limits (MAX_TOKENS 8K→12K, various char limits 150-300→400-800). Cost ~$0.50→$0.60/run. Margin remains 85-94%.
+
+---
+
+## Positioning Reframe: Diagnosis Over Plan (Jan 30 2026)
+
+**Decision**: Stop leading with "30-day marketing plan" in copy. Lead with diagnosis, clarity, and direction instead.
+
+**Why**: "30-day plan" describes the delivery format, not the value. The ICP is pre-traction — they don't even have acquisition figured out. They don't want a plan (homework). They want someone to tell them what's going on and what to do about it. "Plan" works for workouts, not for people who are lost. Nobody searches for or clicks on "marketing plan" in FB ads — the term doesn't resonate.
+
+**The reframe**:
+- FROM: "Get a 30-day marketing plan" → TO: "Find out what's working, what's not, and what to do next"
+- FROM: "Plan ready in 5 minutes" → TO: don't lead with time (fast = shallow)
+- FROM: naming specific tools (Tavily, DataForSEO) → TO: "hundreds of sources across the internet" (don't reveal the secret sauce)
+
+**Where "30-day" is OK**: As a supporting detail deep in copy ("includes a week-by-week roadmap"), not as the headline or CTA.
+
+**Applies to**: All customer-facing copy — ads, landing pages, CTAs, emails, social. Internal docs can still reference the plan structure.
 
 ---
 

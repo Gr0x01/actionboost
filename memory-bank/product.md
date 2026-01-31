@@ -2,9 +2,11 @@
 
 ## Value Prop
 
-> "Tell us about your business. Get a 30-day marketing plan built on real research. $29."
+> "Tell us about your business. We'll tell you what's actually going on — and exactly what to do about it. $29."
 
-You describe your business. We research your market, analyze what's working in your space, and hand you a plan: what to stop, what to start, what to do this week.
+You describe your business. We research your market from hundreds of sources across the internet and tell you: what's working, what's not, what to stop, what to start, and what to do this week.
+
+**Framing rule**: The output includes a week-by-week roadmap, but lead with the diagnosis and direction — not the plan format. "30-day plan" sounds like homework. "Here's what's going on and what to do next" sounds like relief.
 
 ---
 
@@ -57,9 +59,9 @@ Business type determines where we reach them, not who they are:
 
 ### Messaging Hierarchy (Promise → Proof → Mechanism)
 
-1. **Promise**: You'll know exactly what to do for the next 30 days
-2. **Proof**: Built on real research into your specific market — not templates, not vibes
-3. **Mechanism**: We analyze your competitors, your market, your current presence, then build a custom plan
+1. **Promise**: You'll finally know what's going on with your marketing — and exactly what to do about it
+2. **Proof**: Built on real research from hundreds of sources across the internet — not templates, not vibes
+3. **Mechanism**: We analyze your business, your market, and your competitors, then tell you what to stop, what to start, and what to do next
 
 ### Competitive Alternatives (Dunford Positioning)
 
@@ -70,7 +72,7 @@ Business type determines where we reach them, not who they are:
 4. Ask a friend — limited to their experience
 5. Hire an agency — $2K-10K/month, overkill for this stage
 
-**Our differentiation:** A specific 30-day plan built on real research into YOUR market. Not generic. Not expensive. Not overwhelming.
+**Our differentiation:** A real diagnosis of your marketing — what's working, what's not, and exactly what to do next. Built on real research from hundreds of sources. Not generic. Not expensive. Not overwhelming.
 
 ---
 
@@ -110,9 +112,9 @@ The action-first, research-backed strategist who tells you exactly what to do. S
 
 | Element | Pattern | Example |
 |---------|---------|---------|
-| Headlines | Direct, confident | "Stop guessing. Get a plan that works." |
-| Subheads | Specific, outcome-focused | "Real competitor research. Specific tactics. Ready to execute." |
-| CTAs | Action-oriented | "Get my 30-day plan", "See what's working" |
+| Headlines | Direct, confident | "Finally know what's working — and what to do next." |
+| Subheads | Specific, outcome-focused | "Real research. Clear diagnosis. Exactly what to do." |
+| CTAs | Action-oriented | "Get Your Boost", "Show me what's wrong", "Tell me what to do" |
 | Guarantees | Clear, near CTA | "Money back if it doesn't help. Seriously." |
 | Trust | Specific audiences | "SaaS, e-commerce, consultants" |
 | Labels | Sentence case, clean | "Your marketing plans" not "YOUR ACTION PLANS" |
@@ -168,11 +170,11 @@ Subtle "Just want a taste?" option at checkout → 4-section condensed audit →
 ## Landing Page Content
 
 ### Hero
-- Headline: "Stop guessing. Get a marketing plan that works."
-- Subhead: Real competitor research. Specific tactics. A 30-day plan you can actually execute.
+- Headline: "Finally know what's working — and what to do next."
+- Subhead: Real research from hundreds of sources. A clear diagnosis. Exactly what to stop, start, and do this week.
 - Trust line: "Money back if it doesn't help. Seriously."
-- Trust badges: "Plan ready in 5 minutes. SaaS, e-commerce, consultants."
-- CTA: "Get my 30-day plan"
+- Trust badges: "SaaS, e-commerce, consultants."
+- CTA: "Get Your Boost"
 
 ### Flow
 Pain → Solution → Outcome. Examples: Tech/SaaS first, e-commerce second, service third. How it works: Tell us → We research → Get your plan. Pricing: $49 once, free preview available.

@@ -8,7 +8,7 @@ Every 30 Min (trigger)
     ↓
 Subreddits (20 subs)
     ↓
-Fetch Reddit (via ScrapingDog)
+Fetch Reddit (direct .json endpoints)
     ↓
 Parse & Filter (posts < 2hrs old)
     ↓
@@ -23,9 +23,16 @@ Filter & Batch (score >= 7, save to Supabase)
 Send to Discord
 ```
 
+## Infrastructure
+- **n8n runs on localhost** — workflow authoring and management stays local
+- **Vultr scraping box**: `45.76.28.46` (Chicago, $5/mo, `n8n-reddit` label) — disposable IP for Reddit fetches. If Reddit bans the IP, destroy and recreate.
+- **n8n UI**: http://45.76.28.46:5678 (Docker, auto-restart)
+- **Screenshot service**: Separate box at 45.63.3.155 (New Jersey)
+- **Reddit API**: Applied for official API access, pending approval. Once approved, swap direct `.json` fetches for OAuth2 API calls.
+
 ## Files
 ```
-n8n-reddit-v13.json                    # Workflow export
+memory-bank/docs/n8n-reddit-v14.json   # Workflow export (v14: direct fetch, Supabase dedup)
 memory-bank/_archive/reddit-comment-prompt.md   # Comment generation prompt
 memory-bank/n8n-supabase-dedup.js      # Dedup node code
 ```
@@ -68,7 +75,8 @@ Voice: Direct, specific, peer energy. Mention Boost if naturally relevant. MAX 7
 |-----------|------|
 | Scoring (per post) | ~$0.001 (Haiku) |
 | Comment (per post) | ~$0.002 (Haiku) |
-| ScrapingDog | Free tier |
+| Reddit fetch | Free (direct .json) |
+| n8n Vultr box | ~$5-10/mo |
 | **Per run (20 subs)** | **~$0.10-0.20** |
 
 ## Discord Output
