@@ -24,7 +24,7 @@ export async function GET(
   // Fetch the run (include structured_output, research_data for lazy backfill, and plan_start_date for calendar)
   const { data: run, error } = await supabase
     .from("runs")
-    .select("id, status, input, output, share_slug, completed_at, created_at, user_id, refinements_used, parent_run_id, structured_output, research_data, plan_start_date")
+    .select("id, status, input, output, share_slug, completed_at, created_at, user_id, parent_run_id, structured_output, research_data, plan_start_date")
     .eq("id", runId)
     .single();
 
@@ -49,11 +49,10 @@ export async function GET(
     }
   }
 
-  // If this is a refinement, find the ROOT run's refinements_used
-  // Includes depth limit and cycle detection for safety
+  // Find the ROOT run, then count completed refinements
   const MAX_CHAIN_DEPTH = 10;
   const visitedIds = new Set<string>([runId]);
-  let rootRefinementsUsed = run.refinements_used;
+  let rootRunId = runId;
   let nextParentId: string | null = run.parent_run_id;
   let depth = 0;
 
@@ -67,14 +66,24 @@ export async function GET(
 
     const { data } = await supabase
       .from("runs")
-      .select("refinements_used, parent_run_id")
+      .select("id, parent_run_id")
       .eq("id", nextParentId)
       .single();
 
     if (!data) break;
-    rootRefinementsUsed = data.refinements_used;
+    rootRunId = data.id;
     nextParentId = data.parent_run_id;
   }
+
+  // Count completed refinement children of the root run
+  const { count: completedRefinements } = await supabase
+    .from("runs")
+    .select("id", { count: "exact", head: true })
+    .eq("parent_run_id", rootRunId)
+    .eq("source", "refinement")
+    .eq("status", "complete");
+
+  const rootRefinementsUsed = completedRefinements ?? 0;
 
   // Lazy backfill: If run is complete but lacks structured_output, extract async
   const structuredOutput = run.structured_output;

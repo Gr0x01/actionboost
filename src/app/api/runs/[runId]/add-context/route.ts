@@ -72,7 +72,7 @@ export async function POST(
   // Get the current run and verify ownership
   const { data: run, error: fetchError } = await supabase
     .from("runs")
-    .select("id, user_id, status, input, refinements_used, parent_run_id")
+    .select("id, user_id, status, input, parent_run_id")
     .eq("id", runId)
     .single();
 
@@ -94,11 +94,9 @@ export async function POST(
   }
 
   // Find the ROOT run (original) - traverse up parent chain
-  // Refinement limits are tracked on the ROOT, not intermediate refinements
   const MAX_CHAIN_DEPTH = 10;
   const visitedIds = new Set<string>([runId]);
   let rootRunId = runId;
-  let rootRefinementsUsed = run.refinements_used || 0;
   let currentParentId = run.parent_run_id;
   let depth = 0;
 
@@ -112,7 +110,7 @@ export async function POST(
 
     const { data: parentRun, error: parentError } = await supabase
       .from("runs")
-      .select("id, refinements_used, parent_run_id")
+      .select("id, parent_run_id")
       .eq("id", currentParentId)
       .single();
 
@@ -122,16 +120,32 @@ export async function POST(
     }
 
     rootRunId = parentRun.id;
-    rootRefinementsUsed = parentRun.refinements_used || 0;
     currentParentId = parentRun.parent_run_id;
   }
 
-  // Check refinement limit on ROOT run (pre-check for fast failure)
-  const currentRefinements = rootRefinementsUsed;
-  if (currentRefinements >= MAX_FREE_REFINEMENTS) {
+  // Count completed refinements and in-flight ones (all flattened under root)
+  const { count: completedCount, error: countError } = await supabase
+    .from("runs")
+    .select("id", { count: "exact", head: true })
+    .eq("parent_run_id", rootRunId)
+    .eq("source", "refinement")
+    .eq("status", "complete");
+
+  if (countError) {
+    console.error("[AddContext] Failed to count refinements:", countError);
+    return NextResponse.json(
+      { error: "Failed to check refinement limit" },
+      { status: 500 }
+    );
+  }
+
+  const completedRefinements = completedCount ?? 0;
+
+  // Check refinement limit based on completed count
+  if (completedRefinements >= MAX_FREE_REFINEMENTS) {
     trackServerEvent(userId, "refinement_limit_reached", {
       run_id: runId,
-      refinements_used: currentRefinements,
+      refinements_used: completedRefinements,
     });
 
     return NextResponse.json(
@@ -143,73 +157,67 @@ export async function POST(
     );
   }
 
-  // ATOMIC: Increment refinements_used on ROOT run with condition check to prevent race condition
-  // This ensures only one concurrent request can succeed
-  const { data: updatedRun, error: incrementError } = await supabase
+  // Also block if a refinement is already in-flight
+  const { count: inflightCount } = await supabase
     .from("runs")
-    .update({ refinements_used: currentRefinements + 1 })
-    .eq("id", rootRunId)
-    .eq("refinements_used", currentRefinements) // Optimistic locking - only update if value unchanged
-    .select("refinements_used")
-    .single();
+    .select("id", { count: "exact", head: true })
+    .eq("parent_run_id", rootRunId)
+    .eq("source", "refinement")
+    .in("status", ["pending", "processing"]);
 
-  if (incrementError || !updatedRun) {
-    // Either another request won the race, or the limit was reached
-    console.log("Refinement increment failed (likely race condition):", incrementError);
-
-    // Re-fetch ROOT run to get accurate count for error message
-    const { data: freshRun } = await supabase
-      .from("runs")
-      .select("refinements_used")
-      .eq("id", rootRunId)
-      .single();
-
-    const actualUsed = freshRun?.refinements_used || MAX_FREE_REFINEMENTS;
-
-    if (actualUsed >= MAX_FREE_REFINEMENTS) {
-      trackServerEvent(userId, "refinement_limit_reached", {
-        run_id: runId,
-        refinements_used: actualUsed,
-      });
-      return NextResponse.json(
-        {
-          error: `You've used all ${MAX_FREE_REFINEMENTS} free refinements for this strategy`,
-          refinementsRemaining: 0,
-        },
-        { status: 429 }
-      );
-    }
-
-    // Some other error
+  if ((inflightCount ?? 0) > 0) {
     return NextResponse.json(
-      { error: "Failed to process refinement. Please try again." },
-      { status: 500 }
+      { error: "A refinement is already in progress. Please wait for it to complete." },
+      { status: 429 }
     );
   }
 
-  const newRefinementCount = updatedRun.refinements_used || 1;
+  // ATOMIC GATE: Increment refinements_used on root with optimistic locking
+  // to prevent two concurrent requests from both passing the count check.
+  // The counter is a concurrency gate only — the *limit* is based on completed count above.
+  const { data: rootRun } = await supabase
+    .from("runs")
+    .select("refinements_used")
+    .eq("id", rootRunId)
+    .single();
 
-  // Create the refinement run (only after successful atomic increment)
+  const currentCounter = rootRun?.refinements_used ?? 0;
+
+  const { data: lockedRun, error: lockError } = await supabase
+    .from("runs")
+    .update({ refinements_used: currentCounter + 1 })
+    .eq("id", rootRunId)
+    .eq("refinements_used", currentCounter)
+    .select("refinements_used")
+    .single();
+
+  if (lockError || !lockedRun) {
+    return NextResponse.json(
+      { error: "Another refinement request is being processed. Please try again." },
+      { status: 429 }
+    );
+  }
+
+  // Create the refinement run — parent_run_id always points to root for flat counting
   const { data: newRun, error: insertError } = await supabase
     .from("runs")
     .insert({
       input: run.input,
       additional_context: additionalContext,
-      parent_run_id: runId,
+      parent_run_id: rootRunId,
       status: "pending",
       user_id: userId,
       source: "refinement",
-      refinements_used: 0, // New run starts fresh (parent tracks count)
     })
     .select("id")
     .single();
 
   if (insertError || !newRun) {
     console.error("Failed to create refinement run:", insertError);
-    // Rollback the increment on ROOT run since we couldn't create the run
+    // Rollback the counter since we couldn't create the run
     await supabase
       .from("runs")
-      .update({ refinements_used: currentRefinements })
+      .update({ refinements_used: currentCounter })
       .eq("id", rootRunId);
 
     return NextResponse.json(
@@ -221,8 +229,8 @@ export async function POST(
   // Track refinement submission
   trackServerEvent(userId, "refinement_submitted", {
     run_id: newRun.id,
-    parent_run_id: runId,
-    refinement_number: newRefinementCount,
+    parent_run_id: rootRunId,
+    refinement_number: completedRefinements + 1,
     context_length: additionalContext.length,
   });
 
@@ -238,6 +246,6 @@ export async function POST(
 
   return NextResponse.json({
     runId: newRun.id,
-    refinementsRemaining: MAX_FREE_REFINEMENTS - newRefinementCount,
+    refinementsRemaining: MAX_FREE_REFINEMENTS - completedRefinements - 1,
   });
 }
