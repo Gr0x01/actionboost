@@ -1,6 +1,26 @@
 # Current Phase
 
-## Latest Update: Disabled Tab Feedback on Free Results
+## Latest Update: A/B Test — Free-Primary Homepage (50/50)
+
+**Jan 31, 2026** — Running a PostHog experiment to test whether leading with free converts more cold traffic (especially Facebook).
+
+**PostHog experiment**: "Free-First Hero CTA" (ID 326332), feature flag `free-hero-cta`, 50/50 `control`/`test` split.
+
+**What changes in the `test` variant:**
+- **Hero**: Primary CTA becomes "See what we find — free" → `/start?free=true`. Paid demoted to secondary text link. Subheadline and trust line updated (no $29 mention, emphasizes no signup/no payment).
+- **Pricing section**: Headline changes to "Start free. Go deeper for **$29.**" Centered testimonial below headline. Two-tier side-by-side cards (Free $0 left, Full Boost $29 right). Free card shows 3 included + 3 locked features with lock icons. In-Action card replaced with inline text links.
+
+**Control variant**: Completely unchanged (current production homepage).
+
+**Key files modified**: `HeroWithExplainer.tsx`, `Pricing.tsx` (both read `free-hero-cta` flag via `useMemo` + `posthog.getFeatureFlag`).
+
+**Why**: 297 visitors/week, only 3.9% click through to /start. 67% mobile, mostly Facebook. $29 is too high a commitment for cold social traffic on first visit. Free run costs $0.07 — can afford 385 free runs per paid conversion.
+
+**Metrics**: Hero CTA click rate, hero-to-pageview funnel, paid CTA clicks (secondary).
+
+---
+
+## Previous: Disabled Tab Feedback on Free Results
 
 **Jan 30, 2026** - Added tooltip feedback when users click disabled "Tasks" tab on free result pages. Shows "Available with the full Boost plan" message on click (auto-dismisses after 2.5s). `disabledMessage` prop is customizable per page.
 
