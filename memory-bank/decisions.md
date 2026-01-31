@@ -4,6 +4,16 @@ Key architectural and product decisions. Reference this when you need to underst
 
 ---
 
+## Positioning: Clarity, Not Plans or Competitor Research (Feb 1 2026)
+
+**Decision**: The value prop is **clarity** — "get clarity on what's working and what's not." NOT "30-day marketing plan" (tested poorly, sounds generic) and NOT "competitive research" (that's a feature/input, not the outcome).
+
+**When writing about Boost externally**: Lead with the outcome (clarity on your market, where you stand, what to do next). Competitor data, keyword rankings, traffic analysis are supporting details, not the headline.
+
+**Why**: "Marketing plan generator" made people bounce — sounds like a ChatGPT wrapper. "Competitive research" is too narrow and feature-focused. "Clarity" is what people actually want and what triggered the first paid conversion.
+
+---
+
 ## Thesis-Driven Plan Architecture (Jan 27 2026)
 
 **Decision**: Restructure Opus pipeline prompt around an internal "thesis" — a strategic diagnosis that silently drives plan coherence — instead of a single goal or scattered goals.
@@ -195,6 +205,22 @@ Increased truncation limits (MAX_TOKENS 8K→12K, various char limits 150-300→
 **Where "30-day" is OK**: As a supporting detail deep in copy ("includes a week-by-week roadmap"), not as the headline or CTA.
 
 **Applies to**: All customer-facing copy — ads, landing pages, CTAs, emails, social. Internal docs can still reference the plan structure.
+
+---
+
+## Refinement Counting: Live Count, Not Counter (Feb 1 2026)
+
+**Decision**: Replace upfront `refinements_used` counter increment with a live count of completed refinement child runs.
+
+**Why**: The counter was incremented before the pipeline ran. If the pipeline failed, the slot was consumed for nothing. Now only `status = 'complete'` refinements count against the limit.
+
+**How it works**:
+- Limit check: `SELECT count(*) FROM runs WHERE parent_run_id = :rootRunId AND source = 'refinement' AND status = 'complete'`
+- Concurrency gate: `refinements_used` column kept for optimistic locking (prevents two concurrent requests slipping past the count check), but it no longer determines the limit
+- All refinement runs set `parent_run_id` to the **root** run (flat hierarchy) so counts are accurate regardless of which run in the chain the user refines from
+- In-flight check blocks submitting while a refinement is pending/processing
+
+**Files**: `api/runs/[runId]/add-context/route.ts`, `api/runs/[runId]/route.ts`
 
 ---
 

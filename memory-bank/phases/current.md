@@ -1,6 +1,32 @@
 # Current Phase
 
-## Latest Update: Free-Primary Homepage (Shipped)
+## Latest Update: /start Funnel Tracking Shipped (Feb 1, 2026)
+
+**Step-level tracking deployed.** Clean funnel data flowing going forward.
+
+**New events:**
+- `step_viewed` — fires per question (step, step_name, step_id, total_steps, time_since_start)
+- `step_completed` — fires on advance (step, step_name, step_id, skipped, time_on_step_seconds)
+- `checkout_viewed` — fires when checkout renders
+- `form_abandoned` — now uses `sendBeacon` + `visibilitychange` for mobile reliability (was ~27% capture rate with `beforeunload` alone)
+
+**Funnel to build in PostHog:** `form_started` → `step_viewed (step=1)` → `step_completed (step=1)` → ... → `checkout_viewed`
+
+**Old data (pre-tracking, last 30 days):**
+- 207 `form_started` → 56 `form_abandoned` (tracked) → 8 `run_created`
+- Biggest drop-off: Q1 traction (37.5%), checkout (28.6%)
+- Step names were inconsistent — fixed now
+
+**Next steps:**
+- Let data collect 1-2 weeks for clean funnel picture
+- Then tackle Q1 drop-off (reorder questions or change opener)
+- Progress bar label also shipped ("Step X of 6 · Building your growth plan")
+
+**Key files**: `src/app/start/page.tsx`, `src/lib/hooks/useFormAnalytics.ts`, `src/lib/hooks/useFormWizard.ts`
+
+---
+
+## Previous: Free-Primary Homepage (Shipped)
 
 **Jan 31, 2026** — Switched homepage to lead with free instead of $29. No A/B test — traffic too low (~200/week) for statistical significance. Just shipping it and watching numbers.
 

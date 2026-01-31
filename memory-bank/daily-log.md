@@ -405,6 +405,46 @@ Bio: "Solo dev. Building Boost — competitive marketing research for small busi
 
 ---
 
+## Day 11 - Jan 31
+
+### Completed
+| Activity | Result |
+|----------|--------|
+| Free-primary homepage switch | ✅ Removed A/B test flag, hardcoded free-first |
+| A/B test setup + teardown | ✅ Tested free hero CTA + pricing via PostHog, killed early (low traffic) |
+| Free-to-paid conversion redesign | ✅ Locked sections + coupon reveal flow |
+| Homepage copy reframe | ✅ "Get a plan" → "Get clarity" |
+| Pricing card fixes | ✅ Accurate free tier features, removed duplicate max-w |
+| Reddit n8n workflow v15 | ✅ Filter before comment gen, removed archetypes |
+| Screenshot service update | ✅ Updated deployment |
+| Agent prompts + copywriter skill | ✅ Refreshed guidelines |
+| CI fixes | ✅ Unused import, missing dep, checkout tests |
+| ICP-relevant example swap | ✅ Replaced tattoo example with free tool finding |
+| Memory bank cleanup | ✅ Cleaned old files, added daily log + docs |
+| Reddit engagement | ✅ Continued growth loop |
+
+### Product Work
+- **Free-primary homepage**: Switched hero to lead with free ("See what we find — free"), paid demoted to secondary link. No A/B test — traffic too low (~200/week) for significance. Just shipped it.
+- **Conversion redesign**: Free results now show locked sections with coupon reveal to drive paid upgrades.
+- **Copy reframe**: Shifted messaging from "get a marketing plan" to "get clarity on what's working and what's not."
+- **Pricing cards**: Fixed free tier card to accurately reflect what users actually get.
+
+### Wins
+- **First paid sale! $29** 🎉 — First revenue, came in late night.
+
+### Marketing
+- **n8n Reddit workflow v15**: Smarter filtering — scores posts before generating comments, removed archetype system for simpler flow.
+- Continued Reddit growth loop
+
+### Spend
+| Date | Item | Cost |
+|------|------|------|
+| Jan 31 | Nothing | $0 |
+| **Running Total** | | **$140** |
+| **Revenue** | First sale | **$29** |
+
+---
+
 ## Next Actions
 1. Post "Drop your URL" thread on r/SaaS
 2. Continue Reddit growth loop

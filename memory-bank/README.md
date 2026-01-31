@@ -4,11 +4,11 @@
 
 ## The Product
 
-**Your 30-day marketing plan. Real research, not generic advice.**
+**Stop guessing. Get clarity on what's working and what's not.**
 
 Target audience: **Tech-adjacent entrepreneurs** — SaaS founders, solopreneurs, e-commerce/Shopify, service businesses. People who can find and buy tools but won't build their own.
 
-**v1 (now)**: One-shot runs. Pay $29, tell us about your business, get a real strategy built on live competitive research + Claude Opus 4.5 reasoning. Includes 2 refinements + dashboard access.
+**v1 (now)**: One-shot runs. Pay $29, tell us about your business, get clarity on your market — real research on your competitors, traffic, keywords, what's working in your space — and a clear picture of where you stand and what to do next. Includes 2 refinements + dashboard access.
 
 **v2 (future)**: Subscription tier. $49/mo for integrations (PostHog/Mixpanel/GA), fresh competitor data, weekly check-ins. Dashboard sells the subscription via grayed-out integration slots.
 
@@ -16,12 +16,14 @@ Target audience: **Tech-adjacent entrepreneurs** — SaaS founders, solopreneurs
 
 **Output format**: Executive Summary → Your Situation → Competitive Landscape → Stop Doing → Start Doing → Quick Wins → 30-Day Roadmap.
 
-**Brand voice**: Direct strategist. "Stop guessing. Get a marketing plan that works." — confident, specific, respects intelligence. No hand-holding, no startup bro energy, no emojis.
+**Brand voice**: Direct strategist. "Stop guessing. Get clarity on what's working and what's not." — confident, specific, respects intelligence. No hand-holding, no startup bro energy, no emojis.
+
+**IMPORTANT — Positioning guidance**: The value prop is **clarity**, not "marketing plan" or "competitive research." Competitor research is one input/feature, not the headline. When describing Boost externally (copy, posts, pitches), lead with the outcome (clarity on your market, what to do next) not the mechanism (competitor data, keyword rankings). "30-day marketing plan" framing tested poorly — avoid it.
 
 ## Why It Works
 
 1. **User invests time before money** - Fill out detailed form BEFORE seeing checkout. After 10 minutes of input, they're committed.
-2. **Real research on YOUR competitors** - Tavily searches, DataForSEO metrics. Not templated advice.
+2. **Real research on YOUR market** - Tavily searches, DataForSEO metrics, homepage screenshots. Not templated advice.
 3. **No friction** - No account, no subscription. Email for receipt + magic link to access later.
 
 ## Traction
