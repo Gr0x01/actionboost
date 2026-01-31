@@ -35,7 +35,7 @@ export function Pricing() {
         </div>
 
         {/* Two-tier grid: free left/top, paid right/bottom */}
-        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6 md:gap-8 max-w-2xl mx-auto md:max-w-none">
+        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6 md:gap-8">
 
           {/* FREE tier card */}
           <div
