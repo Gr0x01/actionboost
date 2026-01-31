@@ -364,7 +364,7 @@ function MarketingAuditContent() {
       setError("Network error. Please try again.");
       setSubmitting(false);
     }
-  }, [submitting, url, businessDescription, email, turnstileToken, router]);
+  }, [submitting, url, businessDescription, email, turnstileToken, router, posthog]);
 
   return (
     <div className="min-h-screen flex flex-col bg-mesh">

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Check } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
-import { config } from '@/lib/config'
+
 
 interface FreeTasksEmptyStateProps {
   freeAuditId: string

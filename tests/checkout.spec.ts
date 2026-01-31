@@ -44,8 +44,8 @@ test.describe("Checkout Flow", () => {
   test("displays checkout options after completing form", async ({ page }) => {
     await fillFormAndReachCheckout(page)
 
-    // Should show the main CTA button ($29 price)
-    await expect(page.getByRole("button", { name: /\$29/i })).toBeVisible()
+    // Should show the main CTA button
+    await expect(page.getByRole("button", { name: /generate my plan/i })).toBeVisible()
   })
 
   test("shows promo code input", async ({ page }) => {
@@ -92,8 +92,8 @@ test.describe("Checkout Flow", () => {
       })
     })
 
-    // Click checkout button ($29 price)
-    await page.getByRole("button", { name: /\$29/i }).click()
+    // Click checkout button
+    await page.getByRole("button", { name: /generate my plan/i }).click()
 
     // Wait for the API response instead of arbitrary timeout
     const response = await responsePromise
