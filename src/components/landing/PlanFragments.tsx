@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import Link from "next/link";
 
 interface Fragment {
@@ -95,91 +95,163 @@ const FRAGMENTS: Fragment[] = [
       </>
     ),
   },
+  {
+    label: "Market opportunity",
+    businessType: "scam detection tool",
+    text: (
+      <>
+        You{"\u2019"}re competing against giants {"\u2014"} Norton Genie,
+        Bitdefender Scamio, Surfshark {"\u2014"} but with a differentiator they
+        can{"\u2019"}t easily replicate: <B>privacy-first local AI</B> via
+        Ollama. The research reveals a growing segment of privacy-conscious users
+        and an enormous underserved demographic {"\u2014"} adult children seeking
+        scam protection for <B>aging parents</B>.
+      </>
+    ),
+  },
+  {
+    label: "Executive summary",
+    businessType: "webpage commenting platform",
+    text: (
+      <>
+        You{"\u2019"}re entering a market with one dominant player {"\u2014"}{" "}
+        Disqus, at <B>~15K monthly organic visits</B> {"\u2014"} that has severe
+        trust issues around privacy, tracking, and forced advertising. Hyvor Talk
+        (<B>~2.4K monthly visits</B>) positions as the privacy-first
+        alternative. Your concept of {"\u2018"}turning any webpage into a forum
+        {"\u2019"} sits at an interesting intersection.
+      </>
+    ),
+  },
+  {
+    label: "Competitive gap",
+    businessType: "founder positioning studio",
+    text: (
+      <>
+        Fletch PMM charges <B>$10K{"\u2013"}$15K sprints</B> for generic B2B
+        SaaS. April Dunford runs <B>$50K{"\u2013"}$100K workshops</B> for
+        enterprise. Neither specializes in complex, regulated industries. Your
+        wedge {"\u2014"} {"\u2018"}clarity before design, direction before pixels
+        {"\u2019"} {"\u2014"} targets founders who can{"\u2019"}t articulate what
+        they do, and investors cite that as a <B>deal-breaker</B>.
+      </>
+    ),
+  },
+  {
+    label: "Market analysis",
+    businessType: "creator pipeline tool",
+    text: (
+      <>
+        The market is crowded but fragmented. Creators cobble together Notion,
+        Google Sheets, Trello, and various note apps. Research shows their
+        biggest frustrations are {"\u2018"}
+        <B>too many tools</B>,{"\u2019"} disorganization across apps, and the
+        tedium of tracking ideas. Notion has brand recognition but an{" "}
+        <B>overwhelming learning curve</B>. Be the simple alternative that just
+        works.
+      </>
+    ),
+  },
 ];
 
-function shuffle<T>(arr: T[]): T[] {
-  const shuffled = [...arr];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
+/* Split fragments across two rows — 5 per row */
+const ROW_1 = [FRAGMENTS[0], FRAGMENTS[2], FRAGMENTS[4], FRAGMENTS[6], FRAGMENTS[8]];
+const ROW_2 = [FRAGMENTS[1], FRAGMENTS[3], FRAGMENTS[5], FRAGMENTS[7], FRAGMENTS[9]];
+
+function FragmentCard({ fragment }: { fragment: Fragment }) {
+  return (
+    <div
+      className="w-[340px] md:w-[440px] shrink-0 p-5 md:p-6
+                 border border-surface/[0.08] bg-surface/[0.03] rounded-sm"
+    >
+      <p className="font-mono text-cta text-[11px] font-bold uppercase tracking-[0.08em] mb-1">
+        {fragment.label}
+      </p>
+      <p className="font-mono text-surface/40 text-xs mb-3">
+        {fragment.businessType}
+      </p>
+      <p className="text-surface/80 text-sm md:text-[15px] leading-relaxed font-light">
+        {fragment.text}
+      </p>
+    </div>
+  );
+}
+
+function MarqueeRow({
+  fragments,
+  direction,
+}: {
+  fragments: Fragment[];
+  direction: "left" | "right";
+}) {
+  // Duplicate for seamless infinite loop
+  const items = [...fragments, ...fragments];
+
+  return (
+    <div
+      className="marquee-container overflow-hidden"
+      style={{
+        maskImage:
+          "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+        WebkitMaskImage:
+          "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+      }}
+    >
+      <div
+        className={`flex gap-4 w-max ${
+          direction === "left"
+            ? "animate-marquee-left"
+            : "animate-marquee-right"
+        }`}
+        style={{ animationDuration: "55s" }}
+      >
+        {items.map((f, i) => (
+          <FragmentCard key={`${f.label}-${i}`} fragment={f} />
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export function PlanFragments() {
-  const [fragments, setFragments] = useState<Fragment[]>(FRAGMENTS);
-
-  useEffect(() => {
-    setFragments(shuffle(FRAGMENTS));
-  }, []);
-
   return (
-    <section className="relative py-16 sm:py-20 bg-foreground">
-      <div className="mx-auto max-w-5xl px-6">
-        {/* Heading */}
-        <div className="mb-10">
-          <p className="font-mono text-xs tracking-[0.15em] text-surface/50 uppercase mb-4">
-            From real plans
-          </p>
-          <h2 className="text-2xl sm:text-3xl font-light text-surface tracking-tight">
-            Excerpts from{" "}
-            <span className="font-black">actual plans.</span>
-          </h2>
-          <p className="text-base text-surface/50 mt-3">
-            Every Boost plan is built on live market data. Here&apos;s what that
-            looks like.
-          </p>
-        </div>
+    <section className="relative bg-foreground py-16 sm:py-20 overflow-hidden">
+      {/* Heading */}
+      <div className="mx-auto max-w-2xl px-6 text-center mb-10 md:mb-14">
+        <p className="font-mono text-xs tracking-[0.15em] text-surface/50 uppercase mb-4">
+          From real plans
+        </p>
+        <h2 className="text-2xl sm:text-3xl font-light text-surface tracking-tight">
+          What{" "}
+          <span className="font-black">real research</span>{" "}
+          looks like.
+        </h2>
+        <p className="text-base text-surface/50 mt-3">
+          Every Boost plan is built on live market data. These are real excerpts.
+        </p>
+      </div>
 
-        {/* Fragments — two-column on desktop, show 3 on mobile / all 6 on desktop */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-0">
-          {fragments.map((fragment, i) => (
-            <div
-              key={fragment.label}
-              className={`py-5 ${
-                /* Border between rows: on mobile, all except last visible (index 2).
-                   On desktop, items 0-3 get borders (first two rows), last row (4-5) don't. */
-                i < 2 ? "border-b border-surface/10" : ""
-              } ${
-                i >= 2 && i < 4
-                  ? "md:border-b md:border-surface/10"
-                  : ""
-              } ${
-                /* Hide fragments 4-6 on mobile */
-                i >= 3 ? "hidden md:block" : ""
-              }`}
-            >
-              {/* Category label */}
-              <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-cta">
-                {fragment.label}
-              </span>
+      {/* Row 1 — scrolls left */}
+      <MarqueeRow fragments={ROW_1} direction="left" />
 
-              {/* Fragment text */}
-              <p className="text-[15px] leading-relaxed text-surface/80 mt-2">
-                {fragment.text}
-              </p>
+      {/* Gap */}
+      <div className="h-3 md:h-4" />
 
-              {/* Attribution */}
-              <p className="text-[13px] italic text-surface/35 mt-3">
-                From a plan built for a {fragment.businessType}
-              </p>
-            </div>
-          ))}
-        </div>
+      {/* Row 2 — scrolls right */}
+      <MarqueeRow fragments={ROW_2} direction="right" />
 
-        {/* Inline CTA */}
-        <div className="mt-10 pt-8 text-center">
-          <p className="text-base text-surface/60">
-            Want to see what Boost finds for your business?{" "}
-            <Link
-              href="/start?free=true"
-              className="font-semibold text-cta underline decoration-cta/40 decoration-2 underline-offset-[3px] transition-all hover:decoration-cta"
-            >
-              Get a free preview
-            </Link>
-            . No payment, no&nbsp;signup.
-          </p>
-        </div>
+      {/* Inline CTA */}
+      <div className="mt-10 md:mt-14 text-center px-6">
+        <p className="text-base text-surface/60">
+          Want to see what Boost finds for your business?{" "}
+          <Link
+            href="/start?free=true"
+            className="font-semibold text-cta underline decoration-cta/40 decoration-2 underline-offset-[3px] transition-all hover:decoration-cta"
+          >
+            Get a free preview
+          </Link>
+          . No payment, no&nbsp;signup.
+        </p>
       </div>
     </section>
   );
