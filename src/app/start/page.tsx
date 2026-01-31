@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, Suspense } from "react";
+import { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -128,7 +128,7 @@ function StartPageContent() {
   // Track where checkout was entered from for back navigation
   const [checkoutSource, setCheckoutSource] = useState<"questions" | "context_update">("questions");
 
-  // Form wizard navigation
+  // Form wizard navigation (analytics wired via callback below)
   const {
     currentQuestion,
     setCurrentQuestion,
@@ -139,21 +139,28 @@ function StartPageContent() {
     isComplete: isQuestionsComplete,
   } = useFormWizard({
     questions: QUESTIONS,
-    posthog,
     onComplete: () => {
       setCheckoutSource("questions");
       setViewState("checkout");
     },
+    onStepCompleted: (stepIndex, stepId, skipped) => {
+      trackStepCompletedRef.current?.(stepIndex, stepId, skipped);
+    },
   });
 
-  // Form analytics tracking - handles form start and abandonment tracking
-  const { trackFormStart } = useFormAnalytics({
+  // Form analytics tracking - handles form start, step views, step completions, abandonment
+  const { trackFormStart, trackStepViewed, trackStepCompleted } = useFormAnalytics({
     posthog,
     entrySource,
     viewState,
     currentQuestion,
     questionId: question?.id,
+    totalQuestions: QUESTIONS.length,
   });
+
+  // Ref to break circular dependency between wizard and analytics hooks
+  const trackStepCompletedRef = useRef(trackStepCompleted);
+  trackStepCompletedRef.current = trackStepCompleted;
 
   // Promo code handling
   const {
@@ -191,6 +198,13 @@ function StartPageContent() {
       setEmail(userEmail);
     }
   }, [userEmail]);
+
+  // Track step_viewed when a question is displayed
+  useEffect(() => {
+    if (viewState === "questions" && !showAcknowledgment && question) {
+      trackStepViewed(currentQuestion, question.id);
+    }
+  }, [viewState, currentQuestion, showAcknowledgment, question, trackStepViewed]);
 
   // Load from localStorage and track form start on mount
   useEffect(() => {
@@ -396,9 +410,17 @@ function StartPageContent() {
 
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-12">
         <div className="w-full max-w-2xl">
-          {/* Progress bar */}
-          <div className="mb-12">
-            <ProgressBar current={progress.current} total={progress.total} />
+          {/* Progress bar with context label */}
+          <div className="mb-10">
+            <ProgressBar
+              current={progress.current}
+              total={progress.total}
+              label={
+                viewState === "questions" && !showAcknowledgment && !isQuestionsComplete
+                  ? `Step ${currentQuestion + 1} of ${QUESTIONS.length} · ${freeMode ? "Building your free growth plan" : "Building your growth plan"}`
+                  : undefined
+              }
+            />
           </div>
 
           <AnimatePresence mode="wait">
