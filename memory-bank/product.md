@@ -255,14 +255,16 @@ Pain → Solution → Outcome. Examples: Tech/SaaS first, e-commerce second, ser
 
 ---
 
-## Pricing
+## Pricing (Feb 2026)
 
-| Product | Price | Credits |
-|---------|-------|---------|
-| Single | $49 | 1 |
+| Product | Price | Cost | Margin |
+|---------|-------|------|--------|
+| Boost Weekly (1 project) | $29/mo (founder) → $49/mo later | ~$1.50/mo | ~95% |
+| Additional project | $15-20/mo | ~$1.50/mo | ~90%+ |
+| Boost Brief (free) | $0 | ~$0.10 | lead gen |
+| Boost Snapshot (free) | $0 | ~$0.05 | lead gen |
 
-**Per-run cost**: ~$1.50-2.50 (Opus + research APIs)
-**Margin**: ~95%
+**v1 one-shot ($29) still live** until Boost Weekly launches, then sunsets.
 
 ---
 
@@ -288,11 +290,13 @@ Pain → Solution → Outcome. Examples: Tech/SaaS first, e-commerce second, ser
 
 ---
 
-## Not Building (MVP)
+## Building Next (v2 — Boost Weekly)
 
-- User accounts beyond magic link
-- Subscriptions
-- Team features
-- Strategy editing/revision
-- Integrations
-- Mobile app
+- Business profiles (ICP, voice, competitors — persistent)
+- $29/mo subscription via Stripe (+ $15-20/mo per additional project)
+- Focused dashboard: this week's focus / what's working / draft it
+- "Draft this" execution engine (Sonnet generates content aligned to ICP)
+- Weekly re-vectoring based on outcomes
+- GSC/GA4 integration (later)
+
+See `projects/v2-master-plan.md` for full plan.

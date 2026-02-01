@@ -38,7 +38,11 @@ Tracked competitors and adjacent tools. Not all are direct — some overlap on a
 
 **Founder**: Nikhil Kumar (@nikhonit) — ex-Seedstars, GrowthSchool, Invact Metaversity. 8+ years growth/engineering. Solo founder, building in public.
 
-**Price**: **$9.99/mo** (launch offer, increases to $29/mo after first 100 founders). 1-day free trial. 30-day refund guarantee (ToS says 7-day — inconsistency). Stripe payments. Also: GitToTweet standalone at $5/mo.
+**Price** (updated Feb 1 2026 from dashboard screenshots):
+- **$9.99/mo** base (launch offer, increases to $29/mo after first 100 founders). 1-day free trial. 30-day refund guarantee (ToS says 7-day — inconsistency).
+- **Agency pricing already live**: Quick Add $19.98/mo (+3 projects, 6 total), Agency $39/mo (15 projects, 3 team members, white-label), Agency Pro $99/mo (unlimited projects, 10 team members, white-label). "Quick Add" labeled "Can be availed only once."
+- Building for agencies before having 100 solo founders paying. Classic premature scaling.
+- Also: GitToTweet standalone at $5/mo.
 
 **Tech**: Vite frontend (not Next.js), Cloudflare hosting, **Google Gemini/Vertex AI** (not OpenAI), Google OAuth, Stripe, Supabase. GA4 + Search Console read-only integrations.
 
@@ -60,8 +64,30 @@ Tracked competitors and adjacent tools. Not all are direct — some overlap on a
 - Broader feature set (ads, email, LinkedIn, outreach)
 - GA4/Search Console integration (Boost doesn't have this yet)
 
+**Dashboard (Feb 1 2026 — from screenshots):**
+Sidebar has 12 items: Mission Control, Business Context, Growth Command, Magic Ads, YouTube to Blog, Build in Public, Create New Landing Page, SEO Forensics, Hooks & Headlines, Audit Report, Tech SEO Audit, Marketing Modules. Plus "Context Health" progress bar (100% Complete), "Auto-Enrich" button, "Share Idea" button. It *looks* packed. Unknown how many are functional vs shells.
+
+**Business Context page (detailed, Feb 1 2026):**
+Structured business profile builder — the best-designed part of the product:
+- **Brand Identity**: Name, URL, tagline, elevator pitch, origin story ("Why This Exists"), "The Enemy" (status quo they fight against). "Auto-Enrich" button to AI-fill gaps.
+- **Target Persona**: Card with avatar, persona name (e.g. "Solopreneurs"), "Cares about" description, Core Motivations, Buying Triggers, Critical Pains & Fears. Risk Tolerance + Decision Speed fields. "AI Enhance" button. Editable items with "+ Add Item."
+- **Product Truths**: Feature/User Benefit pairs (e.g. "Competitor Traffic Analysis" → "Stop guessing what works and see exactly where your competitor..."). Editable list.
+- **Strategic Core**: Target Audience description, Problem Solved, Primary Solution ("Your Unlock"), Pricing Model (text field, not enforced).
+- **Voice & Tone**: Tone Pattern dropdown ("Professional & Trusted"), Style Guide Notes.
+- **Persona Simulation**: Chat interface where AI roleplays as the target persona. User practices their pitch, persona responds with skeptical objections ("I'm listening, but I'm skeptical. Why should I care about this right now?"). Essentially a sales objection practice tool / pitch testing chatbot. Clever feature — low cost (just a chat completion), high perceived value, helps founders pressure-test their messaging against realistic buyer pushback. No screenshots saved (shared inline).
+- **Competitor Recon**: Paste URL → "Analyze" button. Shows positioning + weaknesses side-by-side. Found Enji and gave decent analysis. But still just Gemini on a scraped page — no traffic/keyword data.
+
+He ran Boost through it — used our copy verbatim in his elevator pitch field. Studying us like we're studying him.
+
+**Useful for Boost Weekly business profile design**: The section structure (identity → persona → value props → strategy → voice → competitors) is a good skeleton. Our version will be smarter — we can auto-populate from the Brief's real research data instead of just AI inference on scraped pages.
+
+**Post-checkout experience (Feb 1 2026 — paid $9.99 for 1-day trial):**
+Console full of 400 errors immediately after checkout. Business Context page loads blank. "Error fetching purchases," "Error fetching jobs," "Failed to load resource" (400s on multiple Supabase endpoints), "Could not establish connection. Receiving end does not exist," disconnected polkadot websocket. The paid dashboard is broken on first load. Screenshot: `31-paid-dashboard-console-errors.png`. This is what shipping 12 features in 30 days looks like.
+
 **Weaknesses**:
-- **Feature sprawl for a solo dev 30 days in**: 12+ features in dashboard, many are shells with "Activate Feature" buttons and "coming soon" labels (Pricing Doctor, CRO Auditor, Copy Architect). The audit is the real product; everything else is dashboard dressing to justify the subscription.
+- **Paid audit adds fear-based urgency, not depth**: Paid "Audit Report" is the same free audit inside the dashboard. Adds "Projected Monthly Loss: -$240" based on "a standard 4% conversion benchmark vs. your score" — fabricated number with no knowledge of actual traffic. Letter grades (Visuals: C, Copy: C) with no methodology. Message Clarity 5/10 and Conversion Urgency 5/10 with no receipts. Bottom half of the page is empty. Screenshot: `33-paid-audit-report-boost.png`.
+- **Not a system — it's a kit**: Each module is a standalone LLM call. Mission Control generates a prompt to paste into Lovable. Magic Ads generates ad copy headlines + visual prompts for "Nano Banana Pro or ChatGPT" (doesn't generate images — generates prompts for other tools). Credit-based (29 credits on free plan). Persona Simulation is a chatbot. Competitor Recon scrapes a page. Nothing builds on anything else — persona doesn't inform ad copy, ad copy doesn't inform landing page, nothing feeds back into weekly priorities. 12 sidebar items, zero strategic thread. The name "LandKit" is literal.
+- **Feature sprawl for a solo dev 30 days in**: 12+ sidebar items, many likely shells. The audit is the real product; everything else is dashboard dressing to justify the subscription. Now adding agency tiers ($39-99/mo) before validating the core product works for solo founders.
 - Promises a LOT — "entire agency minus the retainer" is hand-wavy at $9.99/mo
 - Costs: Likely using Gemini 2.5 Pro ($1.25-2.50/1M input, $10/1M output) given the audit output quality — Flash can't produce that level of structured analysis. Estimated ~$0.05-0.10/audit in LLM costs, plus headless browser compute for DOM scraping (confirmed in HN post). At 2,400 audits/month: $120-240/mo in AI + compute costs with <100 paid subscribers at $9.99 = burning money
 - Copyright still says "© 2025" — fresh/rushed

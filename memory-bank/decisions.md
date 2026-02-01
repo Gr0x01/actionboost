@@ -4,6 +4,70 @@ Key architectural and product decisions. Reference this when you need to underst
 
 ---
 
+## Product Ladder & Naming (Feb 1 2026)
+
+**Decision**: Three-tier product ladder, each tier = increasing clarity from the same strategist voice.
+
+| Name | Price | Delivers |
+|------|-------|----------|
+| **Boost Snapshot** | Free | "Here's what a stranger sees" — quick site audit |
+| **Boost Brief** | Free | "Here's where you stand" — situational clarity + real competitive landscape |
+| **Boost Weekly** | $29/mo (founder) → $49/mo later | "Here's what to do this week" — full strategy + execution drafts + live data |
+
+**No middle tier.** The $29 one-shot is killed. The current Opus pipeline becomes week 1 of the subscription. One decision point: free or $29/mo.
+
+**Why kill the one-shot**: Users expected ongoing access for $29 ("multiple runs" confusion). Two paid tiers = two decision points = more off-ramps. The Brief does the one-shot's old job as a conversion tool. Simpler product, simpler checkout, simpler messaging.
+
+**Why $29/mo at launch**: Our advantages (real data, Opus quality) are experience goods — invisible until used. Landkit's advantages (12 modules, $10) are visible in a screenshot. At launch with zero testimonials, we need people in the door. $29/mo matches Landkit's target price, signals same category without undercutting.
+
+**Additional projects: $15-20/mo each.** No agency tiers, no white-label, no feature gates. Just "+Add Project" with a price tag. Freelancer managing 3 clients pays ~$59-69/mo. Organic expansion revenue without product complexity. Landkit charges $39/mo for 15 projects + team members — overbuilds for a use case that doesn't need its own tier.
+
+**Why $49/mo later**: After GSC/GA4 ships + 30-50 subscribers + testimonials, raise for new signups. Early adopters stay at $29 — framed as respect for people who showed up first, not a deal or promotion.
+
+**Why these names**: Functional, not clever. No tier labels (Starter/Pro). "Boost Lite" rejected — tells users they're getting lesser version. "Boost Weekly" sets expectations (cadence, not commitment) and sounds like something you open Monday morning.
+
+**Full plan**: `projects/v2-master-plan.md`
+
+---
+
+## Product Philosophy: Success = Graduation (Feb 1 2026)
+
+**Decision**: If someone leaves after 3 months because they figured out their marketing, the product worked.
+
+Boost Weekly is not a dependency machine. No dark-pattern retention, no guilt-trip cancellation flows, no feature bloat to justify ongoing billing. Healthy churn from founders who outgrew us is the goal. Acquisition solves volume, not stickiness hacks.
+
+Building for month 3+ retention via platform expansion is a year+ problem. Not now.
+
+---
+
+## Urgency Strategy: Specificity, Not Fear (Feb 1 2026)
+
+**Decision**: Both competitor audits scored Boost 2/10 on urgency. Fix with data-driven specificity, not fear tactics.
+
+**Boost Brief urgency**: Lead with competitive landscape (real differentiator), lock tactics, show one specific finding from full strategy, 7-day expiry on results (honest — data goes stale). Email nurture sequence during the 7-day window (3 emails).
+
+**Boost Weekly pricing**: Early adopters keep their rate. Framed as respect, not a promotion. No "locked for life" deal energy, no founder counters.
+
+**What we're NOT doing**: Countdown timers, founder counters, fake scarcity, fear-based copy. If the urgency doesn't come from the data itself, it's not real urgency.
+
+**Why**: The brand is a direct strategist. Specificity creates its own urgency — "Your competitor ranks for 47 keywords you don't" hits harder than "you're bleeding money." Trust > manipulation.
+
+---
+
+## Dashboard Philosophy: Focus Over Sprawl (Feb 1 2026)
+
+**Decision**: Boost Weekly dashboard shows three things, not twelve. Resist Landkit's packed-module approach.
+
+1. **This week's focus** — 1-3 specific actions picked by the strategist
+2. **What's working** — filtered data, not raw dashboards
+3. **Draft it** — one button per action, aligned to ICP/voice/strategy
+
+Business profile = settings. No gamification, no health scores, no "Blueprint Locked" gating.
+
+**Why**: Clarity is the brand promise. A cluttered dashboard undermines it. Landkit's 12+ modules with "Activate Feature" buttons are dashboard dressing for a solo dev 30 days in. Do fewer things with real data.
+
+---
+
 ## Positioning: Clarity, Not Plans or Competitor Research (Feb 1 2026)
 
 **Decision**: The value prop is **clarity** — "get clarity on what's working and what's not." NOT "30-day marketing plan" (tested poorly, sounds generic) and NOT "competitive research" (that's a feature/input, not the outcome).

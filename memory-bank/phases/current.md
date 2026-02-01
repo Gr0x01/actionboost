@@ -1,6 +1,38 @@
 # Current Phase
 
-## Latest Update: /start Funnel Tracking Shipped (Feb 1, 2026)
+## Latest Update: V2 Master Plan Created (Feb 1, 2026)
+
+**Strategic pivot to subscription model.** Competitor analysis (Landkit, LandingBoost, Enji) confirmed market exists for AI marketing co-pilot at $29-50/mo. Landkit doing same thing with worse data but better distribution. We have depth, they have reach.
+
+**Product ladder decided** — two tiers, one decision point:
+- **Boost Snapshot** (free) — "Here's what a stranger sees"
+- **Boost Brief** (free) — "Here's where you stand" (leads with competitive landscape)
+- **Boost Weekly** ($29/mo founder, $49/mo later) — "Here's what to do this week" + execution drafts + live data
+
+**$29 one-shot killed.** The Opus pipeline becomes week 1 of the subscription. Eliminates "multiple runs" confusion, removes middle-tier decision point, simplifies everything. The Brief does the one-shot's old job as conversion tool.
+
+**Key decisions**: $29/mo at launch (experience goods need people in the door), $49/mo after proof + integrations. Urgency through specificity, not fear. Dashboard = 3 panels (this week / what's working / draft it), not 12 modules. Founder pricing locked for life.
+
+**Master plan**: `projects/v2-master-plan.md` — 5 workstreams:
+1. **WS1**: Free tool funnel — Snapshot + Brief with urgency, single conversion page, more entry points
+2. **WS2**: Boost Weekly — business profiles, $29/mo Stripe billing, focused dashboard, weekly loop
+3. **WS3**: Execution engine — "Draft this" for any tactic, aligned to ICP/thesis
+4. **WS4**: Integrations — GSC first, GA4 second
+5. **WS5**: Dev infrastructure — Supabase branching + feature branches
+
+**Build order**: Phase 0 (concierge validation — HARD GATE) → WS5 → WS1 → WS2 (includes basic Draft This) → WS3+WS4 in parallel.
+
+**Phase 0 is next**: Email existing customers, manually deliver "week 2" adjustments, test if the weekly loop has pull before building infrastructure. 3 paying subscribers = green light.
+
+**Product philosophy**: If someone leaves after 3 months because they figured it out, the product worked. No dark-pattern retention. Success = graduation.
+
+**Existing $29 one-shot stays live** until Boost Weekly is ready to launch. Then sunset it.
+
+**Detailed project docs**: `projects/ws1-*.md` through `projects/ws5-*.md`
+
+---
+
+## Previous: /start Funnel Tracking Shipped (Feb 1, 2026)
 
 **Step-level tracking deployed.** Clean funnel data flowing going forward.
 
