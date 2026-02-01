@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 import { usePostHog } from "posthog-js/react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { Footer } from "@/components/layout/Footer";
 
 // --- Mock results page preview (fades out right + bottom) ---
 
@@ -164,6 +165,7 @@ export default function FreeAuditPage() {
   ];
 
   return (
+    <>
     <main className="min-h-screen bg-background">
       {/* Trust bar */}
       <div className="text-center py-2.5 bg-surface border-b border-border">
@@ -278,5 +280,7 @@ export default function FreeAuditPage() {
         </p>
       </div>
     </main>
+    <Footer />
+    </>
   );
 }

@@ -4,10 +4,15 @@ import { BoostLogo } from "@/components/ui";
 const footerLinks = {
   product: [
     { label: "See the Output", href: "/in-action" },
-    { label: "Free Marketing Audit", href: "/tools/marketing-audit" },
-    { label: "Target Audience Generator", href: "/tools/target-audience-generator" },
     { label: "Marketing Guide", href: "/marketing-plan-guide" },
     { label: "Boost vs Alternatives", href: "/boost-vs-alternatives" },
+  ],
+  freeTools: [
+    { label: "Marketing Audit", href: "/tools/marketing-audit" },
+    { label: "Target Audience Generator", href: "/tools/target-audience-generator" },
+    { label: "Headline Analyzer", href: "/tools/headline-analyzer" },
+    { label: "Email Subject Scorer", href: "/tools/email-subject-scorer" },
+    { label: "Competitor Finder", href: "/tools/competitor-finder" },
   ],
   industries: [
     { label: "SaaS Marketing", href: "/marketing-plan/saas" },
@@ -64,8 +69,9 @@ export function Footer() {
         </div>
 
         {/* Link columns - 2 cols on mobile, 4 on desktop */}
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-5">
           <FooterColumn title="Product" links={footerLinks.product} />
+          <FooterColumn title="Free Tools" links={footerLinks.freeTools} />
           <FooterColumn title="Industries" links={footerLinks.industries} />
           <FooterColumn title="Company" links={footerLinks.company} />
           <FooterColumn title="Legal" links={footerLinks.legal} />
