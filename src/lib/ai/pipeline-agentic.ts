@@ -818,6 +818,42 @@ After your research, write the full strategy:
 - Week 1 through Week 4 (each with 7-day action table: Day | Action | Time | Success Metric)
 - Metrics Dashboard (AARRR metrics table)
 - Content Templates (2-3 ready-to-use)
+- Diagnostic Scores
+
+## Diagnostic Scoring (REQUIRED)
+After the strategy, score the business on 4 categories, 0-100 each:
+
+| Category | What It Measures | Framework |
+|----------|-----------------|-----------|
+| **Clarity** | Can people immediately understand what you do, who it's for, and why you? | Dunford positioning, Ries/Trout |
+| **Visibility** | Can the target audience actually find them? | Sharp's mental/physical availability |
+| **Proof** | Do they have evidence that builds trust? | Cialdini social proof, Keller brand equity |
+| **Advantage** | What makes them defensibly different from alternatives? | Ritson competitive strategy |
+
+Calibration:
+- 90-100: Exceptional
+- 70-89: Solid
+- 50-69: Needs work
+- 0-49: Significant problems
+
+**Hard rule**: Every score must cite specific evidence. Overall = weighted average. Be honest — most early-stage businesses score 30-55.
+
+Output as a "## Scores" section with this JSON block:
+
+\`\`\`json
+{
+  "overall": [0-100],
+  "clarity": [0-100],
+  "visibility": [0-100],
+  "proof": [0-100],
+  "advantage": [0-100]
+}
+\`\`\`
+
+**Clarity** ([score]/100): [1-sentence evidence]
+**Visibility** ([score]/100): [1-sentence evidence]
+**Proof** ([score]/100): [1-sentence evidence]
+**Advantage** ([score]/100): [1-sentence evidence]
 
 No emojis. Be direct. Challenge flawed assumptions. Say "unknown" rather than guessing metrics.`
 }

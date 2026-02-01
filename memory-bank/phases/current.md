@@ -1,6 +1,32 @@
 # Current Phase
 
-## Latest Update: Headline Analyzer Free Tool + Dead Code Cleanup (Feb 1, 2026)
+## Latest Update: Unified Scoring Across All 3 Tiers (Feb 1, 2026)
+
+**All 3 product tiers now use the same 4-category scoring framework: Clarity / Visibility / Proof / Advantage.**
+
+**What changed:**
+- **Snapshot (3s)**: Renamed clarity/customerFocus/proof/friction → clarity/visibility/proof/advantage. Rewrote "Customer Focus" and "Friction" diagnostic lenses to match new meanings (visibility = discoverability, advantage = differentiation). Redesigned results page: 3/5 + 2/5 hero grid (silent killer left, score gauge right), responsive finding cards (2-col for 1-2, 3-col for 3+), dark CTA block.
+- **Free Brief**: Renamed positioning/competitiveEdge → clarity/advantage in schema, prompts, formatter, and UI. Backward compat fallbacks for old stored results.
+- **Paid Boost**: Added `## Diagnostic Scoring (REQUIRED)` section to the paid agentic prompt. Added `BriefScoreGauge` to `InsightsView` in 3/5 + 2/5 grid alongside positioning. Formatter already extracts `briefScores` from `## Scores` sections — no extraction changes needed.
+
+**Scoring framework** (from brand guardian research):
+| Category | Weight | Grounded In |
+|----------|--------|-------------|
+| Clarity | 35% | Dunford positioning, Ries/Trout |
+| Visibility | 25% | Sharp's mental/physical availability |
+| Proof | 20% | Cialdini social proof, Keller brand equity |
+| Advantage | 20% | Ritson competitive strategy |
+
+**Files changed:** pipeline-agentic.ts, generate.ts, formatter-types.ts, marketing-audit.ts, BriefScoreGauge.tsx, InsightsView.tsx, LockedSections.tsx, results-client.tsx (snapshot)
+
+**What's NOT done yet:**
+- Single conversion page not started
+- Brief locks tactical sections behind Weekly upgrade
+- ICP (separate, comes with dashboard)
+
+---
+
+## Previous: Headline Analyzer Free Tool + Dead Code Cleanup (Feb 1, 2026)
 
 **Built `/tools/headline-analyzer`** — third free tool. User enters headline + optional business context + email, gets scored on clarity/specificity/differentiation/customer focus (0-100 each) + 3 rewrite suggestions.
 
@@ -21,11 +47,6 @@
 - Dead code cleanup: removed `generatePositioningPreview`, `buildPositioningPreviewPrompt`, `buildPositioningPreviewUserMessage`, `FREE_AUDIT_MODEL`, `PREVIEW_MODEL`, `PREVIEW_MAX_TOKENS` from `generate.ts`; removed `runTavilyOnlyResearch` from `research.ts`; deleted `scripts/test-free-models.ts`
 - Added headline-analyzer + target-audience-generator to sitemap.ts
 - Cross-links updated on all 3 free tool pages
-
-**What's NOT done yet:**
-- Single conversion page not started
-- Unify scoring categories across all tiers
-- Brief locks tactical sections behind Weekly upgrade
 
 ---
 

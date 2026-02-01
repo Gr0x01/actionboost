@@ -13,6 +13,7 @@ import {
   LeadDiscovery,
   Discoveries,
 } from './dashboard'
+import { BriefScoreGauge } from './free/BriefScoreGauge'
 import { RefinementInterstitial } from './RefinementInterstitial'
 
 interface InsightsViewProps {
@@ -59,8 +60,21 @@ export function InsightsView({
 
   return (
     <div className="space-y-24">
-      {/* 1. Positioning */}
-      {positioning && <PositioningSummaryV2 positioning={positioning} />}
+      {/* 1. Positioning + Score */}
+      {(positioning || structuredOutput.briefScores) && (
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+          {positioning && (
+            <div className={structuredOutput.briefScores ? 'lg:col-span-3' : 'lg:col-span-5'}>
+              <PositioningSummaryV2 positioning={positioning} />
+            </div>
+          )}
+          {structuredOutput.briefScores && (
+            <div className={positioning ? 'lg:col-span-2' : 'lg:col-span-5'}>
+              <BriefScoreGauge scores={structuredOutput.briefScores} />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 2. Lead Discovery (hero) */}
       {leadDiscovery && <LeadDiscovery discovery={leadDiscovery} />}
