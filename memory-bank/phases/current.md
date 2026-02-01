@@ -1,26 +1,37 @@
 # Current Phase
 
-## Latest Update: Unified Scoring Across All 3 Tiers (Feb 1, 2026)
+## Latest Update: /upgrade Conversion Page (Feb 1, 2026)
 
-**All 3 product tiers now use the same 4-category scoring framework: Clarity / Visibility / Proof / Advantage.**
+**Single conversion landing page at `/upgrade` — all free tools funnel here.**
 
-**What changed:**
-- **Snapshot (3s)**: Renamed clarity/customerFocus/proof/friction → clarity/visibility/proof/advantage. Rewrote "Customer Focus" and "Friction" diagnostic lenses to match new meanings (visibility = discoverability, advantage = differentiation). Redesigned results page: 3/5 + 2/5 hero grid (silent killer left, score gauge right), responsive finding cards (2-col for 1-2, 3-col for 3+), dark CTA block.
-- **Free Brief**: Renamed positioning/competitiveEdge → clarity/advantage in schema, prompts, formatter, and UI. Backward compat fallbacks for old stored results.
-- **Paid Boost**: Added `## Diagnostic Scoring (REQUIRED)` section to the paid agentic prompt. Added `BriefScoreGauge` to `InsightsView` in 3/5 + 2/5 grid alongside positioning. Formatter already extracts `briefScores` from `## Scores` sections — no extraction changes needed.
+All 5 free tool result pages now CTA to `/upgrade?from=<tool>` with personalized copy per source:
+- Snapshot → `/upgrade?from=snapshot`
+- Headline Analyzer → `/upgrade?from=headline`
+- Target Audience Generator → `/upgrade?from=target-audience`
+- Email Subject Scorer → `/upgrade?from=email-subject`
+- Competitor Finder → `/upgrade?from=competitor-finder`
 
-**Scoring framework** (from brand guardian research):
-| Category | Weight | Grounded In |
-|----------|--------|-------------|
-| Clarity | 35% | Dunford positioning, Ries/Trout |
-| Visibility | 25% | Sharp's mental/physical availability |
-| Proof | 20% | Cialdini social proof, Keller brand equity |
-| Advantage | 20% | Ritson competitive strategy |
+**Brief flow unchanged** — `LockedSections`/`FreePreviewPaywall` stay direct-to-Stripe (user already saw the pitch).
 
-**Files changed:** pipeline-agentic.ts, generate.ts, formatter-types.ts, marketing-audit.ts, BriefScoreGauge.tsx, InsightsView.tsx, LockedSections.tsx, results-client.tsx (snapshot)
+**Page layout:** Personalized hero → free vs paid feature comparison → testimonial → dark CTA block. If `audit` + `token` params present (Brief upgrade path), calls Stripe checkout inline. Otherwise links to `/start` with prefill.
+
+**Files:**
+- NEW: `src/app/upgrade/page.tsx`, `src/app/upgrade/UpgradeContent.tsx`
+- EDITED: All 5 free tool `results-client.tsx` files + `ToolBoostPitch.tsx`
+
+**Free tools status (6 built, 1 remaining):**
+| Tool | Status |
+|------|--------|
+| Marketing Audit (Snapshot) | ✅ Shipped |
+| Target Audience Generator | ✅ Shipped |
+| Headline Analyzer | ✅ Shipped |
+| Email Subject Scorer | ✅ Shipped |
+| Competitor Finder | ✅ Shipped |
+| /upgrade conversion page | ✅ Shipped |
+| Landing Page Roaster | Not started |
 
 **What's NOT done yet:**
-- Single conversion page not started
+- Landing Page Roaster (last free tool)
 - Brief locks tactical sections behind Weekly upgrade
 - ICP (separate, comes with dashboard)
 

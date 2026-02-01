@@ -36,6 +36,11 @@ const COPY_VARIANTS: Record<
     subhead:
       "The scorer optimized your open rate. The full Boost covers positioning, competitors, and what to do next.",
   },
+  "competitor-finder": {
+    headline: "You\u2019ve found your competitors. Now outmaneuver them.",
+    subhead:
+      "The finder mapped your competitive landscape. The full Boost turns those gaps into a 30-day action plan.",
+  },
 };
 
 const DEFAULT_COPY = {
