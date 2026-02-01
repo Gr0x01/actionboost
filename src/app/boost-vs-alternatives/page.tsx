@@ -74,6 +74,12 @@ const COMPARISON_PAGES = [
     tagline: "Strategy vs execution tool",
     highlight: "Boost tells you what to do. Enji helps you do it.",
   },
+  {
+    href: "/boost-vs-alternatives/clawdbot",
+    label: "vs Clawdbot",
+    tagline: "Answers vs a toolkit to configure",
+    highlight: "Clawdbot gives you capabilities. Boost gives you clarity.",
+  },
 ];
 
 export default function ComparisonHubPage() {
@@ -99,7 +105,7 @@ export default function ComparisonHubPage() {
               What&apos;s the best way to create a marketing&nbsp;plan?
             </h1>
             <p className="text-lg text-foreground/70 max-w-xl lg:mx-auto leading-relaxed text-pretty">
-              Five options. Real trade-offs. Here&apos;s what each one actually
+              Six options. Real trade-offs. Here&apos;s what each one actually
               delivers — and what it&nbsp;doesn&apos;t.
             </p>
           </header>
@@ -126,6 +132,7 @@ export default function ComparisonHubPage() {
                   <th className="text-left py-3 px-4 font-semibold">ChatGPT</th>
                   <th className="text-left py-3 px-4 font-semibold">Agency</th>
                   <th className="text-left py-3 px-4 font-semibold">Enji</th>
+                  <th className="text-left py-3 px-4 font-semibold">Clawdbot</th>
                   <th className="text-left py-3 px-4 font-semibold bg-cta/5 rounded-t-md">
                     Boost
                   </th>
@@ -138,6 +145,7 @@ export default function ComparisonHubPage() {
                   <td className="py-3 px-4">Free-$20/mo</td>
                   <td className="py-3 px-4">$2,000-10,000+</td>
                   <td className="py-3 px-4">$49/mo</td>
+                  <td className="py-3 px-4">Free + ~$30/mo APIs</td>
                   <td className="py-3 px-4 bg-cta/5 font-semibold">$29 one-time</td>
                 </tr>
                 <tr className="border-b border-foreground/10">
@@ -146,6 +154,7 @@ export default function ComparisonHubPage() {
                   <td className="py-3 px-4">1-2 hours</td>
                   <td className="py-3 px-4">2-4 weeks</td>
                   <td className="py-3 px-4">2-3 hours</td>
+                  <td className="py-3 px-4">Hours to days (setup)</td>
                   <td className="py-3 px-4 bg-cta/5 font-semibold">10 minutes</td>
                 </tr>
                 <tr className="border-b border-foreground/10">
@@ -154,6 +163,7 @@ export default function ComparisonHubPage() {
                   <td className="py-3 px-4">None (no live data)</td>
                   <td className="py-3 px-4">Comprehensive</td>
                   <td className="py-3 px-4">Basic templates</td>
+                  <td className="py-3 px-4">DIY (install plugins)</td>
                   <td className="py-3 px-4 bg-cta/5 font-semibold">Live traffic + content</td>
                 </tr>
                 <tr className="border-b border-foreground/10">
@@ -162,6 +172,7 @@ export default function ComparisonHubPage() {
                   <td className="py-3 px-4">Medium (generic base)</td>
                   <td className="py-3 px-4">High</td>
                   <td className="py-3 px-4">Medium</td>
+                  <td className="py-3 px-4">High (if you configure it)</td>
                   <td className="py-3 px-4 bg-cta/5 font-semibold">High (market-specific)</td>
                 </tr>
                 <tr className="border-b border-foreground/10">
@@ -170,6 +181,7 @@ export default function ComparisonHubPage() {
                   <td className="py-3 px-4">$0-20/mo</td>
                   <td className="py-3 px-4">$500-2,000/mo retainer</td>
                   <td className="py-3 px-4">$49/mo</td>
+                  <td className="py-3 px-4">~$30/mo</td>
                   <td className="py-3 px-4 bg-cta/5 font-semibold">$0</td>
                 </tr>
                 <tr>
@@ -178,6 +190,7 @@ export default function ComparisonHubPage() {
                   <td className="py-3 px-4">Generic suggestions</td>
                   <td className="py-3 px-4">Detailed</td>
                   <td className="py-3 px-4">Task-based</td>
+                  <td className="py-3 px-4">You orchestrate it</td>
                   <td className="py-3 px-4 bg-cta/5 rounded-b-md font-semibold">30-day weekly plan</td>
                 </tr>
               </tbody>
@@ -191,6 +204,7 @@ export default function ComparisonHubPage() {
               { name: "ChatGPT", cost: "Free-$20/mo", time: "1-2 hours", research: "None", ongoing: "$0-20/mo" },
               { name: "Agency", cost: "$2,000-10,000+", time: "2-4 weeks", research: "Comprehensive", ongoing: "$500-2,000/mo" },
               { name: "Enji", cost: "$49/mo", time: "2-3 hours", research: "Templates", ongoing: "$49/mo" },
+              { name: "Clawdbot", cost: "Free + ~$30/mo APIs", time: "Hours to days (setup)", research: "DIY plugins", ongoing: "~$30/mo" },
               { name: "Boost", cost: "$29 one-time", time: "10 minutes", research: "Live data", ongoing: "$0", highlight: true },
             ].map((option) => (
               <div
@@ -271,6 +285,10 @@ export default function ComparisonHubPage() {
               <li>
                 <strong>Need a plan today, budget under $50:</strong> Boost.
                 Real competitive research, 10 minutes, $29.
+              </li>
+              <li>
+                <strong>Technical and love tinkering:</strong> Clawdbot
+                (OpenClaw) for a customizable AI assistant
               </li>
               <li>
                 <strong>Need ongoing execution help:</strong> Enji or a
