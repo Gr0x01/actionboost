@@ -257,7 +257,6 @@ export function MarketingAuditResults({ initialAudit }: Props) {
 
   // Complete state — show results
   const output = audit.output!;
-  const [firstFinding, ...restFindings] = output.findings;
 
   const scoreColor = (s: number) =>
     s >= 70 ? "text-green-600" : s >= 50 ? "text-amber-600" : "text-red-600";
@@ -267,7 +266,7 @@ export function MarketingAuditResults({ initialAudit }: Props) {
     s >= 85 ? "Exceptional" : s >= 70 ? "Strong" : s >= 50 ? "Getting There" : s >= 30 ? "Needs Work" : "Critical";
 
   return (
-    <div className="max-w-3xl mx-auto px-6 pb-24">
+    <div className="max-w-6xl mx-auto px-6 pb-24">
       {/* Header */}
       <section className="pt-16 pb-8">
         <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-4">
@@ -276,45 +275,64 @@ export function MarketingAuditResults({ initialAudit }: Props) {
         <p className="font-mono text-sm text-foreground/40 mb-8">{audit.url}</p>
       </section>
 
-      {/* Hero: Score + Silent Killer combined */}
+      {/* Hero: Silent Killer (3/5) + Score Gauge (2/5) — matches Brief layout */}
       <section className="pb-10">
-        <div
-          className="bg-background border-2 border-foreground/20 rounded-md p-6 md:p-8"
-          style={{ boxShadow: "6px 6px 0 rgba(44, 62, 80, 0.12)" }}
-        >
-          <div className="grid md:grid-cols-[180px_1fr] gap-6 md:gap-8">
-            {/* Score column: gauge + breakdown */}
-            {output.scores ? (
-              <div className="flex flex-col items-center">
-                <div className="relative w-[140px] h-[78px]">
-                  <svg viewBox="0 0 120 68" className="w-full h-full" fill="none">
-                    <path
-                      d="M 10 63 A 50 50 0 0 1 110 63"
-                      stroke="currentColor"
-                      strokeWidth="6"
-                      strokeLinecap="round"
-                      className="text-foreground/10"
-                    />
-                    <path
-                      d="M 10 63 A 50 50 0 0 1 110 63"
-                      stroke={borderColor(output.scores.overall)}
-                      strokeWidth="6"
-                      strokeLinecap="round"
-                      strokeDasharray={`${output.scores.overall * 1.57} 157`}
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-end pb-0">
-                    <span className={`text-[44px] font-bold leading-none tabular-nums ${scoreColor(output.scores.overall)}`}>
-                      {output.scores.overall}
-                    </span>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+          {/* Left — silent killer + summary (open typography) */}
+          <div className="lg:col-span-3">
+            <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-cta block mb-3">
+              The biggest thing costing you customers
+            </span>
+            <p className="text-xl lg:text-2xl font-bold text-foreground leading-snug mb-4">
+              {output.silentKiller}
+            </p>
+            <p className="text-[15px] leading-[1.7] text-foreground">
+              {output.summary}
+            </p>
+          </div>
+
+          {/* Right — score gauge in card */}
+          {output.scores && (
+            <div className="lg:col-span-2">
+              <div
+                className="bg-background border-2 border-foreground/20 rounded-md p-5"
+                style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.08)" }}
+              >
+                <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-4">
+                  Diagnostic score
+                </span>
+
+                <div className="flex items-center gap-4 mb-5">
+                  <div className="relative w-[100px] h-[56px] shrink-0">
+                    <svg viewBox="0 0 120 68" className="w-full h-full" fill="none">
+                      <path
+                        d="M 10 63 A 50 50 0 0 1 110 63"
+                        stroke="currentColor"
+                        strokeWidth="7"
+                        strokeLinecap="round"
+                        className="text-foreground/10"
+                      />
+                      <path
+                        d="M 10 63 A 50 50 0 0 1 110 63"
+                        stroke={borderColor(output.scores.overall)}
+                        strokeWidth="7"
+                        strokeLinecap="round"
+                        strokeDasharray={`${output.scores.overall * 1.57} 157`}
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-end pb-0">
+                      <span className={`text-[32px] font-bold leading-none tabular-nums ${scoreColor(output.scores.overall)}`}>
+                        {output.scores.overall}
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-sm font-semibold text-foreground">{verdict(output.scores.overall)}</span>
+                    <p className="text-xs text-foreground/50 mt-0.5">out of 100</p>
                   </div>
                 </div>
-                <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-foreground/40 mt-1 mb-3">
-                  {verdict(output.scores.overall)}
-                </p>
 
-                {/* Category breakdown — tight rows */}
-                <div className="w-full border-t border-foreground/10 pt-3 space-y-1">
+                <div className="border-t border-foreground/10 pt-4 space-y-3">
                   {([
                     ["Clarity", output.scores.clarity],
                     ["Visibility", output.scores.visibility ?? output.scores.customerFocus],
@@ -322,7 +340,7 @@ export function MarketingAuditResults({ initialAudit }: Props) {
                     ["Advantage", output.scores.advantage ?? output.scores.friction],
                   ] as const).map(([label, score]) => (
                     <div key={label} className="flex items-center justify-between gap-3">
-                      <span className="font-mono text-[9px] tracking-wider uppercase text-foreground/40">
+                      <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40">
                         {label}
                       </span>
                       <span className={`text-sm font-bold tabular-nums ${scoreColor(score)}`}>
@@ -332,158 +350,91 @@ export function MarketingAuditResults({ initialAudit }: Props) {
                   ))}
                 </div>
               </div>
-            ) : null}
-
-            {/* Silent killer + summary */}
-            <div className="min-w-0 md:border-l md:border-foreground/10 md:pl-8">
-              <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-cta block mb-2">
-                {output.scores ? "The biggest thing costing you customers" : "Biggest silent killer"}
-              </span>
-              <p className="text-lg lg:text-xl font-bold text-foreground leading-snug mb-4">
-                {output.silentKiller}
-              </p>
-              <p className="text-[15px] leading-[1.7] text-foreground/60">
-                {output.summary}
-              </p>
             </div>
-          </div>
-
-          {output.scores && (
-            <p className="font-mono text-[9px] tracking-[0.3em] uppercase text-foreground/20 mt-6 text-center">
-              Website audit by Boost &middot; actionboost.com
-            </p>
           )}
         </div>
       </section>
 
-      {/* Section divider */}
-      <div className="border-t-[3px] border-foreground mb-10" />
-
-      {/* Finding Cards */}
+      {/* Findings */}
       <section className="pb-16">
         <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-8">
           What&apos;s costing you customers
         </span>
 
-        {/* First finding — featured, 2-column with fix pulled right */}
-        {firstFinding && (
-          <div
-            className="bg-background border-2 border-foreground/20 rounded-md p-6 md:p-8 mb-8"
-            style={{ boxShadow: "6px 6px 0 rgba(44, 62, 80, 0.12)" }}
-          >
-            <div className="grid md:grid-cols-[1.5fr_1fr] gap-6 md:gap-10">
-              <div>
-                <span className="font-mono text-[10px] uppercase tracking-wider text-foreground/40 block mb-2">
-                  {CATEGORY_LABELS[firstFinding.category] || firstFinding.category}
-                </span>
-                <h3 className="text-xl lg:text-2xl font-bold text-foreground leading-snug mb-3">
-                  {firstFinding.title}
-                </h3>
-                <p className="text-[15px] leading-[1.75] text-foreground/85">
-                  {firstFinding.detail}
-                </p>
-              </div>
-              <div className="border-l-[3px] border-cta/40 bg-cta/[0.04] pl-5 py-4 pr-4 rounded-r-md self-start md:mt-6">
-                <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-cta/70 block mb-1.5">
+        <div className={`grid gap-5 ${output.findings.length >= 3 ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:grid-cols-2'}`}>
+          {output.findings.map((finding, i) => (
+            <div
+              key={i}
+              className="bg-background border border-foreground/15 rounded-md p-5 flex flex-col"
+              style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.08)" }}
+            >
+              <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-foreground/40 block mb-2">
+                {CATEGORY_LABELS[finding.category] || finding.category}
+              </span>
+              <h3 className="text-base font-bold text-foreground leading-snug mb-2">
+                {finding.title}
+              </h3>
+              <p className="text-[15px] leading-[1.6] text-foreground mb-4 flex-1">
+                {finding.detail}
+              </p>
+              <div className="border-l-[3px] border-cta/40 bg-cta/[0.04] pl-4 py-2.5 pr-3 rounded-r-md">
+                <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-cta/70 block mb-1">
                   Fix
                 </span>
                 <p className="text-sm text-foreground/80 leading-relaxed">
-                  {firstFinding.recommendation}
+                  {finding.recommendation}
                 </p>
               </div>
             </div>
-          </div>
-        )}
-
-        {/* Remaining findings — 2-column grid */}
-        {restFindings.length > 0 && (
-          <div className="grid md:grid-cols-2 gap-5">
-            {restFindings.map((finding, i) => (
-              <div
-                key={i}
-                className="bg-background border border-foreground/15 rounded-md p-5 flex flex-col"
-                style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.08)" }}
-              >
-                <span className="font-mono text-[10px] uppercase tracking-wider text-foreground/40 block mb-2">
-                  {CATEGORY_LABELS[finding.category] || finding.category}
-                </span>
-
-                <h3 className="text-base font-bold text-foreground leading-snug mb-2">
-                  {finding.title}
-                </h3>
-
-                <p className="text-sm text-foreground/70 leading-relaxed mb-4 flex-1">
-                  {finding.detail}
-                </p>
-
-                <div className="border-l-[3px] border-cta/40 bg-cta/[0.04] pl-4 py-2.5 pr-3 rounded-r-md">
-                  <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-cta/70 block mb-1">
-                    Fix
-                  </span>
-                  <p className="text-sm text-foreground/80 leading-relaxed">
-                    {finding.recommendation}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+          ))}
+        </div>
       </section>
 
-      {/* CTA — 2-column: value left, price card right */}
-      <section>
-        <div className="border-t-[3px] border-foreground mb-10" />
-
-        <div className="grid md:grid-cols-[1.2fr_1fr] gap-8 md:gap-12 items-start">
-          {/* Left: value pitch */}
-          <div>
-            <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-3">
-              Ready to fix it?
-            </span>
-            <h2 className="text-xl lg:text-2xl font-bold text-foreground tracking-tight mb-4">
-              You&apos;ve seen what&apos;s broken. Here&apos;s how to fix it.
-            </h2>
-            <ul className="space-y-3 text-sm text-foreground/70 leading-relaxed">
-              <li className="flex items-start gap-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-cta mt-1.5 shrink-0" />
-                <span><strong className="text-foreground">30-day action plan</strong> — week-by-week tasks, ranked by impact</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-cta mt-1.5 shrink-0" />
-                <span><strong className="text-foreground">Specific to your business</strong> — your market, your competitors, your budget</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-cta mt-1.5 shrink-0" />
-                <span><strong className="text-foreground">Real research</strong> — built from competitive analysis, not generic templates</span>
-              </li>
+      {/* CTA — dark full-width block (matches Brief transition) */}
+      <section className="pb-16">
+        <div
+          className="bg-foreground rounded-md p-8 lg:p-10"
+          style={{ boxShadow: "6px 6px 0 rgba(44, 62, 80, 0.15)" }}
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+            <div>
+              <h2 className="text-2xl font-bold text-background mb-2 text-balance">
+                You&apos;ve seen what&apos;s broken. Here&apos;s how to&nbsp;fix&nbsp;it.
+              </h2>
+              <p className="text-[15px] leading-[1.6] text-background/60 mb-6">
+                Get a 30-day action plan built from competitive research — specific to your business, your market, and your budget.
+              </p>
+              <a
+                href="/start"
+                onClick={() => {
+                  prefillStartForm({ websiteUrl: audit.url, productDescription: audit.businessDescription })
+                  posthog?.capture("marketing_audit_cta_clicked", { slug: audit.slug })
+                }}
+                className="inline-flex items-center gap-2 bg-cta text-white font-semibold px-8 py-3 rounded-md border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0.5 active:border-b-0 transition-all duration-100"
+              >
+                Get my Boost — {config.singlePrice}
+                <ArrowRight className="w-4 h-4" />
+              </a>
+              <p className="text-sm text-background/40 mt-2">
+                One-time payment. No subscription.
+              </p>
+            </div>
+            <ul className="space-y-4">
+              {[
+                "Week-by-week tasks ranked by what fixes your score fastest",
+                "Competitor gaps you can exploit this month, with exact steps",
+                "Channel-specific playbooks matched to your budget and audience",
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <svg className="w-5 h-5 text-cta shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-[15px] leading-[1.6] text-background/80">
+                    {item}
+                  </span>
+                </li>
+              ))}
             </ul>
-          </div>
-
-          {/* Right: price card */}
-          <div
-            className="bg-background border-2 border-foreground/20 rounded-md p-6 text-center"
-            style={{ boxShadow: "6px 6px 0 rgba(44, 62, 80, 0.15)" }}
-          >
-            <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-2">
-              Your full plan
-            </span>
-            <p className="text-3xl font-bold text-foreground mb-1">
-              {config.singlePrice}
-            </p>
-            <p className="text-sm text-foreground/50 mb-6">
-              One-time payment. No subscription.
-            </p>
-            <a
-              href="/start"
-              onClick={() => {
-                prefillStartForm({ websiteUrl: audit.url, productDescription: audit.businessDescription })
-                posthog?.capture("marketing_audit_cta_clicked", { slug: audit.slug })
-              }}
-              className="w-full inline-flex items-center justify-center gap-2 bg-cta text-white font-semibold px-6 py-4 rounded-md text-base border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 active:translate-y-0.5 transition-all"
-            >
-              Get my Boost
-              <ArrowRight className="w-4 h-4" />
-            </a>
           </div>
         </div>
       </section>
