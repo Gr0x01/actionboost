@@ -91,6 +91,13 @@ export type AuditStatus = "pending" | "processing" | "complete" | "failed";
 export type MarketingAuditOutput = {
   silentKiller: string;
   summary: string;
+  scores?: {
+    overall: number;
+    clarity: number;
+    customerFocus: number;
+    proof: number;
+    friction: number;
+  };
   findings: Array<{
     category: "clarity" | "customer-focus" | "proof" | "friction";
     title: string;

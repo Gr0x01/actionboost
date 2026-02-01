@@ -165,9 +165,12 @@ export function MarketingAuditResults({ initialAudit }: Props) {
         <p className="text-xs font-bold uppercase tracking-widest text-cta mb-3">
           Free Marketing Audit
         </p>
-        <h1 className="text-2xl sm:text-3xl font-black text-foreground mb-8">
+        <h1 className="text-2xl sm:text-3xl font-black text-foreground mb-3">
           Running the 3-Second Test...
         </h1>
+        <p className="text-sm text-foreground/50 mb-8 max-w-sm mx-auto text-balance">
+          Testing whether strangers can tell what you sell, who it&apos;s for, and why you in under 3 seconds.
+        </p>
 
         {/* Terminal-style activity display */}
         <div className="w-full rounded-none border-[3px] border-foreground bg-foreground/5 p-6 shadow-[4px_4px_0_0_rgba(44,62,80,1)] text-left mb-6">
@@ -252,33 +255,101 @@ export function MarketingAuditResults({ initialAudit }: Props) {
   const output = audit.output!;
   const [firstFinding, ...restFindings] = output.findings;
 
+  const scoreColor = (s: number) =>
+    s >= 70 ? "text-green-600" : s >= 50 ? "text-amber-600" : "text-red-600";
+  const borderColor = (s: number) =>
+    s >= 70 ? "#16a34a" : s >= 50 ? "#d97706" : "#dc2626";
+  const verdict = (s: number) =>
+    s >= 85 ? "Exceptional" : s >= 70 ? "Strong" : s >= 50 ? "Getting There" : s >= 30 ? "Needs Work" : "Critical";
+
   return (
     <div className="max-w-3xl mx-auto px-6 pb-24">
       {/* Header */}
-      <section className="pt-16 pb-12">
+      <section className="pt-16 pb-8">
         <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-4">
           Your free marketing audit
         </span>
-
         <p className="font-mono text-sm text-foreground/40 mb-8">{audit.url}</p>
+      </section>
 
-        {/* Silent Killer — hero card (LeadDiscovery pattern) */}
+      {/* Hero: Score + Silent Killer combined */}
+      <section className="pb-10">
         <div
-          className="bg-background border-2 border-foreground/20 rounded-md p-6 md:p-8 mb-10"
+          className="bg-background border-2 border-foreground/20 rounded-md p-6 md:p-8"
           style={{ boxShadow: "6px 6px 0 rgba(44, 62, 80, 0.12)" }}
         >
-          <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-cta block mb-3">
-            Biggest silent killer
-          </span>
-          <p className="text-xl lg:text-2xl font-serif text-foreground leading-relaxed">
-            {output.silentKiller}
-          </p>
-        </div>
+          <div className="grid md:grid-cols-[180px_1fr] gap-6 md:gap-8">
+            {/* Score column: gauge + breakdown */}
+            {output.scores ? (
+              <div className="flex flex-col items-center">
+                <div className="relative w-[140px] h-[78px]">
+                  <svg viewBox="0 0 120 68" className="w-full h-full" fill="none">
+                    <path
+                      d="M 10 63 A 50 50 0 0 1 110 63"
+                      stroke="currentColor"
+                      strokeWidth="6"
+                      strokeLinecap="round"
+                      className="text-foreground/10"
+                    />
+                    <path
+                      d="M 10 63 A 50 50 0 0 1 110 63"
+                      stroke={borderColor(output.scores.overall)}
+                      strokeWidth="6"
+                      strokeLinecap="round"
+                      strokeDasharray={`${output.scores.overall * 1.57} 157`}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-end pb-0">
+                    <span className={`text-[44px] font-bold leading-none tabular-nums ${scoreColor(output.scores.overall)}`}>
+                      {output.scores.overall}
+                    </span>
+                  </div>
+                </div>
+                <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-foreground/40 mt-1 mb-3">
+                  {verdict(output.scores.overall)}
+                </p>
 
-        {/* Summary — pull quote style */}
-        <p className="font-serif text-[17px] lg:text-[18px] leading-[1.75] text-foreground/85">
-          {output.summary}
-        </p>
+                {/* Category breakdown — tight rows */}
+                <div className="w-full border-t border-foreground/10 pt-3 space-y-1">
+                  {([
+                    ["Clarity", output.scores.clarity],
+                    ["Focus", output.scores.customerFocus],
+                    ["Proof", output.scores.proof],
+                    ["Ease", output.scores.friction],
+                  ] as const).map(([label, score]) => (
+                    <div key={label} className="flex items-center justify-between gap-3">
+                      <span className="font-mono text-[9px] tracking-wider uppercase text-foreground/40">
+                        {label}
+                      </span>
+                      <span className={`text-sm font-bold tabular-nums ${scoreColor(score)}`}>
+                        {score}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {/* Silent killer + summary */}
+            <div className="min-w-0 md:border-l md:border-foreground/10 md:pl-8">
+              <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-cta block mb-2">
+                {output.scores ? "The biggest thing costing you customers" : "Biggest silent killer"}
+              </span>
+              <p className="text-lg lg:text-xl font-bold text-foreground leading-snug mb-4">
+                {output.silentKiller}
+              </p>
+              <p className="text-[15px] leading-[1.7] text-foreground/60">
+                {output.summary}
+              </p>
+            </div>
+          </div>
+
+          {output.scores && (
+            <p className="font-mono text-[9px] tracking-[0.3em] uppercase text-foreground/20 mt-6 text-center">
+              Website audit by Boost &middot; actionboost.com
+            </p>
+          )}
+        </div>
       </section>
 
       {/* Section divider */}
@@ -304,7 +375,7 @@ export function MarketingAuditResults({ initialAudit }: Props) {
                 <h3 className="text-xl lg:text-2xl font-bold text-foreground leading-snug mb-3">
                   {firstFinding.title}
                 </h3>
-                <p className="font-serif text-[17px] leading-[1.75] text-foreground/85">
+                <p className="text-[15px] leading-[1.75] text-foreground/85">
                   {firstFinding.detail}
                 </p>
               </div>

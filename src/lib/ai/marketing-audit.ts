@@ -6,6 +6,13 @@ import type { Json } from "@/lib/types/database";
 export interface MarketingAuditOutput {
   silentKiller: string;
   summary: string;
+  scores: {
+    overall: number;
+    clarity: number;
+    customerFocus: number;
+    proof: number;
+    friction: number;
+  };
   findings: Array<{
     category: "clarity" | "customer-focus" | "proof" | "friction";
     title: string;
@@ -66,10 +73,29 @@ The number of findings should reflect the actual number of real issues — not a
   - Give one specific, actionable fix they can implement today
   Spread findings across different diagnostic lenses when possible. Do NOT invent findings to fill a quota. If the site only has one real issue, return one finding.
 
+## Scoring
+
+Score each diagnostic lens 0-100 and compute an overall score. Scores must be consistent with your findings — don't score 85 for clarity then report a finding saying the headline is confusing.
+
+Calibration:
+- 90-100: Exceptional — best-in-class for this lens
+- 70-89: Solid — working well with room for improvement
+- 50-69: Needs work — noticeable gaps hurting conversion
+- 0-49: Significant problems — this is actively costing customers
+
+The overall score should reflect the weighted importance of each lens to conversion.
+
 Return ONLY valid JSON matching this schema:
 {
   "silentKiller": "The single biggest issue or opportunity",
   "summary": "2-3 sentence diagnostic summary",
+  "scores": {
+    "overall": 0-100,
+    "clarity": 0-100,
+    "customerFocus": 0-100,
+    "proof": 0-100,
+    "friction": 0-100
+  },
   "findings": [
     {
       "category": "clarity" | "customer-focus" | "proof" | "friction",
@@ -100,6 +126,15 @@ function validateOutput(data: unknown): data is MarketingAuditOutput {
   if (typeof obj.silentKiller !== "string" || !obj.silentKiller) return false;
   if (typeof obj.summary !== "string" || !obj.summary) return false;
   if (!Array.isArray(obj.findings) || obj.findings.length < 1 || obj.findings.length > 4) return false;
+  // Validate scores
+  if (typeof obj.scores === "object" && obj.scores !== null) {
+    const s = obj.scores as Record<string, unknown>;
+    for (const key of ["overall", "clarity", "customerFocus", "proof", "friction"]) {
+      if (typeof s[key] !== "number" || s[key] < 0 || s[key] > 100) return false;
+    }
+  } else {
+    return false;
+  }
   for (const f of obj.findings) {
     if (typeof f !== "object" || !f) return false;
     if (!VALID_CATEGORIES.includes(f.category as typeof VALID_CATEGORIES[number])) return false;
