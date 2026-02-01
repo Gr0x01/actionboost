@@ -300,7 +300,7 @@ export function HeroWithExplainer() {
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl lg:text-2xl text-foreground/70 max-w-2xl mx-auto font-medium">
-            We research your competitors, pull real traffic data, and show you where to focus. Try it free — no signup, no payment.
+            We research your competitors, pull real traffic data, and show you where to focus. Try it free. No signup, no payment.
           </p>
 
           {/* Primary CTA — free-primary */}
