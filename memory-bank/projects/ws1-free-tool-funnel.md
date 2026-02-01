@@ -126,6 +126,5 @@ Landkit indexes completed audits at `/audits` for organic traffic. Boost can do 
 - [x] Screenshot + Tavily extract fallback for bot-protected sites — shipped Feb 1, 2026
 - [x] Unify scoring categories across all tiers: Clarity/Visibility/Proof/Advantage — all 3 tiers aligned, paid Boost now outputs scores — Feb 1, 2026
 - [x] Brief locks tactical sections behind upgrade CTA (LockedSections: priorities, discoveries, market pulse, metrics) — Feb 1, 2026. CTA points to one-shot $29 until WS2 subscription ships.
-- [ ] All free tools funnel to single conversion page
+- [x] All free tools funnel to single conversion page (`/upgrade`) — personalized copy per source tool, Stripe checkout for Brief upgrades, `/start` link for others — Feb 1, 2026
 - [x] Headline Analyzer shipped (`/tools/headline-analyzer`) — inline GPT (no Inngest), ~$0.01-0.02/run, scores clarity/specificity/differentiation/customer focus + 3 rewrites — Feb 1, 2026
-- [ ] Public audit directory live with opt-in

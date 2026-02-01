@@ -109,7 +109,7 @@ export function Header() {
               <>
                 <Link
                   href="/login"
-                  className="px-3 py-2 text-sm font-bold text-foreground/60 hover:text-foreground transition-colors"
+                  className="hidden sm:inline-flex px-3 py-2 text-sm font-bold text-foreground/60 hover:text-foreground transition-colors"
                 >
                   Login
                 </Link>
@@ -210,6 +210,25 @@ export function Header() {
                     </Link>
                   </motion.div>
                 ))}
+                {!loading && !user && (
+                  <motion.div
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: navLinks.length * 0.05, duration: 0.15 }}
+                  >
+                    <Link
+                      href="/login"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="
+                        block px-4 py-2.5 text-sm font-bold text-foreground/60
+                        hover:text-foreground hover:bg-foreground/5
+                        rounded-md transition-colors
+                      "
+                    >
+                      Login
+                    </Link>
+                  </motion.div>
+                )}
               </div>
             </motion.nav>
           )}

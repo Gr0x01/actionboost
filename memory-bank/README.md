@@ -13,7 +13,7 @@ Target audience: **Tech-adjacent entrepreneurs** — SaaS founders, solopreneurs
 | Name | Price | What It Delivers | Cost |
 |------|-------|-----------------|------|
 | **Boost Snapshot** | Free | "Here's what a stranger sees" — quick site audit (3-Second Test) | ~$0.05 |
-| **Boost Brief** | Free | "Here's where you stand" — situational clarity + real competitive landscape | ~$0.10 |
+| **Boost Brief** | Free | "Here's where you stand" — situational clarity, based on real market data | ~$0.10 |
 | **Boost Weekly** | $29/mo (founder) → $49/mo later | "Here's what to do this week" — full strategy + execution drafts + live data | ~$1.50/mo |
 
 Additional projects: $15-20/mo each. No agency tiers.
@@ -22,19 +22,19 @@ Additional projects: $15-20/mo each. No agency tiers.
 
 **v2 (building now — Boost Weekly)**: $29/mo subscription. Business profile (ICP, voice, competitors), full Opus strategy on signup (replaces one-shot), weekly re-vectoring, "Draft this" execution engine, GSC/GA4 integration (later). Dashboard shows 3 things: this week's focus, what's working, draft it.
 
-**The flywheel**: Boost Snapshot/Brief (free, proves research is real) → Boost Weekly ($29/mo, full strategy + execution). Brief leads with competitive landscape — the "wow" Landkit can't replicate.
+**The flywheel**: Free tools prove we know your market (Snapshot/Brief) → user trusts us with $29/mo (Boost Weekly) for ongoing clarity + execution.
 
 **Output format**: Executive Summary → Your Situation → Competitive Landscape → Stop Doing → Start Doing → Quick Wins → 30-Day Roadmap.
 
 **Brand voice**: Direct strategist. "Stop guessing. Get clarity on what's working and what's not." — confident, specific, respects intelligence. No hand-holding, no startup bro energy, no emojis.
 
-**IMPORTANT — Positioning guidance**: The value prop is **clarity**, not "marketing plan" or "competitive research." Competitor research is one input/feature, not the headline. When describing Boost externally (copy, posts, pitches), lead with the outcome (clarity on your market, what to do next) not the mechanism (competitor data, keyword rankings). "30-day marketing plan" framing tested poorly — avoid it.
+**IMPORTANT — Positioning guidance**: The value prop is **clarity**, not "marketing plan" or "competitive research." Competitor research is one input/feature, not the headline. When describing Boost externally (copy, posts, pitches), lead with the outcome (clarity on your market, what to do next) not the mechanism (competitor data, keyword rankings). "30-day marketing plan" framing tested poorly — avoid it. **See product.md "External Messaging Rules" for full guidelines.**
 
 ## Why It Works
 
-1. **Real research on YOUR market** - Tavily searches, DataForSEO metrics, homepage screenshots. Not templated advice.
-2. **Depth over breadth** - Competitors (Landkit) use Gemini on scraped pages. Boost uses Opus + real external data. Found competitors that ChatGPT/Claude/manual searches all missed.
-3. **Execute, not just plan** - "Draft this" turns strategy into ready-to-post content aligned to ICP and brand voice.
+1. **You stop guessing** — Instead of wondering what to do, you know. Based on your real market, not templates or generic AI advice.
+2. **It's specific to you** — Not "do SEO." More like "your competitor gets 40% of their traffic from these 3 keywords and you're not ranking for any of them. Here's what to do about it."
+3. **You can act on it immediately** — "Draft this" turns strategy into ready-to-post content. No staring at a plan wondering how to start.
 
 ## Traction
 
@@ -94,7 +94,7 @@ npm run test:all     # Both
 ## Doc Map
 
 | Doc | Read when... |
-|-----|--------------|
+|-----|------------|
 | `phases/current.md` | Starting work (ALWAYS read this) |
 | `product.md` | Building user-facing features |
 | `architecture.md` | Building backend/infra |

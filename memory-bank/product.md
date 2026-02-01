@@ -10,6 +10,65 @@ You describe your business. We research your market from hundreds of sources acr
 
 ---
 
+## External Messaging Rules (MANDATORY for all customer-facing copy)
+
+These rules govern how Boost is described in Reddit comments, landing pages, emails, social posts, and any outward-facing text. They override any feature-level details elsewhere in this doc.
+
+### The Hierarchy: Outcome > Problem > Mechanism
+
+When describing Boost externally, always follow this order:
+
+1. **Outcome** (what changes for them): "You'll know exactly what to do next with your marketing."
+2. **Problem** (what they feel now): "Instead of guessing, trying random tactics, or paying an agency thousands."
+3. **Mechanism** (how, briefly, only if needed): "We research your actual market and give you a clear plan."
+
+Never lead with mechanism. Never lead with features.
+
+### Language Rules
+
+**ALWAYS frame as:**
+- What changes for the customer (they get clarity, they stop guessing, they know what to do)
+- The feeling of relief (finally knowing, not wondering anymore)
+- The contrast with alternatives (vs. guessing, vs. generic ChatGPT advice, vs. $5K agencies)
+
+**NEVER frame as:**
+- A list of what the product does (researches competitors, analyzes keywords, generates content)
+- "Competitive research" or "competitive analysis" as a headline or lead
+- The output format (10 sections, 30-day roadmap, AARRR framework)
+- The tools or data sources (Tavily, DataForSEO, Opus)
+- A "marketing plan" (tested poorly, sounds like homework)
+
+### Describing What Boost Does (approved patterns)
+
+Use these patterns when someone asks "what is Boost?":
+
+| Instead of this (feature/mechanism) | Say this (outcome/benefit) |
+|--------------------------------------|----------------------------|
+| "It does competitive research on your market" | "It tells you what's actually going on with your marketing" |
+| "It analyzes hundreds of sources" | "It looks at your real market — not templates" |
+| "It generates a 30-day marketing plan" | "It tells you exactly what to do this week" |
+| "It includes competitor analysis" | "You'll see what's working for others in your space" |
+| "It uses real SEO data and web research" | "It's based on your actual market, not generic advice" |
+| "We research your competitors" | "You'll finally know where you stand" |
+
+### The One-Sentence Test
+
+Every external description of Boost should pass this test: **Does it describe what changes for the customer, or what the product does?**
+
+- FAIL: "Boost researches your market from hundreds of sources and delivers a competitive analysis with a 30-day action plan."
+- PASS: "Boost tells you what's actually going on with your marketing — and exactly what to do about it."
+- PASS: "Stop guessing. For $29, you'll know what's working, what's not, and what to do this week."
+
+### Reddit/Social Comment Patterns
+
+When mentioning Boost in comments (help-first, not pitching):
+
+- "I ran [their business type] through Boost and here's what came back..." (share the insight, not the product features)
+- "The biggest thing was finding out that [specific finding]. Turns out [insight]." (lead with the value of clarity)
+- Never: "Boost does competitive research using real data sources to create a marketing plan for your business."
+
+---
+
 ## ICP (Ideal Customer Profile)
 
 ### The Person
@@ -57,11 +116,11 @@ Business type determines where we reach them, not who they are:
 - These audiences can actually FIND tools online (unlike traditional SMBs)
 - **Founder personality fit**: Blunt, direct, helpful — matches this audience
 
-### Messaging Hierarchy (Promise → Proof → Mechanism)
+### Messaging Hierarchy (Promise > Proof > Mechanism)
 
 1. **Promise**: You'll finally know what's going on with your marketing — and exactly what to do about it
-2. **Proof**: Built on real research from hundreds of sources across the internet — not templates, not vibes
-3. **Mechanism**: We analyze your business, your market, and your competitors, then tell you what to stop, what to start, and what to do next
+2. **Proof**: Based on real research into your actual market — not templates, not vibes, not generic AI advice
+3. **Mechanism** (only when asked): We look at your business, your market, and what's working for others in your space, then tell you what to stop, start, and do next
 
 ### Competitive Alternatives (Dunford Positioning)
 
@@ -72,7 +131,7 @@ Business type determines where we reach them, not who they are:
 4. Ask a friend — limited to their experience
 5. Hire an agency — $2K-10K/month, overkill for this stage
 
-**Our differentiation:** A real diagnosis of your marketing — what's working, what's not, and exactly what to do next. Built on real research from hundreds of sources. Not generic. Not expensive. Not overwhelming.
+**Our differentiation:** You'll know exactly what's going on and what to do next — based on your real market, not generic advice. For $29, not $5,000.
 
 ---
 
@@ -80,7 +139,7 @@ Business type determines where we reach them, not who they are:
 
 ### Core Narrative
 
-**"Stop guessing. Get a marketing plan that actually fits your business."**
+**"Stop guessing. Get clarity on what's working and what's not."**
 
 The action-first, research-backed strategist who tells you exactly what to do. Specific recommendations, no fluff.
 

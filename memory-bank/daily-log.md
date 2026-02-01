@@ -445,10 +445,54 @@ Bio: "Solo dev. Building Boost — competitive marketing research for small busi
 
 ---
 
+## Day 12 - Feb 1
+
+### Completed
+| Activity | Result |
+|----------|--------|
+| V2 master plan | ✅ Subscription pivot, competitor deep dive, 5 workstreams planned |
+| Dev infrastructure (WS5) | ✅ Supabase branching verified, migration compat fixed |
+| Free Brief agentic pipeline | ✅ Agentic Sonnet + search/SEO tools replaces one-shot |
+| Free Brief results redesign | ✅ 5-zone wide layout, new components, dark CTA block |
+| Unified scoring framework | ✅ Clarity/Visibility/Proof/Advantage across all 3 tiers |
+| Snapshot results redesign | ✅ 3/5+2/5 hero grid, responsive cards, dark CTA |
+| Scoring on paid Boost | ✅ BriefScoreGauge in InsightsView |
+| Headline Analyzer free tool | ✅ Built + shipped at /tools/headline-analyzer |
+| Dead code cleanup | ✅ Removed old free audit pipeline code |
+| /free-audit landing page | ✅ Zero-nav conversion page for FB ad traffic |
+| Facebook ads live | ✅ 4 variations at $20/day → /free-audit |
+| Cross-links + sitemap | ✅ All free tools cross-linked, sitemap updated |
+| Competitor Finder + Email Subject Scorer | 🔄 Started (untracked files, not committed) |
+| /upgrade page | 🔄 Started, CTAs now route through it |
+
+### Product Work
+- **V2 strategic pivot**: Designed full subscription model. $29 one-shot becomes week 1 of $29/mo Boost Weekly. Free Snapshot/Brief as funnel. Competitor deep dive (Landkit, Enji, LandingBoost) confirmed market.
+- **Free Brief overhaul**: Replaced one-shot Sonnet with agentic pipeline using search + SEO tools. Complete UI redesign — 5-zone layout with mixed visual treatments, competitive landscape cards, dark transition CTA.
+- **Unified scoring**: All 3 product tiers now score on same 4 categories (Clarity 35%, Visibility 25%, Proof 20%, Advantage 20%). Grounded in Dunford, Sharp, Cialdini, Ritson.
+- **Headline Analyzer**: Third free tool. GPT-4.1-mini inline (~$0.01/run, 5-15s). Skipped Inngest — too much latency overhead for a single fast call.
+- **FB ad funnel**: /free-audit landing page (zero-nav, mock results preview) → /start?free=true. 4 ad variations running.
+
+### Commits (7)
+- `60e67c7` Add scoring to paid Boost + Snapshot redesign + docs
+- `c92b42d` Add headline analyzer free tool + clean up dead code
+- `b9413c8` Redesign Snapshot results to match Brief layout
+- `9ec22db` Redesign free Brief results + unify scoring framework
+- `554a04d` Add /free-audit landing page for Facebook ad traffic
+- `a6d66e6` Disable Vercel Analytics debug logging
+- `7a7badb` Add scoring to free marketing audit
+
+### Spend
+| Date | Item | Cost |
+|------|------|------|
+| Feb 1 | FB Ads | ~$20 |
+| **Running Total** | | **~$160** |
+
+---
+
 ## Next Actions
-1. Post "Drop your URL" thread on r/SaaS
-2. Continue Reddit growth loop
-3. Build Headline/Value Prop Analyzer (next free tool)
-4. Build Email Subject Line Scorer
-5. Monitor FB ad performance
+1. Monitor FB ad performance (landing → /start conversion, target 15-25%)
+2. Finish Competitor Finder + Email Subject Scorer free tools
+3. Finish /upgrade page
+4. Build single conversion page (WS1)
+5. Start WS2: Boost Weekly (business profiles, $29/mo Stripe billing, dashboard)
 6. **Gifted full Boost to Spendy user** (fireshotdev@gmail.com) — spent 12 min on free version trying to get tasks. Run ID: `ac788ee5-471a-4318-b2c4-73d71185e5a1`, source: `gift`. Email them with teaser about BudgetBakers competitor intel. Track if they open it + any reply.
