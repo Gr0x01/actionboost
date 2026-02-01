@@ -61,7 +61,7 @@ export default function TermsPage() {
                   Refund Policy
                 </h2>
                 <p className="text-sm text-muted leading-relaxed">
-                  We offer a <strong className="text-foreground">7-day money-back guarantee</strong>.
+                  We offer a <strong className="text-foreground">30-day money-back guarantee</strong>.
                   If you&apos;re not satisfied with your action plan, email us at{" "}
                   <a
                     href="mailto:team@aboo.st"
@@ -69,7 +69,7 @@ export default function TermsPage() {
                   >
                     team@aboo.st
                   </a>{" "}
-                  within 7 days of purchase with brief feedback on what didn&apos;t work for you,
+                  within 30 days of purchase with brief feedback on what didn&apos;t work for you,
                   and we&apos;ll issue a full refund—no questions asked beyond the feedback. This
                   helps us improve the product for everyone.
                 </p>

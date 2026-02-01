@@ -70,7 +70,7 @@ export function ResultsHeader({
 
   return (
     <div className="sticky top-14 z-40 bg-background border-b border-foreground/10">
-      <div className="mx-auto max-w-5xl px-6">
+      <div className="mx-auto max-w-6xl px-6">
         {/* Grid layout: Plan name | Tabs (centered) | Actions */}
         {/* Mobile: 2-col (left + right), Desktop: 3-col with centered tabs */}
         <div className="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_1fr] items-center gap-4">

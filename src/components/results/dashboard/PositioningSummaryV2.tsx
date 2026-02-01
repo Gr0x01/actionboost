@@ -77,42 +77,38 @@ export function PositioningSummaryV2({ positioning }: PositioningSummaryV2Props)
 
   return (
     <section className="scroll-mt-32">
-      {/* Two-column layout: header + quote left, insights right */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
-        {/* Left 2/3 - Header + Hero pull quote */}
-        <div className="lg:col-span-2">
-          {/* Section label */}
-          <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-2">
-            YOUR POSITIONING
+      <div>
+        {/* Section label */}
+        <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-2">
+          YOUR POSITIONING
+        </span>
+
+        {/* Verdict header */}
+        <div className="flex items-baseline gap-2 flex-wrap mb-4">
+          <span className="text-2xl lg:text-3xl font-bold text-foreground tracking-tight">
+            {style.word}
           </span>
-
-          {/* Verdict header */}
-          <div className="flex items-baseline gap-2 flex-wrap mb-6">
-            <span className="text-2xl lg:text-3xl font-bold text-foreground tracking-tight">
-              {style.word}
-            </span>
-            <span className="text-base text-foreground/60 font-medium">
-              {style.subtitle}
-            </span>
-          </div>
-
-          {/* Hero pull quote */}
-          {positioning.summary && (
-            <p className="text-xl lg:text-2xl font-serif text-foreground leading-relaxed">
-              {positioning.summary}
-            </p>
-          )}
+          <span className="text-sm text-foreground/50">
+            {style.subtitle}
+          </span>
         </div>
 
-        {/* Right 1/3 - Supporting insights stacked */}
+        {/* Hero pull quote */}
+        {positioning.summary && (
+          <p className="text-lg lg:text-xl font-serif text-foreground leading-relaxed mb-6">
+            {positioning.summary}
+          </p>
+        )}
+
+        {/* Supporting insights */}
         {displayInsights.length > 0 && (
-          <div className="space-y-6 lg:border-l lg:border-foreground/10 lg:pl-8">
+          <div className="border-t border-foreground/8 pt-5 space-y-4">
             {displayInsights.map((insight) => (
               <div key={insight.label}>
-                <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-foreground/50 block mb-1">
+                <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-1">
                   {insight.label}
                 </span>
-                <p className="text-sm lg:text-base text-foreground font-medium leading-relaxed">
+                <p className="text-[15px] leading-[1.6] text-foreground font-medium">
                   {insight.value}
                 </p>
               </div>

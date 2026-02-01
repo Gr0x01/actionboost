@@ -4,6 +4,28 @@ Key architectural and product decisions. Reference this when you need to underst
 
 ---
 
+## Free Brief Results Page Layout (Feb 1 2026)
+
+**Decision**: 5-zone wide layout (max-w-6xl) with varied visual treatments per zone. Mix of open typography, cards, and accent borders to avoid card-card-card monotony.
+
+**Zone architecture**: Positioning + score (3/5 + 2/5 grid) → Positioning gap + 3-second test (3/5 + 2/5) → Quick wins (3-col cards) → Competitive landscape (left border blocks) → Dark transition CTA → Locked skeletons → Paywall.
+
+**Conversion flow**: Primary CTA lives in a dark `bg-foreground` card between free content and locked skeletons. H2 + subtitle + CTA button (left) with checkmark benefits (right). Locked sections below serve as visual proof. Bottom paywall is a safety net for scrollers.
+
+**Competitive section**: Replaced traffic bar chart with strategic intelligence — competitor positioning, weakness, opportunity. Bar charts with massive traffic disparities (1.4M vs 49) are demoralizing, not useful. Strategic insights are more actionable.
+
+**Typography system**: Consolidated to consistent scale — `font-mono text-[10px] tracking-[0.25em] text-foreground/40` for labels, `text-[15px] leading-[1.6] text-foreground` for body, `text-sm leading-relaxed text-foreground/50` for secondary. Body text at full foreground color for WCAG AA (text-foreground/70 fails at 4.0:1 contrast).
+
+---
+
+## Design Process: UI Designer Suggests, Frontend Skill Implements (Feb 1 2026)
+
+**Decision**: The ui-designer subagent provides design SUGGESTIONS only (direction, not code). Implementation uses the frontend-design skill to ensure Soft Brutalist consistency. The ui-designer should never write code directly.
+
+**Why**: When the ui-designer wrote code directly, it produced inconsistent results — random badges, decorative elements, typography that didn't match the page system. Separating suggestion from implementation keeps designs cohesive.
+
+---
+
 ## Product Ladder & Naming (Feb 1 2026)
 
 **Decision**: Three-tier product ladder, each tier = increasing clarity from the same strategist voice.
@@ -181,11 +203,11 @@ Enji: ~2021, ~12 people, 1.5K monthly visits, $29/mo full suite (strategy, calen
 | Pipeline | Model | Cost |
 |----------|-------|------|
 | Paid strategy (agentic) | Opus 4.5 | ~$0.15-0.20 |
-| Free positioning preview | Sonnet 4 | ~$0.02 |
+| Free Brief (agentic) | Sonnet 4 + tools | ~$0.10-0.15 |
 | Formatter (all pipelines) | Sonnet 4 | ~$0.02 |
 | Refinements | Opus 4.5 | ~$0.10-0.15 |
 
-Sonnet-Sonnet for free audits: 64% cost savings ($0.10 → $0.04), quality good. Sonnet's slightly critical tone creates urgency to upgrade.
+Free Brief upgraded from one-shot to agentic Sonnet with search + SEO tools (Feb 1 2026). Cost increased from ~$0.04 to ~$0.10-0.15 but output is dramatically better — real competitors found, actual SEO data, landing page analysis.
 
 **Constraint**: Do NOT change model names without explicit user approval.
 
@@ -285,6 +307,20 @@ Increased truncation limits (MAX_TOKENS 8K→12K, various char limits 150-300→
 - In-flight check blocks submitting while a refinement is pending/processing
 
 **Files**: `api/runs/[runId]/add-context/route.ts`, `api/runs/[runId]/route.ts`
+
+---
+
+## Supabase Branching: Migration Compatibility Fix (Feb 1 2026)
+
+**Decision**: Patched stored migration SQL in `supabase_migrations.schema_migrations` to use `IF EXISTS` on all DROP statements.
+
+**What happened**: Migration `fix_rls_and_security_advisors` (20260128221642) used `DROP POLICY "Allow all access to reddit_sent_posts"` without `IF EXISTS`. That policy was manually created on production (not via migration), so it existed on prod but not on fresh branch databases. Branch creation failed with `MIGRATIONS_FAILED`.
+
+**Fix**: Updated the stored `statements` array for that migration to use `DROP POLICY IF EXISTS` and `DROP FUNCTION IF EXISTS` on all DROP statements. This is safe because IF EXISTS is a no-op when the object exists (prod) and skips cleanly when it doesn't (branches).
+
+**Lesson**: Never use `DROP POLICY/FUNCTION` without `IF EXISTS` in migrations. Policies created manually on prod won't exist on fresh branch databases.
+
+**GitHub integration not required** for Supabase branching — branches are created/managed via the Supabase MCP API. GitHub integration is optional (auto-creates branches from PRs).
 
 ---
 

@@ -76,7 +76,7 @@ export function FreePreviewPaywall({
         </h2>
 
         {/* Subhead */}
-        <p className="text-foreground/60 mb-10 text-base">
+        <p className="text-sm leading-relaxed text-foreground/50 mb-10">
           Real research on your market. Clear priorities. Exactly what to do next.
         </p>
 

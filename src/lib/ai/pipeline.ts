@@ -1,7 +1,5 @@
 import { createServiceClient } from '@/lib/supabase/server'
-import { runTavilyOnlyResearch } from './research'
-import { generatePositioningPreview } from './generate'
-import { generateStrategyAgentic, generateAgenticRefinement } from './pipeline-agentic'
+import { generateStrategyAgentic, generateAgenticRefinement, generateFreeAgenticStrategy } from './pipeline-agentic'
 import { extractStructuredOutput } from './formatter'
 import { accumulateBusinessContext, accumulateUserContext } from '@/lib/context/accumulate'
 import { getOrCreateDefaultBusiness } from '@/lib/business'
@@ -370,12 +368,12 @@ export type FreePipelineResult = {
 }
 
 /**
- * Run the free positioning preview pipeline
+ * Run the free agentic Brief pipeline
  *
- * V2 approach - focused on proving "we understand YOUR business":
- * - Positioning analysis (verdict, unique value, target segment)
- * - 1-2 key discoveries from research
- * - Tavily research only (no DataForSEO) for cost efficiency
+ * V3 approach - landing page as lens into strategy:
+ * - Screenshot captured upfront, passed as vision input
+ * - Sonnet with tools (search + seo) finds real competitors
+ * - 3-Second Test, positioning gap, quick wins, competitive landscape, scores
  * - Extracts structured output for dashboard-style rendering
  */
 export async function runFreePipeline(
@@ -389,39 +387,73 @@ export async function runFreePipeline(
   // Update status to processing
   await supabase.from('free_audits').update({ status: 'processing' }).eq('id', freeAuditId)
 
-  let research: ResearchContext
+  // Capture screenshot + extract page content in parallel
+  let screenshotBase64: string | null = null
+  let pageContent: string | null = null
+  if (input.websiteUrl) {
+    const url = input.websiteUrl.startsWith('http') ? input.websiteUrl : `https://${input.websiteUrl}`
 
-  // Run Tavily-only research (no DataForSEO)
-  try {
-    console.log(`[FreePipeline] Starting Tavily research for ${freeAuditId}`)
-    research = await runTavilyOnlyResearch(input)
-    console.log(
-      `[FreePipeline] Research completed: ${research.competitorInsights.length} competitor insights, ${research.marketTrends.length} trends`
-    )
-  } catch (err) {
-    console.error('[FreePipeline] Research failed:', err)
-    research = {
-      competitorInsights: [],
-      marketTrends: [],
-      growthTactics: [],
-      seoMetrics: [],
-      researchCompletedAt: new Date().toISOString(),
-      errors: [`Research failed: ${err instanceof Error ? err.message : String(err)}`],
+    const [ssResult, extractResult] = await Promise.allSettled([
+      // Screenshot
+      (async () => {
+        const ssUrl = process.env.SCREENSHOT_SERVICE_URL
+        const ssKey = process.env.SCREENSHOT_API_KEY
+        if (!ssUrl || !ssKey) return null
+        console.log(`[FreePipeline] Capturing screenshot of ${url}`)
+        const ssRes = await fetch(
+          `${ssUrl}/screenshot?url=${encodeURIComponent(url)}&width=1280&height=800`,
+          { headers: { 'x-api-key': ssKey }, signal: AbortSignal.timeout(20000) }
+        )
+        if (!ssRes.ok) return null
+        const base64 = Buffer.from(await ssRes.arrayBuffer()).toString('base64')
+        console.log(`[FreePipeline] Screenshot captured`)
+        return base64
+      })(),
+      // Tavily extract for DOM text (fallback if screenshot blocked)
+      (async () => {
+        const tavilyKey = process.env.TAVILY_API
+        if (!tavilyKey) return null
+        console.log(`[FreePipeline] Extracting page content from ${url}`)
+        const { tavily } = await import('@tavily/core')
+        const tvly = tavily({ apiKey: tavilyKey })
+        const result = await tvly.extract([url])
+        const raw = result.results?.[0]?.rawContent || ''
+        if (!raw) return null
+        // Truncate to keep token costs down
+        const truncated = raw.length > 4000 ? raw.slice(0, 4000) + '\n[Content truncated]' : raw
+        console.log(`[FreePipeline] Page content extracted: ${truncated.length} chars`)
+        return truncated
+      })(),
+    ])
+
+    screenshotBase64 = ssResult.status === 'fulfilled' ? ssResult.value : null
+    pageContent = extractResult.status === 'fulfilled' ? extractResult.value : null
+
+    if (ssResult.status === 'rejected') {
+      console.warn('[FreePipeline] Screenshot capture failed (non-fatal):', ssResult.reason)
+    }
+    if (extractResult.status === 'rejected') {
+      console.warn('[FreePipeline] Page extract failed (non-fatal):', extractResult.reason)
     }
   }
 
-  // Generate positioning preview (focused prompt for positioning + discoveries)
-  // Default model is Sonnet for cost efficiency - see generate.ts FREE_AUDIT_MODEL
+  // Run agentic generation with Sonnet + tools (search, seo)
   try {
-    console.log(`[FreePipeline] Generating positioning preview`)
-    const output = await generatePositioningPreview(input, research)
-    console.log(`[FreePipeline] Preview generated: ${output.length} characters`)
+    console.log(`[FreePipeline] Starting agentic generation for ${freeAuditId}`)
+    const agenticResult = await generateFreeAgenticStrategy(input, screenshotBase64, freeAuditId, pageContent)
+
+    if (!agenticResult.success || !agenticResult.output) {
+      throw new Error(agenticResult.error || 'Agentic generation returned no output')
+    }
+
+    const output = agenticResult.output
+    console.log(`[FreePipeline] Agentic generation complete: ${output.length} chars, ${agenticResult.toolCalls?.length || 0} tool calls`)
 
     // Extract structured output for dashboard rendering
     let structuredOutput: import('./formatter-types').StructuredOutput | null = null
     try {
       console.log(`[FreePipeline] Extracting structured output`)
-      structuredOutput = await extractStructuredOutput(output)
+      structuredOutput = await extractStructuredOutput(output, agenticResult.researchData)
       console.log(
         `[FreePipeline] Structured output extracted: positioning=${!!structuredOutput?.positioning}, discoveries=${structuredOutput?.discoveries?.length || 0}`
       )

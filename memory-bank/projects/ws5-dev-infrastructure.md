@@ -1,4 +1,4 @@
-# WS5: Dev Infrastructure
+# WS5: Dev Infrastructure ✅ COMPLETE
 
 *Parent: v2-master-plan.md*
 
@@ -35,6 +35,8 @@ main (production)
 
 Supabase branching creates an isolated database for each branch. Migrations from production are applied, but production data doesn't carry over.
 
+**Cost**: $0.01344/hr (~$0.32/day, ~$9.70/mo if left running). Create when needed, delete when done.
+
 **How to use it**:
 - Create a Supabase branch when starting schema work
 - Write migrations on the branch, test them
@@ -46,21 +48,21 @@ Supabase branching creates an isolated database for each branch. Migrations from
 - No risk of breaking production data
 - Migrations are validated before hitting prod
 
-**Cost**: Check via `get_cost` MCP tool before creating branches. Branches are billed hourly.
+**Migration fix applied**: Patched `fix_rls_and_security_advisors` migration to use `DROP POLICY IF EXISTS` and `DROP FUNCTION IF EXISTS` — original had `DROP POLICY` without `IF EXISTS` for policies that were manually created on prod, causing branch creation to fail.
 
-### 3. Vercel Preview Deployments
+### 3. Vercel Preview Deployments + GitHub Integration
 
-Already configured. Each git branch gets a preview URL. Connect preview URLs to Supabase branch databases using branch-specific env vars.
+Already configured. Each git branch gets a preview URL. GitHub connected to Supabase — PRs auto-create preview branches with isolated databases.
 
 **Env var strategy**:
 - Production: `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` point to production
-- Preview: Override with Supabase branch credentials (set in Vercel branch env vars or via Supabase GitHub integration)
+- Preview: Supabase + Vercel integration auto-injects branch DB credentials into preview deployments
 
 ### 4. Stripe Test Mode
 
 - All subscription development uses Stripe test mode
-- Test API keys in `.env.local` and preview deployments
-- Production Stripe keys only on `main` deployment
+- Production `.env.local` has `sk_live_` keys — swap to `sk_test_` for branch work
+- `.env.example` updated with guidance comment
 - Use Stripe test clocks for subscription lifecycle testing
 
 ## Process
@@ -87,8 +89,9 @@ Start feature work:
 
 ## Action Items
 
-- [ ] Verify Supabase project has branching enabled (requires Pro plan)
-- [ ] Test creating + merging a Supabase branch
-- [ ] Confirm Vercel preview deployments can connect to Supabase branch DBs
-- [ ] Set up Stripe test mode keys in `.env.local`
-- [ ] Document branch naming convention for team of one (keep it simple)
+- [x] Verify Supabase project has branching enabled (Pro plan confirmed)
+- [x] Test creating + merging a Supabase branch (created, verified 12 tables + all migrations, deleted)
+- [x] Confirm Vercel preview deployments can connect to Supabase branch DBs (already configured)
+- [x] Set up Stripe test mode keys in `.env.local` (live keys in prod, guidance added to .env.example)
+- [x] Document branch naming convention for team of one (ws1/, ws2/, etc.)
+- [x] Fix migration compatibility for branching (patched DROP POLICY IF EXISTS)

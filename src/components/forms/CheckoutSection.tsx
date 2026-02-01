@@ -159,7 +159,7 @@ export function CheckoutSection({
         {!hasValidCode && !hasCredits && (
           <div className="flex items-center justify-center gap-2 text-sm text-foreground/70 font-medium">
             <Check className="w-5 h-5 text-green-600" />
-            <span>7-day money-back guarantee</span>
+            <span>30-day money-back guarantee</span>
           </div>
         )}
       </div>

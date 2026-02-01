@@ -26,17 +26,30 @@ All free tools drive to one conversion point. Add urgency through specificity, n
 
 Both Landkit and LandingBoost give users an instant score (88/100, 48/100). That visceral number creates the impulse to act. Boost's free tools currently output prose — no score.
 
-**Add scoring to every free tool — grounded in real marketing frameworks, not arbitrary numbers:**
+**Unified Scoring Framework — same 4 categories across all tiers, each going deeper:**
 
-- **Boost Snapshot**: Already uses 3-Second Test (Clarity, Customer Focus, Proof, Friction). Rooted in conversion copywriting principles (Schwartz awareness levels, Cialdini trust signals). Add explicit per-category scores + overall.
-- **Boost Brief**: Scoring rubric TBD — must be designed before building. Categories should map to positioning strength (Dunford framework), channel readiness (AARRR), competitive exposure (real data: traffic gaps, keyword gaps, content gaps vs competitors found). Each score backed by specific evidence from the research, not LLM inference.
-- **Future Snapshot tools** (headline analyzer, email subject scorer): Each gets its own framework-grounded rubric.
+| Category | Weight | Grounded In | What It Measures |
+|----------|--------|-------------|------------------|
+| **Clarity** | 35% | Dunford positioning, Ries/Trout | Can people immediately understand what you do, who it's for, and why you? |
+| **Visibility** | 25% | Sharp's mental/physical availability | Can your target audience actually find you? SEO, channels, discoverability |
+| **Proof** | 20% | Cialdini social proof, Keller brand equity | Do you have evidence that builds trust? Reviews, case studies, mentions |
+| **Advantage** | 20% | Ritson competitive strategy, Porter | What makes you defensibly different from alternatives? |
+
+**How it maps across tiers:**
+
+| | Boost Snapshot (3s) | Boost Brief (free) | Boost Weekly (paid) |
+|---|---|---|---|
+| **Clarity** | Headline clear? Value prop visible? | Positioning gap analysis, market fit | Full messaging strategy, ICP alignment |
+| **Visibility** | Basic page signals | Traffic vs competitors, SEO snapshot | Keyword gaps, channel strategy, weekly tasks |
+| **Proof** | Trust signals on page? | Third-party mentions, review presence | Full proof-building roadmap |
+| **Advantage** | Differentiation visible? | Competitor positioning + weaknesses | Exploitable gaps, counter-strategies |
+| **Depth** | Surface scan (~$0.05) | Real research (~$0.10-0.15) | Full strategy + execution (~$0.15-0.20) |
+
+**Category rename needed**: Snapshot's current categories (Clarity, Focus, Proof, Ease) → Clarity, Visibility, Proof, Advantage. Brief's current categories (Positioning, Visibility, Proof, Competitive Edge) → same.
 
 **Hard rule: if we can't explain WHY something scores a 4/10 with a named principle and specific evidence, we don't score it.** No vibes scoring. Every number has receipts.
 
 **The score IS the urgency.** "Your Proof score is 3/10 because we found zero third-party mentions and your competitors both have case studies" = instant motivation grounded in fact.
-
-**Prerequisite**: Design the Brief scoring rubric (categories, what each measures, what data feeds each score) before building the UI. This is product design work — consult growth-hacker agent for framework selection.
 
 ### 2. Boost Brief: Lead with Competitive Landscape
 
@@ -66,10 +79,25 @@ Current state: Free results have scattered CTAs to `/start`. Need a dedicated co
 
 ### 3. Free Tool Expansion (Boost Snapshot variants)
 
-From `free-tools-seo.md` — more Snapshot-style entry points:
-1. **Headline / Value Prop Analyzer** — highest search volume (20-40K/mo), ~$0.02-0.04/run
-2. **Email Subject Line Scorer** — cheapest (~$0.01-0.02), high volume
-3. All follow existing pattern: form → Inngest async → result page with CTA to Brief/Plan
+Aligned to unified scoring categories — each tool maps to a category, naturally funneling to the Brief for the full picture:
+
+**Clarity tools** (35% weight = highest funnel priority):
+1. **Headline / Value Prop Analyzer** — highest search volume (20-40K/mo), ~$0.02-0.04/run. "Is your headline clear?" → Clarity score → "See how your full positioning stacks up" → Brief
+2. **Homepage 3-Second Test** — already built (Boost Snapshot). Expand standalone distribution.
+
+**Visibility tools** (25% weight):
+3. **SEO Visibility Check** — "How findable are you?" One domain lookup via DataForSEO (~$0.01). Shows traffic estimate + top keywords. → "See how you compare to competitors" → Brief
+4. **Google My Business Audit** — for local businesses. Check listing completeness. Low cost, high local search volume.
+
+**Proof tools** (20% weight):
+5. **Social Proof Audit** — "Do strangers trust you?" Scan for reviews, testimonials, case studies on the page. ~$0.02-0.04. → "See what competitors are doing better" → Brief
+
+**Advantage tools** (20% weight):
+6. **Competitor Quick Compare** — enter your URL + one competitor. Side-by-side positioning snapshot. ~$0.05. → "Get the full competitive landscape" → Brief
+
+**Not forced**: These are brainstormed options. Only build what has search volume and natural distribution. The Brief is the real conversion tool — Snapshots are entry points.
+
+All follow existing pattern: form → Inngest async → result page with CTA to Brief
 
 ### 4. Public Audit Directory (SEO Play)
 
@@ -89,10 +117,15 @@ Landkit indexes completed audits at `/audits` for organic traffic. Boost can do 
 
 ## Definition of Done
 
-- [ ] Diagnostic scoring on Snapshot (category scores + overall)
-- [ ] Diagnostic scoring on Brief (marketing position score + breakdown)
-- [ ] Brief leads with score + competitive landscape, locks tactics
-- [ ] Brief shows one specific finding from full strategy as urgency hook
+- [x] Diagnostic scoring on Snapshot (category scores + overall) — shipped Feb 1, 2026
+- [x] Diagnostic scoring on Brief (BriefScoreGauge: overall + Positioning/Visibility/Proof/Competitive Edge) — shipped Feb 1, 2026
+- [x] ~~Brief urgency hook~~ — removed UrgencyHook component (redundant with competitive landscape) — Feb 1, 2026
+- [x] Brief leads with competitive landscape — agentic Sonnet pipeline finds competitors via search + SEO lookups, CompetitiveComparison now populated — shipped Feb 1, 2026
+- [x] Free Brief redesigned: 3-Second Test, Quick Wins, Positioning Gap, score, competitive comparison — shipped Feb 1, 2026
+- [x] DataForSEO cost reduced: domain_rank_overview ($0.01) replaces domain_metrics_by_categories ($0.10) — shipped Feb 1, 2026
+- [x] Screenshot + Tavily extract fallback for bot-protected sites — shipped Feb 1, 2026
+- [ ] Unify scoring categories across all tiers: Clarity/Visibility/Proof/Advantage (rename from current mismatched names)
+- [ ] Brief locks tactical sections behind Weekly upgrade
 - [ ] 7-day expiry on Brief results
 - [ ] All free tools funnel to single conversion page
 - [ ] At least 1 new Snapshot-style tool shipped (headline analyzer)

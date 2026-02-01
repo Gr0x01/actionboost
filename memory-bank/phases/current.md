@@ -1,6 +1,113 @@
 # Current Phase
 
-## Latest Update: V2 Master Plan Created (Feb 1, 2026)
+## Latest Update: Free Brief Results Page Redesign (Feb 1, 2026)
+
+**Complete UI overhaul of the free Brief results page.** Went from single narrow column to a 5-zone wide layout with proper visual hierarchy, typography consistency, and conversion flow.
+
+**New layout (FreeInsightsView, max-w-6xl):**
+- **Zone 1**: Positioning verdict (3/5) + diagnostic score gauge (2/5) — side-by-side
+- **Zone 2**: Positioning gap (open typography, 3/5) + 3-second test (card, 2/5)
+- **Zone 3**: Quick wins — 3 ranked cards with overlapping rank badges (#1 in CTA orange)
+- **Zone 4**: Competitive landscape — thick left border blocks, side-by-side grid
+- **Transition**: Dark `bg-foreground` card with h2 + CTA (left) and checkmarks (right)
+- **Zone 5**: Locked skeleton sections (priorities, discoveries, market pulse, metrics)
+- **Bottom**: Existing paywall as safety net for scrollers
+
+**Key changes:**
+- `PositioningSummaryV2` added to free page (was only on paid dashboard)
+- `CompetitiveLandscapeFree` — new component replacing traffic bar chart with strategic intelligence (positioning, weakness, opportunity per competitor)
+- `UrgencyHook` removed — redundant with competitive landscape section
+- `QuickWins` redesigned with PriorityCards-style overlapping rank badges, #1 gets CTA accent
+- `ThreeSecondTest` simplified — removed verdict badge and border-l decorations
+- `PositioningGap` — no card, open typography with bold disconnect statement
+- `LockedSections` — dark transition block with h2, CTA button, checkmark list; now accepts freeAuditId + token for inline checkout
+- `MagicLinkBanner` — dismiss persists to localStorage
+- `ResultsHeader` — widened to max-w-6xl
+- Typography audit: consolidated to consistent system (10px mono labels, 15px body, consistent opacity)
+- Accessibility fix: body text changed from text-foreground/70 to text-foreground (WCAG AA compliance)
+
+**Files changed:**
+- `src/components/results/free/FreeInsightsView.tsx` — 5-zone layout orchestrator
+- `src/components/results/free/CompetitiveLandscapeFree.tsx` — NEW, replaces CompetitiveComparison
+- `src/components/results/free/QuickWins.tsx` — rank badges, no impact/time badges
+- `src/components/results/free/ThreeSecondTest.tsx` — simplified, no verdict badge
+- `src/components/results/free/PositioningGap.tsx` — open typography, no card
+- `src/components/results/free/LockedSections.tsx` — dark transition block with CTA
+- `src/components/results/free/BriefScoreGauge.tsx` — compact layout in card
+- `src/components/results/free/UrgencyHook.tsx` — removed from page (file still exists)
+- `src/components/results/MagicLinkBanner.tsx` — localStorage persist
+- `src/components/results/ResultsHeader.tsx` — max-w-6xl
+- `src/components/results/dashboard/PositioningSummaryV2.tsx` — flattened to single column for 3/5 grid
+
+**Process note:** UI designer provides suggestions only, then implement using frontend-design skill. UI designer should never write code directly.
+
+---
+
+## Previous: Facebook Ad Campaign Live (Feb 1, 2026)
+
+**4 Facebook ad variations running at $20/day** pointing to `/free-audit` landing page. Previous generic traffic ad stopped.
+
+**Landing page (`/free-audit`):**
+- Zero-nav, single-purpose conversion page for cold Facebook traffic
+- Two-column desktop: headline + CTA (left), mock results page with CSS mask fade (right)
+- Mobile: stacked with simplified score card
+- CTA sends to `/start?free=true&source=fb-ad` — same existing free Brief flow, no new API
+- PostHog tracking: `free_audit_landing_viewed`
+- Commit: `554a04d`
+
+**What to watch:** Landing page → /start conversion rate (target: 15-25%), which ad copy wins, cost per completed free Brief. After 100 completed audits, build lookalike audience.
+
+---
+
+## Previous: WS1 Free Brief — Agentic Pipeline Redesign Complete (Feb 1, 2026)
+
+**Free Brief completely redesigned.** Replaced one-shot Sonnet with agentic Sonnet pipeline (search + SEO tools). "Landing page as lens into strategy" positioning.
+
+**Pipeline:** Agentic Sonnet 4 with search + SEO tools, 5 tool calls max, screenshot upfront. Cost ~$0.10-0.15.
+
+**What's NOT done yet:**
+- Single conversion page not started
+- More entry points not started
+- Dead code cleanup: `generatePositioningPreview` in generate.ts, `runTavilyOnlyResearch` in research.ts
+
+**WS1 doc**: `projects/ws1-free-tool-funnel.md`
+
+---
+
+## Previous: WS5 Dev Infrastructure Complete (Feb 1, 2026)
+
+**Dev infrastructure is ready.**
+
+- Supabase branching verified: created `dev-test` branch, all 31 migrations applied, all 12 tables present, deleted branch
+- Branch cost: $0.01344/hr (~$0.32/day). Create when needed, delete when done.
+- Fixed migration compatibility: patched `fix_rls_and_security_advisors` to use `IF EXISTS` on DROP statements (policies were manually created on prod, didn't exist on fresh branches)
+- Stripe: production uses `sk_live_` keys, swap to `sk_test_` for branch work. `.env.example` updated.
+- Vercel preview deployments already configured — no changes needed
+- **WS5 doc**: `projects/ws5-dev-infrastructure.md` — all action items checked off
+
+---
+
+## Previous: Scoring Added to Free Marketing Audit (Feb 1, 2026)
+
+**WS1 progress — diagnostic scoring shipped on Boost Snapshot (marketing audit).**
+
+Added 0-100 scores (overall + per-category: Clarity, Customer Focus, Proof, Ease) to the free marketing audit. AI scores each lens alongside findings. Results page shows score gauge (SVG arc) integrated with the silent killer hero card, category breakdown in compact rows. Backward compatible — old audits without scores still render.
+
+**Key design decisions:**
+- Score gauge uses semi-circular arc (CSS/SVG, no library) — reads as "score" not "random number"
+- "Friction" renamed to "Ease" — high score = good, no confusion
+- Score + silent killer combined in one hero card (score left, text right with vertical divider)
+- Category scores as compact label/number rows under the gauge
+- Branding watermark for screenshot shareability
+- 3-Second Test explainer added to processing/pending screen
+
+**Files changed:** `src/lib/ai/marketing-audit.ts` (schema, prompt, validation), `results-client.tsx` (UI), `page.tsx` (type)
+
+**WS1 checklist update:** ✅ Diagnostic scoring on Snapshot. Next: scoring on Brief, then single conversion page.
+
+---
+
+## Previous: V2 Master Plan Created (Feb 1, 2026)
 
 **Strategic pivot to subscription model.** Competitor analysis (Landkit, LandingBoost, Enji) confirmed market exists for AI marketing co-pilot at $29-50/mo. Landkit doing same thing with worse data but better distribution. We have depth, they have reach.
 
@@ -20,9 +127,9 @@
 4. **WS4**: Integrations — GSC first, GA4 second
 5. **WS5**: Dev infrastructure — Supabase branching + feature branches
 
-**Build order**: Phase 0 (concierge validation — HARD GATE) → WS5 → WS1 → WS2 (includes basic Draft This) → WS3+WS4 in parallel.
+**Build order**: WS5 → WS1 → WS2 (includes basic Draft This) → WS3+WS4 in parallel.
 
-**Phase 0 is next**: Email existing customers, manually deliver "week 2" adjustments, test if the weekly loop has pull before building infrastructure. 3 paying subscribers = green light.
+**WS5 is next**: Set up dev infrastructure (feature branches, Supabase branching, Stripe test mode), then start building.
 
 **Product philosophy**: If someone leaves after 3 months because they figured it out, the product worked. No dark-pattern retention. Success = graduation.
 

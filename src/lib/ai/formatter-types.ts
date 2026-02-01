@@ -179,6 +179,63 @@ export const DiscoverySchema = z.object({
 
 export type Discovery = z.infer<typeof DiscoverySchema>
 
+/**
+ * Brief scores - 4-category diagnostic scoring for free Brief
+ */
+export const BriefScoresSchema = z.object({
+  overall: z.number().min(0).max(100),
+  clarity: z.number().min(0).max(100),
+  clarityWhy: z.string().optional(),
+  visibility: z.number().min(0).max(100),
+  visibilityWhy: z.string().optional(),
+  proof: z.number().min(0).max(100),
+  proofWhy: z.string().optional(),
+  advantage: z.number().min(0).max(100),
+  advantageWhy: z.string().optional(),
+  // Backward compat: old field names from existing stored results
+  positioning: z.number().min(0).max(100).optional(),
+  positioningWhy: z.string().optional(),
+  competitiveEdge: z.number().min(0).max(100).optional(),
+  competitiveEdgeWhy: z.string().optional(),
+})
+
+export type BriefScores = z.infer<typeof BriefScoresSchema>
+
+/**
+ * Quick wins - specific, actionable fixes from the free Brief
+ */
+export const QuickWinSchema = z.object({
+  title: z.string(),
+  detail: z.string(),
+  impact: z.enum(['high', 'medium', 'low']).default('medium'),
+  timeEstimate: z.string().optional(),
+})
+
+export type QuickWin = z.infer<typeof QuickWinSchema>
+
+/**
+ * Positioning gap - what the page says vs what the market expects
+ */
+export const PositioningGapSchema = z.object({
+  yourMessage: z.string(),
+  marketExpects: z.string(),
+  gap: z.string(),
+})
+
+export type PositioningGap = z.infer<typeof PositioningGapSchema>
+
+/**
+ * 3-Second Test - can a stranger tell what you do?
+ */
+export const ThreeSecondTestSchema = z.object({
+  whatYouSell: z.string(),
+  whoItsFor: z.string(),
+  whyYou: z.string(),
+  verdict: z.enum(['clear', 'needs-work', 'unclear']).default('needs-work'),
+})
+
+export type ThreeSecondTest = z.infer<typeof ThreeSecondTestSchema>
+
 // =============================================================================
 // FULL STRUCTURED OUTPUT SCHEMA
 // =============================================================================
@@ -219,6 +276,14 @@ export const StructuredOutputSchema = z.object({
 
   // Novel insights that don't fit standard categories
   discoveries: z.array(DiscoverySchema).optional(),
+
+  // Brief diagnostic scores (free tier)
+  briefScores: BriefScoresSchema.optional(),
+
+  // Free Brief sections
+  quickWins: z.array(QuickWinSchema).optional(),
+  positioningGap: PositioningGapSchema.optional(),
+  threeSecondTest: ThreeSecondTestSchema.optional(),
 })
 
 export type StructuredOutput = z.infer<typeof StructuredOutputSchema>
@@ -257,6 +322,14 @@ export const PartialStructuredOutputSchema = z.object({
 
   // Novel insights that don't fit standard categories
   discoveries: z.array(DiscoverySchema).optional(),
+
+  // Brief diagnostic scores (free tier)
+  briefScores: BriefScoresSchema.optional(),
+
+  // Free Brief sections
+  quickWins: z.array(QuickWinSchema).optional(),
+  positioningGap: PositioningGapSchema.optional(),
+  threeSecondTest: ThreeSecondTestSchema.optional(),
 })
 
 export type PartialStructuredOutput = z.infer<typeof PartialStructuredOutputSchema>
@@ -323,6 +396,22 @@ When a "RESEARCH DATA" section is provided after the strategy document, ALSO ext
 
 If NO research data section is provided, OMIT these 4 research fields (but STILL include positioning).
 
+BRIEF SCORES EXTRACTION (only when "## Scores" section is present):
+Extract "briefScores" from a JSON block in the "## Scores" section:
+- "overall": 0-100 overall diagnostic score
+- "clarity": 0-100 — can people immediately understand what you do, who it's for, and why you? (Dunford positioning)
+- "clarityWhy": 1-sentence evidence from the text after "**Clarity** (X/100): ..."
+- "visibility": 0-100 — can the target audience actually find them? (SEO, channels, discoverability)
+- "visibilityWhy": 1-sentence evidence from "**Visibility** (X/100): ..."
+- "proof": 0-100 — do they have evidence that builds trust? (reviews, case studies, mentions)
+- "proofWhy": 1-sentence evidence from "**Proof** (X/100): ..."
+- "advantage": 0-100 — what makes them defensibly different from alternatives? (competitive strategy)
+- "advantageWhy": 1-sentence evidence from "**Advantage** (X/100): ..."
+
+IMPORTANT: The JSON block may use old field names ("positioning" instead of "clarity", "competitiveEdge" instead of "advantage"). Map them: positioning→clarity, competitiveEdge→advantage.
+
+If NO "## Scores" section exists, OMIT briefScores entirely.
+
 DISCOVERIES EXTRACTION (Novel Insights):
 Scan the strategy for valuable insights that don't fit standard categories. Look for:
 - Competitor intel: "Tattoodo cancelled X feature, artists are upset"
@@ -356,6 +445,26 @@ The PRIMARY discovery (index 0) MUST be:
 4. Researched — found from tool calls, not generated from training data
 
 If Opus found something interesting and novel, capture it. Don't let insights get lost.
+
+THREE-SECOND TEST EXTRACTION (when "3-Second Test" or "Three-Second Test" section exists):
+Extract "threeSecondTest":
+- "whatYouSell": What a stranger would think this site sells after 3 seconds
+- "whoItsFor": Who they'd think the target audience is
+- "whyYou": Why choose this over alternatives (if discernible)
+- "verdict": "clear" | "needs-work" | "unclear"
+
+QUICK WINS EXTRACTION (when "Quick Wins" section exists):
+Extract "quickWins" array — 2-3 specific, do-it-today fixes:
+- "title": The specific fix (e.g., "Change your headline from X to Y")
+- "detail": Why this matters and expected impact
+- "impact": "high" | "medium" | "low"
+- "timeEstimate": How long the fix takes (e.g., "5 min", "15 min", "30 min")
+
+POSITIONING GAP EXTRACTION (when "Positioning Gap" section exists):
+Extract "positioningGap":
+- "yourMessage": What the landing page currently communicates
+- "marketExpects": What the target market/audience expects to see
+- "gap": The disconnect between the two
 
 OUTPUT FORMAT:
 {
@@ -468,6 +577,17 @@ OUTPUT FORMAT:
     "uniqueValue": "AI-powered automation for small teams",
     "targetSegment": "Solo founders and small agencies"
   },
+  "briefScores": {
+    "overall": 42,
+    "clarity": 35,
+    "clarityWhy": "Messaging blends in with competitors — no clear differentiator visible",
+    "visibility": 50,
+    "visibilityWhy": "Some organic presence but competitors outrank on key terms by 10x",
+    "proof": 38,
+    "proofWhy": "One testimonial found, no case studies or third-party mentions",
+    "advantage": 45,
+    "advantageWhy": "Two direct competitors found with significantly more traffic and content"
+  },
   "discoveries": [
     {
       "type": "opportunity",
@@ -493,7 +613,22 @@ OUTPUT FORMAT:
       "significance": "Distribution channel opportunity - engage in local subreddits rather than competing on broad tattoo keywords",
       "surpriseScore": 6
     }
-  ]
+  ],
+  "threeSecondTest": {
+    "whatYouSell": "Some kind of CRM tool",
+    "whoItsFor": "Unclear - mentions both enterprise and startups",
+    "whyYou": "Not discernible from the page",
+    "verdict": "unclear"
+  },
+  "quickWins": [
+    { "title": "Replace hero headline with specific outcome", "detail": "Current headline is vague. Try: 'Close 2x more deals without hiring' — specificity converts.", "impact": "high", "timeEstimate": "5 min" },
+    { "title": "Add customer logos above the fold", "detail": "Social proof within 3 seconds builds instant credibility.", "impact": "medium", "timeEstimate": "15 min" }
+  ],
+  "positioningGap": {
+    "yourMessage": "All-in-one business platform for everyone",
+    "marketExpects": "A focused tool that solves their specific pain point",
+    "gap": "Too broad — visitors can't tell if this is for them"
+  }
 }`
 
 export const FORMATTER_USER_PROMPT = `Extract structured data from this strategy document. Return ONLY the JSON object, no other text.

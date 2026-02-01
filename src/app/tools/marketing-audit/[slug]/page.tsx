@@ -94,12 +94,14 @@ export type MarketingAuditOutput = {
   scores?: {
     overall: number;
     clarity: number;
-    customerFocus: number;
+    visibility: number;
     proof: number;
-    friction: number;
+    advantage: number;
+    customerFocus?: number;
+    friction?: number;
   };
   findings: Array<{
-    category: "clarity" | "customer-focus" | "proof" | "friction";
+    category: "clarity" | "visibility" | "proof" | "advantage" | "customer-focus" | "friction";
     title: string;
     detail: string;
     recommendation: string;

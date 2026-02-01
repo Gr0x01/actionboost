@@ -9,12 +9,15 @@ export interface MarketingAuditOutput {
   scores: {
     overall: number;
     clarity: number;
-    customerFocus: number;
+    visibility: number;
     proof: number;
-    friction: number;
+    advantage: number;
+    // Backward compat for old stored results
+    customerFocus?: number;
+    friction?: number;
   };
   findings: Array<{
-    category: "clarity" | "customer-focus" | "proof" | "friction";
+    category: "clarity" | "visibility" | "proof" | "advantage";
     title: string;
     detail: string;
     recommendation: string;
@@ -41,14 +44,14 @@ Evaluate through these four lenses. For each, determine whether the site is stro
 **1. Clarity — Can a Stranger Tell What This Business Does?**
 Look at the screenshot first. What's the visual hierarchy? Can you read the headline, subhead, and CTA at a glance? Evaluate the full above-the-fold experience as a visitor would see it — layout, font sizes, whitespace, and how elements guide the eye. The 3-second test measures whether a first-time visitor can answer "what does this company do?" after seeing the full above-the-fold section — NOT whether the headline alone literally states the product. An emotional or benefit-focused headline (e.g., "Wrestling with projects?") paired with a clear subhead and CTA is a PASS. Only flag clarity as an issue if a visitor would genuinely struggle to understand what the business does after reading the headline AND subhead AND CTA together. Do not penalize headlines for being emotional, aspirational, or benefit-focused — that's good copywriting, not a clarity problem.
 
-**2. Customer vs. Company Focus**
-Is the site oriented around the customer's needs, problems, and outcomes — or is it primarily about the company's story, credentials, and history? Don't mechanically count "we" vs. "you" — read for intent. A founder story that explains why they understand the customer's problem IS customer-focused even if it uses "we." An "About Us" page existing is normal, not a red flag. The question is: does the homepage lead with what the customer gets, or with what the company is?
+**2. Visibility — Can the Target Audience Find You?**
+From what you can see on the page: are there signals that this business is discoverable? Look for: SEO-friendly headlines (specific keywords vs. vague slogans), clear navigation structure, meta signals, blog/content links, social media presence, local signals (address, map), or any indication of channel strategy. A site that says "innovative solutions" with no specific keywords is invisible to search. A site with a clear "Marketing Automation for SaaS Founders" headline is findable. The question is: if someone had the problem this business solves, could they find this site?
 
-**3. Proof of Transformation**
+**3. Proof — Do You Have Evidence That Builds Trust?**
 Can you see testimonials, logos, or social proof in the screenshot? Where are they positioned? Look for: specific customer results, testimonials with outcomes, before/after examples, case studies, portfolio work, review counts, or concrete metrics. Different types of proof work for different businesses — a bakery showing photos of their work IS proof. Client logos for a B2B company IS proof. Don't dismiss valid proof because it isn't in your preferred format. The question is: would a stranger believe this business delivers? If there's no proof at all, that's a real issue. If proof exists but could be stronger, say that proportionately.
 
-**4. Friction — What's Stopping the Next Step**
-Is the primary CTA visually prominent in the screenshot? Is it above the fold? What color and size stands out? Evaluate whether the primary CTA is visible and compelling. Note: navigation menus, footer links, and social icons are NOT competing CTAs — they're standard website elements. Evaluate only the intentional conversion actions (buttons, forms, booking widgets). A site with one clear primary CTA and a secondary option (e.g., "Book Now" + "Call Us") is fine. A site with no clear action, or where the main CTA is buried below the fold, has friction.
+**4. Advantage — What Makes You Different?**
+Is the differentiation visible on the page? Can a visitor tell why they should choose this over alternatives? Look for: unique value propositions, specific claims competitors can't make, proprietary methods/tools, niche focus, or clear "why us" sections. A site that sounds like every other business in its category has no visible advantage. A site that says "The only X that does Y" or leads with a specific, defensible claim has advantage. The question is: could you swap the company name with a competitor's and the page would still make sense? If yes, there's no visible advantage.
 
 ## Voice
 
@@ -92,13 +95,13 @@ Return ONLY valid JSON matching this schema:
   "scores": {
     "overall": 0-100,
     "clarity": 0-100,
-    "customerFocus": 0-100,
+    "visibility": 0-100,
     "proof": 0-100,
-    "friction": 0-100
+    "advantage": 0-100
   },
   "findings": [
     {
-      "category": "clarity" | "customer-focus" | "proof" | "friction",
+      "category": "clarity" | "visibility" | "proof" | "advantage",
       "title": "Short finding title",
       "detail": "What you observed (quote specific content from the site)",
       "recommendation": "Specific action to fix it"
@@ -106,7 +109,7 @@ Return ONLY valid JSON matching this schema:
   ]
 }`;
 
-const VALID_CATEGORIES = ["clarity", "customer-focus", "proof", "friction"] as const;
+const VALID_CATEGORIES = ["clarity", "visibility", "proof", "advantage"] as const;
 
 /** Block private/internal IP ranges (SSRF protection) */
 function isPrivateUrl(url: string): boolean {
@@ -129,7 +132,7 @@ function validateOutput(data: unknown): data is MarketingAuditOutput {
   // Validate scores
   if (typeof obj.scores === "object" && obj.scores !== null) {
     const s = obj.scores as Record<string, unknown>;
-    for (const key of ["overall", "clarity", "customerFocus", "proof", "friction"]) {
+    for (const key of ["overall", "clarity", "visibility", "proof", "advantage"]) {
       if (typeof s[key] !== "number" || s[key] < 0 || s[key] > 100) return false;
     }
   } else {

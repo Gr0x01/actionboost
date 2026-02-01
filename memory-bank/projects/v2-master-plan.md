@@ -199,13 +199,14 @@ Two tiers. One decision point. The Brief proves the research is real. The Weekly
 
 **Project doc**: `projects/ws4-integrations.md`
 
-### WS5: Dev Infrastructure
+### WS5: Dev Infrastructure ✅ COMPLETE
 **Goal**: Ship safely. Feature branches + Supabase branching.
 
 - Git feature branches for all WS work
-- Supabase branching for schema changes
-- Vercel preview deployments per branch
-- Stripe test mode for subscription development
+- Supabase branching for schema changes ($0.01344/hr — create when needed, delete when done)
+- Vercel preview deployments per branch (already configured)
+- Stripe test mode for subscription development (live keys in prod, test keys for branches)
+- Migration compatibility fix applied (IF EXISTS on DROP statements)
 
 **Project doc**: `projects/ws5-dev-infrastructure.md`
 
@@ -213,19 +214,7 @@ Two tiers. One decision point. The Brief proves the research is real. The Weekly
 
 ## Dependencies & Build Order
 
-### Phase 0: Concierge Validation ← HARD GATE
-
-**Do not build subscription infrastructure until real people pay for the weekly loop by hand.**
-
-1. Email existing one-shot buyer(s): "How's your plan going? Want me to adjust it based on what happened?"
-2. Offer manual re-vectoring to 2-3 Brief users (free — you're testing the loop, not the price)
-3. Deliver "week 2" manually — email them a doc with adjusted actions based on their feedback
-4. If they engage: pitch $29/mo. If 3 people say yes, build with confidence.
-5. If nobody engages: the weekly loop hypothesis needs rethinking before engineering starts.
-
-**This is the most important step in the plan.** Everything else is implementation detail.
-
-### Build Order (After Phase 0 Validates)
+### Build Order
 
 ```
 WS5 (Dev Infra)          ← Set up first, enables safe development
@@ -260,8 +249,8 @@ This is enough signal. Integration data makes it better, but the loop works with
 ## Immediate Actions
 
 The existing $29 one-shot stays live until Boost Weekly is ready. Meanwhile:
-1. **Start Phase 0 concierge validation** — email existing customers, test the weekly loop manually
-2. **Improve Brief urgency** — lead with competitive landscape, add specificity-driven urgency (can ship on main)
+1. ~~**Set up WS5 dev infrastructure**~~ ✅ Complete (Feb 1, 2026)
+2. **Improve Brief urgency** — ✅ Scoring + urgency hook shipped. Still needs: competitive landscape data in free pipeline, tactical section locking, 7-day expiry
 3. **Write the one-sentence Weekly pitch** — "Your strategy, updated every week based on what's actually working." (Draft. Refine with copywriter agent before launch.)
 4. **Plan the one-shot sunset** — when Weekly launches, existing one-shot customers get offered subscription
 

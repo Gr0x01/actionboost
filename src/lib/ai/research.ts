@@ -449,7 +449,7 @@ async function fetchSEOMetrics(
   return results
 }
 
-function getDataForSEOCredentials(): string | null {
+export function getDataForSEOCredentials(): string | null {
   if (process.env.DATAFORSEO_BASE64) {
     return process.env.DATAFORSEO_BASE64
   }
@@ -538,17 +538,17 @@ async function fetchDomainSEOData(
 // DATAFORSEO ENDPOINT IMPLEMENTATIONS
 // =============================================================================
 
-async function fetchDomainMetrics(
+export async function fetchDomainMetrics(
   domain: string,
   credentials: string
 ): Promise<{ organicTraffic?: number; organicKeywords?: number }> {
   const response = await dataForSEORequest(
-    'https://api.dataforseo.com/v3/dataforseo_labs/google/domain_metrics_by_categories/live',
+    'https://api.dataforseo.com/v3/dataforseo_labs/google/domain_rank_overview/live',
     [{ target: domain, location_code: 2840, language_code: 'en' }],
     credentials
   )
 
-  const metrics = response?.tasks?.[0]?.result?.[0]?.metrics?.organic
+  const metrics = response?.tasks?.[0]?.result?.[0]?.items?.[0]?.metrics?.organic
   return {
     organicTraffic: metrics?.etv,
     organicKeywords: metrics?.count,
@@ -693,29 +693,3 @@ async function dataForSEORequest(
 // TAVILY-ONLY RESEARCH (for free tier)
 // =============================================================================
 
-/**
- * Run Tavily web searches only (no DataForSEO)
- * Used for free tier mini-audits to keep costs low
- */
-export async function runTavilyOnlyResearch(input: RunInput): Promise<ResearchContext> {
-  const errors: string[] = []
-  const tvly = tavily({ apiKey: process.env.TAVILY_API! })
-
-  const productCategory = extractCategory(input.productDescription)
-
-  // Run Tavily searches in parallel
-  const [competitorResults, marketResults, tacticsResults] = await Promise.allSettled([
-    searchWithTimeout(tvly, buildCompetitorQuery(input), TAVILY_TIMEOUT),
-    searchWithTimeout(tvly, `${productCategory} market trends 2025`, TAVILY_TIMEOUT),
-    searchWithTimeout(tvly, `growth tactics for ${productCategory} startups`, TAVILY_TIMEOUT),
-  ])
-
-  return {
-    competitorInsights: extractTavilyResults(competitorResults, errors, 'competitor search'),
-    marketTrends: extractTavilyResults(marketResults, errors, 'market trends'),
-    growthTactics: extractTavilyResults(tacticsResults, errors, 'growth tactics'),
-    seoMetrics: [], // No DataForSEO for free tier
-    researchCompletedAt: new Date().toISOString(),
-    errors,
-  }
-}

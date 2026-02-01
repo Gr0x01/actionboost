@@ -5,21 +5,25 @@ import Link from "next/link";
 import { usePostHog } from "posthog-js/react";
 import { ArrowRight, Check } from "lucide-react";
 import { config } from "@/lib/config";
+import { prefillStartForm } from "@/lib/prefill";
 import type { AuditStatus, MarketingAuditOutput } from "./page";
 
 const CATEGORY_LABELS: Record<string, string> = {
   clarity: "Clarity",
-  "customer-focus": "Customer Focus",
+  visibility: "Visibility",
   proof: "Proof",
-  friction: "Friction",
+  advantage: "Advantage",
+  // Backward compat for old stored results
+  "customer-focus": "Visibility",
+  friction: "Advantage",
 };
 
 // Terminal-style simulated stages (matches FreeAuditPending pattern)
 const STAGES = [
   { text: "Fetching your page", delay: 0, duration: 10 },
   { text: "Running the 3-Second Test", delay: 10, duration: 12 },
-  { text: "Counting customer vs. company focus", delay: 22, duration: 10 },
-  { text: "Checking proof of transformation", delay: 32, duration: 10 },
+  { text: "Checking visibility signals", delay: 22, duration: 10 },
+  { text: "Scanning for proof and trust signals", delay: 32, duration: 10 },
   { text: "Generating your report", delay: 42, duration: 18 },
 ] as const;
 
@@ -313,9 +317,9 @@ export function MarketingAuditResults({ initialAudit }: Props) {
                 <div className="w-full border-t border-foreground/10 pt-3 space-y-1">
                   {([
                     ["Clarity", output.scores.clarity],
-                    ["Focus", output.scores.customerFocus],
+                    ["Visibility", output.scores.visibility ?? output.scores.customerFocus],
                     ["Proof", output.scores.proof],
-                    ["Ease", output.scores.friction],
+                    ["Advantage", output.scores.advantage ?? output.scores.friction],
                   ] as const).map(([label, score]) => (
                     <div key={label} className="flex items-center justify-between gap-3">
                       <span className="font-mono text-[9px] tracking-wider uppercase text-foreground/40">
@@ -471,7 +475,10 @@ export function MarketingAuditResults({ initialAudit }: Props) {
             </p>
             <a
               href="/start"
-              onClick={() => posthog?.capture("marketing_audit_cta_clicked", { slug: audit.slug })}
+              onClick={() => {
+                prefillStartForm({ websiteUrl: audit.url, productDescription: audit.businessDescription })
+                posthog?.capture("marketing_audit_cta_clicked", { slug: audit.slug })
+              }}
               className="w-full inline-flex items-center justify-center gap-2 bg-cta text-white font-semibold px-6 py-4 rounded-md text-base border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 active:translate-y-0.5 transition-all"
             >
               Get my Boost

@@ -1702,3 +1702,404 @@ export async function generateAgenticRefinement(
     },
   }
 }
+
+// =============================================================================
+// FREE AGENTIC PIPELINE (Sonnet + limited tools)
+// =============================================================================
+
+const FREE_MODEL = 'claude-sonnet-4-20250514'
+const FREE_MAX_TOKENS = 4000
+const FREE_MAX_ITERATIONS = 3
+const FREE_MAX_TOOL_CALLS = 5
+
+const FREE_TOOLS: Anthropic.Tool[] = TOOLS.filter((t) =>
+  ['search', 'seo'].includes(t.name)
+)
+
+function buildFreeSystemPrompt(): string {
+  return `You're a marketing analyst doing a quick competitive assessment for a client.
+
+You have access to:
+- Web search (find competitors, market discussions, reviews)
+- SEO metrics lookup (traffic and keyword data for any domain)
+
+The client's homepage screenshot is attached. You will also receive their product description.
+
+IMPORTANT: If the screenshot shows a Cloudflare verification page, CAPTCHA, cookie wall, or any kind of bot-protection interstitial instead of the actual website, IGNORE the screenshot entirely. Base the 3-Second Test on the product description and what you find via search instead. Do NOT mention the bot-check page in your output — just assess based on available information and note "Based on product description and search results" in the 3-Second Test section.
+
+## Your Job
+
+1. **3-Second Test** — Look at the screenshot. Can a stranger tell in 3 seconds: What do they sell? Who is it for? Why should I pick them? Be specific about what's clear and what's not. If the screenshot was blocked (see above), infer from the product description and search results instead.
+
+2. **Find Real Competitors** — Search for alternatives in their space. Find 2-3 direct competitors with actual websites, not just "DIY" or "do nothing."
+
+3. **SEO Comparison** — Look up traffic/keyword metrics for the user's site AND the top 1-2 competitors you found.
+
+4. **Positioning Gap** — Based on the screenshot + competitor research: What does their page communicate? What does the market/audience expect? Where's the disconnect?
+
+5. **Quick Wins** — 2-3 specific, do-it-today fixes based on what you found. Each should reference something concrete (their actual headline, a specific competitor advantage, a real metric).
+
+6. **Score** — Rate them 0-100 on Clarity, Visibility, Proof, and Advantage.
+
+## Budget
+You have 5 tool calls total. Be strategic:
+- 1-2 searches to find competitors and market context
+- 1-2 SEO lookups on the most relevant domains (always include the user's domain)
+
+## Output Format
+
+Structure your response as markdown with EXACTLY these sections:
+
+## 3-Second Test
+
+**What You Sell**: [What the page communicates / Clear or Unclear]
+**Who It's For**: [Target audience visible or not / Clear or Unclear]
+**Why You**: [Differentiation visible or not / Clear or Unclear]
+**Verdict**: [Clear / Needs Work / Unclear]
+
+[1-2 sentences explaining the overall impression a stranger gets]
+
+## Positioning Gap
+
+**Your page says**: [What their site actually communicates]
+**The market expects**: [What competitors/audience are looking for]
+**The gap**: [The specific disconnect — be direct]
+
+## Competitive Landscape
+
+| Competitor | Domain | What They Do | Their Advantage | Your Angle |
+|-----------|--------|-------------|-----------------|------------|
+| [Name] | [domain.com] | [Brief] | [Where they're stronger] | [Where you can win] |
+
+## Quick Wins
+
+1. **[Specific action]** — [Why this matters, referencing real evidence] — Impact: [High/Medium/Low] — Time: [5 min/15 min/30 min]
+2. **[Specific action]** — [Evidence] — Impact: [High/Medium/Low] — Time: [5 min/15 min/30 min]
+3. **[Specific action]** — [Evidence] — Impact: [High/Medium/Low] — Time: [5 min/15 min/30 min]
+
+## Key Discovery
+
+### [Title — something surprising from your research]
+[1-3 sentences. Must be specific, sourced, and not obvious.]
+
+*Source: [Where this came from]*
+
+## Scores
+
+\`\`\`json
+{
+  "overall": [0-100],
+  "clarity": [0-100],
+  "visibility": [0-100],
+  "proof": [0-100],
+  "advantage": [0-100]
+}
+\`\`\`
+
+**Clarity** ([score]/100): [1-sentence evidence]
+**Visibility** ([score]/100): [1-sentence evidence]
+**Proof** ([score]/100): [1-sentence evidence]
+**Advantage** ([score]/100): [1-sentence evidence]
+
+---
+
+**STOP HERE.** This is a free preview. The full strategy with 30-day roadmap, execution drafts, and weekly action plans is available with Boost Weekly.
+
+## Rules
+- No emojis. Ever.
+- Every claim needs evidence — don't guess traffic numbers, look them up.
+- Be direct. If their clarity or advantage is weak, say so.
+- Quick wins must be specific enough to act on TODAY, not vague advice like "improve your SEO."
+- Say "unknown" rather than estimating metrics you haven't looked up.`
+}
+
+function buildFreeUserMessage(
+  input: RunInput,
+  screenshotBase64?: string | null,
+  pageContent?: string | null
+): Anthropic.MessageParam {
+  let textContent = `# Quick Assessment Request
+
+## About My Product
+${input.productDescription}
+`
+
+  if (input.websiteUrl) {
+    textContent += `\n## My Website\n${input.websiteUrl}\n`
+  }
+
+  if (input.competitorUrls?.length) {
+    textContent += `\n## Known Competitors\n${input.competitorUrls.join('\n')}\n`
+  }
+
+  if (input.currentTraction) {
+    textContent += `\n## Current Traction\n${input.currentTraction}\n`
+  }
+
+  if (pageContent) {
+    textContent += `\n## Extracted Page Content\nThis is the text content from their landing page:\n\n${pageContent}\n`
+  }
+
+  if (!screenshotBase64 && !pageContent) {
+    textContent += `\nNote: Could not capture screenshot or extract page content. Base the 3-Second Test on the product description and search results.\n`
+  } else if (!screenshotBase64 && pageContent) {
+    textContent += `\nNote: Screenshot was blocked by the site's bot protection. Use the extracted page content above for the 3-Second Test instead.\n`
+  }
+
+  const content: Array<Anthropic.ImageBlockParam | Anthropic.TextBlockParam> = []
+
+  if (screenshotBase64) {
+    content.push({
+      type: 'image',
+      source: {
+        type: 'base64',
+        media_type: 'image/jpeg',
+        data: screenshotBase64,
+      },
+    })
+  }
+
+  content.push({ type: 'text', text: textContent })
+
+  return { role: 'user', content }
+}
+
+/**
+ * Run agentic strategy generation for FREE tier
+ * Sonnet with limited tools (search + seo), screenshot passed as vision input
+ */
+export async function generateFreeAgenticStrategy(
+  input: RunInput,
+  screenshotBase64?: string | null,
+  freeAuditId?: string,
+  pageContent?: string | null
+): Promise<AgenticResult> {
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+  const toolCalls: string[] = []
+  let totalToolTime = 0
+
+  const researchData: ResearchData = {
+    searches: [],
+    seoMetrics: [],
+    keywordGaps: [],
+    scrapes: [],
+    screenshots: screenshotBase64 ? [{ url: input.websiteUrl || 'homepage' }] : [],
+  }
+
+  const context: ToolContext = {
+    userDomain: input.websiteUrl?.replace(/^https?:\/\//, '').replace(/\/$/, ''),
+    runId: freeAuditId,
+  }
+
+  const distinctId = freeAuditId || 'anonymous'
+  const systemPrompt = buildFreeSystemPrompt()
+  const userMessage = buildFreeUserMessage(input, screenshotBase64, pageContent)
+  let messages: Anthropic.MessageParam[] = [userMessage]
+
+  const startTime = Date.now()
+  let iterations = 0
+
+  while (iterations < FREE_MAX_ITERATIONS + 2) {
+    iterations++
+
+    const apiStartTime = Date.now()
+    let response: Anthropic.Message
+
+    try {
+      response = await client.messages.create({
+        model: FREE_MODEL,
+        max_tokens: FREE_MAX_TOKENS,
+        system: systemPrompt,
+        tools: FREE_TOOLS,
+        messages,
+      })
+
+      trackApiCall(distinctId, {
+        service: 'anthropic',
+        endpoint: 'messages.create',
+        run_id: freeAuditId,
+        latency_ms: Date.now() - apiStartTime,
+        success: true,
+        input_tokens: response.usage?.input_tokens,
+        output_tokens: response.usage?.output_tokens,
+        model: FREE_MODEL,
+        estimated_cost_usd: calculateApiCost('anthropic', 'messages.create', {
+          inputTokens: response.usage?.input_tokens,
+          outputTokens: response.usage?.output_tokens,
+        }),
+      })
+    } catch (err) {
+      trackApiCall(distinctId, {
+        service: 'anthropic',
+        endpoint: 'messages.create',
+        run_id: freeAuditId,
+        latency_ms: Date.now() - apiStartTime,
+        success: false,
+        error: err instanceof Error ? err.message : String(err),
+        model: FREE_MODEL,
+        estimated_cost_usd: 0,
+      })
+      throw err
+    }
+
+    if (response.stop_reason === 'end_turn') {
+      const textBlock = response.content.find((b) => b.type === 'text')
+      const total = Date.now() - startTime
+      return {
+        success: true,
+        output: textBlock && textBlock.type === 'text' ? textBlock.text : '',
+        toolCalls,
+        researchData,
+        timing: { total, tools: totalToolTime, generation: total - totalToolTime },
+      }
+    }
+
+    const toolUseBlocks = response.content.filter(
+      (b): b is Anthropic.ToolUseBlock => b.type === 'tool_use'
+    )
+
+    if (toolCalls.length >= FREE_MAX_TOOL_CALLS) {
+      console.log(`[FreeAgentic] Hit tool budget (${FREE_MAX_TOOL_CALLS}), forcing output`)
+      const pendingResults: Anthropic.ToolResultBlockParam[] = toolUseBlocks.map((block) => ({
+        type: 'tool_result' as const,
+        tool_use_id: block.id,
+        content: 'Tool budget reached. Write the assessment with the data you have.',
+      }))
+      messages = [
+        ...messages,
+        { role: 'assistant', content: response.content },
+        { role: 'user', content: [...pendingResults, { type: 'text' as const, text: 'Write the complete assessment now. No more tool calls.' }] },
+      ]
+      const finalStartTime = Date.now()
+      const finalResponse = await client.messages.create({
+        model: FREE_MODEL,
+        max_tokens: FREE_MAX_TOKENS,
+        system: systemPrompt,
+        tools: [],
+        messages,
+      })
+      trackApiCall(distinctId, {
+        service: 'anthropic',
+        endpoint: 'messages.create',
+        run_id: freeAuditId,
+        latency_ms: Date.now() - finalStartTime,
+        success: true,
+        input_tokens: finalResponse.usage?.input_tokens,
+        output_tokens: finalResponse.usage?.output_tokens,
+        model: FREE_MODEL,
+        estimated_cost_usd: calculateApiCost('anthropic', 'messages.create', {
+          inputTokens: finalResponse.usage?.input_tokens,
+          outputTokens: finalResponse.usage?.output_tokens,
+        }),
+      })
+      const textBlock = finalResponse.content.find((b) => b.type === 'text')
+      const total = Date.now() - startTime
+      return {
+        success: true,
+        output: textBlock && textBlock.type === 'text' ? textBlock.text : '',
+        toolCalls,
+        researchData,
+        timing: { total, tools: totalToolTime, generation: total - totalToolTime },
+      }
+    }
+
+    if (toolUseBlocks.length === 0) {
+      const textBlock = response.content.find((b) => b.type === 'text')
+      const total = Date.now() - startTime
+      return {
+        success: true,
+        output: textBlock && textBlock.type === 'text' ? textBlock.text : '',
+        toolCalls,
+        researchData,
+        timing: { total, tools: totalToolTime, generation: total - totalToolTime },
+      }
+    }
+
+    const toolStartTime = Date.now()
+    // Enforce budget before dispatching — cap to remaining slots
+    const remaining = FREE_MAX_TOOL_CALLS - toolCalls.length
+    const toExecute = toolUseBlocks.slice(0, remaining)
+    const toSkip = toolUseBlocks.slice(remaining)
+
+    const batchResults = await Promise.all(
+      toExecute.map(async (block) => {
+        const toolInput = block.input as ToolInput
+        const callDesc = `${block.name}: ${JSON.stringify(toolInput)}`
+        console.log(`[FreeAgentic] Tool call: ${callDesc}`)
+        toolCalls.push(callDesc)
+        const toolResult = await executeTool(block.name, toolInput, context)
+        if (toolResult.data) {
+          switch (toolResult.data.type) {
+            case 'search':
+              researchData.searches.push({ query: toolResult.data.query, results: toolResult.data.results })
+              break
+            case 'seo':
+              researchData.seoMetrics.push({
+                domain: toolResult.data.domain,
+                traffic: toolResult.data.traffic,
+                keywords: toolResult.data.keywords,
+                topPositions: toolResult.data.topPositions,
+              })
+              break
+          }
+        }
+        return { id: block.id, result: toolResult.text }
+      })
+    )
+
+    // Return budget-exceeded for skipped blocks
+    for (const block of toSkip) {
+      batchResults.push({ id: block.id, result: 'Tool budget exceeded.' })
+    }
+    totalToolTime += Date.now() - toolStartTime
+
+    const toolResults: Anthropic.ToolResultBlockParam[] = batchResults.map((r) => ({
+      type: 'tool_result' as const,
+      tool_use_id: r.id,
+      content: r.result,
+    }))
+    messages = [
+      ...messages,
+      { role: 'assistant', content: response.content },
+      { role: 'user', content: toolResults },
+    ]
+  }
+
+  // Max iterations reached — force a final output with what we have
+  console.log(`[FreeAgentic] Max iterations (${FREE_MAX_ITERATIONS + 2}) reached, forcing final output`)
+  messages.push({
+    role: 'user',
+    content: 'You have used all available iterations. Write the complete assessment NOW with the data you have. No more tool calls.',
+  })
+  const finalStartTime2 = Date.now()
+  const finalResponse2 = await client.messages.create({
+    model: FREE_MODEL,
+    max_tokens: FREE_MAX_TOKENS,
+    system: systemPrompt,
+    tools: [],
+    messages,
+  })
+  trackApiCall(distinctId, {
+    service: 'anthropic',
+    endpoint: 'messages.create',
+    run_id: freeAuditId,
+    latency_ms: Date.now() - finalStartTime2,
+    success: true,
+    input_tokens: finalResponse2.usage?.input_tokens,
+    output_tokens: finalResponse2.usage?.output_tokens,
+    model: FREE_MODEL,
+    estimated_cost_usd: calculateApiCost('anthropic', 'messages.create', {
+      inputTokens: finalResponse2.usage?.input_tokens,
+      outputTokens: finalResponse2.usage?.output_tokens,
+    }),
+  })
+  const textBlock2 = finalResponse2.content.find((b) => b.type === 'text')
+  const total2 = Date.now() - startTime
+  return {
+    success: true,
+    output: textBlock2 && textBlock2.type === 'text' ? textBlock2.text : '',
+    toolCalls,
+    researchData,
+    timing: { total: total2, tools: totalToolTime, generation: total2 - totalToolTime },
+  }
+}

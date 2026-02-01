@@ -5,7 +5,12 @@ import { useState, useEffect } from "react";
 import { createBrowserClient } from "@supabase/ssr";
 
 export function MagicLinkBanner() {
-  const [dismissed, setDismissed] = useState(false);
+  const [dismissed, setDismissed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('magic-link-banner-dismissed') === 'true';
+    }
+    return false;
+  });
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -17,6 +22,11 @@ export function MagicLinkBanner() {
       setIsLoggedIn(!!user);
     });
   }, []);
+
+  function handleDismiss() {
+    setDismissed(true);
+    localStorage.setItem('magic-link-banner-dismissed', 'true');
+  }
 
   // Don't show if dismissed, still loading, or user is logged in
   if (dismissed || isLoggedIn === null || isLoggedIn) return null;
@@ -35,7 +45,7 @@ export function MagicLinkBanner() {
         </p>
       </div>
       <button
-        onClick={() => setDismissed(true)}
+        onClick={handleDismiss}
         className="text-foreground/50 hover:text-foreground transition-colors p-1 -m-1"
         aria-label="Dismiss"
       >

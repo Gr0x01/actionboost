@@ -92,8 +92,7 @@ From subscription-brainstorm.md §8:
 ## Definition of Done
 
 - [ ] Business profile builder live and populated for test users
-- [ ] Stripe subscription billing working ($50/mo)
+- [ ] Stripe subscription billing working
 - [ ] Task tracking with completion persistence
 - [ ] Weekly check-in flow functional
-- [ ] At least 5 subscribers before building full orchestrator
 - [ ] Automated re-vectoring running for active subscribers

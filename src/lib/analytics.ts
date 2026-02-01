@@ -49,7 +49,7 @@ const API_COSTS = {
     extract: 0.05,
   },
   dataforseo: {
-    domain_rank_overview: 0.02,
+    domain_rank_overview: 0.01,
     domain_intersection: 0.05,
   },
   scrapingdog: {

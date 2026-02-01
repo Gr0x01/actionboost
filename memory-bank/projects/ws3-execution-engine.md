@@ -128,3 +128,57 @@ Unlimited drafts with basic rate limiting (10 regenerations per task per day). N
 - [ ] Context pulls from business profile + plan + task
 - [ ] Regeneration with feedback
 - [ ] Outcome tracking (draft generated → posted → result noted)
+
+---
+
+## Phase 2: Browser Extension (Post-WS3 Launch)
+
+**Subscribers only.** A lightweight Chrome extension that acts as a task helper — not a standalone product.
+
+### UX Flow
+
+```
+User is on Reddit/Twitter/LinkedIn/etc
+    ↓
+Sees a thread they want to respond to (or want to post)
+    ↓
+Copies the relevant text from the page
+    ↓
+Pastes into extension popup
+    ↓
+Extension sends: pasted text + user's ICP/voice from business profile
+    ↓
+Sonnet generates a contextual response
+    ↓
+User copies the draft, pastes it back, edits, posts
+```
+
+No page scraping, no content injection, no platform-specific DOM manipulation. Just a clipboard-in, clipboard-out helper with business context.
+
+### Why This Is Cheap to Build
+
+- Hits the same `/api/drafts/generate` endpoint from WS3
+- Business profile (ICP, voice, product) already exists from WS2
+- Auth via Supabase session token (user is already logged in)
+- No complex permissions — extension doesn't read page content automatically
+- Thin UI: text input, generate button, output area, copy button
+
+### What the Extension Adds Over Dashboard
+
+The pasted text IS the context. The extension auto-detects platform tone from the input (Reddit = conversational, LinkedIn = professional) and combines with the user's ICP/voice. No need to navigate back to dashboard, find the task, click "Draft this."
+
+### Build Scope
+
+- Chrome extension (Manifest V3)
+- Popup UI: paste input → generate → copy output
+- Optional: tone/platform selector if auto-detect isn't enough
+- Auth: check active subscription via Supabase
+- Single API call to existing drafts endpoint
+
+### Definition of Done
+
+- [ ] Chrome extension published (unlisted or public)
+- [ ] Paste → generate → copy flow working
+- [ ] Pulls ICP + voice from business profile
+- [ ] Subscriber-only gate
+- [ ] Works for any platform (no platform-specific code)

@@ -191,6 +191,12 @@ export async function extractStructuredOutput(
       positioning: !!parsedObj.positioning,
     })
 
+    // Pre-process: fix common LLM mistakes before validation
+    // Brief outputs don't have thisWeek — LLM sometimes returns array instead of object
+    if (parsedObj.thisWeek && Array.isArray(parsedObj.thisWeek)) {
+      parsedObj.thisWeek = { days: parsedObj.thisWeek }
+    }
+
     // Validate with Zod
     const result = StructuredOutputSchema.safeParse(parsed)
     if (!result.success) {
@@ -245,5 +251,11 @@ function normalizePartialOutput(partial: PartialStructuredOutput): StructuredOut
     positioning: partial.positioning,
     // Novel insights
     discoveries: partial.discoveries,
+    // Brief diagnostic scores
+    briefScores: partial.briefScores,
+    // Free Brief sections
+    quickWins: partial.quickWins,
+    positioningGap: partial.positioningGap,
+    threeSecondTest: partial.threeSecondTest,
   }
 }

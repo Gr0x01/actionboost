@@ -1,12 +1,17 @@
+'use client'
+
 import { ArrowRight } from "lucide-react";
 import { config } from "@/lib/config";
+import { prefillStartForm } from "@/lib/prefill";
 
 interface ToolBoostPitchProps {
   headline: string;
   description: string;
+  /** Prefill data to carry forward to /start */
+  prefill?: { websiteUrl?: string; productDescription?: string };
 }
 
-export function ToolBoostPitch({ headline, description }: ToolBoostPitchProps) {
+export function ToolBoostPitch({ headline, description, prefill }: ToolBoostPitchProps) {
   return (
     <div
       className="bg-foreground text-white rounded-md p-6 md:p-8"
@@ -16,6 +21,7 @@ export function ToolBoostPitch({ headline, description }: ToolBoostPitchProps) {
       <p className="text-white/70 text-sm mb-4 leading-relaxed">{description}</p>
       <a
         href="/start"
+        onClick={() => prefill && prefillStartForm(prefill)}
         className="inline-flex items-center gap-2 bg-cta text-white font-semibold px-6 py-3 rounded-md border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 active:translate-y-0.5 transition-all text-sm"
       >
         Get my full Boost — {config.singlePrice}

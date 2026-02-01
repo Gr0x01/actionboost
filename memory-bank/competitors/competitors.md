@@ -40,9 +40,16 @@ Tracked competitors and adjacent tools. Not all are direct — some overlap on a
 
 **Price** (updated Feb 1 2026 from dashboard screenshots):
 - **$9.99/mo** base (launch offer, increases to $29/mo after first 100 founders). 1-day free trial. 30-day refund guarantee (ToS says 7-day — inconsistency).
+- **$7 one-time** "Deep Dive Report" upsell from free audit ("normally $49, save 86%"). Tripwire to get a credit card on file.
 - **Agency pricing already live**: Quick Add $19.98/mo (+3 projects, 6 total), Agency $39/mo (15 projects, 3 team members, white-label), Agency Pro $99/mo (unlimited projects, 10 team members, white-label). "Quick Add" labeled "Can be availed only once."
-- Building for agencies before having 100 solo founders paying. Classic premature scaling.
+- Building for agencies before having 100 solo founders paying. Classic premature scaling — too many tiers, too early.
 - Also: GitToTweet standalone at $5/mo.
+
+**Email funnel (observed Feb 1 2026):**
+Free audit → automated email with report link → $7 Deep Dive upsell → prefill link carrying audit data into subscription onboarding. The prefill link (`/new?prefill=base64`) reduces friction from free to paid — user's audit context carries over. Smart mechanic worth noting.
+
+**Overall product assessment (Feb 1 2026):**
+~2 months in, flying by the seat of their pants. No coherent product vision — it's a bag of disconnected LLM calls behind a dashboard. 12 sidebar items, many broken or shells. Persona doesn't inform ad copy, ad copy doesn't inform landing page, nothing feeds into weekly priorities. No strategic thread. The name "LandKit" is literal — it's a kit, not a system. Agency tiers ($39-99/mo) before proving core product works for solo founders. Post-checkout experience broken with 400 errors on first login. Distribution is real (10K visitors, 2.4K audits); product cohesion is not.
 
 **Tech**: Vite frontend (not Next.js), Cloudflare hosting, **Google Gemini/Vertex AI** (not OpenAI), Google OAuth, Stripe, Supabase. GA4 + Search Console read-only integrations.
 
@@ -299,9 +306,13 @@ Landkit's presentation is more aggressive and creates more urgency to engage. Mu
 
 **The real competitive threat isn't Landkit's product quality — it's their distribution.** They're in the same subreddits, targeting the same founders, with a lower price point and a free tool that gives instant value. Even if Boost's output is better, Landkit is reaching more people.
 
+**Boost's advantage is product coherence.** Landkit is a kit of disconnected tools. Boost has a real product ladder: Snapshot → Brief → Weekly, each building on the same research data, each deepening the same strategic picture. When Weekly ships with research → strategy → execution → measure → re-vector, that's a fundamentally different product than a bag of disconnected LLM calls. The risk is if "good enough and cheap" wins the market before "genuinely better" gets distribution.
+
+**Rashaad's take (Feb 1 2026):** Ads and outreach need to lead with the free Boost Brief above all else. Get people started with real research on their market, and the product quality wins them over. The Brief is the conversion weapon — it proves the research is real in a way Landkit's scraped-page Gemini output can't match. Distribution is the bottleneck, not product.
+
 **What matters now:**
+- **Lead with free Brief in all distribution** — ads, Reddit, outreach. The Brief is the best sales tool.
 - Accelerate free tools SEO expansion (already planned)
-- Consider a mid-tier price point between free and $29
 - Add urgency/scarcity to pricing (Landkit and both audits flagged this)
-- Make the free audit more prominent as the primary entry point
-- The v2 subscription tier becomes more urgent — one-shot at $29 is hard to defend against $9.99-29/mo ongoing access
+- The v2 subscription tier remains urgent — one-shot at $29 is hard to defend against $9.99-29/mo ongoing access
+- Don't copy the feature sprawl. Landkit's breadth is a weakness disguised as a strength — half of it is broken.

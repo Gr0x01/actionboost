@@ -217,30 +217,34 @@ This keeps costs proportional to how useful SEO data is for each problem type.
 - Total time: ~2 minutes
 - Graceful degradation: Research fails → proceed with limited context
 
-### Free Pipeline (Positioning Preview)
-Lighter-weight pipeline for lead generation:
-- Model: Claude Sonnet 4 (switched from Opus Jan 27 2026 - 64% cost savings, quality still good)
-- Research: Tavily only (no DataForSEO)
-- Output: Positioning analysis + 1-2 key discoveries
-- Locked sections shown as upsell: Full competitive analysis, 30-day roadmap, metrics dashboard, content templates
+### Free Pipeline (Agentic Brief)
+Agentic Sonnet pipeline — "landing page as lens into strategy":
+- Model: Claude Sonnet 4 with tool calling
+- Tools: `search` (Tavily), `seo` (DataForSEO domain_rank_overview)
+- Limits: 5 tool calls, 3 iterations, 4000 max output tokens
+- Screenshot captured upfront via Vultr Puppeteer (vision input to Sonnet)
+- Tavily extract runs in parallel as fallback for bot-protected sites
+- System prompt detects Cloudflare/CAPTCHA screenshots, falls back to page text
+- Output sections: 3-Second Test, Positioning Gap, Quick Wins, Competitive Landscape, Scores
+- Formatter extracts: `threeSecondTest`, `positioningGap`, `quickWins`, `briefScores`, `competitiveComparison`
+- Locked sections shown as upsell: Full competitive deep-dive, 30-day roadmap, weekly execution, channel strategy
 - No RAG/user history
 - Rate limit: 1 per email (normalized for Gmail aliases)
 - Polling: Recursive setTimeout every 2s until complete
 
-**Free Run Cost (Sonnet 4) - Updated Jan 27 2026:**
+**Free Run Cost (Sonnet 4 Agentic) - Updated Feb 1 2026:**
 | Component | Calculation | Cost |
 |-----------|-------------|------|
-| Claude Sonnet input | ~2,500 tokens × $3/MTok | $0.008 |
-| Claude Sonnet output | ~700 tokens × $15/MTok | $0.011 |
-| Formatter (Sonnet) | ~3,500 tokens in, ~500 out | $0.018 |
-| Tavily | minimal research | $0.01 |
-| **Total** | | **~$0.04** |
-
-**Previous cost (Opus 4.5)**: ~$0.10/audit - switched to Sonnet for 64% savings
+| Sonnet agentic (2-4 API calls) | ~8K input, ~3K output | $0.04-0.07 |
+| Tavily search | 2-3 searches | $0.02-0.03 |
+| DataForSEO domain_rank_overview | 1-2 lookups × $0.01 | $0.01-0.02 |
+| Tavily extract (page content) | 1 call | ~$0.01 |
+| Formatter (Sonnet) | ~3,500 in, ~500 out | $0.02 |
+| **Total** | | **~$0.10-0.15** |
 
 **Upgrade Flow**: When user upgrades from free audit, the free preview output is passed as context to the paid pipeline. Claude is instructed to "build on it, don't repeat the same insights, go deeper."
 
-Files: `runFreePipeline()` in pipeline.ts, `generatePositioningPreview()` in generate.ts
+Files: `runFreePipeline()` in pipeline.ts, `generateFreeAgenticStrategy()` in pipeline-agentic.ts
 Routes: `POST /api/free-audit`, `GET /api/free-audit/[id]`
 Page: `/free-results/[id]` with auto-polling and upsell UI
 
@@ -458,7 +462,7 @@ Only called when competitor URLs provided. Endpoints by focus area:
 
 | Endpoint | Price |
 |----------|-------|
-| `dataforseo_labs/domain_metrics_by_categories/live` | $0.10 |
+| `dataforseo_labs/domain_rank_overview/live` | $0.01 |
 | `dataforseo_labs/ranked_keywords/live` | $0.01 |
 | `dataforseo_labs/competitors_domain/live` | $0.01 |
 | `backlinks/summary/live` | $0.02 |

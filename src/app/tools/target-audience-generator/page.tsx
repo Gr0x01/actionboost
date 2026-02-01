@@ -441,7 +441,7 @@ function TargetAudienceContent() {
             {
               label: "Free Marketing Audit",
               href: "/tools/marketing-audit",
-              description: "See what's costing you customers with a 3-second test of your website's clarity, proof, and friction.",
+              description: "See what's costing you customers with a 3-second test of your website's clarity, proof, and advantage.",
             },
           ]}
         />
