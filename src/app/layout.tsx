@@ -78,7 +78,7 @@ export default async function RootLayout({
       >
         <PHProvider cookieless={isGdprCountry}>{children}</PHProvider>
         <Toaster position="bottom-center" />
-        <Analytics />
+        <Analytics debug={false} />
         {!isGdprCountry && <FacebookPixel />}
         <CookieBanner />
       </body>
