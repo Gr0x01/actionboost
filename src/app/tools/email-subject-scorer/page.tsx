@@ -25,108 +25,108 @@ const FAQ_ITEMS = [
     answer: "Yes. No credit card, no trial, no sales calls. You get a real analysis with scores and rewrite suggestions. We built this so you can see what Boost does before you ever spend a dollar.",
   },
   {
-    question: "What counts as a 'headline'?",
-    answer: "Anything that's the first thing people read on your site — your homepage H1, your tagline, your value proposition, even your LinkedIn headline. If it's meant to grab attention and explain what you do, paste it in.",
+    question: "What counts as a 'subject line'?",
+    answer: "Any email subject line you're about to send or have sent — newsletters, cold outreach, product announcements, drip sequences, promotional emails. If it shows up in someone's inbox preview, paste it in.",
   },
   {
     question: "How is this different from asking ChatGPT?",
-    answer: "ChatGPT will tell you your headline is 'great!' and suggest minor tweaks. We score it against specific criteria (clarity, specificity, differentiation, customer focus) with evidence. Most headlines score 30-55. We won't sugarcoat it.",
+    answer: "ChatGPT will tell you your subject line is 'great!' and suggest minor tweaks. We score it against specific criteria (clarity, urgency, curiosity, relevance) with evidence. Most subject lines score 30-55. We won't sugarcoat it.",
   },
   {
-    question: "What if I add my business context?",
-    answer: "The rewrites get dramatically better. Without context, we can only fix structure. With context (what you sell, who it's for), we write headlines that are specific to your business, your market, and your customers.",
+    question: "What if I add context about my email?",
+    answer: "The rewrites get dramatically better. Without context, we can only fix structure. With context (what the email is about, who's receiving it), we write subject lines that are specific to your audience and your message.",
   },
   {
     question: "Is my information safe?",
-    answer: "We don't share your data, sell your email, or send spam. We use your headline to generate the analysis and your email to send results. That's it.",
+    answer: "We don't share your data, sell your email, or send spam. We use your subject line to generate the analysis and your email to send results. That's it.",
   },
 ];
 
 const FEATURES = [
   {
     title: "Clarity Score",
-    description: "Can a stranger understand what you do in 3 seconds?",
+    description: "Is it immediately clear what the email is about?",
   },
   {
-    title: "Specificity Score",
-    description: "Concrete details or just buzzwords?",
+    title: "Urgency Score",
+    description: "Does it create a reason to open now?",
   },
   {
-    title: "Differentiation Score",
-    description: "Could a competitor use this exact headline?",
+    title: "Curiosity Score",
+    description: "Does it create an information gap that demands a click?",
   },
   {
     title: "3 Rewrites",
-    description: "Better headlines written for your specific business.",
+    description: "Better subject lines written for your specific email.",
   },
 ];
 
 const EDUCATIONAL_BLOCKS = [
   {
-    title: "Most headlines fail the same way",
+    title: "Most subject lines fail the same way",
     content: (
       <>
         <p>
-          <strong className="text-foreground">They describe the product instead of the customer&apos;s problem.</strong>{" "}
-          &quot;AI-powered marketing platform&quot; tells me what you built. It doesn&apos;t tell me why I should care. The best headlines make the reader think &quot;that&apos;s exactly my problem&quot; before they even know what you sell.
+          <strong className="text-foreground">They describe the email instead of selling the open.</strong>{" "}
+          &quot;March Newsletter&quot; tells me what it is. It doesn&apos;t give me a reason to open it. The best subject lines make the reader think &quot;I need to know what&apos;s inside&quot; before they even click.
         </p>
         <p>
-          The fix is almost always the same: replace the feature with the outcome. &quot;AI-powered marketing platform&quot; becomes &quot;Stop guessing what&apos;s working.&quot;
+          The fix is almost always the same: replace the label with the payoff. &quot;March Newsletter&quot; becomes &quot;The pricing mistake that cost us $12K.&quot;
         </p>
       </>
     ),
   },
   {
-    title: "Why 'clear' beats 'clever' every time",
+    title: "Why shorter almost always wins",
     content: (
       <>
         <p>
-          <strong className="text-foreground">Clever headlines win awards. Clear headlines win customers.</strong>{" "}
-          Your visitor gives you about 3 seconds. If they have to decode a pun or figure out what you mean, they&apos;re gone. Save the wit for your Twitter bio.
+          <strong className="text-foreground">Mobile shows ~40 characters. Desktop shows ~60.</strong>{" "}
+          If your subject line gets cut off at the most important part, it&apos;s not working. Front-load the interesting part. Save the details for the preview text.
         </p>
         <p>
-          The test is simple: show your headline to someone who knows nothing about your business. If they can&apos;t tell you what you sell and who it&apos;s for, it&apos;s not clear enough.
+          The test is simple: read just the first 5 words of your subject line. If those 5 words aren&apos;t compelling on their own, rewrite it.
         </p>
       </>
     ),
   },
   {
-    title: "The 'could a competitor use this?' test",
+    title: "Curiosity without clickbait",
     content: (
       <>
         <p>
-          <strong className="text-foreground">If you swap in a competitor&apos;s name and the headline still works, it&apos;s not differentiated.</strong>{" "}
-          &quot;The best project management tool&quot; could be said by literally anyone. &quot;Project management for teams that ship daily&quot; could not.
+          <strong className="text-foreground">The best subject lines open a loop that the email closes.</strong>{" "}
+          &quot;You won&apos;t believe what happened!&quot; is clickbait — it promises vaguely and usually disappoints. &quot;We tested 3 pricing pages. One converted 4x better.&quot; is curiosity — it&apos;s specific, honest, and the email delivers.
         </p>
         <p>
-          Differentiation doesn&apos;t mean being different for the sake of it. It means being specific about who you serve and what makes your approach unique. The narrower, the better.
+          The difference is specificity. Clickbait is vague. Curiosity is specific enough to be believable but incomplete enough to demand the click.
         </p>
       </>
     ),
   },
   {
-    title: "Headlines that actually convert",
+    title: "Subject lines that actually get opens",
     content: (
       <>
         <p>
-          <strong className="text-foreground">The highest-converting headlines share three traits:</strong>
+          <strong className="text-foreground">The highest-performing subject lines share three traits:</strong>
         </p>
         <ul className="space-y-1.5 pl-1">
           <li className="flex items-start gap-2">
             <span className="text-foreground font-bold mt-0.5">1.</span>
-            They name the audience (&quot;for freelance designers&quot; not &quot;for everyone&quot;)
+            They create urgency (&quot;ends Friday&quot; not &quot;check this out&quot;)
           </li>
           <li className="flex items-start gap-2">
             <span className="text-foreground font-bold mt-0.5">2.</span>
-            They state the outcome (&quot;get clients without cold pitching&quot; not &quot;grow your business&quot;)
+            They&apos;re specific (&quot;3 mistakes killing your cold emails&quot; not &quot;improve your emails&quot;)
           </li>
           <li className="flex items-start gap-2">
             <span className="text-foreground font-bold mt-0.5">3.</span>
-            They imply a mechanism (&quot;using your existing content&quot; not just &quot;easily&quot;)
+            They feel personal (&quot;quick question about your pricing page&quot; not &quot;important update&quot;)
           </li>
         </ul>
         <p>
-          You don&apos;t need all three in one headline. But the more specific you are on each, the harder your headline works.
+          You don&apos;t need all three. But the more you stack, the harder it is to skip your email.
         </p>
       </>
     ),
@@ -135,13 +135,13 @@ const EDUCATIONAL_BLOCKS = [
 
 // --- Form Steps ---
 
-function WizardHeadlineStep({
-  headline,
-  onHeadlineChange,
+function WizardSubjectLineStep({
+  subjectLine,
+  onSubjectLineChange,
   onSubmit,
 }: {
-  headline: string;
-  onHeadlineChange: (v: string) => void;
+  subjectLine: string;
+  onSubjectLineChange: (v: string) => void;
   onSubmit: () => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -149,30 +149,30 @@ function WizardHeadlineStep({
     inputRef.current?.focus();
   }, []);
 
-  const canSubmit = headline.trim().length >= 3;
+  const canSubmit = subjectLine.trim().length >= 3;
 
   return (
     <div>
       <label className="text-base font-bold text-foreground mb-3 block">
-        What&apos;s your headline or tagline?
+        What&apos;s your email subject line?
       </label>
 
       <input
         ref={inputRef}
         type="text"
-        value={headline}
-        onChange={(e) => onHeadlineChange(e.target.value)}
+        value={subjectLine}
+        onChange={(e) => onSubjectLineChange(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === "Enter" && canSubmit) {
             e.preventDefault();
             onSubmit();
           }
         }}
-        placeholder="Innovative solutions for modern businesses"
+        placeholder="Quick update on your account"
         className="w-full rounded-md border-2 border-foreground/20 bg-background px-4 py-3 text-foreground placeholder:text-foreground/30 outline-none focus:border-foreground transition-colors"
       />
       <p className="text-xs text-foreground/40 mt-2">
-        Your homepage H1, tagline, value prop — whatever people see first.
+        Newsletter, cold outreach, promo, drip — any subject line you want scored.
       </p>
 
       <button
@@ -180,7 +180,7 @@ function WizardHeadlineStep({
         disabled={!canSubmit}
         className="w-full mt-5 flex items-center justify-center gap-2 px-6 py-4 bg-cta text-white text-lg font-bold rounded-xl border-2 border-cta shadow-[4px_4px_0_rgba(44,62,80,0.3)] hover:shadow-[5px_5px_0_rgba(44,62,80,0.35)] hover:-translate-y-0.5 active:shadow-[2px_2px_0_rgba(44,62,80,0.3)] active:translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0_rgba(44,62,80,0.3)] transition-all duration-100"
       >
-        Analyze my headline
+        Score my subject line
         <ArrowRight className="w-5 h-5" />
       </button>
       <p className="mt-4 text-sm text-foreground/50 text-center">
@@ -191,17 +191,17 @@ function WizardHeadlineStep({
 }
 
 function WizardContextStep({
-  whatTheySell,
-  onWhatTheySellChange,
-  whoItsFor,
-  onWhoItsForChange,
+  emailAbout,
+  onEmailAboutChange,
+  audience,
+  onAudienceChange,
   onSubmit,
   onBack,
 }: {
-  whatTheySell: string;
-  onWhatTheySellChange: (v: string) => void;
-  whoItsFor: string;
-  onWhoItsForChange: (v: string) => void;
+  emailAbout: string;
+  onEmailAboutChange: (v: string) => void;
+  audience: string;
+  onAudienceChange: (v: string) => void;
   onSubmit: () => void;
   onBack: () => void;
 }) {
@@ -212,37 +212,37 @@ function WizardContextStep({
 
   return (
     <div>
-      <p className="text-sm font-bold text-foreground mb-1">Tell us about your business</p>
+      <p className="text-sm font-bold text-foreground mb-1">Tell us about this email</p>
       <p className="text-xs text-foreground/50 mb-3">
-        Optional — makes the rewrites specific to your business instead of generic
+        Optional — makes the rewrites specific to your email instead of generic
       </p>
 
       <div className="space-y-3">
         <div>
-          <p className="text-xs font-semibold text-foreground mb-1">What do you sell?</p>
+          <p className="text-xs font-semibold text-foreground mb-1">What&apos;s the email about?</p>
           <textarea
             ref={textareaRef}
-            value={whatTheySell}
-            onChange={(e) => onWhatTheySellChange(e.target.value)}
-            placeholder="Online courses for freelance designers who want to get clients"
+            value={emailAbout}
+            onChange={(e) => onEmailAboutChange(e.target.value)}
+            placeholder="Announcing our new pricing tier for small teams"
             rows={2}
             className="w-full rounded-md border-2 border-foreground/20 bg-background px-4 py-3 text-foreground placeholder:text-foreground/30 outline-none focus:border-foreground transition-colors resize-none min-h-[56px]"
           />
         </div>
 
         <div>
-          <p className="text-xs font-semibold text-foreground mb-1">Who is it for?</p>
+          <p className="text-xs font-semibold text-foreground mb-1">Who&apos;s receiving it?</p>
           <input
             type="text"
-            value={whoItsFor}
-            onChange={(e) => onWhoItsForChange(e.target.value)}
+            value={audience}
+            onChange={(e) => onAudienceChange(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
                 onSubmit();
               }
             }}
-            placeholder="Freelance designers making $50-100K"
+            placeholder="SaaS founders on our free trial"
             className="w-full rounded-md border-2 border-foreground/20 bg-background px-4 py-3 text-foreground placeholder:text-foreground/30 outline-none focus:border-foreground transition-colors"
           />
         </div>
@@ -278,15 +278,15 @@ function WizardContextStep({
 
 // --- Main Page ---
 
-function HeadlineAnalyzerContent() {
+function EmailSubjectScorerContent() {
   const router = useRouter();
   const posthog = usePostHog();
   const hasTrackedStart = useRef(false);
 
   const [step, setStep] = useState(0);
-  const [headline, setHeadline] = useState("");
-  const [whatTheySell, setWhatTheySell] = useState("");
-  const [whoItsFor, setWhoItsFor] = useState("");
+  const [subjectLine, setSubjectLine] = useState("");
+  const [emailAbout, setEmailAbout] = useState("");
+  const [audience, setAudience] = useState("");
   const [email, setEmail] = useState("");
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -294,13 +294,13 @@ function HeadlineAnalyzerContent() {
 
   useEffect(() => {
     if (!hasTrackedStart.current) {
-      posthog?.capture("headline_analyzer_started");
+      posthog?.capture("email_subject_scorer_started");
       hasTrackedStart.current = true;
     }
   }, [posthog]);
 
   const handleStepChange = useCallback((newStep: number, stepName: string) => {
-    posthog?.capture("headline_analyzer_step", { step: newStep, step_name: stepName });
+    posthog?.capture("email_subject_scorer_step", { step: newStep, step_name: stepName });
     setStep(newStep);
   }, [posthog]);
 
@@ -309,18 +309,18 @@ function HeadlineAnalyzerContent() {
     setSubmitting(true);
     setError(null);
 
-    posthog?.capture("headline_analyzer_submitted", {
+    posthog?.capture("email_subject_scorer_submitted", {
       email_domain: email.split("@")[1],
     });
 
     try {
-      const res = await fetch("/api/headline-analyzer", {
+      const res = await fetch("/api/email-subject-scorer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          headline: headline.trim(),
-          whatTheySell: whatTheySell.trim() || undefined,
-          whoItsFor: whoItsFor.trim() || undefined,
+          subjectLine: subjectLine.trim(),
+          emailAbout: emailAbout.trim() || undefined,
+          audience: audience.trim() || undefined,
           email: email.trim(),
           turnstileToken: turnstileToken || undefined,
         }),
@@ -330,24 +330,24 @@ function HeadlineAnalyzerContent() {
 
       if (!res.ok) {
         if (res.status === 409 && data.existingSlug) {
-          posthog?.capture("headline_analyzer_duplicate");
-          router.push(`/tools/headline-analyzer/${data.existingSlug}`);
+          posthog?.capture("email_subject_scorer_duplicate");
+          router.push(`/tools/email-subject-scorer/${data.existingSlug}`);
           return;
         }
-        posthog?.capture("headline_analyzer_error", { error: data.error });
+        posthog?.capture("email_subject_scorer_error", { error: data.error });
         setError(data.error || "Something went wrong.");
         setSubmitting(false);
         return;
       }
 
-      posthog?.capture("headline_analyzer_success", { slug: data.slug });
-      router.push(`/tools/headline-analyzer/${data.slug}`);
+      posthog?.capture("email_subject_scorer_success", { slug: data.slug });
+      router.push(`/tools/email-subject-scorer/${data.slug}`);
     } catch {
-      posthog?.capture("headline_analyzer_error", { error: "network_error" });
+      posthog?.capture("email_subject_scorer_error", { error: "network_error" });
       setError("Network error. Please try again.");
       setSubmitting(false);
     }
-  }, [submitting, headline, whatTheySell, whoItsFor, email, turnstileToken, router, posthog]);
+  }, [submitting, subjectLine, emailAbout, audience, email, turnstileToken, router, posthog]);
 
   return (
     <div className="min-h-screen flex flex-col bg-mesh">
@@ -357,20 +357,18 @@ function HeadlineAnalyzerContent() {
         <ToolHeroSection
           headline={
             <>
-              Your headline gets<br />
-              <span className="font-black">3 seconds.</span>{" "}
-              <span className="text-foreground/50 font-medium">Is it</span><br />
-              <span className="font-black">earning its keep?</span>
+              Is your subject line<br />
+              <span className="font-black">worth opening?</span>
             </>
           }
-          subheadline="Get a brutally honest score on your headline's clarity, specificity, and differentiation — plus 3 rewrites. Free in 30 seconds."
+          subheadline="Get a brutally honest score on your email subject line's clarity, urgency, and curiosity — plus 3 rewrites. Free in 30 seconds."
         >
-          <ToolFormCard id="headline-form" step={step} totalSteps={3} error={error}>
+          <ToolFormCard id="subject-form" step={step} totalSteps={3} error={error}>
             {step === 0 && (
-              <motion.div key="headline" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
-                <WizardHeadlineStep
-                  headline={headline}
-                  onHeadlineChange={setHeadline}
+              <motion.div key="subject" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
+                <WizardSubjectLineStep
+                  subjectLine={subjectLine}
+                  onSubjectLineChange={setSubjectLine}
                   onSubmit={() => handleStepChange(1, "context")}
                 />
               </motion.div>
@@ -378,10 +376,10 @@ function HeadlineAnalyzerContent() {
             {step === 1 && (
               <motion.div key="context" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
                 <WizardContextStep
-                  whatTheySell={whatTheySell}
-                  onWhatTheySellChange={setWhatTheySell}
-                  whoItsFor={whoItsFor}
-                  onWhoItsForChange={setWhoItsFor}
+                  emailAbout={emailAbout}
+                  onEmailAboutChange={setEmailAbout}
+                  audience={audience}
+                  onAudienceChange={setAudience}
                   onSubmit={() => handleStepChange(2, "email")}
                   onBack={() => setStep(0)}
                 />
@@ -398,8 +396,8 @@ function HeadlineAnalyzerContent() {
                   setTurnstileToken={setTurnstileToken}
                   submitting={submitting}
                   sendLabel="Where should we send your analysis?"
-                  submitLabel="Analyze my headline"
-                  loadingLabel="Analyzing..."
+                  submitLabel="Score my subject line"
+                  loadingLabel="Scoring..."
                 />
               </motion.div>
             )}
@@ -407,26 +405,26 @@ function HeadlineAnalyzerContent() {
         </ToolHeroSection>
 
         <ToolWhatsYouGet
-          headline={<>A <span className="font-black">real score</span> — not &ldquo;looks great!&rdquo;</>}
+          headline={<>A <span className="font-black">real score</span> — not &ldquo;looks good!&rdquo;</>}
           intro={
             <p>
-              Most feedback on your headline is polite or generic. Ours scores it against <span className="text-foreground font-semibold">4 specific criteria</span> with evidence, then writes 3 alternatives that fix what&apos;s broken.
+              Most feedback on your subject line is polite or generic. Ours scores it against <span className="text-foreground font-semibold">4 specific criteria</span> with evidence, then writes 3 alternatives that fix what&apos;s broken.
             </p>
           }
           features={FEATURES}
         />
 
         <ToolMidCTA
-          text="Ready to find out if your headline is actually working?"
-          buttonLabel="Analyze my headline"
-          href="#headline-form"
+          text="Ready to find out if your subject line is actually working?"
+          buttonLabel="Score my subject line"
+          href="#subject-form"
         />
 
         <ToolEducationalSection
           blocks={EDUCATIONAL_BLOCKS}
           boostPitch={{
-            headline: "Your headline is one piece. Boost shows the full picture.",
-            description: "The headline score shows what strangers see first. A Boost Brief shows your full competitive landscape — who you're up against, where they're weak, and where you should attack. Free, no signup.",
+            headline: "Your subject line is one piece. Boost shows the full picture.",
+            description: "The subject line score shows what lands in the inbox. A Boost Brief shows your full competitive landscape — who you're up against, where they're weak, and where you should attack. Free, no signup.",
           }}
           boostAfterIndex={1}
         />
@@ -439,9 +437,9 @@ function HeadlineAnalyzerContent() {
               description: "See what's costing you customers with a 3-second test of your website.",
             },
             {
-              label: "Target Audience Generator",
-              href: "/tools/target-audience-generator",
-              description: "Get a detailed profile of who you should be selling to.",
+              label: "Headline Analyzer",
+              href: "/tools/headline-analyzer",
+              description: "Score your headline on clarity, specificity, and differentiation — plus 3 rewrites.",
             },
             {
               label: "Competitor Finder",
@@ -481,7 +479,7 @@ function HeadlineAnalyzerContent() {
   );
 }
 
-export default function HeadlineAnalyzerPage() {
+export default function EmailSubjectScorerPage() {
   return (
     <Suspense
       fallback={
@@ -494,7 +492,7 @@ export default function HeadlineAnalyzerPage() {
         </div>
       }
     >
-      <HeadlineAnalyzerContent />
+      <EmailSubjectScorerContent />
     </Suspense>
   );
 }

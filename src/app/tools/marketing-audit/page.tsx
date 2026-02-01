@@ -442,6 +442,11 @@ function MarketingAuditContent() {
               href: "/tools/headline-analyzer",
               description: "Score your headline on clarity, specificity, and differentiation — plus 3 rewrites.",
             },
+            {
+              label: "Competitor Finder",
+              href: "/tools/competitor-finder",
+              description: "Find 5 real competitors with positioning analysis, weaknesses, and opportunities.",
+            },
           ]}
         />
 
