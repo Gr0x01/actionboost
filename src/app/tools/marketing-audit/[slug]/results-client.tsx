@@ -405,7 +405,7 @@ export function MarketingAuditResults({ initialAudit }: Props) {
                 Get a 30-day action plan built from competitive research — specific to your business, your market, and your budget.
               </p>
               <a
-                href="/start"
+                href={`/upgrade?from=snapshot&websiteUrl=${encodeURIComponent(audit.url)}`}
                 onClick={() => {
                   prefillStartForm({ websiteUrl: audit.url, productDescription: audit.businessDescription })
                   posthog?.capture("marketing_audit_cta_clicked", { slug: audit.slug })

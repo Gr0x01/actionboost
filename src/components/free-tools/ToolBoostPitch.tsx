@@ -7,11 +7,17 @@ import { prefillStartForm } from "@/lib/prefill";
 interface ToolBoostPitchProps {
   headline: string;
   description: string;
+  /** Which free tool this pitch appears on — used for /upgrade personalization */
+  from?: string;
   /** Prefill data to carry forward to /start */
   prefill?: { websiteUrl?: string; productDescription?: string };
 }
 
-export function ToolBoostPitch({ headline, description, prefill }: ToolBoostPitchProps) {
+export function ToolBoostPitch({ headline, description, from, prefill }: ToolBoostPitchProps) {
+  const href = from
+    ? `/upgrade?from=${encodeURIComponent(from)}${prefill?.websiteUrl ? `&websiteUrl=${encodeURIComponent(prefill.websiteUrl)}` : ''}`
+    : '/upgrade';
+
   return (
     <div
       className="bg-foreground text-white rounded-md p-6 md:p-8"
@@ -20,7 +26,7 @@ export function ToolBoostPitch({ headline, description, prefill }: ToolBoostPitc
       <h2 className="text-xl md:text-2xl font-bold mb-3">{headline}</h2>
       <p className="text-white/70 text-sm mb-4 leading-relaxed">{description}</p>
       <a
-        href="/start"
+        href={href}
         onClick={() => prefill && prefillStartForm(prefill)}
         className="inline-flex items-center gap-2 bg-cta text-white font-semibold px-6 py-3 rounded-md border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 active:translate-y-0.5 transition-all text-sm"
       >

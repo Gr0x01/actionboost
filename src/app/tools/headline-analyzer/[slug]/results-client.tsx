@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { usePostHog } from "posthog-js/react";
 import { ArrowRight, Check } from "lucide-react";
+import { config } from "@/lib/config";
 import type { ResultStatus } from "./page";
 import type { HeadlineAnalysisOutput } from "@/lib/ai/headline-analyzer";
 
@@ -374,26 +375,29 @@ export function HeadlineAnalysisResults({ initialResult }: Props) {
           </div>
 
           <div
-            className="bg-background border-2 border-foreground/20 rounded-md p-6 text-center"
+            className="bg-foreground rounded-md p-6 text-center"
             style={{ boxShadow: "6px 6px 0 rgba(44, 62, 80, 0.15)" }}
           >
-            <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40 block mb-2">
-              Free competitive brief
+            <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-background/40 block mb-2">
+              Full Boost
             </span>
-            <p className="text-3xl font-bold text-foreground mb-1">
-              $0
+            <p className="text-3xl font-bold text-background mb-1">
+              {config.singlePrice}
             </p>
-            <p className="text-sm text-foreground/50 mb-6">
-              No signup. No payment. Results in 2 minutes.
+            <p className="text-sm text-background/50 mb-6">
+              One-time. No subscription.
             </p>
             <a
-              href="/start?free=true"
+              href="/upgrade?from=headline"
               onClick={() => posthog?.capture("headline_cta_clicked", { slug: result.slug })}
               className="w-full inline-flex items-center justify-center gap-2 bg-cta text-white font-semibold px-6 py-4 rounded-md text-base border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 active:translate-y-0.5 transition-all"
             >
-              Get my free Brief
+              See the full picture
               <ArrowRight className="w-4 h-4" />
             </a>
+            <p className="text-sm text-background/40 mt-3">
+              Didn&apos;t help? Full refund.
+            </p>
           </div>
         </div>
       </section>

@@ -311,7 +311,7 @@ export function TargetAudienceResults({ initialResult }: Props) {
               One-time payment. No subscription.
             </p>
             <a
-              href="/start"
+              href="/upgrade?from=target-audience"
               onClick={() => posthog?.capture("target_audience_cta_clicked", { slug: result.slug })}
               className="w-full inline-flex items-center justify-center gap-2 bg-cta text-white font-semibold px-6 py-4 rounded-md text-base border-b-[3px] border-b-[#B85D10] hover:-translate-y-0.5 active:translate-y-0.5 transition-all"
             >
