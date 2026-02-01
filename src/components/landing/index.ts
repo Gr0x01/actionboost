@@ -1,4 +1,3 @@
-export { HeroSummaryCard } from "./HeroSummaryCard";
 export { HeroWithExplainer } from "./HeroWithExplainer";
 export { ExplainerSection } from "./ExplainerSection";
 export { ProblemSection } from "./ProblemSection";

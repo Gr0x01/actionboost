@@ -1,6 +1,31 @@
 # Current Phase
 
-## Latest Update: /upgrade Conversion Page (Feb 1, 2026)
+## Latest Update: Homepage Hero Redesign — Option B (Feb 2, 2026)
+
+**Complete hero rewrite. Old animated chaos→clarity hero replaced with static two-column layout.**
+
+**Problem**: Old hero had scroll-takeover animation (23 floating logos + 12 noise cards converging on scroll) + interactive 3-tab demo card. Session replays showed confusion: scroll down, get caught in animation, scroll back up, fiddle with card, bounce. 0.6% conversion rate (155 views → 1 click to /start in 30 days).
+
+**New hero (Option B)**:
+- **Headline**: "Everyone has marketing advice. **None of it** is about your business." (light/black weight contrast, thick orange underline on "None of it")
+- **Subheadline**: "Boost researches your actual market — **real traffic data**, **real competitor strategies**, **real gaps** — and tells you exactly where to focus."
+- **CTA**: "Show me my market" → `/start?free=true`
+- **Trust line**: "Free · No signup · Takes 2 minutes"
+- **Right column (desktop)**: Static visual — 12 scattered data fragment cards (GA, Semrush, Reddit, Instagram, Ahrefs, Google, YouTube, LinkedIn, Shopify, Facebook, Mailchimp + keyword pills) with convergence lines pointing to a clean Boost output card showing priorities + market opportunity score
+- **Mobile**: Simplified 3-fragment + arrow + output card vertical stack
+- **No scroll takeover, no animation hijacking, no floating chaos**
+
+**PostHog tracking**: `hero_cta_clicked` with `variant: "option-b"` for comparison.
+
+**Old hero archived**: `src/components/landing/_archive/HeroWithExplainer.tsx` + `HeroSummaryCard.tsx`
+
+**Files changed**: `HeroWithExplainer.tsx` (full rewrite), `index.ts` (removed HeroSummaryCard export)
+
+**Watch**: Homepage → /start conversion rate. Baseline is 0.6%. Any improvement on cold FB traffic is a win.
+
+---
+
+## Previous: /upgrade Conversion Page (Feb 1, 2026)
 
 **Single conversion landing page at `/upgrade` — all free tools funnel here.**
 
@@ -34,6 +59,22 @@ All 5 free tool result pages now CTA to `/upgrade?from=<tool>` with personalized
 - Landing Page Roaster (last free tool)
 - Brief locks tactical sections behind Weekly upgrade
 - ICP (separate, comes with dashboard)
+
+---
+
+## Previous: Unified Scoring Across All 3 Tiers (Feb 1, 2026)
+
+**All 3 product tiers now use the same 4-category scoring framework: Clarity / Visibility / Proof / Advantage.**
+
+**Scoring framework** (from brand guardian research):
+| Category | Weight | Grounded In |
+|----------|--------|-------------|
+| Clarity | 35% | Dunford positioning, Ries/Trout |
+| Visibility | 25% | Sharp's mental/physical availability |
+| Proof | 20% | Cialdini social proof, Keller brand equity |
+| Advantage | 20% | Ritson competitive strategy |
+
+**Files changed:** pipeline-agentic.ts, generate.ts, formatter-types.ts, marketing-audit.ts, BriefScoreGauge.tsx, InsightsView.tsx, LockedSections.tsx, results-client.tsx (snapshot)
 
 ---
 
