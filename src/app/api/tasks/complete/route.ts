@@ -12,10 +12,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Authentication required" }, { status: 401 })
   }
 
-  const { runId, taskIndex, completed, note, outcome } = await request.json()
+  let body: Record<string, unknown>
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 })
+  }
 
-  if (!runId || taskIndex === undefined) {
-    return NextResponse.json({ error: "runId and taskIndex required" }, { status: 400 })
+  const { runId, taskIndex, completed, note, outcome } = body as {
+    runId?: string; taskIndex?: number; completed?: boolean; note?: string; outcome?: string
+  }
+
+  if (!runId || taskIndex === undefined || typeof taskIndex !== "number") {
+    return NextResponse.json({ error: "runId and taskIndex (number) required" }, { status: 400 })
   }
 
   const supabase = createServiceClient()

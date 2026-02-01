@@ -317,7 +317,7 @@ function StepContent({
               onChange={(e) => {
                 const comps = [...(profile.competitors || [])]
                 comps[i] = e.target.value
-                onChange({ ...profile, competitors: comps.filter(Boolean) })
+                onChange({ ...profile, competitors: comps })
               }}
               className="w-full px-4 py-3 mb-3 border-2 border-foreground/20 rounded-md font-mono text-sm
                          focus:border-cta focus:outline-none transition-colors"

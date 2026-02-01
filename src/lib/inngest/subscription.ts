@@ -57,7 +57,11 @@ export const handleSubscriptionCreated = inngest.createFunction(
         .eq("id", businessId)
         .single()
 
-      const context = (business?.context as Record<string, unknown>) || {}
+      if (!business) {
+        throw new Error(`Business ${businessId} not found for subscription ${subscriptionId}`)
+      }
+
+      const context = (business.context as Record<string, unknown>) || {}
       const profile = (context.profile as BusinessProfile) || {}
 
       // Build pipeline input from profile
@@ -188,7 +192,7 @@ export const weeklyRevector = inngest.createFunction(
 
         // Build input with context from prior weeks
         const input = buildRunInputFromProfile(profile)
-        const newWeek = await incrementSubscriptionWeek(sub.id)
+        const newWeek = await incrementSubscriptionWeek(sub.id, sub.current_week)
 
         // Additional context for the pipeline
         const weeklyContext = [
@@ -244,6 +248,7 @@ export const weeklyRevector = inngest.createFunction(
             .update({ status: "failed", stage: "Weekly pipeline error" })
             .eq("id", run.id)
           console.error(`[Inngest] Weekly pipeline failed for ${sub.id}:`, err)
+          throw err
         }
       })
     }

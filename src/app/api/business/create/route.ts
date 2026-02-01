@@ -12,8 +12,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Authentication required" }, { status: 401 })
   }
 
-  const body = await request.json()
-  const { name } = body
+  let body: Record<string, unknown>
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 })
+  }
+  const { name } = body as { name?: string }
 
   try {
     const businessId = await createBusiness(userId, {

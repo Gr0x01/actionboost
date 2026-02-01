@@ -54,15 +54,30 @@ export async function POST(request: NextRequest) {
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001"
 
+    // Check for existing active subscription
+    const { getActiveSubscription } = await import("@/lib/subscription")
+    const existing = await getActiveSubscription(userId)
+    if (existing) {
+      return NextResponse.json({ error: "You already have an active subscription" }, { status: 409 })
+    }
+
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       payment_method_types: ["card"],
       line_items: [{ price: priceId, quantity: 1 }],
+      // IMPORTANT: subscription_data.metadata propagates to the Subscription object
+      subscription_data: {
+        metadata: {
+          user_id: userId,
+          business_id: businessId,
+          type: "boost_weekly",
+          upgrade_from_run_id: runId || "",
+        },
+      },
       metadata: {
         user_id: userId,
         business_id: businessId,
         type: "boost_weekly",
-        upgrade_from_run_id: runId || "",
       },
       customer_email: user?.email || undefined,
       success_url: `${appUrl}/dashboard?subscription=new`,

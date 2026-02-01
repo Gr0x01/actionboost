@@ -38,7 +38,7 @@ export async function getActiveSubscription(userId: string): Promise<Subscriptio
     .in("status", ["active", "trialing", "past_due"])
     .order("created_at", { ascending: false })
     .limit(1)
-    .single()
+    .maybeSingle()
 
   return (data as Subscription) ?? null
 }
@@ -129,7 +129,7 @@ export async function updateSubscriptionStatus(
   const supabase = createServiceClient()
 
   const updateData: Record<string, unknown> = {}
-  if (updates.status) updateData.status = updates.status
+  if (updates.status !== undefined) updateData.status = updates.status
   if (updates.currentPeriodStart) updateData.current_period_start = updates.currentPeriodStart.toISOString()
   if (updates.currentPeriodEnd) updateData.current_period_end = updates.currentPeriodEnd.toISOString()
   if (updates.cancelAtPeriodEnd !== undefined) updateData.cancel_at_period_end = updates.cancelAtPeriodEnd
@@ -140,32 +140,31 @@ export async function updateSubscriptionStatus(
     .eq("stripe_subscription_id", stripeSubscriptionId)
 
   if (error) {
-    console.error(`[Subscription] Failed to update ${stripeSubscriptionId}:`, error)
+    throw new Error(`Failed to update subscription ${stripeSubscriptionId}: ${error.message}`)
   }
 }
 
 /**
- * Increment the current week number on a subscription.
- * Called when a new weekly run is generated.
+ * Atomically increment the current week number on a subscription.
+ * Uses optimistic locking to prevent double-increments on retry.
  */
-export async function incrementSubscriptionWeek(subscriptionId: string): Promise<number> {
+export async function incrementSubscriptionWeek(subscriptionId: string, expectedCurrentWeek: number): Promise<number> {
   const supabase = createServiceClient()
+  const newWeek = expectedCurrentWeek + 1
 
-  // Fetch current week, increment, save
-  const { data: sub } = await supabase
-    .from("subscriptions")
-    .select("current_week")
-    .eq("id", subscriptionId)
-    .single()
-
-  const newWeek = (sub?.current_week ?? 0) + 1
-
-  await supabase
+  const { data, error } = await supabase
     .from("subscriptions")
     .update({ current_week: newWeek })
     .eq("id", subscriptionId)
+    .eq("current_week", expectedCurrentWeek) // optimistic lock
+    .select("current_week")
+    .single()
 
-  return newWeek
+  if (error || !data) {
+    throw new Error(`Week already incremented for subscription ${subscriptionId} (expected ${expectedCurrentWeek})`)
+  }
+
+  return data.current_week
 }
 
 /**

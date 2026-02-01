@@ -62,7 +62,12 @@ export async function PATCH(
     return NextResponse.json({ error: "Not found" }, { status: 404 })
   }
 
-  const updates = await request.json() as Partial<BusinessProfile>
+  let updates: Partial<BusinessProfile>
+  try {
+    updates = await request.json()
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 })
+  }
 
   const supabase = createServiceClient()
 

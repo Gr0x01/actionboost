@@ -32,6 +32,9 @@ export function WeeklyFocus({ runId }: WeeklyFocusProps) {
   }, [runId])
 
   const handleToggle = useCallback(async (taskIndex: number, completed: boolean) => {
+    // Capture previous state for revert
+    const previousTasks = [...tasks]
+
     // Optimistic update
     setTasks((prev) =>
       prev.map((t) =>
@@ -48,14 +51,9 @@ export function WeeklyFocus({ runId }: WeeklyFocusProps) {
     })
 
     if (!res.ok) {
-      // Revert on failure
-      setTasks((prev) =>
-        prev.map((t) =>
-          t.index === taskIndex ? { ...t, completed: !completed } : t
-        )
-      )
+      setTasks(previousTasks)
     }
-  }, [runId])
+  }, [runId, tasks])
 
   const sprintTasks = tasks.filter((t) => t.track === "sprint")
   const buildTasks = tasks.filter((t) => t.track === "build")

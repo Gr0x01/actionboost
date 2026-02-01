@@ -399,7 +399,7 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const subData = subscription as any;
     await updateSubscriptionStatus(subscription.id, {
-      status: (statusMap[subscription.status] || "active") as "active" | "past_due" | "canceled" | "paused" | "trialing",
+      status: (statusMap[subscription.status] || "paused") as "active" | "past_due" | "canceled" | "paused" | "trialing",
       currentPeriodStart: new Date((subData.current_period_start ?? Math.floor(Date.now() / 1000)) * 1000),
       currentPeriodEnd: new Date((subData.current_period_end ?? Math.floor(Date.now() / 1000) + 30 * 86400) * 1000),
       cancelAtPeriodEnd: subscription.cancel_at_period_end,

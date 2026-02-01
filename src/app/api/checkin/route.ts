@@ -13,7 +13,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Authentication required" }, { status: 401 })
   }
 
-  const { sentiment, notes } = await request.json()
+  let body: Record<string, unknown>
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 })
+  }
+
+  const { sentiment, notes } = body as { sentiment?: string; notes?: string }
 
   if (!sentiment || !["great", "okay", "rough"].includes(sentiment)) {
     return NextResponse.json({ error: "Valid sentiment required (great/okay/rough)" }, { status: 400 })

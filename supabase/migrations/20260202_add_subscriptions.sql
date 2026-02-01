@@ -144,3 +144,8 @@ ALTER TABLE public.runs
   ADD COLUMN IF NOT EXISTS thesis TEXT;
 
 CREATE INDEX IF NOT EXISTS idx_runs_subscription_id ON public.runs(subscription_id);
+
+-- Prevent duplicate weekly runs for the same subscription+week
+CREATE UNIQUE INDEX IF NOT EXISTS idx_runs_subscription_week
+  ON public.runs(subscription_id, week_number)
+  WHERE subscription_id IS NOT NULL AND week_number IS NOT NULL;

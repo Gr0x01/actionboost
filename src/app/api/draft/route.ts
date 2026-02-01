@@ -22,9 +22,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Subscription required" }, { status: 403 })
   }
 
-  const { runId, taskIndex, contentType } = await request.json()
+  let body: Record<string, unknown>
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 })
+  }
 
-  if (!runId || taskIndex === undefined || !contentType) {
+  const { runId, taskIndex, contentType } = body as {
+    runId?: string; taskIndex?: number; contentType?: string
+  }
+
+  if (!runId || taskIndex === undefined || typeof taskIndex !== "number" || !contentType) {
     return NextResponse.json({ error: "runId, taskIndex, and contentType required" }, { status: 400 })
   }
 
