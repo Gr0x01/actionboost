@@ -1,0 +1,66 @@
+import { NextRequest, NextResponse } from "next/server"
+import Stripe from "stripe"
+import { getAuthenticatedUserId } from "@/lib/auth/session"
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+
+/**
+ * POST /api/checkout/create-subscription
+ *
+ * Creates a Stripe Checkout session in subscription mode for Boost Weekly.
+ * Requires: businessId in body. User must be authenticated.
+ */
+export async function POST(request: NextRequest) {
+  try {
+    const userId = await getAuthenticatedUserId()
+    if (!userId) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 })
+    }
+
+    const body = await request.json()
+    const { businessId, email } = body
+
+    if (!businessId) {
+      return NextResponse.json({ error: "businessId is required" }, { status: 400 })
+    }
+
+    const priceId = process.env.STRIPE_PRICE_SUBSCRIPTION
+    if (!priceId) {
+      console.error("[Checkout] STRIPE_PRICE_SUBSCRIPTION not configured")
+      return NextResponse.json({ error: "Subscription pricing not configured" }, { status: 500 })
+    }
+
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001"
+
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
+      mode: "subscription",
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      metadata: {
+        user_id: userId,
+        business_id: businessId,
+        type: "boost_weekly",
+      },
+      success_url: `${appUrl}/dashboard?subscription=new`,
+      cancel_url: `${appUrl}/subscribe?canceled=true`,
+      allow_promotion_codes: true,
+    }
+
+    // Pre-fill email if available
+    if (email) {
+      sessionParams.customer_email = email
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams)
+
+    return NextResponse.json({ url: session.url })
+  } catch (error) {
+    console.error("[Checkout] Subscription session creation failed:", error)
+    return NextResponse.json({ error: "Failed to create checkout session" }, { status: 500 })
+  }
+}

@@ -29,6 +29,30 @@ export type Events = {
       resultId: string;
     };
   };
+  "landing-page-roaster/created": {
+    data: {
+      resultId: string;
+    };
+  };
+  "subscription/created": {
+    data: {
+      subscriptionId: string;
+      businessId: string;
+      userId: string;
+    };
+  };
+  "subscription/weekly-revector": {
+    data: {
+      subscriptionId: string;
+    };
+  };
+  "subscription/draft-requested": {
+    data: {
+      runId: string;
+      taskIndex: number;
+      contentType: string;
+    };
+  };
 };
 
 // Create the Inngest client with typed events
