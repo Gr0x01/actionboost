@@ -443,6 +443,11 @@ function TargetAudienceContent() {
               href: "/tools/marketing-audit",
               description: "See what's costing you customers with a 3-second test of your website's clarity, proof, and advantage.",
             },
+            {
+              label: "Headline Analyzer",
+              href: "/tools/headline-analyzer",
+              description: "Score your headline on clarity, specificity, and differentiation — plus 3 rewrites.",
+            },
           ]}
         />
 

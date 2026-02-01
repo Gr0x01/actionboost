@@ -2,7 +2,6 @@ import { inngest } from "./client";
 import { runPipeline, runFreePipeline, runRefinementPipeline } from "@/lib/ai/pipeline";
 import { runMarketingAuditPipeline } from "@/lib/ai/marketing-audit";
 import { runTargetAudiencePipeline } from "@/lib/ai/target-audience";
-import { runHeadlineAnalysisPipeline } from "@/lib/ai/headline-analyzer";
 import { createServiceClient } from "@/lib/supabase/server";
 import type { RunInput } from "@/lib/ai/types";
 
@@ -220,44 +219,5 @@ export const generateTargetAudience = inngest.createFunction(
   }
 );
 
-/**
- * Headline Analyzer — evaluates headline clarity, specificity, differentiation, customer focus.
- *
- * Single GPT-4.1-mini call. Fast and cheap (~$0.01-0.02).
- */
-export const generateHeadlineAnalysis = inngest.createFunction(
-  {
-    id: "generate-headline-analysis",
-    retries: 2,
-  },
-  { event: "headline-analyzer/created" },
-  async ({ event, step }) => {
-    const { resultId } = event.data;
-
-    console.log(`[Inngest] Starting headline analysis ${resultId}`);
-
-    const result = await step.run("headline-analysis-pipeline", async () => {
-      try {
-        return await runHeadlineAnalysisPipeline(resultId);
-      } catch (err) {
-        const supabase = createServiceClient();
-        await supabase
-          .from("free_tool_results")
-          .update({ status: "failed" })
-          .eq("id", resultId);
-        throw err;
-      }
-    });
-
-    if (!result.success) {
-      console.error(`[Inngest] Headline analysis failed for ${resultId}:`, result.error);
-      return { success: false, error: result.error };
-    }
-
-    console.log(`[Inngest] Headline analysis completed for ${resultId}`);
-    return { success: true, resultId };
-  }
-);
-
 // Export all functions for the serve handler
-export const functions = [generateStrategy, refineStrategy, generateFreeAudit, generateMarketingAudit, generateTargetAudience, generateHeadlineAnalysis];
+export const functions = [generateStrategy, refineStrategy, generateFreeAudit, generateMarketingAudit, generateTargetAudience];

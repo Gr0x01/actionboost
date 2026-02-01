@@ -689,7 +689,4 @@ async function dataForSEORequest(
   return Promise.race([fetchPromise, timeoutPromise])
 }
 
-// =============================================================================
-// TAVILY-ONLY RESEARCH (for free tier)
-// =============================================================================
 

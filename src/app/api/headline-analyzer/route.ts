@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import { isValidEmail, isDisposableEmail } from "@/lib/validation";
-import { inngest } from "@/lib/inngest";
 import { checkHoneypot, getClientIP, checkIPRateLimit, guardTurnstile, normalizeEmail, generateSlug } from "@/lib/api/free-tool-helpers";
+import { runHeadlineAnalysisInline } from "@/lib/ai/headline-analyzer";
 import type { Json } from "@/lib/types/database";
 
 export async function POST(request: NextRequest) {
@@ -82,6 +82,9 @@ export async function POST(request: NextRequest) {
       ...(whoItsFor?.trim() ? { whoItsFor: whoItsFor.trim() } : {}),
     };
 
+    // Run GPT inline — fast enough (~5-15s) to skip Inngest
+    const output = await runHeadlineAnalysisInline(inputData);
+
     const { data: created, error: insertError } = await supabase
       .from("free_tool_results")
       .insert({
@@ -89,7 +92,9 @@ export async function POST(request: NextRequest) {
         email: normalizedEmail,
         tool_type: "headline-analyzer",
         input: inputData as unknown as Json,
-        status: "pending",
+        output: output as unknown as Json,
+        status: "complete",
+        completed_at: new Date().toISOString(),
       })
       .select("id, slug")
       .single();
@@ -103,16 +108,6 @@ export async function POST(request: NextRequest) {
       }
       console.error("[HeadlineAnalyzer] Insert failed:", insertError);
       return NextResponse.json({ error: "Failed to create analysis" }, { status: 500 });
-    }
-
-    // Trigger Inngest pipeline
-    try {
-      await inngest.send({
-        name: "headline-analyzer/created",
-        data: { resultId: created.id },
-      });
-    } catch (err) {
-      console.error("[HeadlineAnalyzer] Failed to trigger Inngest:", err);
     }
 
     return NextResponse.json({ slug: created.slug });

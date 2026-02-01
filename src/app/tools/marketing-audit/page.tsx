@@ -437,6 +437,11 @@ function MarketingAuditContent() {
               href: "/tools/target-audience-generator",
               description: "Find exactly who your ideal customer is — demographics, pain points, and where to reach them.",
             },
+            {
+              label: "Headline Analyzer",
+              href: "/tools/headline-analyzer",
+              description: "Score your headline on clarity, specificity, and differentiation — plus 3 rewrites.",
+            },
           ]}
         />
 

@@ -29,11 +29,6 @@ export type Events = {
       resultId: string;
     };
   };
-  "headline-analyzer/created": {
-    data: {
-      resultId: string;
-    };
-  };
 };
 
 // Create the Inngest client with typed events

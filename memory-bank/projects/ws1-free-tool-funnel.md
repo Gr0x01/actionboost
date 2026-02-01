@@ -128,5 +128,5 @@ Landkit indexes completed audits at `/audits` for organic traffic. Boost can do 
 - [ ] Brief locks tactical sections behind Weekly upgrade
 - [ ] 7-day expiry on Brief results
 - [ ] All free tools funnel to single conversion page
-- [ ] At least 1 new Snapshot-style tool shipped (headline analyzer)
+- [x] Headline Analyzer shipped (`/tools/headline-analyzer`) — inline GPT (no Inngest), ~$0.01-0.02/run, scores clarity/specificity/differentiation/customer focus + 3 rewrites — Feb 1, 2026
 - [ ] Public audit directory live with opt-in

@@ -731,8 +731,6 @@ function truncate(text: string, maxLength: number): string {
 }
 
 // =============================================================================
-// MINI STRATEGY GENERATION (Free tier - uses Sonnet)
-// =============================================================================
 // REFINED STRATEGY GENERATION (User provides additional context)
 // =============================================================================
 

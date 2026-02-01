@@ -1,6 +1,35 @@
 # Current Phase
 
-## Latest Update: Free Brief Results Page Redesign (Feb 1, 2026)
+## Latest Update: Headline Analyzer Free Tool + Dead Code Cleanup (Feb 1, 2026)
+
+**Built `/tools/headline-analyzer`** — third free tool. User enters headline + optional business context + email, gets scored on clarity/specificity/differentiation/customer focus (0-100 each) + 3 rewrite suggestions.
+
+**Key design decision: inline GPT, no Inngest.** Single GPT-4.1-mini call completes in 5-15s — Inngest overhead was adding 60s+ of unnecessary latency. API route runs GPT inline, saves result as `complete`, redirects to SSR results page. No polling needed.
+
+**Cost:** ~$0.01-0.02 per run. No external APIs (no Tavily, no screenshots, no DataForSEO).
+
+**Files created:**
+- `src/lib/ai/headline-analyzer.ts` — GPT pipeline + output types
+- `src/app/api/headline-analyzer/route.ts` — POST (inline GPT)
+- `src/app/api/headline-analyzer/[slug]/route.ts` — GET (fetch by slug)
+- `src/app/tools/headline-analyzer/page.tsx` — landing page (3-step wizard)
+- `src/app/tools/headline-analyzer/layout.tsx` — SEO metadata
+- `src/app/tools/headline-analyzer/[slug]/page.tsx` — results SSR
+- `src/app/tools/headline-analyzer/[slug]/results-client.tsx` — results display
+
+**Also done:**
+- Dead code cleanup: removed `generatePositioningPreview`, `buildPositioningPreviewPrompt`, `buildPositioningPreviewUserMessage`, `FREE_AUDIT_MODEL`, `PREVIEW_MODEL`, `PREVIEW_MAX_TOKENS` from `generate.ts`; removed `runTavilyOnlyResearch` from `research.ts`; deleted `scripts/test-free-models.ts`
+- Added headline-analyzer + target-audience-generator to sitemap.ts
+- Cross-links updated on all 3 free tool pages
+
+**What's NOT done yet:**
+- Single conversion page not started
+- Unify scoring categories across all tiers
+- Brief locks tactical sections behind Weekly upgrade
+
+---
+
+## Previous: Free Brief Results Page Redesign (Feb 1, 2026)
 
 **Complete UI overhaul of the free Brief results page.** Went from single narrow column to a 5-zone wide layout with proper visual hierarchy, typography consistency, and conversion flow.
 
@@ -67,8 +96,6 @@
 
 **What's NOT done yet:**
 - Single conversion page not started
-- More entry points not started
-- Dead code cleanup: `generatePositioningPreview` in generate.ts, `runTavilyOnlyResearch` in research.ts
 
 **WS1 doc**: `projects/ws1-free-tool-funnel.md`
 

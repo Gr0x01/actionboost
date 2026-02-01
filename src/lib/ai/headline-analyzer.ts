@@ -1,6 +1,4 @@
 import OpenAI from "openai";
-import { createServiceClient } from "@/lib/supabase/server";
-import type { Json } from "@/lib/types/database";
 
 export interface HeadlineAnalysisOutput {
   overall: number;
@@ -114,75 +112,40 @@ function validateOutput(data: unknown): data is HeadlineAnalysisOutput {
   return true;
 }
 
-export async function runHeadlineAnalysisPipeline(resultId: string): Promise<{ success: boolean; error?: string }> {
-  const supabase = createServiceClient();
-
-  const { data: record, error: fetchError } = await supabase
-    .from("free_tool_results")
-    .select("*")
-    .eq("id", resultId)
-    .single();
-
-  if (fetchError || !record) {
-    console.error(`[HeadlineAnalyzer] Record ${resultId} not found:`, fetchError);
-    return { success: false, error: "Record not found" };
+/**
+ * Run headline analysis inline (no Inngest). Fast enough for a single GPT call (~5-15s).
+ */
+export async function runHeadlineAnalysisInline(input: {
+  headline: string;
+  whatTheySell?: string;
+  whoItsFor?: string;
+}): Promise<HeadlineAnalysisOutput> {
+  let userMessage = `Headline to analyze: "${input.headline}"`;
+  if (input.whatTheySell) {
+    userMessage += `\nWhat the business sells: ${input.whatTheySell}`;
+  }
+  if (input.whoItsFor) {
+    userMessage += `\nWho it's for: ${input.whoItsFor}`;
   }
 
-  await supabase
-    .from("free_tool_results")
-    .update({ status: "processing" })
-    .eq("id", resultId);
+  const openai = new OpenAI();
 
-  try {
-    const input = record.input as { headline: string; whatTheySell?: string; whoItsFor?: string } | null;
-    if (!input?.headline) {
-      throw new Error("Missing required headline input");
-    }
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4.1-mini",
+    response_format: { type: "json_object" },
+    messages: [
+      { role: "system", content: SYSTEM_PROMPT },
+      { role: "user", content: userMessage },
+    ],
+    temperature: 0.7,
+    max_tokens: 1500,
+  });
 
-    let userMessage = `Headline to analyze: "${input.headline}"`;
-    if (input.whatTheySell) {
-      userMessage += `\nWhat the business sells: ${input.whatTheySell}`;
-    }
-    if (input.whoItsFor) {
-      userMessage += `\nWho it's for: ${input.whoItsFor}`;
-    }
+  const rawOutput = completion.choices[0]?.message?.content;
+  if (!rawOutput) throw new Error("Empty response from GPT");
 
-    const openai = new OpenAI();
+  const parsed = JSON.parse(rawOutput);
+  if (!validateOutput(parsed)) throw new Error("Invalid output structure from GPT");
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4.1-mini",
-      response_format: { type: "json_object" },
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        { role: "user", content: userMessage },
-      ],
-      temperature: 0.7,
-      max_tokens: 1500,
-    });
-
-    const rawOutput = completion.choices[0]?.message?.content;
-    if (!rawOutput) throw new Error("Empty response from GPT");
-
-    const parsed = JSON.parse(rawOutput);
-    if (!validateOutput(parsed)) throw new Error("Invalid output structure from GPT");
-
-    await supabase
-      .from("free_tool_results")
-      .update({
-        output: parsed as unknown as Json,
-        status: "complete",
-        completed_at: new Date().toISOString(),
-      })
-      .eq("id", resultId);
-
-    console.log(`[HeadlineAnalyzer] Completed ${resultId}`);
-    return { success: true };
-  } catch (err) {
-    console.error(`[HeadlineAnalyzer] Pipeline failed for ${resultId}:`, err);
-    await supabase
-      .from("free_tool_results")
-      .update({ status: "failed" })
-      .eq("id", resultId);
-    return { success: false, error: err instanceof Error ? err.message : "Unknown error" };
-  }
+  return parsed;
 }
