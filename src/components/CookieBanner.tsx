@@ -17,9 +17,18 @@ export function CookieBanner() {
       // localStorage unavailable (private browsing, etc.) - show banner anyway
     }
 
-    // Show after 1s delay
-    const timer = setTimeout(() => setVisible(true), 1000)
-    return () => clearTimeout(timer)
+    // Show after 1s delay, auto-dismiss after 5s
+    const showTimer = setTimeout(() => setVisible(true), 1000)
+    const hideTimer = setTimeout(() => {
+      try {
+        localStorage.setItem(STORAGE_KEY, 'true')
+      } catch {}
+      setVisible(false)
+    }, 6000)
+    return () => {
+      clearTimeout(showTimer)
+      clearTimeout(hideTimer)
+    }
   }, [])
 
   const dismiss = () => {
