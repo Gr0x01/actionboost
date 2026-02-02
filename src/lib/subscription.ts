@@ -21,8 +21,8 @@ export type Subscription = {
   current_week: number
   original_run_id: string | null
   cancel_at_period_end: boolean
+  strategy_context: unknown | null
   created_at: string
-  updated_at: string
 }
 
 /**

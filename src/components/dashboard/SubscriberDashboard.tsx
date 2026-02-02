@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react"
 import { WeekTheme } from "./WeekTheme"
+import { MonthlyFocus } from "./MonthlyFocus"
 import { WeeklyFocus } from "./WeeklyFocus"
 import { WhatsWorking } from "./WhatsWorking"
 import { WeeklyCheckin } from "./WeeklyCheckin"
@@ -28,7 +29,7 @@ interface SubscriberDashboardProps {
 
 export function SubscriberDashboard({ subscription, latestRun, checkin }: SubscriberDashboardProps) {
   const isProcessing = latestRun?.status === "pending" || latestRun?.status === "processing"
-  const thesis = latestRun?.structuredOutput?.thesis as string | undefined
+  const thesis = (latestRun?.structuredOutput?.thesis ?? latestRun?.structuredOutput?.weekTheme) as string | undefined
   const [panelOpen, setPanelOpen] = useState(false)
   const handlePanelChange = useCallback((open: boolean) => setPanelOpen(open), [])
 
@@ -80,6 +81,8 @@ export function SubscriberDashboard({ subscription, latestRun, checkin }: Subscr
           </div>
         ) : (
           <div className="space-y-6">
+            <MonthlyFocus />
+
             <WeekTheme
               weekNumber={latestRun.weekNumber}
               thesis={thesis}

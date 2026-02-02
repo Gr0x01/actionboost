@@ -12,6 +12,7 @@ export interface ExtractedTask {
   track?: "sprint" | "build"
   why?: string
   how?: string
+  timeEstimate?: string
 }
 
 interface DayAction {
@@ -63,13 +64,14 @@ export function extractTasksFromStructuredOutput(
     }
   } else if (Array.isArray(structuredOutput.tasks)) {
     // Subscription weekly format: flat tasks array with { title, track, ... }
-    for (const t of structuredOutput.tasks as { title?: string; description?: string; track?: string; why?: string; how?: string }[]) {
+    for (const t of structuredOutput.tasks as { title?: string; description?: string; track?: string; why?: string; how?: string; timeEstimate?: string }[]) {
       tasks.push({
         title: t.title ?? "",
         description: t.description ?? "",
         track: t.track === "build" ? "build" : "sprint",
         why: t.why,
         how: t.how,
+        timeEstimate: t.timeEstimate,
       })
     }
   }

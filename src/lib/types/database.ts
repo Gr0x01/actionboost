@@ -453,6 +453,7 @@ export type Database = {
           current_week: number
           original_run_id: string | null
           cancel_at_period_end: boolean
+          strategy_context: Json | null
           created_at: string
         }
         Insert: {
@@ -467,6 +468,7 @@ export type Database = {
           current_week?: number
           original_run_id?: string | null
           cancel_at_period_end?: boolean
+          strategy_context?: Json | null
           created_at?: string
         }
         Update: {
@@ -481,6 +483,7 @@ export type Database = {
           current_week?: number
           original_run_id?: string | null
           cancel_at_period_end?: boolean
+          strategy_context?: Json | null
           created_at?: string
         }
         Relationships: [

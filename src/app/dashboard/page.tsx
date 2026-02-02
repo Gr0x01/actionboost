@@ -31,13 +31,28 @@ export default async function DashboardPage() {
   if (subscription) {
     // Subscriber: render 3-panel dashboard
     // Get the latest run for this subscription
-    const { data: latestRun } = await supabase
+    let { data: latestRun } = await supabase
       .from("runs")
       .select("id, output, structured_output, week_number, status, created_at")
       .eq("subscription_id", subscription.id)
       .order("week_number", { ascending: false })
       .limit(1)
       .single()
+
+    // Fallback: if no subscription run yet, use the user's latest completed run
+    if (!latestRun) {
+      const { data: legacyRun } = await supabase
+        .from("runs")
+        .select("id, output, structured_output, week_number, status, created_at")
+        .eq("user_id", publicUser.id)
+        .eq("status", "complete")
+        .not("structured_output", "is", null)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      if (legacyRun) latestRun = legacyRun
+    }
 
     // Get checkin for current week
     const { data: checkin } = await supabase

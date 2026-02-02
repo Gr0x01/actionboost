@@ -1,39 +1,169 @@
 /**
  * Inngest functions for Boost Weekly subscription lifecycle.
  *
- * - subscription/created → generate initial strategy from business profile
- * - weekly cron → Sunday: generate new weekly plan for all active subscriptions
+ * Split pipeline architecture:
+ * - Opus strategy (signup + monthly) → stored on subscriptions.strategy_context
+ * - Sonnet weekly tasks (every Sunday) → stored in runs.structured_output
+ *
+ * Cost: ~75% reduction vs old all-Opus approach.
  */
 
 import { inngest } from "./client"
 import { createServiceClient } from "@/lib/supabase/server"
-import { runPipeline } from "@/lib/ai/pipeline"
+import { generateStrategyContext } from "@/lib/ai/pipeline-strategy"
+import { generateWeeklyTasks } from "@/lib/ai/pipeline-weekly-tasks"
 import type { BusinessProfile } from "@/lib/types/business-profile"
+import type { StrategyContext, WeeklyTaskOutput } from "@/lib/ai/types"
 import type { Json } from "@/lib/types/database"
 import { getAllActiveSubscriptions, incrementSubscriptionWeek } from "@/lib/subscription"
 import { sendWeekReadyEmail } from "@/lib/email/resend"
+import { addDays, format } from "date-fns"
 
 /**
- * Build RunInput from a business profile for the AI pipeline.
+ * Fetch business profile from a business ID.
  */
-function buildRunInputFromProfile(profile: BusinessProfile) {
-  return {
-    productDescription: profile.description || "",
-    currentTraction: "",
-    tacticsAndResults: profile.triedBefore || "",
-    focusArea: "custom" as const,
-    competitorUrls: profile.competitors || [],
-    websiteUrl: profile.websiteUrl || "",
-    analyticsSummary: "",
-    constraints: profile.goals?.budget
-      ? `Budget: ${profile.goals.budget}`
-      : "",
+async function fetchBusinessProfile(businessId: string): Promise<BusinessProfile> {
+  const supabase = createServiceClient()
+  const { data: business } = await supabase
+    .from("businesses")
+    .select("context")
+    .eq("id", businessId)
+    .single()
+
+  if (!business) {
+    throw new Error(`Business ${businessId} not found`)
+  }
+
+  const context = (business.context as Record<string, unknown>) || {}
+  return (context.profile as BusinessProfile) || {}
+}
+
+/**
+ * Fetch last week's completion summary and checkin for task generation context.
+ */
+async function fetchLastWeekContext(subscriptionId: string, currentWeek: number): Promise<{
+  completionSummary: string
+  checkinContext: string
+}> {
+  const supabase = createServiceClient()
+
+  // Fetch last week's run
+  const { data: lastRun } = await supabase
+    .from("runs")
+    .select("id, structured_output")
+    .eq("subscription_id", subscriptionId)
+    .order("week_number", { ascending: false })
+    .limit(1)
+    .single()
+
+  let completionSummary = ""
+  if (lastRun) {
+    const { data: completions } = await supabase
+      .from("task_completions")
+      .select("task_index, completed, note, outcome")
+      .eq("run_id", lastRun.id)
+
+    if (completions && completions.length > 0) {
+      const completed = completions.filter((c) => c.completed)
+      const skipped = completions.filter((c) => !c.completed)
+      completionSummary = `Last week: ${completed.length}/${completions.length} tasks completed.`
+      if (completed.some((c) => c.outcome)) {
+        completionSummary += ` Outcomes: ${completed.filter((c) => c.outcome).map((c) => c.outcome).join("; ")}`
+      }
+      if (skipped.length > 0) {
+        completionSummary += ` Skipped: ${skipped.length} tasks.`
+      }
+    }
+  }
+
+  // Fetch weekly checkin
+  const { data: checkin } = await supabase
+    .from("weekly_checkins")
+    .select("sentiment, notes")
+    .eq("subscription_id", subscriptionId)
+    .eq("week_number", currentWeek)
+    .single()
+
+  const checkinContext = checkin
+    ? `User sentiment: ${checkin.sentiment}. ${checkin.notes || ""}`
+    : ""
+
+  return { completionSummary, checkinContext }
+}
+
+/**
+ * Store strategy context on the subscription.
+ */
+async function storeStrategyContext(subscriptionId: string, strategyContext: StrategyContext): Promise<void> {
+  const supabase = createServiceClient()
+  const { error } = await supabase
+    .from("subscriptions")
+    .update({ strategy_context: strategyContext as unknown as Json })
+    .eq("id", subscriptionId)
+
+  if (error) {
+    throw new Error(`Failed to store strategy context: ${error.message}`)
   }
 }
 
 /**
+ * Fetch existing strategy context from subscription.
+ */
+async function fetchStrategyContext(subscriptionId: string): Promise<StrategyContext | null> {
+  const supabase = createServiceClient()
+  const { data } = await supabase
+    .from("subscriptions")
+    .select("strategy_context")
+    .eq("id", subscriptionId)
+    .single()
+
+  return (data?.strategy_context as StrategyContext) ?? null
+}
+
+/**
+ * Create a run record and store weekly task output.
+ */
+async function createWeeklyRun(params: {
+  userId: string
+  businessId: string
+  subscriptionId: string
+  weekNumber: number
+  weeklyOutput: WeeklyTaskOutput
+  parentRunId?: string
+}): Promise<string> {
+  const supabase = createServiceClient()
+
+  const { data: run, error } = await supabase
+    .from("runs")
+    .insert({
+      user_id: params.userId,
+      business_id: params.businessId,
+      subscription_id: params.subscriptionId,
+      week_number: params.weekNumber,
+      parent_plan_id: params.parentRunId,
+      input: {} as unknown as Json,
+      structured_output: params.weeklyOutput as unknown as Json,
+      status: "complete",
+      source: "subscription",
+      completed_at: new Date().toISOString(),
+      plan_start_date: format(addDays(new Date(), 1), "yyyy-MM-dd"),
+    })
+    .select("id")
+    .single()
+
+  if (error || !run) {
+    throw new Error(`Failed to create weekly run: ${error?.message}`)
+  }
+
+  return run.id
+}
+
+/**
  * Initial strategy generation when a subscription is created.
- * Creates a run linked to the subscription and triggers the full Opus pipeline.
+ * 1. Opus generates strategy context (with research tools)
+ * 2. Strategy stored on subscription
+ * 3. Sonnet generates first week's tasks
+ * 4. Tasks stored in a run
  */
 export const handleSubscriptionCreated = inngest.createFunction(
   {
@@ -46,79 +176,59 @@ export const handleSubscriptionCreated = inngest.createFunction(
 
     console.log(`[Inngest] Subscription created: ${subscriptionId}`)
 
-    const result = await step.run("initial-strategy", async () => {
-      const supabase = createServiceClient()
+    // Step 1: Generate Opus strategy
+    const strategyContext = await step.run("generate-strategy", async () => {
+      const profile = await fetchBusinessProfile(businessId)
 
-      // Fetch business profile
-      const { data: business } = await supabase
-        .from("businesses")
-        .select("context")
-        .eq("id", businessId)
-        .single()
+      const strategy = await generateStrategyContext({
+        profile,
+        monthNumber: 1,
+      })
 
-      if (!business) {
-        throw new Error(`Business ${businessId} not found for subscription ${subscriptionId}`)
-      }
+      await storeStrategyContext(subscriptionId, strategy)
 
-      const context = (business.context as Record<string, unknown>) || {}
-      const profile = (context.profile as BusinessProfile) || {}
-
-      // Build pipeline input from profile
-      const input = buildRunInputFromProfile(profile)
-
-      // Create the initial run linked to subscription
-      const { data: run, error: runError } = await supabase
-        .from("runs")
-        .insert({
-          user_id: userId,
-          business_id: businessId,
-          subscription_id: subscriptionId,
-          week_number: 1,
-          input: input as unknown as Json,
-          status: "pending",
-          source: "subscription",
-        })
-        .select("id")
-        .single()
-
-      if (runError || !run) {
-        throw new Error(`Failed to create initial run: ${runError?.message}`)
-      }
-
-      // Link run to subscription as original_run_id
-      await supabase
-        .from("subscriptions")
-        .update({ original_run_id: run.id })
-        .eq("id", subscriptionId)
-
-      // Run the full pipeline
-      try {
-        return await runPipeline(run.id)
-      } catch (err) {
-        await supabase
-          .from("runs")
-          .update({ status: "failed", stage: "Pipeline error" })
-          .eq("id", run.id)
-        throw err
-      }
+      return strategy
     })
 
-    if (!result.success) {
-      console.error(`[Inngest] Initial strategy failed for subscription ${subscriptionId}:`, result.error)
-      return { success: false, error: result.error }
-    }
+    // Step 2: Generate Sonnet weekly tasks
+    const runId = await step.run("generate-weekly-tasks", async () => {
+      const profile = await fetchBusinessProfile(businessId)
 
-    console.log(`[Inngest] Initial strategy complete for subscription ${subscriptionId}`)
-    return { success: true, subscriptionId }
+      const weeklyOutput = await generateWeeklyTasks({
+        profile,
+        strategyContext,
+        userId,
+      })
+
+      const newRunId = await createWeeklyRun({
+        userId,
+        businessId,
+        subscriptionId,
+        weekNumber: 1,
+        weeklyOutput,
+      })
+
+      // Link run to subscription as original_run_id
+      const supabase = createServiceClient()
+      await supabase
+        .from("subscriptions")
+        .update({ original_run_id: newRunId })
+        .eq("id", subscriptionId)
+
+      return newRunId
+    })
+
+    console.log(`[Inngest] Subscription ${subscriptionId} initialized: strategy + week 1 tasks (run ${runId})`)
+    return { success: true, subscriptionId, runId }
   }
 )
 
 /**
  * Weekly re-vectoring cron — runs every Sunday at 6am UTC.
- * Fetches all active subscriptions and generates new weekly plans.
  *
- * Order of operations: create run first, then increment week after pipeline
- * succeeds. This prevents orphaned week increments if the pipeline fails.
+ * For each active subscription:
+ * - If month boundary (every 4th week): re-run Opus strategy
+ * - Always: generate Sonnet weekly tasks
  */
 export const weeklyRevector = inngest.createFunction(
   {
@@ -135,9 +245,9 @@ export const weeklyRevector = inngest.createFunction(
 
     console.log(`[Inngest] Found ${subscriptions.length} active subscriptions`)
 
-    // Process each subscription
     for (const sub of subscriptions) {
-      await step.run(`revector-${sub.id}`, async () => {
+      // Step A: Generate and store (idempotent via existing run check)
+      const runId = await step.run(`generate-${sub.id}`, async () => {
         const supabase = createServiceClient()
         const nextWeek = sub.current_week + 1
 
@@ -150,150 +260,84 @@ export const weeklyRevector = inngest.createFunction(
           .single()
 
         if (existingRun) {
-          // Run already exists — skip to pipeline (idempotent retry)
-          console.log(`[Inngest] Run already exists for sub ${sub.id} week ${nextWeek}, re-running pipeline`)
-          try {
-            await runPipeline(existingRun.id)
-
-            // Increment week after successful pipeline
-            await incrementSubscriptionWeek(sub.id, sub.current_week)
-
-            const { data: user } = await supabase
-              .from("users")
-              .select("email")
-              .eq("id", sub.user_id)
-              .single()
-
-            if (user?.email) {
-              sendWeekReadyEmail({ to: user.email, runId: existingRun.id }).catch((err) => {
-                console.error("[Inngest] Week ready email failed:", err)
-              })
-            }
-          } catch (err) {
-            await supabase
-              .from("runs")
-              .update({ status: "failed", stage: "Weekly pipeline error" })
-              .eq("id", existingRun.id)
-            console.error(`[Inngest] Weekly pipeline failed for ${sub.id}:`, err)
-            throw err
-          }
-          return
+          console.log(`[Inngest] Run already exists for sub ${sub.id} week ${nextWeek}`)
+          return existingRun.id
         }
 
-        // Fetch business profile
-        const { data: business } = await supabase
-          .from("businesses")
-          .select("context, name")
-          .eq("id", sub.business_id)
-          .single()
+        const profile = await fetchBusinessProfile(sub.business_id)
 
-        const context = (business?.context as Record<string, unknown>) || {}
-        const profile = (context.profile as BusinessProfile) || {}
+        // Month boundary check: every 4th week triggers Opus re-strategy
+        const isMonthBoundary = sub.current_week > 0 && sub.current_week % 4 === 0
 
-        // Fetch last week's run
+        let strategyContext = await fetchStrategyContext(sub.id)
+
+        if (isMonthBoundary || !strategyContext) {
+          console.log(`[Inngest] Month boundary (week ${sub.current_week}) — regenerating strategy for ${sub.id}`)
+
+          const carryForward = await buildCarryForward(sub.id, sub.current_week)
+          const newMonthNumber = strategyContext ? strategyContext.monthNumber + 1 : 1
+
+          strategyContext = await generateStrategyContext({
+            profile,
+            monthNumber: newMonthNumber,
+            carryForward,
+          })
+
+          await storeStrategyContext(sub.id, strategyContext)
+        }
+
+        // Fetch last week's context for task generation
+        const { completionSummary, checkinContext } = await fetchLastWeekContext(sub.id, sub.current_week)
+
+        // Generate weekly tasks
+        const weeklyOutput = await generateWeeklyTasks({
+          profile,
+          strategyContext,
+          lastWeekSummary: completionSummary,
+          checkinContext,
+          userId: sub.user_id,
+        })
+
+        // Get last run for parent linking
         const { data: lastRun } = await supabase
           .from("runs")
-          .select("id, output, structured_output")
+          .select("id")
           .eq("subscription_id", sub.id)
           .order("week_number", { ascending: false })
           .limit(1)
           .single()
 
-        // Fetch task completions from last week
-        let completionSummary = ""
-        if (lastRun) {
-          const { data: completions } = await supabase
-            .from("task_completions")
-            .select("task_index, completed, note, outcome")
-            .eq("run_id", lastRun.id)
+        return await createWeeklyRun({
+          userId: sub.user_id,
+          businessId: sub.business_id,
+          subscriptionId: sub.id,
+          weekNumber: nextWeek,
+          weeklyOutput,
+          parentRunId: lastRun?.id || sub.original_run_id || undefined,
+        })
+      })
 
-          if (completions && completions.length > 0) {
-            const completed = completions.filter((c) => c.completed)
-            const skipped = completions.filter((c) => !c.completed)
-            completionSummary = `Last week: ${completed.length}/${completions.length} tasks completed.`
-            if (completed.some((c) => c.outcome)) {
-              completionSummary += ` Outcomes: ${completed.filter((c) => c.outcome).map((c) => c.outcome).join("; ")}`
-            }
-            if (skipped.length > 0) {
-              completionSummary += ` Skipped: ${skipped.length} tasks.`
-            }
-          }
-        }
+      // Step B: Finalize — increment week + send email (separate step for retry safety)
+      await step.run(`finalize-${sub.id}`, async () => {
+        // Idempotent: incrementSubscriptionWeek uses optimistic lock
+        await incrementSubscriptionWeek(sub.id, sub.current_week).catch(() => {
+          // Already incremented on prior attempt — expected
+        })
 
-        // Fetch weekly checkin
-        const { data: checkin } = await supabase
-          .from("weekly_checkins")
-          .select("sentiment, notes")
-          .eq("subscription_id", sub.id)
-          .eq("week_number", sub.current_week)
+        const supabase = createServiceClient()
+        const { data: user } = await supabase
+          .from("users")
+          .select("email")
+          .eq("id", sub.user_id)
           .single()
 
-        const checkinContext = checkin
-          ? `User sentiment: ${checkin.sentiment}. ${checkin.notes || ""}`
-          : ""
-
-        // Build input with context from prior weeks
-        const input = buildRunInputFromProfile(profile)
-
-        // Additional context for the pipeline
-        const weeklyContext = [
-          `## Week ${nextWeek} Re-vectoring`,
-          completionSummary,
-          checkinContext,
-          lastRun?.output ? `## Previous Strategy Summary\n${(lastRun.output as string).slice(0, 2000)}` : "",
-        ]
-          .filter(Boolean)
-          .join("\n\n")
-
-        // Create new run BEFORE incrementing week
-        const { data: run, error: runError } = await supabase
-          .from("runs")
-          .insert({
-            user_id: sub.user_id,
-            business_id: sub.business_id,
-            subscription_id: sub.id,
-            week_number: nextWeek,
-            parent_plan_id: lastRun?.id || sub.original_run_id,
-            input: input as unknown as Json,
-            additional_context: weeklyContext,
-            status: "pending",
-            source: "subscription",
+        if (user?.email) {
+          sendWeekReadyEmail({ to: user.email, runId }).catch((err) => {
+            console.error("[Inngest] Week ready email failed:", err)
           })
-          .select("id")
-          .single()
-
-        if (runError || !run) {
-          console.error(`[Inngest] Failed to create weekly run for ${sub.id}:`, runError)
-          return
         }
 
-        // Run pipeline, then increment week only on success
-        try {
-          await runPipeline(run.id)
-
-          // Increment week AFTER successful pipeline completion
-          await incrementSubscriptionWeek(sub.id, sub.current_week)
-
-          // Send Monday email
-          const { data: user } = await supabase
-            .from("users")
-            .select("email")
-            .eq("id", sub.user_id)
-            .single()
-
-          if (user?.email) {
-            sendWeekReadyEmail({ to: user.email, runId: run.id }).catch((err) => {
-              console.error("[Inngest] Week ready email failed:", err)
-            })
-          }
-        } catch (err) {
-          await supabase
-            .from("runs")
-            .update({ status: "failed", stage: "Weekly pipeline error" })
-            .eq("id", run.id)
-          console.error(`[Inngest] Weekly pipeline failed for ${sub.id}:`, err)
-          throw err
-        }
+        console.log(`[Inngest] Weekly tasks finalized for ${sub.id} (run ${runId})`)
       })
     }
 
@@ -301,5 +345,73 @@ export const weeklyRevector = inngest.createFunction(
     return { success: true, count: subscriptions.length }
   }
 )
+
+/**
+ * Build carryForward from the last 4 weeks of task completions.
+ */
+async function buildCarryForward(
+  subscriptionId: string,
+  currentWeek: number
+): Promise<StrategyContext['monthlyTheme']['carryForward']> {
+  const supabase = createServiceClient()
+
+  // Get runs from last 4 weeks
+  const startWeek = Math.max(1, currentWeek - 3)
+  const { data: runs } = await supabase
+    .from("runs")
+    .select("id, structured_output")
+    .eq("subscription_id", subscriptionId)
+    .gte("week_number", startWeek)
+    .lte("week_number", currentWeek)
+    .order("week_number", { ascending: true })
+
+  if (!runs || runs.length === 0) {
+    return { worked: [], didntWork: [], learnings: [] }
+  }
+
+  const worked: string[] = []
+  const didntWork: string[] = []
+
+  for (const run of runs) {
+    const { data: completions } = await supabase
+      .from("task_completions")
+      .select("task_index, completed, outcome")
+      .eq("run_id", run.id)
+
+    if (!completions) continue
+
+    const output = run.structured_output as WeeklyTaskOutput | null
+    const tasks = output?.tasks || []
+
+    for (const c of completions) {
+      const task = tasks[c.task_index]
+      if (!task) continue
+
+      if (c.completed && c.outcome) {
+        worked.push(`${task.title}: ${c.outcome}`)
+      } else if (!c.completed) {
+        didntWork.push(task.title)
+      }
+    }
+  }
+
+  // Fetch checkins for learnings
+  const { data: checkins } = await supabase
+    .from("weekly_checkins")
+    .select("notes")
+    .eq("subscription_id", subscriptionId)
+    .gte("week_number", startWeek)
+    .lte("week_number", currentWeek)
+
+  const learnings = (checkins || [])
+    .filter((c) => c.notes)
+    .map((c) => c.notes as string)
+
+  return {
+    worked: worked.slice(0, 10),
+    didntWork: didntWork.slice(0, 10),
+    learnings: learnings.slice(0, 5),
+  }
+}
 
 export const subscriptionFunctions = [handleSubscriptionCreated, weeklyRevector]

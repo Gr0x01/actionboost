@@ -1,32 +1,54 @@
 # Current Phase
 
-## Latest Update: Dashboard Phases 0-2.5 Complete + Bot Protection Fix (Feb 2, 2026)
+## Latest Update: Split Pipeline — Strategy (Opus) → Tasks (Sonnet) (Feb 3, 2026)
 
-**Phases 0, 1, 2, 2.5 shipped.** Dashboard has layout shell, project switcher, Brand page, and Business page — both with AI-powered fill.
+**Subscription pipeline refactored into split architecture.** Opus generates quarterly strategy (monthly), Sonnet generates weekly tasks. ~75% cost reduction per subscriber ($78/yr → $19.50/yr).
 
-**What shipped this session:**
+**What shipped:**
 
-- **Phase 2.5**: Business page (`/dashboard/business`) with 2 editable sections: Business Basics (website, description, industry) and Goals (primary goal, budget). "Fill with AI" button uses Sonnet to infer fields from existing context. Same edit/save/cancel pattern as Brand.
-  - Renamed from "Settings" → "Business" (brand guardian: "Settings" implies account management, not business profile)
-  - Nav icon: `Building2`. Route: `/dashboard/business`
-  - `industry` added to `ALLOWED_PROFILE_KEYS`
-  - New API: `POST /api/business/[id]/business/suggest` (Sonnet, `?save=true`)
-  - "What You've Tried" section removed — static snapshot doesn't belong here; marketing history will be a living log in Phase 4
-  - `triedBefore` removed from `ALLOWED_PROFILE_KEYS` and `ONBOARDING_STEPS` (not collected in any active flow — baked into `productDescription` in `/start`). Field kept in type + schema for backward compat (brand suggest + inngest read it).
-  - `/subscribe` page is orphaned — nothing links to it. Noted for future cleanup.
+- **agentic-engine.ts** (new) — Reusable tool-calling loop extracted from pipeline-agentic.ts. Contains all tool definitions, executors, SSRF protection, API tracking, and generic `runAgenticLoop()`. Each pipeline now owns its own system prompt.
+- **pipeline-agentic.ts** (rewritten) — Now thin wrappers: $29 one-shot, free audit, refinement. Each builds its own prompt and calls `runAgenticLoop()`.
+- **pipeline-strategy.ts** (new) — Opus strategy generation with its own system prompt. Calls `runAgenticLoop()` directly. Extraction via Sonnet into typed `StrategyContext`.
+- **pipeline-weekly-tasks.ts** (new) — Sonnet weekly task generation. Single API call, no tools, 7 tasks with WHY/HOW baked in.
+- **subscription.ts** (rewritten) — Split pipeline flow: `handleSubscriptionCreated` (Opus strategy → Sonnet tasks), `weeklyRevector` (Sunday cron with month boundary detection). Inngest steps split for retry safety.
+- **types.ts** — Added `StrategyContext` and `WeeklyTaskOutput` types.
+- **extract-tasks.ts** — Handles new flat `tasks[]` format alongside legacy `weeks[].days[]`.
+- **MonthlyFocus.tsx** (new) — Dashboard card showing quarter objective + monthly milestone. Fetches from `/api/strategy`.
+- **SubscriberDashboard.tsx** — Added MonthlyFocus, fixed thesis/weekTheme fallback.
+- **`/api/strategy`** (new) — GET endpoint returning subscription strategy context.
+- **Migration** — `strategy_context` JSONB column on `subscriptions`.
 
-- **Bot protection fix**: Cloudflare "verifying your browser" was breaking the landing page roaster and marketing audit screenshots + content extraction.
-  - Screenshot service (Vultr): now detects CF challenge and waits up to 15s for it to resolve before capturing
-  - Landing page roaster + marketing audit: if Tavily returns challenge content, falls back to ScrapingDog with `dynamic=true` (JS rendering)
-  - Screenshot service redeployed to Vultr
+**Architecture:** Three layers — Foundation (business profile, exists) → Quarter Focus + Monthly Theme (Opus, monthly) → Weekly Tasks (Sonnet, weekly). Each pipeline owns its prompt via the shared agentic engine.
+
+**Next:** Week navigator (←/→), week theme improvements, insights tab.
+
+Full dashboard spec and phase plan in `projects/ws2-subscription-platform.md`.
+
+---
+
+## Previous: Phase 3b — Task Detail Panel (Feb 2, 2026)
+
+**Task detail panel shipped.** Clicking a task opens a slide-over panel (desktop right side) or bottom sheet (mobile) with full task context. The collapsed task list stays visible and interactive.
+
+**What shipped:**
+
+- **TaskDetailPanel.tsx** (new) — Responsive panel with framer-motion animations. Desktop: slides in from right below sticky navbar (`top-14`), no backdrop, pushes main content left via `lg:mr-[28rem]`. Mobile: bottom sheet with light backdrop.
+- **TaskCard.tsx** (rewritten) — Collapsed-only: checkbox + title + track pill. Click card → opens panel. Click again → closes panel. No more inline expanded state.
+- **WeeklyFocus.tsx** — Manages `selectedTaskIndex` + per-task draft cache (`DraftState`). Drafts survive panel close/reopen.
+- **WHY/HOW enrichment** — New `enrichTasksWithContext()` Sonnet post-processor in `formatter.ts`. After structured output extraction, generates 1-sentence WHY (strategic rationale) + 2-3 sentence HOW (execution steps) for each task. ~$0.02, ~5s. Wired into both agentic + refinement pipelines (non-fatal).
+- **Schema changes** — `DayActionSchema` now has optional `why`/`how` fields. `ExtractedTask` passes them through. `/api/tasks` returns them.
+- **Sticky navbar** — `DashboardShell` header is now `sticky top-0 z-50`.
+- **TaskCheckbox.tsx deleted** — replaced by TaskCard.
+
+**Panel sections:** Header (checkbox + title + track text + ghost close), WHY (amber callout), HOW, success metric, notes (auto-save on blur), quick draft (chips always visible, per-task draft cache).
+
+**Draft cost:** ~$0.01-0.02 per draft (Sonnet with ~3k tokens strategy context).
 
 **Dashboard nav (4 tabs):**
-1. This Week (CalendarCheck) — task list
+1. This Week (CalendarCheck) — task list + detail panel
 2. Insights (BarChart3) — placeholder
 3. Brand (Fingerprint) — ICP, voice, competitors + AI fill
 4. Business (Building2) — basics, goals + AI fill
-
-**Next: Phase 3 (Task View Redesign)** — Replace current `WeeklyFocus` + `TaskCheckbox` with expandable task cards (collapsed: checkbox + title + track; expanded: WHY + HOW + notes). Week theme card. Week navigator.
 
 Full dashboard spec and phase plan in `projects/ws2-subscription-platform.md`.
 

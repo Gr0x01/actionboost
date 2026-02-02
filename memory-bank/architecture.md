@@ -94,6 +94,7 @@ auth.users (Supabase Auth)     public.users (our table)
 | `/api/headline-analyzer/[slug]` | GET | Get analysis results | No | ✅ |
 | `/api/landing-page-roaster` | POST | Create landing page roast | No | ✅ |
 | `/api/landing-page-roaster/feed` | GET | Recent roasts feed (cached 60s) | No | ✅ |
+| `/api/strategy` | GET | Get subscription strategy context | Required | ✅ |
 
 **Auth pattern**: Check user's `auth_id` links to `public.users`, then verify `user_id` matches, OR valid `share_slug` for public access.
 
@@ -122,13 +123,16 @@ auth.users (Supabase Auth)     public.users (our table)
 ### Files
 ```
 src/lib/ai/
-├── types.ts           # RunInput, ResearchContext, FocusArea, ToolDefinition
-├── tools.ts           # Tool definitions + executor
-├── pipeline-agentic.ts # Agentic generation with tool calling
-├── research.ts        # Research functions (used by tools)
-├── generate.ts        # System prompts + fallback generation
-├── pipeline.ts        # Orchestrator: agentic → accumulate
-└── embeddings.ts      # OpenAI embeddings + pgvector search
+├── types.ts              # RunInput, StrategyContext, WeeklyTaskOutput, etc.
+├── agentic-engine.ts     # Reusable tool-calling loop (tools, executors, SSRF protection)
+├── pipeline-agentic.ts   # $29 one-shot + free audit + refinement (prompts + wrappers)
+├── pipeline-strategy.ts  # Subscription: Opus strategy generation (quarter focus + monthly theme)
+├── pipeline-weekly-tasks.ts # Subscription: Sonnet weekly task generation (7 tasks with WHY/HOW)
+├── tools.ts              # Tool definitions + executor
+├── research.ts           # Research functions (used by tools)
+├── generate.ts           # System prompts + fallback generation
+├── pipeline.ts           # Orchestrator: agentic → accumulate
+└── embeddings.ts         # OpenAI embeddings + pgvector search
 
 src/lib/context/
 └── accumulate.ts # Merge run data into users.context JSONB
@@ -228,7 +232,7 @@ Agentic Sonnet pipeline — "landing page as lens into strategy":
 - Model: Claude Sonnet 4 with tool calling
 - Tools: `search` (Tavily), `seo` (DataForSEO domain_rank_overview)
 - Limits: 5 tool calls, 3 iterations, 4000 max output tokens
-- Screenshot captured upfront via Vultr Puppeteer (vision input to Sonnet)
+- Screenshot captured upfront via Vultr screenshot service (vision input to Sonnet)
 - Tavily extract runs in parallel as fallback for bot-protected sites
 - System prompt detects Cloudflare/CAPTCHA screenshots, falls back to page text
 - Output sections: 3-Second Test, Positioning Gap, Quick Wins, Competitive Landscape, Scores
@@ -256,6 +260,40 @@ Agentic Sonnet pipeline — "landing page as lens into strategy":
 Files: `runFreePipeline()` in pipeline.ts, `generateFreeAgenticStrategy()` in pipeline-agentic.ts
 Routes: `POST /api/free-audit`, `GET /api/free-audit/[id]`
 Page: `/free-results/[id]` with auto-polling and upsell UI
+
+### Subscription Pipeline (Boost Weekly)
+
+Split architecture: Opus strategy (monthly) → Sonnet tasks (weekly). ~75% cost reduction vs all-Opus.
+
+**Three layers:**
+1. **Foundation** — business profile from `businesses.context.profile` (~500 tokens). Already exists.
+2. **Quarter Focus + Monthly Theme** — Opus with research tools, stored on `subscriptions.strategy_context` JSONB. Refreshed every 4th week (month boundary).
+3. **Weekly Tasks** — Sonnet, no tools, 7 tasks with WHY/HOW baked in. Stored in `runs.structured_output` as flat `{ weekTheme, tasks[] }`.
+
+**Pipeline files:**
+- `pipeline-strategy.ts` — Opus strategy. Own system prompt, calls `runAgenticLoop()` from `agentic-engine.ts`. Extraction via Sonnet into `StrategyContext` type.
+- `pipeline-weekly-tasks.ts` — Sonnet tasks. Single API call, structured JSON output. No tools.
+
+**Inngest functions** (`subscription.ts`):
+- `handle-subscription-created` — Opus strategy → store → Sonnet week 1 tasks → store run
+- `weekly-revector-cron` (Sunday 6am UTC) — For each active sub: month boundary? → Opus re-strategy. Always → Sonnet tasks. Split into `generate-{id}` + `finalize-{id}` steps for retry safety.
+- `carryForward` mechanism aggregates last 4 weeks of completions/outcomes/checkins for monthly re-strategy.
+
+**Data model:**
+- `subscriptions.strategy_context` — JSONB column holding `StrategyContext` (quarterFocus, monthlyTheme, rawStrategy, researchSummary, generatedAt, monthNumber)
+- `runs.structured_output` — Weekly format: `{ weekTheme: string, tasks: Array<{ title, description, track, why, how, timeEstimate }> }`
+- `task_completions` — unchanged, index-based (0-6)
+
+**Dashboard:**
+- `MonthlyFocus.tsx` — collapsible card showing quarter objective + monthly milestone. Fetches from `/api/strategy`.
+- `extract-tasks.ts` — handles flat `tasks[]` (new) + `weeks[].days[]` (legacy) + `thisWeek.days[]` (legacy)
+
+**Cost per subscriber:**
+| | Monthly |
+|---|---|
+| Opus strategy (1x/month) | ~$1.50 |
+| Sonnet tasks (4x/month) | ~$0.12 |
+| **Total** | **~$1.62/month** |
 
 ### First Impressions Pipeline (REMOVED)
 **Sunset Jan 23, 2026** - Replaced by `/in-action` curated examples page. All code removed. Table `first_impressions` remains in database (data archived).
@@ -454,9 +492,10 @@ src/
 ## Tech Reference
 
 ### Claude Models
-| Model | ID | Input | Output |
-|-------|-----|-------|--------|
-| Opus 4.5 (all pipelines) | `claude-opus-4-5-20251101` | $5/MTok | $25/MTok |
+| Model | ID | Input | Output | Used By |
+|-------|-----|-------|--------|---------|
+| Opus 4.5 | `claude-opus-4-5-20251101` | $5/MTok | $25/MTok | $29 one-shot, subscription strategy |
+| Sonnet 4 | `claude-sonnet-4-20250514` | $3/MTok | $15/MTok | Free audit, weekly tasks, extraction |
 
 **Do not change models without approval**
 
@@ -556,6 +595,8 @@ Background job orchestration for long-running AI pipelines.
 | `generate-marketing-audit` | `marketing-audit/created` | Free marketing audit (Tavily + GPT-4.1-mini) |
 | `generate-target-audience` | `target-audience/created` | Free target audience generator (GPT-4.1-mini) |
 | `generate-landing-page-roast` | `landing-page-roaster/created` | Free landing page roaster (Tavily + screenshot + GPT-4.1-mini vision) |
+| `handle-subscription-created` | `subscription/created` | Opus strategy + Sonnet week 1 tasks |
+| `weekly-revector-cron` | cron: Sunday 6am UTC | Weekly Sonnet tasks + monthly Opus re-strategy |
 
 **Files**:
 ```
@@ -579,7 +620,7 @@ src/app/api/inngest/route.ts  # Serve handler
 ```
 INNGEST_EVENT_KEY      # For sending events to Inngest Cloud
 INNGEST_SIGNING_KEY    # For verifying requests from Inngest
-SCREENSHOT_SERVICE_URL # Vultr Puppeteer service (http://45.63.3.155:3333)
+SCREENSHOT_SERVICE_URL # Vultr screenshot service (http://45.63.3.155:3333) — stealth plugin, Decodo residential proxy, browser pool
 SCREENSHOT_API_KEY     # Shared secret for screenshot service
 ```
 

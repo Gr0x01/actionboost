@@ -223,23 +223,34 @@ Current dashboard is a single-page 3-panel layout (WeeklyFocus + WhatsWorking + 
 - `src/components/dashboard/profile/ProfileSection.tsx` (reusable card)
 - `src/app/api/business/[id]/brand/suggest/route.ts` (AI endpoint)
 
-### Phase 3: Task View Redesign
-- Replace `WeeklyFocus` + `TaskCheckbox` with expandable task cards:
-  - Collapsed: checkbox + title + track label (Sprint/Build)
-  - Expanded: WHY (rationale) + HOW (instructions) + note field
-- Task-level notes UI (DB column exists, no UI currently)
-  - Inline textarea on expanded card
-  - Save to `/api/tasks/complete` (already accepts `note` + `outcome`)
-- Week theme card at top (thesis from `runs.thesis`)
-- Week navigator: `← Week 3 (This Week) →`
-  - Query runs by `subscription_id` + `week_number`
-  - Current week highlighted, forward/back navigation
-- Enhance AI formatter to output `why` and `how` fields in `structured_output`:
-  - Add to `DayActionSchema`: `why?: string`, `how?: string`
-  - Update system prompt to generate these fields
-  - Backward compatible — old runs without why/how still render
+### Phase 3a: Week Theme + Task Cards ✅ Complete
+- `WeekTheme.tsx` — week theme card showing thesis from `structured_output.thesis`
+- `TaskCard.tsx` — collapsed-only cards: checkbox + title + track pill
+- Click card opens detail panel, click again closes it
+- `TaskCheckbox.tsx` deleted (replaced by TaskCard)
 
-**Dependencies**: Phase 1 (needs layout shell).
+### Phase 3b: Task Detail Panel ✅ Complete
+- `TaskDetailPanel.tsx` — slide-over panel (desktop right side, framer-motion spring) / bottom sheet (mobile)
+- Panel sections: header (checkbox + title + track + ghost close), WHY (amber callout), HOW, success metric, notes (auto-save on blur), quick draft (chips always visible)
+- Panel pushes main content left via `lg:mr-[28rem]` on `SubscriberDashboard`
+- Per-task draft cache in `WeeklyFocus` — drafts survive panel close/reopen
+- WHY/HOW enrichment: `enrichTasksWithContext()` Sonnet post-processor in `formatter.ts`, wired into both pipelines (non-fatal)
+- `DayActionSchema` extended with optional `why`/`how` fields, passed through extraction + API
+- Sticky navbar: `DashboardShell` header `sticky top-0 z-50`
+
+**Key files:**
+- `src/components/dashboard/TaskDetailPanel.tsx` (new)
+- `src/components/dashboard/TaskCard.tsx` (rewritten)
+- `src/components/dashboard/WeekTheme.tsx` (new)
+- `src/components/dashboard/WeeklyFocus.tsx` (manages selection + draft cache)
+- `src/lib/ai/formatter.ts` (`enrichTasksWithContext()`)
+
+### Phase 3c: Week Navigator — Not Started
+- `← Week 3 (This Week) →`
+- Query runs by `subscription_id` + `week_number`
+- Current week highlighted, forward/back navigation
+
+**Dependencies**: Phase 3b (needs task view).
 
 ### Phase 4: Weekly Retro + History
 - Past week view: read-only tasks with completion status + notes + retro
@@ -254,7 +265,7 @@ Current dashboard is a single-page 3-panel layout (WeeklyFocus + WhatsWorking + 
   - Container exists but empty until analytics integrations (WS4)
   - Shows placeholder: "Connect analytics to see what's moving"
 
-**Dependencies**: Phase 3 (needs week navigation).
+**Dependencies**: Phase 3c (needs week navigation).
 
 ### Phase Summary
 
@@ -264,7 +275,9 @@ Current dashboard is a single-page 3-panel layout (WeeklyFocus + WhatsWorking + 
 | 1 | Layout shell + nav + project switcher | ✅ Complete |
 | 2 | Brand page (ICP, voice, competitors + AI fill) | ✅ Complete |
 | 2.5 | Business page (basics, goals + AI fill) | ✅ Complete |
-| 3 | Task view redesign + week navigator | **Next** |
+| 3a | Week theme + task cards | ✅ Complete |
+| 3b | Task detail panel (WHY/HOW/notes/draft) | ✅ Complete |
+| 3c | Week navigator | **Next** |
 | 4 | Weekly retro + marketing history | Blocked on Phase 3 |
 
 ## Data Model Changes
@@ -298,7 +311,7 @@ From subscription-brainstorm.md §3 (Option A — extend `runs`):
 | AI brand suggestions | Sonnet (not Haiku) via dedicated endpoint | Haiku too shallow for nuanced brand positioning. Sonnet worth the cost. |
 | Original strategy display | Decomposed into tasks + theme, never shown as document | Users interact with actions, not reports. |
 | Week navigation | Time navigator on main view, not separate pages | One layout, time dimension. Past/current/future in same view. |
-| "Draft this" | Deferred — not tied into task system yet | Needs more thinking. Can bolt on later without restructuring. |
+| "Draft this" | Quick draft on task detail panel | Sonnet drafts per content type (tweet, Reddit, LinkedIn, email, DM, blog outline). ~$0.01-0.02/draft. Per-task cache. |
 
 ## Key Decisions Still Needed
 
