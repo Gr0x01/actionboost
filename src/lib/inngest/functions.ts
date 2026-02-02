@@ -2,6 +2,7 @@ import { inngest } from "./client";
 import { runPipeline, runFreePipeline, runRefinementPipeline } from "@/lib/ai/pipeline";
 import { runMarketingAuditPipeline } from "@/lib/ai/marketing-audit";
 import { runTargetAudiencePipeline } from "@/lib/ai/target-audience";
+import { runLandingPageRoasterPipeline } from "@/lib/ai/landing-page-roaster";
 import { createServiceClient } from "@/lib/supabase/server";
 import type { RunInput } from "@/lib/ai/types";
 
@@ -219,5 +220,39 @@ export const generateTargetAudience = inngest.createFunction(
   }
 );
 
+export const generateLandingPageRoast = inngest.createFunction(
+  {
+    id: "generate-landing-page-roast",
+    retries: 2,
+  },
+  { event: "landing-page-roaster/created" },
+  async ({ event, step }) => {
+    const { resultId } = event.data;
+
+    console.log(`[Inngest] Starting landing page roast ${resultId}`);
+
+    const result = await step.run("landing-page-roaster-pipeline", async () => {
+      try {
+        return await runLandingPageRoasterPipeline(resultId);
+      } catch (err) {
+        const supabase = createServiceClient();
+        await supabase
+          .from("free_tool_results")
+          .update({ status: "failed" })
+          .eq("id", resultId);
+        throw err;
+      }
+    });
+
+    if (!result.success) {
+      console.error(`[Inngest] Landing page roast failed for ${resultId}:`, result.error);
+      return { success: false, error: result.error };
+    }
+
+    console.log(`[Inngest] Landing page roast completed for ${resultId}`);
+    return { success: true, resultId };
+  }
+);
+
 // Export all functions for the serve handler
-export const functions = [generateStrategy, refineStrategy, generateFreeAudit, generateMarketingAudit, generateTargetAudience];
+export const functions = [generateStrategy, refineStrategy, generateFreeAudit, generateMarketingAudit, generateTargetAudience, generateLandingPageRoast];

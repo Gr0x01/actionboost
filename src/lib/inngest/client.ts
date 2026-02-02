@@ -29,6 +29,11 @@ export type Events = {
       resultId: string;
     };
   };
+  "landing-page-roaster/created": {
+    data: {
+      resultId: string;
+    };
+  };
 };
 
 // Create the Inngest client with typed events
