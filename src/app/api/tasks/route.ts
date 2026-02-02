@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getAuthenticatedUserId } from "@/lib/auth/session"
 import { createServiceClient } from "@/lib/supabase/server"
+import { extractTasksFromStructuredOutput } from "@/lib/dashboard/extract-tasks"
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -32,26 +33,25 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Not found" }, { status: 404 })
   }
 
-  // Extract tasks from structured output
-  const structuredOutput = run.structured_output as Record<string, unknown> | null
-  const tasks = (structuredOutput?.tasks as Array<{
-    title: string
-    description: string
-    track: "sprint" | "build"
-  }>) || []
+  // Extract tasks from structured output weeks or legacy thisWeek
+  const rawTasks = extractTasksFromStructuredOutput(
+    run.structured_output as Record<string, unknown> | null
+  )
 
   // Fetch completions
   const { data: completions } = await supabase
     .from("task_completions")
-    .select("task_index, completed, completed_at, note, outcome")
+    .select("task_index, completed, completed_at, note, outcome, track")
     .eq("run_id", runId)
 
   // Merge tasks with completions
-  const mergedTasks = tasks.map((task, index) => {
+  const mergedTasks = rawTasks.map((task, index) => {
     const completion = completions?.find((c) => c.task_index === index)
     return {
       index,
-      ...task,
+      title: task.title,
+      description: task.description,
+      track: (completion?.track as "sprint" | "build") || "sprint",
       completed: completion?.completed || false,
       completedAt: completion?.completed_at || null,
       note: completion?.note || null,

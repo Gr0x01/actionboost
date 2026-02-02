@@ -136,18 +136,18 @@ export async function updateSubscriptionStatus(
   if (updates.currentPeriodEnd) updateData.current_period_end = updates.currentPeriodEnd.toISOString()
   if (updates.cancelAtPeriodEnd !== undefined) updateData.cancel_at_period_end = updates.cancelAtPeriodEnd
 
-  const { data, error, count } = await supabase
+  const { data, error } = await supabase
     .from("subscriptions")
     .update(updateData)
     .eq("stripe_subscription_id", stripeSubscriptionId)
-    .select("id", { count: "exact" })
+    .select("id")
 
   if (error) {
     throw new Error(`Failed to update subscription ${stripeSubscriptionId}: ${error.message}`)
   }
 
   if (!data || data.length === 0) {
-    console.warn(`[Subscription] updateSubscriptionStatus: no rows matched for stripe_subscription_id=${stripeSubscriptionId} (count=${count}). The subscription record may not exist yet.`)
+    console.warn(`[Subscription] updateSubscriptionStatus: no rows matched for stripe_subscription_id=${stripeSubscriptionId}. The subscription record may not exist yet.`)
   }
 }
 

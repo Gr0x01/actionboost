@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
+import { extractTasksFromStructuredOutput } from "@/lib/dashboard/extract-tasks"
 
 interface DraftItProps {
   runId: string
@@ -24,7 +25,10 @@ export function DraftIt({ runId, structuredOutput }: DraftItProps) {
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
 
-  const tasks = (structuredOutput?.tasks as Array<{ title: string; description: string }>) || []
+  const tasks = useMemo(
+    () => extractTasksFromStructuredOutput(structuredOutput),
+    [structuredOutput]
+  )
 
   const handleDraft = async () => {
     setLoading(true)

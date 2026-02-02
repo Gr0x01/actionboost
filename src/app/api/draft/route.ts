@@ -4,6 +4,7 @@ import { isSubscriber } from "@/lib/subscription"
 import { generateDraft } from "@/lib/ai/draft"
 import { createServiceClient } from "@/lib/supabase/server"
 import type { BusinessProfile } from "@/lib/types/business-profile"
+import { extractTasksFromStructuredOutput } from "@/lib/dashboard/extract-tasks"
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -78,10 +79,11 @@ export async function POST(request: NextRequest) {
     profile = (context.profile as BusinessProfile) || {}
   }
 
-  // Extract the specific task
-  const structuredOutput = run.structured_output as Record<string, unknown> | null
-  const tasks = (structuredOutput?.tasks as Array<{ title: string; description: string }>) || []
-  const task = tasks[taskIndex]
+  // Extract the specific task (same order as /api/tasks)
+  const flatTasks = extractTasksFromStructuredOutput(
+    run.structured_output as Record<string, unknown> | null
+  )
+  const task = flatTasks[taskIndex]
 
   if (!task) {
     return NextResponse.json({ error: "Task not found" }, { status: 404 })

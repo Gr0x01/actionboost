@@ -251,10 +251,20 @@ Pain → Solution → Outcome. Examples: Tech/SaaS first, e-commerce second, ser
 | `/results/[runId]` | Strategy display, export options | Owner or share link |
 | `/free-results/[id]` | Mini-audit results with upsell CTAs | No |
 | `/share/[slug]` | Public read-only view of results | No |
-| `/dashboard` | User's past runs, credits remaining | Yes (magic link) |
+| `/dashboard` | Subscriber dashboard — task view, week navigator | Yes (magic link) |
+| `/dashboard/insights` | Analytics trends, competitive monitoring (future) | Yes |
+| `/dashboard/profile` | Business identity — basics, ICPs, voice, competitors | Yes |
+| `/dashboard/settings` | Account, subscription, integrations | Yes |
 | `/in-action` | Curated examples gallery | No |
 | `/in-action/[slug]` | Example detail page (full Boost output) | No |
 | `/in-action/admin` | Add/edit/toggle examples | Localhost or admin email |
+| `/tools/marketing-audit` | Free marketing audit tool | No |
+| `/tools/marketing-audit/[slug]` | Marketing audit results | No |
+| `/tools/target-audience-generator` | Free target audience tool | No |
+| `/tools/headline-analyzer` | Free headline analyzer tool | No |
+| `/tools/landing-page-roaster` | Free landing page roaster tool | No |
+| `/tools/landing-page-roaster/[slug]` | Roast results (shareable) | No |
+| `/upgrade` | Conversion page for all free tools | No |
 
 ---
 

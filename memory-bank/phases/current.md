@@ -1,6 +1,32 @@
 # Current Phase
 
-## Latest Update: Landing Page Roaster Shipped (Feb 2, 2026)
+## Latest Update: Dashboard Redesign Spec (Feb 2, 2026)
+
+**Designed the subscriber dashboard architecture.** Full spec in `projects/ws2-subscription-platform.md` → "Dashboard Design" section.
+
+**Key decisions:**
+- **Task-centric** — Dashboard IS a task list, not panels. Tasks are the primary interaction.
+- **No sidebar** — Top nav (desktop) + bottom nav (mobile/tablet). 4 items: This Week, Insights, Profile, Settings.
+- **Multi-project** — Project switcher in top bar. Founders run 2-3 projects. Switcher is also the upsell surface ($15-20/mo per additional).
+- **Time-navigable** — Week navigator (←/→) on main view. Peek at next week's plan, look back at past weeks with notes + retros.
+- **Mobile-first** — Primary actions (check tasks, mark done, add notes) on phone. Deeper work (profile editing) on desktop.
+- **ICPs (2+)** — Multiple ICPs per project. Each with own pain points, triggers, channels. Future "Draft this" uses ICP selection for targeting.
+- **Do's & Don'ts** — Explicit brand rules on Profile page. Feed into future content drafting.
+- **Original strategy absorbed** — 10-section Opus output decomposed into tasks, theme, competitive context. User never reads a document.
+- **"Draft this" deferred** — Not tied into task system. Can bolt on later.
+- **Business profiles as separate table** — `business_profiles` (one per project, not JSONB on users). Multi-project requires own table.
+
+**4 views:**
+1. **This Week** — Week theme + task cards (expandable: WHY + HOW) + What's Moving (analytics signals) + Weekly check-in
+2. **Insights** — Placeholder for now. Future: analytics trends, landing page monitoring, SEO, competitive alerts
+3. **Profile** — Business basics, ICPs, brand voice, do's/don'ts, competitors, goals
+4. **Settings** — Account, subscription, integrations, notifications
+
+**Next: Implementation.** Fire up ui-designer + frontend-design skill to build the new dashboard layout.
+
+---
+
+## Previous: Landing Page Roaster Shipped (Feb 2, 2026)
 
 **Built and shipped `/tools/landing-page-roaster`** — sixth free tool. User enters URL + optional context, gets a brutally honest roast of their landing page with actionable fixes.
 
@@ -20,8 +46,6 @@
 - `src/lib/ai/landing-page-roaster.ts` — prompt rewrite with roast energy
 - `src/app/api/landing-page-roaster/route.ts` — email made optional, per-URL dedup
 - `src/components/ui/SocialShareButtons.tsx` — added "roaster" source type
-
-**Git worktree setup:** `actionboost/` on `feature/ws2-boost-weekly`, `actionboost-main/` on `main`. Use worktrees to work on current and future things simultaneously.
 
 ---
 
@@ -78,7 +102,7 @@ All 5 free tool result pages now CTA to `/upgrade?from=<tool>` with personalized
 | Email Subject Scorer | ✅ Shipped |
 | Competitor Finder | ✅ Shipped |
 | /upgrade conversion page | ✅ Shipped |
-| Landing Page Roaster | Not started |
+| Landing Page Roaster | ✅ Shipped |
 
 **What's NOT done yet:**
 - ~~Landing Page Roaster~~ ✅ Shipped
