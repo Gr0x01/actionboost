@@ -1,6 +1,6 @@
 'use client'
 
-import type { StructuredOutput } from '@/lib/ai/formatter-types'
+import type { StructuredOutput, FreeBriefOutput } from '@/lib/ai/formatter-types'
 import { PositioningSummaryV2 } from '../dashboard/PositioningSummaryV2'
 import { BriefScoreGauge } from './BriefScoreGauge'
 import { ThreeSecondTest } from './ThreeSecondTest'
@@ -11,7 +11,7 @@ import { FreePreviewPaywall } from './FreePreviewPaywall'
 import { LockedSections } from './LockedSections'
 
 interface FreeInsightsViewProps {
-  structuredOutput: StructuredOutput
+  structuredOutput: FreeBriefOutput | StructuredOutput
   freeAuditId: string
   token: string
 }

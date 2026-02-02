@@ -1,6 +1,6 @@
 import { createServiceClient } from '@/lib/supabase/server'
 import { generateStrategyAgentic, generateAgenticRefinement, generateFreeAgenticStrategy } from './pipeline-agentic'
-import { extractStructuredOutput } from './formatter'
+import { extractStructuredOutput, extractFreeBriefOutput } from './formatter'
 import { accumulateBusinessContext, accumulateUserContext } from '@/lib/context/accumulate'
 import { getOrCreateDefaultBusiness } from '@/lib/business'
 import { searchUserContext } from './embeddings'
@@ -362,7 +362,7 @@ export async function runAgenticPipeline(runId: string): Promise<PipelineResult>
 export type FreePipelineResult = {
   success: boolean
   output?: string
-  structuredOutput?: import('./formatter-types').StructuredOutput | null
+  structuredOutput?: import('./formatter-types').FreeBriefOutput | null
   error?: string
   freeAuditId?: string
 }
@@ -449,16 +449,16 @@ export async function runFreePipeline(
     const output = agenticResult.output
     console.log(`[FreePipeline] Agentic generation complete: ${output.length} chars, ${agenticResult.toolCalls?.length || 0} tool calls`)
 
-    // Extract structured output for dashboard rendering
-    let structuredOutput: import('./formatter-types').StructuredOutput | null = null
+    // Extract structured output using dedicated free brief schema
+    let structuredOutput: import('./formatter-types').FreeBriefOutput | null = null
     try {
-      console.log(`[FreePipeline] Extracting structured output`)
-      structuredOutput = await extractStructuredOutput(output, agenticResult.researchData)
+      console.log(`[FreePipeline] Extracting free brief structured output`)
+      structuredOutput = await extractFreeBriefOutput(output, agenticResult.researchData)
       console.log(
-        `[FreePipeline] Structured output extracted: positioning=${!!structuredOutput?.positioning}, discoveries=${structuredOutput?.discoveries?.length || 0}`
+        `[FreePipeline] Free brief output extracted: briefScores=${!!structuredOutput?.briefScores}, positioning=${!!structuredOutput?.positioning}, discoveries=${structuredOutput?.discoveries?.length || 0}`
       )
     } catch (extractErr) {
-      console.warn('[FreePipeline] Structured output extraction failed (non-fatal):', extractErr)
+      console.warn('[FreePipeline] Free brief extraction failed (non-fatal):', extractErr)
       // Continue without structured output - will fall back to markdown
     }
 

@@ -8,7 +8,7 @@ import { config } from "@/lib/config";
 import { Header, Footer } from "@/components/layout";
 import { StatusMessage, MagicLinkBanner, ResultsHeader, FreeAuditPending } from "@/components/results";
 import { FreeInsightsView, FreeTasksEmptyState } from "@/components/results/free";
-import type { StructuredOutput } from "@/lib/ai/formatter-types";
+import type { StructuredOutput, FreeBriefOutput } from "@/lib/ai/formatter-types";
 import type { TabType } from "@/lib/storage/visitTracking";
 
 type AuditStatus = "pending" | "processing" | "complete" | "failed";
@@ -18,7 +18,7 @@ interface FreeAuditData {
   email: string;
   status: AuditStatus;
   output: string | null;
-  structured_output: StructuredOutput | null;
+  structured_output: (FreeBriefOutput | StructuredOutput) | null;
   created_at: string;
   completed_at: string | null;
 }
@@ -276,9 +276,10 @@ function FreeResultsPageContent() {
     );
   }
 
-  // Check if we have structured output for the new dashboard-style rendering
+  // Check if we have structured output — briefScores is the primary indicator (required in FreeBriefOutput)
   const hasStructuredOutput = freeAudit.structured_output &&
-    (freeAudit.structured_output.positioning ||
+    (('briefScores' in freeAudit.structured_output && freeAudit.structured_output.briefScores) ||
+     freeAudit.structured_output.positioning ||
      (freeAudit.structured_output.discoveries && freeAudit.structured_output.discoveries.length > 0));
 
   // Extract product name from input for display

@@ -237,6 +237,29 @@ export const ThreeSecondTestSchema = z.object({
 export type ThreeSecondTest = z.infer<typeof ThreeSecondTestSchema>
 
 // =============================================================================
+// FREE BRIEF OUTPUT SCHEMA - Dedicated schema for free pipeline
+// =============================================================================
+
+/**
+ * Free Brief structured output schema
+ * Only contains fields that the free pipeline actually produces.
+ * No extractedAt, formatterVersion, thisWeek, topPriorities, etc.
+ */
+export const FreeBriefOutputSchema = z.object({
+  briefScores: BriefScoresSchema,
+  positioning: PositioningDataSchema.optional(),
+  threeSecondTest: ThreeSecondTestSchema.optional(),
+  positioningGap: PositioningGapSchema.optional(),
+  quickWins: z.array(QuickWinSchema).optional(),
+  competitors: z.array(CompetitorSchema).optional(),
+  competitiveComparison: CompetitiveComparisonSchema.optional(),
+  discoveries: z.array(DiscoverySchema).optional(),
+  businessName: z.string().optional(),
+})
+
+export type FreeBriefOutput = z.infer<typeof FreeBriefOutputSchema>
+
+// =============================================================================
 // FULL STRUCTURED OUTPUT SCHEMA
 // =============================================================================
 
@@ -642,5 +665,95 @@ export const FORMATTER_USER_PROMPT_WITH_RESEARCH = `Extract structured data from
 
 ---
 STRATEGY DOCUMENT:
+
+`
+
+// =============================================================================
+// FREE BRIEF EXTRACTION PROMPT
+// =============================================================================
+
+export const FREE_BRIEF_FORMATTER_SYSTEM_PROMPT = `You are a precise data extractor. Your job is to parse a free Brief markdown document and extract structured JSON data.
+
+IMPORTANT RULES:
+1. Extract ONLY data that is explicitly present in the markdown
+2. Do not invent or hallucinate any information
+3. Return ONLY valid JSON - no markdown, no explanation, no code blocks
+
+BUSINESS NAME EXTRACTION (REQUIRED):
+Extract "businessName" - a clean, short label for this business (2-4 words max).
+Priority order:
+1. Company/product name if mentioned (e.g., "Cheft", "Triple D Map", "Inkdex")
+2. Domain name from website URL - capitalize and drop TLD (e.g., "cheft.io" → "Cheft")
+3. Short descriptor only if no name/domain exists (e.g., "AI Study Tool")
+
+BRIEF SCORES EXTRACTION (REQUIRED - this is the most important field):
+Extract "briefScores" from a JSON block in the "## Scores" section:
+- "overall": 0-100 overall diagnostic score
+- "clarity": 0-100 — can people immediately understand what you do?
+- "clarityWhy": 1-sentence evidence
+- "visibility": 0-100 — can the target audience find them?
+- "visibilityWhy": 1-sentence evidence
+- "proof": 0-100 — do they have evidence that builds trust?
+- "proofWhy": 1-sentence evidence
+- "advantage": 0-100 — what makes them defensibly different?
+- "advantageWhy": 1-sentence evidence
+
+IMPORTANT: The JSON block may use old field names ("positioning" instead of "clarity", "competitiveEdge" instead of "advantage"). Map them: positioning→clarity, competitiveEdge→advantage.
+
+POSITIONING EXTRACTION:
+Extract "positioning" from the "## Your Situation" section:
+- "verdict": "clear" | "needs-work" | "unclear"
+- "summary": 2-3 sentence summary
+- "uniqueValue": What makes this business different
+- "targetSegment": Who they serve best
+- "competitiveAdvantage": Their edge over competitors
+
+THREE-SECOND TEST EXTRACTION:
+Extract "threeSecondTest" from "3-Second Test" or "Three-Second Test" section:
+- "whatYouSell": What a stranger would think after 3 seconds
+- "whoItsFor": Who the target audience appears to be
+- "whyYou": Why choose this over alternatives
+- "verdict": "clear" | "needs-work" | "unclear"
+
+POSITIONING GAP EXTRACTION:
+Extract "positioningGap" from "Positioning Gap" section:
+- "yourMessage": What the landing page currently communicates
+- "marketExpects": What the target market expects
+- "gap": The disconnect
+
+QUICK WINS EXTRACTION:
+Extract "quickWins" array — 2-3 specific fixes:
+- "title": The specific fix
+- "detail": Why this matters
+- "impact": "high" | "medium" | "low"
+- "timeEstimate": How long (e.g., "5 min", "15 min")
+
+COMPETITOR EXTRACTION:
+- "name", "traffic" (numeric string like "50K/mo" or ""), "trafficNumber" (parsed number), "positioning", "weakness", "opportunity", "stealThis"
+
+COMPETITIVE COMPARISON:
+- "domains" array with { domain, traffic (number|null), keywords (number|null), isUser (boolean) }
+
+DISCOVERIES EXTRACTION:
+Extract novel insights ordered by surpriseScore descending:
+- "type", "title", "content", "source", "significance", "surpriseScore" (1-10)
+
+OUTPUT FORMAT:
+{
+  "businessName": "Acme Corp",
+  "briefScores": { "overall": 42, "clarity": 35, "clarityWhy": "...", "visibility": 50, "visibilityWhy": "...", "proof": 38, "proofWhy": "...", "advantage": 45, "advantageWhy": "..." },
+  "positioning": { "verdict": "needs-work", "summary": "...", "uniqueValue": "...", "targetSegment": "..." },
+  "threeSecondTest": { "whatYouSell": "...", "whoItsFor": "...", "whyYou": "...", "verdict": "needs-work" },
+  "positioningGap": { "yourMessage": "...", "marketExpects": "...", "gap": "..." },
+  "quickWins": [{ "title": "...", "detail": "...", "impact": "high", "timeEstimate": "5 min" }],
+  "competitors": [{ "name": "...", "traffic": "50K/mo", "trafficNumber": 50000, "positioning": "...", "weakness": "...", "opportunity": "...", "stealThis": "..." }],
+  "competitiveComparison": { "domains": [{ "domain": "...", "traffic": 50000, "keywords": 1200, "isUser": false }] },
+  "discoveries": [{ "type": "opportunity", "title": "...", "content": "...", "significance": "...", "surpriseScore": 9 }]
+}`
+
+export const FREE_BRIEF_FORMATTER_USER_PROMPT = `Extract structured data from this free Brief document. Return ONLY the JSON object, no other text.
+
+---
+BRIEF DOCUMENT:
 
 `

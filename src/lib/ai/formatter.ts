@@ -2,11 +2,15 @@ import Anthropic from '@anthropic-ai/sdk'
 import {
   StructuredOutputSchema,
   PartialStructuredOutputSchema,
+  FreeBriefOutputSchema,
   FORMATTER_SYSTEM_PROMPT,
   FORMATTER_USER_PROMPT,
   FORMATTER_USER_PROMPT_WITH_RESEARCH,
+  FREE_BRIEF_FORMATTER_SYSTEM_PROMPT,
+  FREE_BRIEF_FORMATTER_USER_PROMPT,
   type StructuredOutput,
   type PartialStructuredOutput,
+  type FreeBriefOutput,
 } from './formatter-types'
 import type { ResearchData } from './pipeline-agentic'
 
@@ -225,6 +229,126 @@ export async function extractStructuredOutput(
   }
 }
 
+
+/**
+ * Recursively strip null values from an object (LLMs return null instead of omitting optional fields)
+ */
+function stripNulls(obj: unknown): void {
+  if (!obj || typeof obj !== 'object') return
+  if (Array.isArray(obj)) {
+    for (const item of obj) stripNulls(item)
+    return
+  }
+  const record = obj as Record<string, unknown>
+  for (const key of Object.keys(record)) {
+    if (record[key] === null) {
+      delete record[key]
+    } else if (typeof record[key] === 'object') {
+      stripNulls(record[key])
+    }
+  }
+}
+
+/**
+ * Extract structured output from a free Brief markdown using the dedicated FreeBriefSchema.
+ * Simpler than extractStructuredOutput — no partial fallback needed since all
+ * critical fields are directly in the schema (briefScores is the only required field).
+ *
+ * @param markdown - The free Brief markdown to extract from
+ * @param researchData - Optional structured research data from tool calls
+ */
+export async function extractFreeBriefOutput(
+  markdown: string,
+  researchData?: ResearchData,
+): Promise<FreeBriefOutput | null> {
+  if (!process.env.ANTHROPIC_API_KEY) {
+    console.warn('[FreeBriefFormatter] Missing ANTHROPIC_API_KEY, skipping extraction')
+    return null
+  }
+
+  const client = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+  })
+
+  // Build user message with optional research data
+  const hasResearchData = researchData && (
+    researchData.searches.length > 0 ||
+    researchData.seoMetrics.length > 0 ||
+    researchData.keywordGaps.length > 0 ||
+    researchData.scrapes.length > 0
+  )
+
+  let userContent: string
+  if (hasResearchData) {
+    const researchSection = formatResearchDataForPrompt(researchData!)
+    userContent = FREE_BRIEF_FORMATTER_USER_PROMPT + markdown + '\n\n---\nRESEARCH DATA:\n\n' + researchSection
+  } else {
+    userContent = FREE_BRIEF_FORMATTER_USER_PROMPT + markdown
+  }
+
+  try {
+    console.log(`[FreeBriefFormatter] Starting extraction with ${FORMATTER_MODEL}...`)
+    const startTime = Date.now()
+
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error('Formatter timeout')), FORMATTER_TIMEOUT_MS)
+    })
+
+    const response = await Promise.race([
+      client.messages.create({
+        model: FORMATTER_MODEL,
+        max_tokens: 8000, // Free briefs are smaller — half of paid
+        system: FREE_BRIEF_FORMATTER_SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: userContent }],
+      }),
+      timeoutPromise,
+    ])
+
+    const elapsed = Date.now() - startTime
+    console.log(`[FreeBriefFormatter] Responded in ${elapsed}ms, tokens: ${response.usage.input_tokens} in / ${response.usage.output_tokens} out`)
+
+    const textContent = response.content.find((block) => block.type === 'text')
+    if (!textContent || textContent.type !== 'text') {
+      console.error('[FreeBriefFormatter] No text content in response')
+      return null
+    }
+
+    // Parse JSON
+    let jsonText = textContent.text.trim()
+    if (jsonText.startsWith('```json')) jsonText = jsonText.slice(7)
+    if (jsonText.startsWith('```')) jsonText = jsonText.slice(3)
+    if (jsonText.endsWith('```')) jsonText = jsonText.slice(0, -3)
+    jsonText = jsonText.trim()
+
+    let parsed: unknown
+    try {
+      parsed = JSON.parse(jsonText)
+    } catch (parseErr) {
+      console.error('[FreeBriefFormatter] JSON parse error:', parseErr, 'Raw text:', jsonText.slice(0, 500))
+      return null
+    }
+
+    // Pre-process: strip null values recursively (LLM returns null instead of omitting optional fields)
+    stripNulls(parsed)
+
+    // Validate with FreeBriefOutputSchema
+    const result = FreeBriefOutputSchema.safeParse(parsed)
+    if (!result.success) {
+      console.error('[FreeBriefFormatter] Zod validation failed:', result.error.issues)
+      return null
+    }
+
+    console.log(`[FreeBriefFormatter] Successfully extracted free brief output`)
+    return result.data
+  } catch (err) {
+    if (err instanceof Error && err.message === 'Formatter timeout') {
+      console.error('[FreeBriefFormatter] Extraction timed out')
+    } else {
+      console.error('[FreeBriefFormatter] Extraction failed:', err)
+    }
+    return null
+  }
+}
 
 /**
  * Convert partial output to full output with defaults

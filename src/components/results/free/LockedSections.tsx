@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import type { StructuredOutput } from '@/lib/ai/formatter-types'
+import type { StructuredOutput, FreeBriefOutput } from '@/lib/ai/formatter-types'
 
 function UpgradeButton({ checkoutUrl, freeAuditId, token }: { checkoutUrl: string; freeAuditId: string; token: string }) {
   const [isLoading, setIsLoading] = useState(false)
@@ -49,7 +49,7 @@ function UpgradeButton({ checkoutUrl, freeAuditId, token }: { checkoutUrl: strin
  */
 
 interface LockedSectionsProps {
-  structuredOutput?: StructuredOutput
+  structuredOutput?: FreeBriefOutput | StructuredOutput
   freeAuditId: string
   token: string
 }
