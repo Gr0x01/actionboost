@@ -1,4 +1,4 @@
-import { CalendarCheck, BarChart3, User, Settings } from 'lucide-react'
+import { CalendarCheck, BarChart3, Fingerprint, Settings } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
 export interface NavItem {
@@ -10,6 +10,6 @@ export interface NavItem {
 export const NAV_ITEMS: readonly NavItem[] = [
   { label: 'This Week', icon: CalendarCheck, path: '/dashboard' },
   { label: 'Insights', icon: BarChart3, path: '/dashboard/insights' },
-  { label: 'Profile', icon: User, path: '/dashboard/profile' },
+  { label: 'Brand', icon: Fingerprint, path: '/dashboard/brand' },
   { label: 'Settings', icon: Settings, path: '/dashboard/settings' },
 ]

@@ -3,6 +3,7 @@
 import { Suspense, useMemo } from 'react'
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
+import { motion } from 'framer-motion'
 import { ProjectSwitcher } from './ProjectSwitcher'
 import { DashboardBottomNav } from './DashboardBottomNav'
 import { NAV_ITEMS } from './nav-config'
@@ -57,7 +58,7 @@ function DashboardShellInner({ businesses, userEmail, children }: DashboardShell
           </div>
 
           {/* Center: desktop nav links */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden md:flex items-end h-full gap-1">
             {NAV_ITEMS.map(({ label, path }) => {
               const isActive = pathname === path
               return (
@@ -65,14 +66,21 @@ function DashboardShellInner({ businesses, userEmail, children }: DashboardShell
                   key={path}
                   href={`${path}${qs}`}
                   className={`
-                    px-3 py-1.5 rounded-md text-sm font-medium transition-colors
+                    relative px-3 pb-3 text-sm font-medium transition-colors
                     ${isActive
-                      ? 'text-foreground bg-foreground/[0.05]'
-                      : 'text-foreground/50 hover:text-foreground hover:bg-foreground/[0.03]'
+                      ? 'text-foreground'
+                      : 'text-foreground/50 hover:text-foreground'
                     }
                   `}
                 >
                   {label}
+                  {isActive && (
+                    <motion.div
+                      layoutId="nav-underline"
+                      className="absolute bottom-0 left-0 right-0 h-[2px] bg-foreground"
+                      transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                    />
+                  )}
                 </Link>
               )
             })}
