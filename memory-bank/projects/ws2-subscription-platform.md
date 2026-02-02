@@ -196,15 +196,11 @@ See `subscription-brainstorm.md` for original design details.
 
 Current dashboard is a single-page 3-panel layout (WeeklyFocus + WhatsWorking + DraftIt + WeeklyCheckin). Needs to be rebuilt into the new task-centric, multi-project, mobile-first layout described above.
 
-### Known Bugs (fix during Phase 0)
-- `DraftIt.tsx` uses `structuredOutput.tasks` which doesn't exist — should use `structuredOutput.weeks[].days[]` or `structuredOutput.thisWeek.days[]`
-- `/api/tasks/route.ts` has same extraction mismatch
-- `WhatsWorking.tsx` uses fragile regex parsing of markdown output
-
-### Phase 0: Fix Existing Bugs
-- Fix task extraction in `/api/tasks/route.ts` and `DraftIt.tsx` to use correct `structured_output` path
-- Verify task data flows correctly end-to-end
-- Small, no-design-needed fixes
+### Phase 0: Fix Existing Bugs ✅ Complete (Feb 2, 2026)
+- Fixed task extraction in `/api/tasks/route.ts`, `/api/draft/route.ts`, and `DraftIt.tsx` — all referenced non-existent `structuredOutput.tasks`. Now use shared `extractTasksFromStructuredOutput()` helper in `src/lib/dashboard/extract-tasks.ts`
+- Helper reads from `weeks[].days[]` (new format) or `thisWeek.days[]` (legacy), with `Array.isArray` guards for malformed JSONB
+- Fixed invalid Supabase `.select("id", { count: "exact" })` in `subscription.ts`
+- Remaining: `WhatsWorking.tsx` still uses fragile regex parsing — will be replaced in Phase 3 with structured data
 
 ### Phase 1: Layout Shell + Navigation
 - New dashboard layout component with route structure:

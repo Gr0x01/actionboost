@@ -1,6 +1,16 @@
 # Current Phase
 
-## Latest Update: Dashboard Redesign Spec (Feb 2, 2026)
+## Latest Update: Dashboard Phase 0 Complete (Feb 2, 2026)
+
+**Phase 0 (bug fixes) shipped.** Fixed broken task extraction across 3 files — created shared `extractTasksFromStructuredOutput()` helper. Fixed Supabase type error in subscription.ts.
+
+**Next: Phase 1 (layout shell + navigation) and Phase 2 (profile page) — can run in parallel.**
+
+Full dashboard spec and phase plan in `projects/ws2-subscription-platform.md`.
+
+---
+
+## Previous: Dashboard Redesign Spec (Feb 2, 2026)
 
 **Designed the subscriber dashboard architecture.** Full spec in `projects/ws2-subscription-platform.md` → "Dashboard Design" section.
 
