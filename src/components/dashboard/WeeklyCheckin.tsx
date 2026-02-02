@@ -20,10 +20,12 @@ export function WeeklyCheckin({ existingCheckin }: WeeklyCheckinProps) {
   const [notes, setNotes] = useState(existingCheckin?.notes || "")
   const [saved, setSaved] = useState(!!existingCheckin)
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSave = async () => {
     if (!sentiment) return
     setSaving(true)
+    setError(null)
 
     try {
       const res = await fetch("/api/checkin", {
@@ -34,9 +36,11 @@ export function WeeklyCheckin({ existingCheckin }: WeeklyCheckinProps) {
 
       if (res.ok) {
         setSaved(true)
+      } else {
+        setError("Failed to save check-in. Try again.")
       }
     } catch {
-      // Silently fail — not critical
+      setError("Connection error. Check your internet and try again.")
     } finally {
       setSaving(false)
     }
@@ -88,6 +92,8 @@ export function WeeklyCheckin({ existingCheckin }: WeeklyCheckinProps) {
         className="w-full px-3 py-2 border-2 border-foreground/20 rounded-md text-sm
                    focus:border-cta focus:outline-none transition-colors resize-none mb-4"
       />
+
+      {error && <p className="text-sm text-red-600 mb-3">{error}</p>}
 
       <button
         onClick={handleSave}

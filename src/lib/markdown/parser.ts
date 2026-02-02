@@ -300,7 +300,7 @@ export function parseMetrics(content: string): Metric[] {
 // =============================================================================
 
 // Escape HTML special characters to prevent XSS
-function escapeHTML(str: string): string {
+export function escapeHTML(str: string): string {
   const escapeMap: Record<string, string> = {
     "&": "&amp;",
     "<": "&lt;",

@@ -4,6 +4,18 @@ import { createServiceClient } from "@/lib/supabase/server"
 import { verifyBusinessOwnership } from "@/lib/business"
 import type { BusinessProfile } from "@/lib/types/business-profile"
 
+const ALLOWED_PROFILE_KEYS = new Set([
+  "websiteUrl",
+  "description",
+  "icp",
+  "voice",
+  "competitors",
+  "triedBefore",
+  "goals",
+  "onboardingCompleted",
+  "onboardingCompletedAt",
+])
+
 /**
  * GET /api/business/[id]/profile
  * Returns the business profile (from businesses.context JSONB).
@@ -62,11 +74,19 @@ export async function PATCH(
     return NextResponse.json({ error: "Not found" }, { status: 404 })
   }
 
-  let updates: Partial<BusinessProfile>
+  let rawUpdates: Record<string, unknown>
   try {
-    updates = await request.json()
+    rawUpdates = await request.json()
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 })
+  }
+
+  // Strip unknown keys — only allow known profile fields
+  const updates: Partial<BusinessProfile> = {}
+  for (const key of Object.keys(rawUpdates)) {
+    if (ALLOWED_PROFILE_KEYS.has(key)) {
+      ;(updates as Record<string, unknown>)[key] = rawUpdates[key]
+    }
   }
 
   const supabase = createServiceClient()

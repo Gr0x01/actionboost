@@ -13,6 +13,8 @@ interface TaskCheckboxProps {
 export function TaskCheckbox({ task, onToggle }: TaskCheckboxProps) {
   return (
     <button
+      role="checkbox"
+      aria-checked={task.completed}
       onClick={() => onToggle(task.index, !task.completed)}
       className="w-full flex items-start gap-3 p-3 rounded-md hover:bg-foreground/[0.02] transition-colors text-left group"
     >

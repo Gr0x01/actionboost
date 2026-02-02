@@ -22,6 +22,7 @@ export type Subscription = {
   original_run_id: string | null
   cancel_at_period_end: boolean
   created_at: string
+  updated_at: string
 }
 
 /**
@@ -116,6 +117,7 @@ export async function createSubscriptionRecord(params: {
 
 /**
  * Update subscription status from Stripe webhook.
+ * Logs a warning if no subscription matched (e.g., out-of-order webhook).
  */
 export async function updateSubscriptionStatus(
   stripeSubscriptionId: string,
@@ -134,13 +136,18 @@ export async function updateSubscriptionStatus(
   if (updates.currentPeriodEnd) updateData.current_period_end = updates.currentPeriodEnd.toISOString()
   if (updates.cancelAtPeriodEnd !== undefined) updateData.cancel_at_period_end = updates.cancelAtPeriodEnd
 
-  const { error } = await supabase
+  const { data, error, count } = await supabase
     .from("subscriptions")
     .update(updateData)
     .eq("stripe_subscription_id", stripeSubscriptionId)
+    .select("id", { count: "exact" })
 
   if (error) {
     throw new Error(`Failed to update subscription ${stripeSubscriptionId}: ${error.message}`)
+  }
+
+  if (!data || data.length === 0) {
+    console.warn(`[Subscription] updateSubscriptionStatus: no rows matched for stripe_subscription_id=${stripeSubscriptionId} (count=${count}). The subscription record may not exist yet.`)
   }
 }
 

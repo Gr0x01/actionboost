@@ -26,6 +26,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Valid sentiment required (great/okay/rough)" }, { status: 400 })
   }
 
+  if (notes !== undefined && (typeof notes !== "string" || notes.length > 5000)) {
+    return NextResponse.json({ error: "notes must be a string of 5000 chars or fewer" }, { status: 400 })
+  }
+
   const subscription = await getActiveSubscription(userId)
   if (!subscription) {
     return NextResponse.json({ error: "No active subscription" }, { status: 403 })

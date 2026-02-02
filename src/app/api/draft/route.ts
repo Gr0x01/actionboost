@@ -5,6 +5,8 @@ import { generateDraft } from "@/lib/ai/draft"
 import { createServiceClient } from "@/lib/supabase/server"
 import type { BusinessProfile } from "@/lib/types/business-profile"
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 /**
  * POST /api/draft
  * Generate a content draft for a specific task.
@@ -33,8 +35,16 @@ export async function POST(request: NextRequest) {
     runId?: string; taskIndex?: number; contentType?: string
   }
 
-  if (!runId || taskIndex === undefined || typeof taskIndex !== "number" || !contentType) {
-    return NextResponse.json({ error: "runId, taskIndex, and contentType required" }, { status: 400 })
+  if (!runId || !UUID_RE.test(runId)) {
+    return NextResponse.json({ error: "Valid runId (UUID) required" }, { status: 400 })
+  }
+
+  if (taskIndex === undefined || typeof taskIndex !== "number" || !Number.isInteger(taskIndex) || taskIndex < 0 || taskIndex > 50) {
+    return NextResponse.json({ error: "taskIndex must be an integer between 0 and 50" }, { status: 400 })
+  }
+
+  if (!contentType) {
+    return NextResponse.json({ error: "contentType required" }, { status: 400 })
   }
 
   const validTypes = ["reddit_post", "email", "dm", "tweet", "linkedin_post", "blog_outline"]

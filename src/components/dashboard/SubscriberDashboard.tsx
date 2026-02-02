@@ -87,7 +87,6 @@ export function SubscriberDashboard({ subscription, latestRun, checkin }: Subscr
               <div className="lg:col-span-2">
                 <WeeklyFocus
                   runId={latestRun.id}
-                  structuredOutput={latestRun.structuredOutput}
                 />
               </div>
 

@@ -18,14 +18,15 @@ CREATE TABLE IF NOT EXISTS public.subscriptions (
   current_week INTEGER NOT NULL DEFAULT 1,
   original_run_id UUID REFERENCES public.runs(id),
   cancel_at_period_end BOOLEAN NOT NULL DEFAULT false,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- Indexes
-CREATE INDEX idx_subscriptions_user_id ON public.subscriptions(user_id);
-CREATE INDEX idx_subscriptions_business_id ON public.subscriptions(business_id);
-CREATE INDEX idx_subscriptions_stripe_subscription_id ON public.subscriptions(stripe_subscription_id);
-CREATE INDEX idx_subscriptions_status ON public.subscriptions(status);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_user_id ON public.subscriptions(user_id);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_business_id ON public.subscriptions(business_id);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_stripe_subscription_id ON public.subscriptions(stripe_subscription_id);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_status ON public.subscriptions(status);
 
 -- RLS
 ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
@@ -51,7 +52,7 @@ CREATE TABLE IF NOT EXISTS public.task_completions (
   UNIQUE(run_id, task_index)
 );
 
-CREATE INDEX idx_task_completions_run_id ON public.task_completions(run_id);
+CREATE INDEX IF NOT EXISTS idx_task_completions_run_id ON public.task_completions(run_id);
 
 -- RLS
 ALTER TABLE public.task_completions ENABLE ROW LEVEL SECURITY;
@@ -99,7 +100,7 @@ CREATE TABLE IF NOT EXISTS public.weekly_checkins (
   UNIQUE(subscription_id, week_number)
 );
 
-CREATE INDEX idx_weekly_checkins_subscription_id ON public.weekly_checkins(subscription_id);
+CREATE INDEX IF NOT EXISTS idx_weekly_checkins_subscription_id ON public.weekly_checkins(subscription_id);
 
 -- RLS
 ALTER TABLE public.weekly_checkins ENABLE ROW LEVEL SECURITY;

@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { signAuditToken } from "@/lib/auth/audit-token";
+import { escapeHTML } from "@/lib/markdown/parser";
 
 // Lazy-load Resend client to avoid throwing on import when API key is missing
 let _resend: Resend | null = null;
@@ -67,7 +68,11 @@ function generateReceiptHtml(data: {
   date: string;
   dashboardUrl: string;
 }): string {
-  const { productName, amount, date, dashboardUrl } = data;
+  // Escape user-controlled data as defense-in-depth against HTML injection
+  const productName = escapeHTML(data.productName);
+  const amount = escapeHTML(data.amount);
+  const date = escapeHTML(data.date);
+  const { dashboardUrl } = data;
 
   return `
 <!DOCTYPE html>

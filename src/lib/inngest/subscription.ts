@@ -2,8 +2,7 @@
  * Inngest functions for Boost Weekly subscription lifecycle.
  *
  * - subscription/created → generate initial strategy from business profile
- * - subscription/weekly-revector → Sunday cron: generate new weekly plan
- * - subscription/draft-requested → generate content draft for a task
+ * - weekly cron → Sunday: generate new weekly plan for all active subscriptions
  */
 
 import { inngest } from "./client"
@@ -117,6 +116,9 @@ export const handleSubscriptionCreated = inngest.createFunction(
 /**
  * Weekly re-vectoring cron — runs every Sunday at 6am UTC.
  * Fetches all active subscriptions and generates new weekly plans.
+ *
+ * Order of operations: create run first, then increment week after pipeline
+ * succeeds. This prevents orphaned week increments if the pipeline fails.
  */
 export const weeklyRevector = inngest.createFunction(
   {
@@ -137,6 +139,46 @@ export const weeklyRevector = inngest.createFunction(
     for (const sub of subscriptions) {
       await step.run(`revector-${sub.id}`, async () => {
         const supabase = createServiceClient()
+        const nextWeek = sub.current_week + 1
+
+        // Check if a run for this week already exists (retry scenario)
+        const { data: existingRun } = await supabase
+          .from("runs")
+          .select("id")
+          .eq("subscription_id", sub.id)
+          .eq("week_number", nextWeek)
+          .single()
+
+        if (existingRun) {
+          // Run already exists — skip to pipeline (idempotent retry)
+          console.log(`[Inngest] Run already exists for sub ${sub.id} week ${nextWeek}, re-running pipeline`)
+          try {
+            await runPipeline(existingRun.id)
+
+            // Increment week after successful pipeline
+            await incrementSubscriptionWeek(sub.id, sub.current_week)
+
+            const { data: user } = await supabase
+              .from("users")
+              .select("email")
+              .eq("id", sub.user_id)
+              .single()
+
+            if (user?.email) {
+              sendWeekReadyEmail({ to: user.email, runId: existingRun.id }).catch((err) => {
+                console.error("[Inngest] Week ready email failed:", err)
+              })
+            }
+          } catch (err) {
+            await supabase
+              .from("runs")
+              .update({ status: "failed", stage: "Weekly pipeline error" })
+              .eq("id", existingRun.id)
+            console.error(`[Inngest] Weekly pipeline failed for ${sub.id}:`, err)
+            throw err
+          }
+          return
+        }
 
         // Fetch business profile
         const { data: business } = await supabase
@@ -192,11 +234,10 @@ export const weeklyRevector = inngest.createFunction(
 
         // Build input with context from prior weeks
         const input = buildRunInputFromProfile(profile)
-        const newWeek = await incrementSubscriptionWeek(sub.id, sub.current_week)
 
         // Additional context for the pipeline
         const weeklyContext = [
-          `## Week ${newWeek} Re-vectoring`,
+          `## Week ${nextWeek} Re-vectoring`,
           completionSummary,
           checkinContext,
           lastRun?.output ? `## Previous Strategy Summary\n${(lastRun.output as string).slice(0, 2000)}` : "",
@@ -204,14 +245,14 @@ export const weeklyRevector = inngest.createFunction(
           .filter(Boolean)
           .join("\n\n")
 
-        // Create new run
+        // Create new run BEFORE incrementing week
         const { data: run, error: runError } = await supabase
           .from("runs")
           .insert({
             user_id: sub.user_id,
             business_id: sub.business_id,
             subscription_id: sub.id,
-            week_number: newWeek,
+            week_number: nextWeek,
             parent_plan_id: lastRun?.id || sub.original_run_id,
             input: input as unknown as Json,
             additional_context: weeklyContext,
@@ -226,9 +267,12 @@ export const weeklyRevector = inngest.createFunction(
           return
         }
 
-        // Run pipeline
+        // Run pipeline, then increment week only on success
         try {
           await runPipeline(run.id)
+
+          // Increment week AFTER successful pipeline completion
+          await incrementSubscriptionWeek(sub.id, sub.current_week)
 
           // Send Monday email
           const { data: user } = await supabase

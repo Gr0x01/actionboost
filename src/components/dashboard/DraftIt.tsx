@@ -22,6 +22,7 @@ export function DraftIt({ runId, structuredOutput }: DraftItProps) {
   const [draft, setDraft] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
 
   const tasks = (structuredOutput?.tasks as Array<{ title: string; description: string }>) || []
 
@@ -29,6 +30,7 @@ export function DraftIt({ runId, structuredOutput }: DraftItProps) {
     setLoading(true)
     setError(null)
     setDraft(null)
+    setCopied(false)
 
     try {
       const res = await fetch("/api/draft", {
@@ -53,6 +55,14 @@ export function DraftIt({ runId, structuredOutput }: DraftItProps) {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleCopy = () => {
+    if (!draft) return
+    navigator.clipboard.writeText(draft).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }).catch(() => {})
   }
 
   return (
@@ -133,10 +143,10 @@ export function DraftIt({ runId, structuredOutput }: DraftItProps) {
                   Draft
                 </span>
                 <button
-                  onClick={() => navigator.clipboard.writeText(draft)}
+                  onClick={handleCopy}
                   className="text-xs text-cta hover:text-cta/80 font-medium"
                 >
-                  Copy
+                  {copied ? "Copied!" : "Copy"}
                 </button>
               </div>
               <div className="text-sm text-foreground/80 whitespace-pre-wrap leading-relaxed">

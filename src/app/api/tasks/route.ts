@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server"
 import { getAuthenticatedUserId } from "@/lib/auth/session"
 import { createServiceClient } from "@/lib/supabase/server"
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 /**
  * GET /api/tasks?runId=xxx
  * Returns tasks from a run's structured_output + their completion status.
@@ -13,8 +15,8 @@ export async function GET(request: NextRequest) {
   }
 
   const runId = request.nextUrl.searchParams.get("runId")
-  if (!runId) {
-    return NextResponse.json({ error: "runId is required" }, { status: 400 })
+  if (!runId || !UUID_RE.test(runId)) {
+    return NextResponse.json({ error: "Valid runId (UUID) required" }, { status: 400 })
   }
 
   const supabase = createServiceClient()

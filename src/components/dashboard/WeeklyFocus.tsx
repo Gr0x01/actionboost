@@ -14,7 +14,6 @@ interface Task {
 
 interface WeeklyFocusProps {
   runId: string
-  structuredOutput: Record<string, unknown> | null
 }
 
 export function WeeklyFocus({ runId }: WeeklyFocusProps) {
@@ -23,7 +22,10 @@ export function WeeklyFocus({ runId }: WeeklyFocusProps) {
 
   useEffect(() => {
     fetch(`/api/tasks?runId=${runId}`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch tasks")
+        return res.json()
+      })
       .then((data) => {
         setTasks(data.tasks || [])
         setLoading(false)
@@ -32,17 +34,16 @@ export function WeeklyFocus({ runId }: WeeklyFocusProps) {
   }, [runId])
 
   const handleToggle = useCallback(async (taskIndex: number, completed: boolean) => {
-    // Capture previous state for revert
-    const previousTasks = [...tasks]
-
-    // Optimistic update
-    setTasks((prev) =>
-      prev.map((t) =>
+    // Capture previous state inside updater to avoid stale closure
+    let previousTasks: Task[] = []
+    setTasks((prev) => {
+      previousTasks = prev
+      return prev.map((t) =>
         t.index === taskIndex
           ? { ...t, completed, completedAt: completed ? new Date().toISOString() : null }
           : t
       )
-    )
+    })
 
     const res = await fetch("/api/tasks/complete", {
       method: "POST",
@@ -53,7 +54,7 @@ export function WeeklyFocus({ runId }: WeeklyFocusProps) {
     if (!res.ok) {
       setTasks(previousTasks)
     }
-  }, [runId, tasks])
+  }, [runId])
 
   const sprintTasks = tasks.filter((t) => t.track === "sprint")
   const buildTasks = tasks.filter((t) => t.track === "build")

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { ONBOARDING_STEPS, type BusinessProfile, type OnboardingStepId } from "@/lib/types/business-profile"
 
@@ -17,6 +17,7 @@ export default function SubscribePage() {
   const [businessId, setBusinessId] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const creatingRef = useRef(false)
 
   // Form state
   const [profile, setProfile] = useState<BusinessProfile>({})
@@ -28,19 +29,25 @@ export default function SubscribePage() {
   // Create business on first step if needed
   const ensureBusiness = useCallback(async (): Promise<string> => {
     if (businessId) return businessId
+    if (creatingRef.current) throw new Error("Business creation already in progress")
 
-    const res = await fetch("/api/business/create", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: profile.websiteUrl || profile.description?.slice(0, 50) || "My Business",
-      }),
-    })
+    creatingRef.current = true
+    try {
+      const res = await fetch("/api/business/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: profile.websiteUrl || profile.description?.slice(0, 50) || "My Business",
+        }),
+      })
 
-    if (!res.ok) throw new Error("Failed to create business")
-    const data = await res.json()
-    setBusinessId(data.id)
-    return data.id
+      if (!res.ok) throw new Error("Failed to create business")
+      const data = await res.json()
+      setBusinessId(data.id)
+      return data.id
+    } finally {
+      creatingRef.current = false
+    }
   }, [businessId, profile])
 
   // Save current step's data
@@ -66,7 +73,7 @@ export default function SubscribePage() {
       if (isLastStep) {
         // Mark onboarding complete and go to checkout
         const bId = businessId!
-        await fetch(`/api/business/${bId}/profile`, {
+        const patchRes = await fetch(`/api/business/${bId}/profile`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -74,6 +81,8 @@ export default function SubscribePage() {
             onboardingCompletedAt: new Date().toISOString(),
           }),
         })
+
+        if (!patchRes.ok) throw new Error("Failed to complete onboarding")
 
         // Create subscription checkout
         const checkoutRes = await fetch("/api/checkout/create-subscription", {

@@ -41,18 +41,6 @@ export type Events = {
       userId: string;
     };
   };
-  "subscription/weekly-revector": {
-    data: {
-      subscriptionId: string;
-    };
-  };
-  "subscription/draft-requested": {
-    data: {
-      runId: string;
-      taskIndex: number;
-      contentType: string;
-    };
-  };
 };
 
 // Create the Inngest client with typed events

@@ -49,7 +49,7 @@ function extractInsights(output: string | null): Array<{ type: InsightType; text
   const insights: Array<{ type: InsightType; text: string }> = []
 
   // Look for "Stop Doing" section
-  const stopMatch = output.match(/##\s*(?:Stop Doing|What to Stop)[^\n]*\n([\s\S]*?)(?=\n##|\n---|\z)/i)
+  const stopMatch = output.match(/##\s*(?:Stop Doing|What to Stop)[^\n]*\n([\s\S]*?)(?=\n##|\n---|$)/i)
   if (stopMatch) {
     const items = stopMatch[1].match(/[-*]\s+\*?\*?([^*\n]+)\*?\*?/g)
     items?.slice(0, 2).forEach((item) => {
@@ -59,7 +59,7 @@ function extractInsights(output: string | null): Array<{ type: InsightType; text
   }
 
   // Look for "Start Doing" section
-  const startMatch = output.match(/##\s*(?:Start Doing|What to Start)[^\n]*\n([\s\S]*?)(?=\n##|\n---|\z)/i)
+  const startMatch = output.match(/##\s*(?:Start Doing|What to Start)[^\n]*\n([\s\S]*?)(?=\n##|\n---|$)/i)
   if (startMatch) {
     const items = startMatch[1].match(/[-*]\s+\*?\*?([^*\n]+)\*?\*?/g)
     items?.slice(0, 3).forEach((item) => {
@@ -69,7 +69,7 @@ function extractInsights(output: string | null): Array<{ type: InsightType; text
   }
 
   // Look for "working" mentions
-  const workingMatch = output.match(/(?:what'?s working|working well|going well)[^\n]*\n([\s\S]*?)(?=\n##|\n---|\z)/i)
+  const workingMatch = output.match(/(?:what'?s working|working well|going well)[^\n]*\n([\s\S]*?)(?=\n##|\n---|$)/i)
   if (workingMatch) {
     const items = workingMatch[1].match(/[-*]\s+\*?\*?([^*\n]+)\*?\*?/g)
     items?.slice(0, 2).forEach((item) => {
