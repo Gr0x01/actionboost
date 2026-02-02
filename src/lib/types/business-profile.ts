@@ -22,6 +22,8 @@ export interface BusinessProfile {
   voice?: {
     tone: string      // "How do you want to sound?" (e.g., "direct and confident", "friendly and approachable")
     examples?: string // Paste of existing copy or description
+    dos?: string[]    // "Always mention free tier"
+    donts?: string[]  // "Never compare to X by name"
   }
 
   // Competition
