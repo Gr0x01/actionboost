@@ -37,7 +37,7 @@ function DashboardShellInner({ businesses, userEmail, children }: DashboardShell
   return (
     <div className="min-h-screen bg-background">
       {/* Desktop top bar */}
-      <header className="border-b-2 border-foreground/20 bg-white">
+      <header className="sticky top-0 z-50 border-b-2 border-foreground/20 bg-white">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
           {/* Left: logo + project switcher */}
           <div className="flex items-center gap-4">

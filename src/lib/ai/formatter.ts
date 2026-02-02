@@ -351,6 +351,111 @@ export async function extractFreeBriefOutput(
 }
 
 /**
+ * Enrich extracted tasks with WHY (strategic rationale) and HOW (concrete steps).
+ * Runs a Sonnet call after structured output extraction to add context to each task.
+ *
+ * Cost: ~$0.02 per run
+ * Latency: ~3-5 seconds
+ */
+export async function enrichTasksWithContext(
+  markdown: string,
+  structuredOutput: StructuredOutput
+): Promise<StructuredOutput> {
+  if (!process.env.ANTHROPIC_API_KEY) {
+    console.warn('[Enrichment] Missing ANTHROPIC_API_KEY, skipping')
+    return structuredOutput
+  }
+
+  const weeks = structuredOutput.weeks
+  if (!weeks || weeks.length === 0) {
+    console.log('[Enrichment] No weeks data, skipping')
+    return structuredOutput
+  }
+
+  // Build a compact task list for the prompt
+  const taskList = weeks.flatMap((week) =>
+    week.days.map((day) => ({
+      week: week.week,
+      theme: week.theme,
+      day: day.day,
+      action: day.action,
+      successMetric: day.successMetric,
+    }))
+  )
+
+  if (taskList.length === 0) return structuredOutput
+
+  const client = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+  })
+
+  try {
+    console.log(`[Enrichment] Generating WHY/HOW for ${taskList.length} tasks...`)
+    const startTime = Date.now()
+
+    const response = await Promise.race([
+      client.messages.create({
+        model: FORMATTER_MODEL,
+        max_tokens: 8000,
+        system: `You generate strategic context for marketing tasks. For each task, write:
+- "why": 1 sentence explaining the strategic rationale (why this task matters for the business)
+- "how": 2-3 sentences with concrete execution steps (what to actually do)
+
+Return ONLY a JSON array. Each element: { "week": number, "day": number, "why": "...", "how": "..." }
+No markdown, no explanation.`,
+        messages: [{
+          role: 'user',
+          content: `Here is the full strategy document:\n\n${markdown.slice(0, 8000)}\n\n---\n\nGenerate WHY and HOW for these tasks:\n${JSON.stringify(taskList, null, 2)}`,
+        }],
+      }),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Enrichment timeout')), 60000)
+      ),
+    ])
+
+    const elapsed = Date.now() - startTime
+    console.log(`[Enrichment] Responded in ${elapsed}ms, tokens: ${response.usage.input_tokens} in / ${response.usage.output_tokens} out`)
+
+    const textContent = response.content.find((b) => b.type === 'text')
+    if (!textContent || textContent.type !== 'text') return structuredOutput
+
+    let jsonText = textContent.text.trim()
+    if (jsonText.startsWith('```json')) jsonText = jsonText.slice(7)
+    if (jsonText.startsWith('```')) jsonText = jsonText.slice(3)
+    if (jsonText.endsWith('```')) jsonText = jsonText.slice(0, -3)
+    jsonText = jsonText.trim()
+
+    const enrichments = JSON.parse(jsonText) as Array<{ week: number; day: number; why: string; how: string }>
+
+    // Merge enrichments back into structured output
+    const enriched = { ...structuredOutput, weeks: structuredOutput.weeks!.map((week) => ({
+      ...week,
+      days: week.days.map((day) => {
+        const match = enrichments.find((e) => e.week === week.week && e.day === day.day)
+        return match ? { ...day, why: match.why, how: match.how } : day
+      }),
+    }))}
+
+    // Also update thisWeek if it mirrors week 1
+    if (enriched.thisWeek?.days) {
+      enriched.thisWeek = {
+        ...enriched.thisWeek,
+        days: enriched.thisWeek.days.map((day) => {
+          const match = enrichments.find((e) => e.week === 1 && e.day === day.day)
+          return match ? { ...day, why: match.why, how: match.how } : day
+        }),
+      }
+    }
+
+    console.log(`[Enrichment] Successfully enriched ${enrichments.length} tasks`)
+    return enriched
+  } catch (err) {
+    console.warn('[Enrichment] Failed (non-fatal):', err instanceof Error ? err.message : err)
+    return structuredOutput
+  }
+}
+
+/**
  * Convert partial output to full output with defaults
  */
 function normalizePartialOutput(partial: PartialStructuredOutput): StructuredOutput {

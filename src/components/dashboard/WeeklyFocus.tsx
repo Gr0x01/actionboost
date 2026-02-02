@@ -1,7 +1,9 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { TaskCheckbox } from "./TaskCheckbox"
+import { AnimatePresence } from "framer-motion"
+import { TaskCard } from "./TaskCard"
+import { TaskDetailPanel } from "./TaskDetailPanel"
 
 interface Task {
   index: number
@@ -10,15 +12,44 @@ interface Task {
   track: "sprint" | "build"
   completed: boolean
   completedAt: string | null
+  note: string | null
+  why: string | null
+  how: string | null
 }
 
 interface WeeklyFocusProps {
   runId: string
+  onPanelChange?: (open: boolean) => void
 }
 
-export function WeeklyFocus({ runId }: WeeklyFocusProps) {
+export interface DraftState {
+  mode: "idle" | "picking" | "loading" | "done"
+  draft: string | null
+  error: string | null
+}
+
+export function WeeklyFocus({ runId, onPanelChange }: WeeklyFocusProps) {
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedTaskIndex, setSelectedTaskIndex] = useState<number | null>(null)
+  // Per-task draft cache: survives panel close/reopen
+  const [drafts, setDrafts] = useState<Record<number, DraftState>>({})
+
+  const getDraft = useCallback((taskIndex: number): DraftState => {
+    return drafts[taskIndex] ?? { mode: "idle", draft: null, error: null }
+  }, [drafts])
+
+  const setDraft = useCallback((taskIndex: number, update: Partial<DraftState>) => {
+    setDrafts((prev) => ({
+      ...prev,
+      [taskIndex]: { ...prev[taskIndex] ?? { mode: "idle", draft: null, error: null }, ...update },
+    }))
+  }, [])
+
+  // Notify parent when panel opens/closes
+  useEffect(() => {
+    onPanelChange?.(selectedTaskIndex !== null)
+  }, [selectedTaskIndex, onPanelChange])
 
   useEffect(() => {
     fetch(`/api/tasks?runId=${runId}`)
@@ -34,7 +65,6 @@ export function WeeklyFocus({ runId }: WeeklyFocusProps) {
   }, [runId])
 
   const handleToggle = useCallback(async (taskIndex: number, completed: boolean) => {
-    // Capture previous state inside updater to avoid stale closure
     let previousTasks: Task[] = []
     setTasks((prev) => {
       previousTasks = prev
@@ -45,19 +75,25 @@ export function WeeklyFocus({ runId }: WeeklyFocusProps) {
       )
     })
 
-    const res = await fetch("/api/tasks/complete", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ runId, taskIndex, completed }),
-    })
+    try {
+      const res = await fetch("/api/tasks/complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ runId, taskIndex, completed }),
+      })
 
-    if (!res.ok) {
+      if (!res.ok) {
+        setTasks(previousTasks)
+      }
+    } catch {
       setTasks(previousTasks)
     }
   }, [runId])
 
-  const sprintTasks = tasks.filter((t) => t.track === "sprint")
-  const buildTasks = tasks.filter((t) => t.track === "build")
+  const selectedTask = selectedTaskIndex !== null
+    ? tasks.find((t) => t.index === selectedTaskIndex) ?? null
+    : null
+
   const completedCount = tasks.filter((t) => t.completed).length
 
   return (
@@ -85,42 +121,32 @@ export function WeeklyFocus({ runId }: WeeklyFocusProps) {
           No tasks extracted yet. Your strategy may still be processing.
         </p>
       ) : (
-        <div className="space-y-6">
-          {sprintTasks.length > 0 && (
-            <div>
-              <span className="font-mono text-[10px] tracking-[0.25em] text-cta uppercase mb-3 block">
-                Sprint
-              </span>
-              <div className="space-y-2">
-                {sprintTasks.map((task) => (
-                  <TaskCheckbox
-                    key={task.index}
-                    task={task}
-                    onToggle={handleToggle}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {buildTasks.length > 0 && (
-            <div>
-              <span className="font-mono text-[10px] tracking-[0.25em] text-foreground/40 uppercase mb-3 block">
-                Build
-              </span>
-              <div className="space-y-2">
-                {buildTasks.map((task) => (
-                  <TaskCheckbox
-                    key={task.index}
-                    task={task}
-                    onToggle={handleToggle}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
+        <div className="space-y-2">
+          {tasks.map((task) => (
+            <TaskCard
+              key={task.index}
+              task={task}
+              onToggle={handleToggle}
+              onSelect={(i) => setSelectedTaskIndex(i === selectedTaskIndex ? null : i)}
+              isSelected={selectedTaskIndex === task.index}
+            />
+          ))}
         </div>
       )}
+
+      {/* Task detail panel */}
+      <AnimatePresence>
+        {selectedTask && (
+          <TaskDetailPanel
+            task={selectedTask}
+            runId={runId}
+            onClose={() => setSelectedTaskIndex(null)}
+            onToggle={handleToggle}
+            draftState={getDraft(selectedTask.index)}
+            onDraftChange={(update) => setDraft(selectedTask.index, update)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

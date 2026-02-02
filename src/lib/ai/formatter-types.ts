@@ -12,6 +12,8 @@ export const DayActionSchema = z.object({
   action: z.string(),
   timeEstimate: z.string(),
   successMetric: z.string(),
+  why: z.string().optional(),
+  how: z.string().optional(),
 })
 
 export type DayAction = z.infer<typeof DayActionSchema>

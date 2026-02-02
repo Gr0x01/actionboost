@@ -9,6 +9,9 @@
 export interface ExtractedTask {
   title: string
   description: string
+  track?: "sprint" | "build"
+  why?: string
+  how?: string
 }
 
 interface DayAction {
@@ -16,6 +19,8 @@ interface DayAction {
   action: string
   timeEstimate: string
   successMetric: string
+  why?: string
+  how?: string
 }
 
 interface Week {
@@ -42,6 +47,8 @@ export function extractTasksFromStructuredOutput(
         tasks.push({
           title: day.action ?? "",
           description: day.successMetric ?? "",
+          why: day.why,
+          how: day.how,
         })
       }
     }
@@ -50,6 +57,19 @@ export function extractTasksFromStructuredOutput(
       tasks.push({
         title: day.action ?? "",
         description: day.successMetric ?? "",
+        why: day.why,
+        how: day.how,
+      })
+    }
+  } else if (Array.isArray(structuredOutput.tasks)) {
+    // Subscription weekly format: flat tasks array with { title, track, ... }
+    for (const t of structuredOutput.tasks as { title?: string; description?: string; track?: string; why?: string; how?: string }[]) {
+      tasks.push({
+        title: t.title ?? "",
+        description: t.description ?? "",
+        track: t.track === "build" ? "build" : "sprint",
+        why: t.why,
+        how: t.how,
       })
     }
   }

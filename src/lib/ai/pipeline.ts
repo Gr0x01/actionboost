@@ -1,6 +1,6 @@
 import { createServiceClient } from '@/lib/supabase/server'
 import { generateStrategyAgentic, generateAgenticRefinement, generateFreeAgenticStrategy } from './pipeline-agentic'
-import { extractStructuredOutput, extractFreeBriefOutput } from './formatter'
+import { extractStructuredOutput, extractFreeBriefOutput, enrichTasksWithContext } from './formatter'
 import { accumulateBusinessContext, accumulateUserContext } from '@/lib/context/accumulate'
 import { getOrCreateDefaultBusiness } from '@/lib/business'
 import { searchUserContext } from './embeddings'
@@ -267,6 +267,12 @@ export async function runAgenticPipeline(runId: string): Promise<PipelineResult>
       structuredOutput = await extractStructuredOutput(output, researchData)
       if (structuredOutput) {
         console.log(`[AgenticPipeline] Structured output extracted successfully`)
+        // Enrich tasks with WHY/HOW context (non-fatal)
+        try {
+          structuredOutput = await enrichTasksWithContext(output, structuredOutput)
+        } catch (enrichErr) {
+          console.warn('[AgenticPipeline] Task enrichment failed (non-fatal):', enrichErr)
+        }
       }
     } catch (err) {
       // Don't fail the pipeline if formatter fails
@@ -627,6 +633,11 @@ export async function runRefinementPipeline(runId: string): Promise<RefinementPi
       structuredOutput = await extractStructuredOutput(result.output, result.researchData)
       if (structuredOutput) {
         console.log(`[RefinementPipeline] Structured output extracted successfully`)
+        try {
+          structuredOutput = await enrichTasksWithContext(result.output, structuredOutput)
+        } catch (enrichErr) {
+          console.warn('[RefinementPipeline] Task enrichment failed (non-fatal):', enrichErr)
+        }
       }
     } catch (err) {
       console.warn('[RefinementPipeline] Structured output extraction failed:', err)

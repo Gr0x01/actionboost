@@ -1,8 +1,9 @@
 "use client"
 
+import { useState, useCallback } from "react"
+import { WeekTheme } from "./WeekTheme"
 import { WeeklyFocus } from "./WeeklyFocus"
 import { WhatsWorking } from "./WhatsWorking"
-import { DraftIt } from "./DraftIt"
 import { WeeklyCheckin } from "./WeeklyCheckin"
 
 interface SubscriberDashboardProps {
@@ -27,9 +28,16 @@ interface SubscriberDashboardProps {
 
 export function SubscriberDashboard({ subscription, latestRun, checkin }: SubscriberDashboardProps) {
   const isProcessing = latestRun?.status === "pending" || latestRun?.status === "processing"
+  const thesis = latestRun?.structuredOutput?.thesis as string | undefined
+  const [panelOpen, setPanelOpen] = useState(false)
+  const handlePanelChange = useCallback((open: boolean) => setPanelOpen(open), [])
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div
+      className={`max-w-3xl mx-auto px-4 py-8 transition-[margin] duration-300 ease-out ${
+        panelOpen ? "lg:mr-[28rem]" : ""
+      }`}
+    >
       {/* Week header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-foreground">
@@ -71,35 +79,18 @@ export function SubscriberDashboard({ subscription, latestRun, checkin }: Subscr
             </p>
           </div>
         ) : (
-          <>
-            {/* 3-panel layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-              {/* Panel 1: This week's focus (takes 2 cols on large) */}
-              <div className="lg:col-span-2">
-                <WeeklyFocus
-                  runId={latestRun.id}
-                />
-              </div>
-
-              {/* Panel 2: What's working */}
-              <div>
-                <WhatsWorking output={latestRun.output} />
-              </div>
-            </div>
-
-            {/* Panel 3: Draft it */}
-            <div className="mb-8">
-              <DraftIt
-                runId={latestRun.id}
-                structuredOutput={latestRun.structuredOutput}
-              />
-            </div>
-
-            {/* Weekly check-in */}
-            <WeeklyCheckin
-              existingCheckin={checkin}
+          <div className="space-y-6">
+            <WeekTheme
+              weekNumber={latestRun.weekNumber}
+              thesis={thesis}
             />
-          </>
+
+            <WeeklyFocus runId={latestRun.id} onPanelChange={handlePanelChange} />
+
+            <WhatsWorking output={latestRun.output} />
+
+            <WeeklyCheckin existingCheckin={checkin} />
+          </div>
         )}
     </div>
   )

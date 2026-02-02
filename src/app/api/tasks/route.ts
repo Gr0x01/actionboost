@@ -51,11 +51,13 @@ export async function GET(request: NextRequest) {
       index,
       title: task.title,
       description: task.description,
-      track: (completion?.track as "sprint" | "build") || "sprint",
+      track: (completion?.track as "sprint" | "build") || task.track || "sprint",
       completed: completion?.completed || false,
       completedAt: completion?.completed_at || null,
       note: completion?.note || null,
       outcome: completion?.outcome || null,
+      why: task.why || null,
+      how: task.how || null,
     }
   })
 
