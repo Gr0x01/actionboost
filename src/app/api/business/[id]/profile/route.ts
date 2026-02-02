@@ -10,10 +10,11 @@ const ALLOWED_PROFILE_KEYS = new Set([
   "icp",
   "voice",
   "competitors",
-  "triedBefore",
+  // "triedBefore" — kept in schema but not exposed; belongs in future marketing history (Phase 4)
   "goals",
   "onboardingCompleted",
   "onboardingCompletedAt",
+  "industry",
 ])
 
 /**

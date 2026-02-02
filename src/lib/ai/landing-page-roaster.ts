@@ -200,6 +200,35 @@ export async function runLandingPageRoasterPipeline(resultId: string): Promise<{
       console.error(`[LandingPageRoaster] Tavily extract failed for ${record.url}:`, err);
     }
 
+    // Detect bot challenge content — fall back to ScrapingDog with JS rendering
+    const looksLikeChallenge =
+      !siteContent ||
+      /verifying (you are human|your browser)|just a moment|checking your browser/i.test(siteContent);
+
+    if (looksLikeChallenge && process.env.SCRAPINGDOG_API_KEY) {
+      try {
+        console.log(`[LandingPageRoaster] Tavily got challenge page, trying ScrapingDog for ${record.url}`);
+        const sdRes = await fetch(
+          `https://api.scrapingdog.com/scrape?api_key=${process.env.SCRAPINGDOG_API_KEY}&url=${encodeURIComponent(record.url)}&dynamic=true`,
+          { signal: AbortSignal.timeout(30000) }
+        );
+        if (sdRes.ok) {
+          const html = await sdRes.text();
+          // Strip HTML tags to get text content
+          const text = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+            .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
+            .replace(/<[^>]+>/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+          if (text.length > 100 && !/verifying (you are human|your browser)/i.test(text)) {
+            siteContent = text;
+          }
+        }
+      } catch (err) {
+        console.error(`[LandingPageRoaster] ScrapingDog fallback failed for ${record.url}:`, err);
+      }
+    }
+
     // Truncate to 8000 chars (full page, not just above-fold)
     if (siteContent.length > 8000) {
       siteContent = siteContent.slice(0, 8000) + "\n[Content truncated]";

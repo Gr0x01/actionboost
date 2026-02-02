@@ -197,6 +197,34 @@ export async function runMarketingAuditPipeline(auditId: string): Promise<{ succ
       console.error(`[MarketingAudit] Tavily extract failed for ${audit.url}:`, err);
     }
 
+    // Detect bot challenge content — fall back to ScrapingDog with JS rendering
+    const looksLikeChallenge =
+      !siteContent ||
+      /verifying (you are human|your browser)|just a moment|checking your browser/i.test(siteContent);
+
+    if (looksLikeChallenge && process.env.SCRAPINGDOG_API_KEY) {
+      try {
+        console.log(`[MarketingAudit] Tavily got challenge page, trying ScrapingDog for ${audit.url}`);
+        const sdRes = await fetch(
+          `https://api.scrapingdog.com/scrape?api_key=${process.env.SCRAPINGDOG_API_KEY}&url=${encodeURIComponent(audit.url)}&dynamic=true`,
+          { signal: AbortSignal.timeout(30000) }
+        );
+        if (sdRes.ok) {
+          const html = await sdRes.text();
+          const text = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+            .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
+            .replace(/<[^>]+>/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+          if (text.length > 100 && !/verifying (you are human|your browser)/i.test(text)) {
+            siteContent = text;
+          }
+        }
+      } catch (err) {
+        console.error(`[MarketingAudit] ScrapingDog fallback failed for ${audit.url}:`, err);
+      }
+    }
+
     // Truncate to ~5000 chars to keep costs low
     if (siteContent.length > 5000) {
       siteContent = siteContent.slice(0, 5000) + "\n[Content truncated]";

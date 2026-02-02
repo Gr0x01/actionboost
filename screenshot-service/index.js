@@ -60,7 +60,41 @@ app.get("/screenshot", async (req, res) => {
     });
     const page = await browser.newPage();
     await page.setViewport({ width, height });
-    await page.goto(url, { waitUntil: "networkidle2", timeout: 15000 });
+    await page.goto(url, { waitUntil: "networkidle2", timeout: 20000 });
+
+    // Wait for Cloudflare/bot challenges to resolve (up to 15s)
+    const hasCfChallenge = await page.evaluate(() => {
+      const body = document.body?.innerText || "";
+      return (
+        body.includes("Verifying you are human") ||
+        body.includes("Just a moment") ||
+        body.includes("Checking your browser") ||
+        body.includes("verifying your browser") ||
+        !!document.querySelector("#challenge-running, #cf-challenge-running")
+      );
+    });
+
+    if (hasCfChallenge) {
+      // Wait for the challenge to disappear (poll every 500ms, max 15s)
+      await page
+        .waitForFunction(
+          () => {
+            const body = document.body?.innerText || "";
+            return (
+              !body.includes("Verifying you are human") &&
+              !body.includes("Just a moment") &&
+              !body.includes("Checking your browser") &&
+              !body.includes("verifying your browser") &&
+              !document.querySelector("#challenge-running, #cf-challenge-running")
+            );
+          },
+          { timeout: 15000 }
+        )
+        .catch(() => {});
+      // Extra settle time for page render after challenge passes
+      await new Promise((r) => setTimeout(r, 2000));
+    }
+
     const screenshot = await page.screenshot({ type: "jpeg", quality: 80 });
     const buf = Buffer.from(screenshot);
     res.set("Content-Type", "image/jpeg");

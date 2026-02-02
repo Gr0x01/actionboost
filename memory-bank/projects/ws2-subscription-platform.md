@@ -30,18 +30,18 @@ Persistent business profiles, Stripe subscription billing ($29/mo founder, $49/m
 
 ### Navigation
 
-**Desktop**: Top bar
+**Desktop**: Top bar with sliding underline (framer-motion `layoutId`)
 ```
-Boost   [▾ Project Name]       This Week   Insights   Profile   ⚙
+Boost   [▾ Project Name]       This Week   Insights   Brand   ⚙
 ```
 
 **Mobile/Tablet**: Slim top bar + bottom nav
 ```
 Top:    Boost   [▾ Project Name]
-Bottom: 📋 This Week   📊 Insights   👤 Profile   ⚙ Settings
+Bottom: 📋 This Week   📊 Insights   🪪 Brand   ⚙ Settings
 ```
 
-4 nav items. "Insights" starts as a placeholder — fills up as analytics integrations connect.
+4 nav items. "Insights" starts as a placeholder — fills up as analytics integrations connect. "Brand" replaced "Profile" — strategic identity (ICP, voice, competitors) lives here. Business basics/goals moved to Settings.
 
 ### Project Switcher
 
@@ -120,23 +120,21 @@ Future contents:
 
 Starts empty. Fills up as integrations connect. Build this view when WS4 (integrations) ships.
 
-### View 3: Profile (per project)
+### View 3: Brand (per project) ✅ Built
 
-Business identity. The "marketing brain" that feeds strategy and drafts.
+Strategic identity. The "marketing brain" that feeds strategy and drafts.
 
-**Sections:**
+**Sections (3 cards, inline edit):**
 
-**Business Basics** — Name, URL, what you sell, stage. View/edit card.
+**Your Customers (ICP)** — Who, problem they solve, alternatives. Single ICP (not multi — kept simple). View/edit card.
 
-**ICPs (2+)** — Each ICP is its own card. Name, description, pain points, buying triggers, where they hang out. Add/edit/delete. Multiple ICPs because one product often serves different segments. When future "Draft this" ships, ICP selection determines voice/targeting of the draft.
+**Brand Voice** — Tone, copy examples, do's list, don'ts list. Do's/don'ts are explicit rules ("Always mention the free tier", "Never compare to X by name"). Feed into future content drafting.
 
-**Brand Voice** — Tone, words they use, words they avoid, examples. View/edit card.
+**Competitors** — Up to 5 URLs. Add/remove. Fed into competitive monitoring and re-vectoring.
 
-**Do's & Don'ts** — Explicit rules. "Always mention the free tier." "Never compare directly to X by name." "No memes in LinkedIn content." These feed into future content drafting to keep output on-brand.
+**"Fill with AI" button** — Uses Sonnet (`claude-sonnet-4-20250514`) to generate all 3 sections from available business context (onboarding profile + accumulated run data). Rate-limited to 1 call per 5 minutes per business. Input sanitized. `?save=true` param auto-persists suggestions.
 
-**Competitors** — Name, URL, positioning notes. Add/edit/delete. Fed into competitive monitoring and re-vectoring.
-
-**Goals** — What they're trying to achieve right now. Short-term and this-quarter. Informs task prioritization.
+Business basics (name, URL, description, industry) and goals moved to Settings (not yet built).
 
 ### View 4: Settings
 
@@ -202,34 +200,28 @@ Current dashboard is a single-page 3-panel layout (WeeklyFocus + WhatsWorking + 
 - Fixed invalid Supabase `.select("id", { count: "exact" })` in `subscription.ts`
 - Remaining: `WhatsWorking.tsx` still uses fragile regex parsing — will be replaced in Phase 3 with structured data
 
-### Phase 1: Layout Shell + Navigation
-- New dashboard layout component with route structure:
-  - `/dashboard` → This Week (default)
-  - `/dashboard/profile` → Profile page
-  - `/dashboard/insights` → Placeholder
-  - `/dashboard/settings` → Placeholder
-- Top nav (desktop): `Boost [▾ Project] This Week Insights Profile ⚙`
-- Bottom nav (mobile/tablet): 4 icon+label items in thumb zone
-- Project switcher dropdown (queries all user businesses, scopes everything below)
+### Phase 1: Layout Shell + Navigation ✅ Complete
+- Dashboard layout with route structure (`DashboardShell.tsx`)
+- Top nav (desktop): `Boost [▾ Project] This Week Insights Brand ⚙` with sliding underline (framer-motion `layoutId`)
+- Bottom nav (mobile/tablet): 4 icon+label items
+- Project switcher dropdown (queries all user businesses, scopes via `?biz=` param)
 - Responsive breakpoint: top nav ≥ 768px, bottom nav < 768px
+- Nav config: `src/components/dashboard/nav-config.ts`
 
-**Dependencies**: None. Pure layout work.
+### Phase 2: Brand Page ✅ Complete
+- Built `/dashboard/brand` with 3 editable sections: ICP, Brand Voice (tone + do's/don'ts), Competitors
+- `/dashboard/profile` redirects to `/dashboard/brand` (preserves `?biz=` param)
+- Reusable `ProfileSection` card component with view/edit modes
+- Added `dos?: string[]` and `donts?: string[]` to `BusinessProfile.voice`
+- "Fill with AI" button: `POST /api/business/[id]/brand/suggest` (Sonnet, rate-limited, input-sanitized)
+- `?save=true` param for auto-persisting AI suggestions
+- Business basics and goals deferred to Settings page (not yet built)
 
-### Phase 2: Profile Page (can parallel with Phase 1)
-- Build `/dashboard/profile` with editable sections:
-  - Business basics (name, URL, description, stage)
-  - ICPs (2+) — each as own card, add/edit/delete
-  - Brand voice (tone, examples)
-  - Do's & Don'ts (explicit rules list, add/edit/delete)
-  - Competitors (name, URL, positioning notes, add/edit/delete)
-  - Goals (short-term, this-quarter)
-- Enhance `BusinessProfile` schema:
-  - `icps`: array of `{ name, who, problem, alternatives, channels }` (currently single object)
-  - `brandGuidelines`: `{ dos: string[], donts: string[] }` (new)
-- Wire to existing `/api/business/[id]/profile` PATCH endpoint
-- Progressive feel — start with basics, deepen over time. Not a giant form.
-
-**Dependencies**: None. Independent of task view.
+**Key files:**
+- `src/app/dashboard/brand/page.tsx` (server)
+- `src/components/dashboard/brand/BrandClient.tsx` (client)
+- `src/components/dashboard/profile/ProfileSection.tsx` (reusable card)
+- `src/app/api/business/[id]/brand/suggest/route.ts` (AI endpoint)
 
 ### Phase 3: Task View Redesign
 - Replace `WeeklyFocus` + `TaskCheckbox` with expandable task cards:
@@ -253,6 +245,11 @@ Current dashboard is a single-page 3-panel layout (WeeklyFocus + WhatsWorking + 
 - Past week view: read-only tasks with completion status + notes + retro
 - Next week preview: theme + planned tasks + "may adjust" note
 - AI-generated weekly retro summary (from task notes + analytics + sentiment)
+- **Marketing history** — running log of what the user has tried and what they've learned
+  - Seed from onboarding data (currently baked into `productDescription` in the `/start` flow — no separate `triedBefore` collection exists in any active flow)
+  - Grows over time as user completes weekly tasks, marks things as tried, adds notes
+  - This replaces the static "What You've Tried" concept — a snapshot goes stale, a living history is useful
+  - `triedBefore` field kept in profile schema for backward compat (brand suggest + inngest read it) but not exposed in UI
 - "What's Moving" signals section below tasks (current week only)
   - Container exists but empty until analytics integrations (WS4)
   - Shows placeholder: "Connect analytics to see what's moving"
@@ -261,13 +258,14 @@ Current dashboard is a single-page 3-panel layout (WeeklyFocus + WhatsWorking + 
 
 ### Phase Summary
 
-| Phase | What | Depends On | Can Parallel |
-|-------|------|------------|--------------|
-| 0 | Fix bugs (task extraction, DraftIt) | Nothing | Yes |
-| 1 | Layout shell + nav + project switcher | Nothing | With Phase 2 |
-| 2 | Profile page (ICPs, voice, do's/don'ts) | Nothing | With Phase 1 |
-| 3 | Task view redesign + week navigator | Phase 1 | — |
-| 4 | Weekly retro + history views | Phase 3 | — |
+| Phase | What | Status |
+|-------|------|--------|
+| 0 | Fix bugs (task extraction, DraftIt) | ✅ Complete |
+| 1 | Layout shell + nav + project switcher | ✅ Complete |
+| 2 | Brand page (ICP, voice, competitors + AI fill) | ✅ Complete |
+| 2.5 | Business page (basics, goals + AI fill) | ✅ Complete |
+| 3 | Task view redesign + week navigator | **Next** |
+| 4 | Weekly retro + marketing history | Blocked on Phase 3 |
 
 ## Data Model Changes
 
@@ -294,8 +292,10 @@ From subscription-brainstorm.md §3 (Option A — extend `runs`):
 | Dashboard layout | Top nav (desktop) + bottom nav (mobile), no sidebar | Not enough sections for sidebar. 4 nav items fits both patterns. |
 | Primary view | Task-centric single column | Tasks are the main interaction. Not a multi-panel dashboard. |
 | Multi-project | Project switcher in top bar | Founders run 2-3 projects. Instant switching. Also upsell surface. |
-| ICP storage | JSONB array on business_profiles | Always accessed with project. No independent queries needed. |
-| Business profile | Separate `business_profiles` table (not JSONB on users) | One per project, not per user. Multi-project requires its own table. |
+| ICP storage | Single ICP in JSONB (not multi-ICP array) | Kept simple for MVP. Multi-ICP adds complexity without proven need. |
+| Business profile | JSONB on `businesses.context.profile` | No separate table needed — always accessed with business. |
+| Profile vs Brand split | Brand = ICP + voice + competitors; Settings = basics + goals | ICP and voice are strategic identity, not "settings". Cleaner mental model. |
+| AI brand suggestions | Sonnet (not Haiku) via dedicated endpoint | Haiku too shallow for nuanced brand positioning. Sonnet worth the cost. |
 | Original strategy display | Decomposed into tasks + theme, never shown as document | Users interact with actions, not reports. |
 | Week navigation | Time navigator on main view, not separate pages | One layout, time dimension. Past/current/future in same view. |
 | "Draft this" | Deferred — not tied into task system yet | Needs more thinking. Can bolt on later without restructuring. |

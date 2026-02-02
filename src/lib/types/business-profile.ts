@@ -54,7 +54,6 @@ export const ONBOARDING_STEPS = [
   { id: "icp", label: "Your customers", field: "icp" },
   { id: "voice", label: "Your voice", field: "voice" },
   { id: "competitors", label: "Competitors", field: "competitors" },
-  { id: "tried", label: "What you've tried", field: "triedBefore" },
   { id: "goals", label: "Your goals", field: "goals" },
 ] as const
 

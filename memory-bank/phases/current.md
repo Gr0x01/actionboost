@@ -1,10 +1,32 @@
 # Current Phase
 
-## Latest Update: Dashboard Phase 0 Complete (Feb 2, 2026)
+## Latest Update: Dashboard Phases 0-2.5 Complete + Bot Protection Fix (Feb 2, 2026)
 
-**Phase 0 (bug fixes) shipped.** Fixed broken task extraction across 3 files — created shared `extractTasksFromStructuredOutput()` helper. Fixed Supabase type error in subscription.ts.
+**Phases 0, 1, 2, 2.5 shipped.** Dashboard has layout shell, project switcher, Brand page, and Business page — both with AI-powered fill.
 
-**Next: Phase 1 (layout shell + navigation) and Phase 2 (profile page) — can run in parallel.**
+**What shipped this session:**
+
+- **Phase 2.5**: Business page (`/dashboard/business`) with 2 editable sections: Business Basics (website, description, industry) and Goals (primary goal, budget). "Fill with AI" button uses Sonnet to infer fields from existing context. Same edit/save/cancel pattern as Brand.
+  - Renamed from "Settings" → "Business" (brand guardian: "Settings" implies account management, not business profile)
+  - Nav icon: `Building2`. Route: `/dashboard/business`
+  - `industry` added to `ALLOWED_PROFILE_KEYS`
+  - New API: `POST /api/business/[id]/business/suggest` (Sonnet, `?save=true`)
+  - "What You've Tried" section removed — static snapshot doesn't belong here; marketing history will be a living log in Phase 4
+  - `triedBefore` removed from `ALLOWED_PROFILE_KEYS` and `ONBOARDING_STEPS` (not collected in any active flow — baked into `productDescription` in `/start`). Field kept in type + schema for backward compat (brand suggest + inngest read it).
+  - `/subscribe` page is orphaned — nothing links to it. Noted for future cleanup.
+
+- **Bot protection fix**: Cloudflare "verifying your browser" was breaking the landing page roaster and marketing audit screenshots + content extraction.
+  - Screenshot service (Vultr): now detects CF challenge and waits up to 15s for it to resolve before capturing
+  - Landing page roaster + marketing audit: if Tavily returns challenge content, falls back to ScrapingDog with `dynamic=true` (JS rendering)
+  - Screenshot service redeployed to Vultr
+
+**Dashboard nav (4 tabs):**
+1. This Week (CalendarCheck) — task list
+2. Insights (BarChart3) — placeholder
+3. Brand (Fingerprint) — ICP, voice, competitors + AI fill
+4. Business (Building2) — basics, goals + AI fill
+
+**Next: Phase 3 (Task View Redesign)** — Replace current `WeeklyFocus` + `TaskCheckbox` with expandable task cards (collapsed: checkbox + title + track; expanded: WHY + HOW + notes). Week theme card. Week navigator.
 
 Full dashboard spec and phase plan in `projects/ws2-subscription-platform.md`.
 

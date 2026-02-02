@@ -335,21 +335,7 @@ function StepContent({
         </div>
       )
 
-    case "tried":
-      return (
-        <div>
-          <h2 className="text-2xl font-bold text-foreground mb-2">What marketing have you tried?</h2>
-          <p className="text-[15px] text-foreground/60 mb-6">So we don&apos;t suggest things you&apos;ve already done.</p>
-          <textarea
-            placeholder="We tried Twitter threads, cold email, and a few Reddit posts. Twitter got some engagement but no conversions..."
-            value={profile.triedBefore || ""}
-            onChange={(e) => onChange({ ...profile, triedBefore: e.target.value })}
-            rows={5}
-            className="w-full px-4 py-3 border-2 border-foreground/20 rounded-md text-sm
-                       focus:border-cta focus:outline-none transition-colors resize-none"
-          />
-        </div>
-      )
+
 
     case "goals":
       return (

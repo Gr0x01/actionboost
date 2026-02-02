@@ -88,6 +88,12 @@ auth.users (Supabase Auth)     public.users (our table)
 | `/api/examples/[id]` | GET | Get single example by ID or slug | Public/Admin | ✅ |
 | `/api/examples/[id]` | PATCH | Update example (toggle live, edit) | Admin | ✅ |
 | `/api/examples/[id]` | DELETE | Delete example | Admin | ✅ |
+| `/api/marketing-audit` | POST | Create marketing audit | No | ✅ |
+| `/api/marketing-audit/[slug]` | GET | Get audit results | No | ✅ |
+| `/api/headline-analyzer` | POST | Create headline analysis (inline GPT) | No | ✅ |
+| `/api/headline-analyzer/[slug]` | GET | Get analysis results | No | ✅ |
+| `/api/landing-page-roaster` | POST | Create landing page roast | No | ✅ |
+| `/api/landing-page-roaster/feed` | GET | Recent roasts feed (cached 60s) | No | ✅ |
 
 **Auth pattern**: Check user's `auth_id` links to `public.users`, then verify `user_id` matches, OR valid `share_slug` for public access.
 
@@ -226,7 +232,10 @@ Agentic Sonnet pipeline — "landing page as lens into strategy":
 - Tavily extract runs in parallel as fallback for bot-protected sites
 - System prompt detects Cloudflare/CAPTCHA screenshots, falls back to page text
 - Output sections: 3-Second Test, Positioning Gap, Quick Wins, Competitive Landscape, Scores
-- Formatter extracts: `threeSecondTest`, `positioningGap`, `quickWins`, `briefScores`, `competitiveComparison`
+- Dedicated `FreeBriefOutputSchema` + `extractFreeBriefOutput()` — separate from paid `StructuredOutputSchema`
+- Only required field: `briefScores`; everything else optional
+- `stripNulls()` preprocessor handles LLM returning null for optional fields
+- Formatter extracts: `threeSecondTest`, `positioningGap`, `quickWins`, `briefScores`, `competitiveComparison`, `positioning`, `competitors`, `discoveries`
 - Locked sections shown as upsell: Full competitive deep-dive, 30-day roadmap, weekly execution, channel strategy
 - No RAG/user history
 - Rate limit: 1 per email (normalized for Gmail aliases)
@@ -544,12 +553,16 @@ Background job orchestration for long-running AI pipelines.
 | `generate-strategy` | `run/created` | Full paid pipeline |
 | `refine-strategy` | `run/refinement.requested` | Refinement pipeline |
 | `generate-free-audit` | `free-audit/created` | Free mini-audit pipeline |
+| `generate-marketing-audit` | `marketing-audit/created` | Free marketing audit (Tavily + GPT-4.1-mini) |
+| `generate-target-audience` | `target-audience/created` | Free target audience generator (GPT-4.1-mini) |
+| `generate-landing-page-roast` | `landing-page-roaster/created` | Free landing page roaster (Tavily + screenshot + GPT-4.1-mini vision) |
 
 **Files**:
 ```
 src/lib/inngest/
 ├── client.ts      # Inngest client with typed events
-├── functions.ts   # Pipeline wrapper functions (3)
+├── functions.ts   # Pipeline wrapper functions (6)
+├── subscription.ts # Subscription-related functions
 └── index.ts       # Barrel export
 
 src/app/api/inngest/route.ts  # Serve handler
