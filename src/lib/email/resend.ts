@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { signAuditToken } from "@/lib/auth/audit-token";
+import { escapeHTML } from "@/lib/markdown/parser";
 
 // Lazy-load Resend client to avoid throwing on import when API key is missing
 let _resend: Resend | null = null;
@@ -67,7 +68,11 @@ function generateReceiptHtml(data: {
   date: string;
   dashboardUrl: string;
 }): string {
-  const { productName, amount, date, dashboardUrl } = data;
+  // Escape user-controlled data as defense-in-depth against HTML injection
+  const productName = escapeHTML(data.productName);
+  const amount = escapeHTML(data.amount);
+  const date = escapeHTML(data.date);
+  const { dashboardUrl } = data;
 
   return `
 <!DOCTYPE html>
@@ -316,6 +321,100 @@ function generateRunReadyHtml(data: { resultsUrl: string }): string {
                         <td style="background-color: ${COLORS.cta}; border-radius: 4px;">
                           <a href="${resultsUrl}" style="display: inline-block; padding: 16px 32px; color: #FFFFFF; text-decoration: none; font-family: 'Source Sans 3', -apple-system, sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em;">
                             View Your Strategy
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 32px 0; text-align: center;">
+              <p style="margin: 0; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: ${COLORS.muted};">
+                <a href="https://aboo.st" style="color: ${COLORS.muted}; text-decoration: none;">Boost</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim();
+}
+
+// =============================================================================
+// WEEK READY EMAIL (Boost Weekly)
+// =============================================================================
+
+export interface WeekReadyEmailData {
+  to: string;
+  runId: string;
+}
+
+/**
+ * Send email when a new weekly strategy is ready (Monday morning).
+ * Fire-and-forget: errors are logged but don't throw.
+ */
+export async function sendWeekReadyEmail(data: WeekReadyEmailData): Promise<void> {
+  try {
+    const { to, runId } = data;
+    const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`;
+
+    const resend = getResend();
+    if (!resend) {
+      console.warn('[Email] RESEND_API_KEY not set, skipping email');
+      return;
+    }
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      subject: "Your week is ready",
+      html: generateWeekReadyHtml({ dashboardUrl }),
+    });
+
+    console.log("[sendWeekReadyEmail] Sent to:", to);
+  } catch (error) {
+    console.error("[sendWeekReadyEmail] Failed:", error);
+  }
+}
+
+function generateWeekReadyHtml(data: { dashboardUrl: string }): string {
+  const { dashboardUrl } = data;
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body style="margin: 0; padding: 0; background-color: ${COLORS.cream}; font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: ${COLORS.cream}; padding: 48px 20px;">
+    <tr>
+      <td align="center">
+        <table width="560" cellpadding="0" cellspacing="0" style="max-width: 560px;">
+          <tr>
+            <td>
+              <table cellpadding="0" cellspacing="0" width="100%" style="border: 2px solid ${COLORS.foreground}; border-radius: 6px; background-color: #FFFFFF; box-shadow: ${SOFT_SHADOW};">
+                <tr>
+                  <td style="padding: 48px 40px 40px;">
+                    <img src="https://aboo.st/logo.png" alt="Boost" width="120" height="28" style="display: block; margin: 0 0 32px; width: 120px; height: 28px;" />
+                    <h1 style="margin: 0 0 16px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.foreground}; line-height: 1.2;">
+                      Your new week is ready.
+                    </h1>
+                    <p style="margin: 0 0 32px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: ${COLORS.muted};">
+                      Based on what happened last week and where you are now, here's your updated focus. New tasks, fresh priorities, same momentum.
+                    </p>
+                    <table cellpadding="0" cellspacing="0" style="border: 2px solid ${COLORS.foreground}; border-radius: 6px; box-shadow: ${SOFT_SHADOW};">
+                      <tr>
+                        <td style="background-color: ${COLORS.cta}; border-radius: 4px;">
+                          <a href="${dashboardUrl}" style="display: inline-block; padding: 16px 32px; color: #FFFFFF; text-decoration: none; font-family: 'Source Sans 3', -apple-system, sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em;">
+                            See This Week's Plan
                           </a>
                         </td>
                       </tr>

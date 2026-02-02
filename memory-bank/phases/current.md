@@ -1,6 +1,31 @@
 # Current Phase
 
-## Latest Update: Homepage Hero Redesign — Option B (Feb 2, 2026)
+## Latest Update: Landing Page Roaster Shipped (Feb 2, 2026)
+
+**Built and shipped `/tools/landing-page-roaster`** — sixth free tool. User enters URL + optional context, gets a brutally honest roast of their landing page with actionable fixes.
+
+**Key design decisions:**
+- **No email required** — URL + optional context only (2-step wizard). Dedup is per-URL, not per-email.
+- **Roast tone** — Gordon Ramsay energy, not polite consultancy. Prompt quotes the page against itself, uses analogies that sting, scores consistently with tone.
+- **Results page** — 2-col grid of `RoastCard` components grouped by severity (Fix these first / Should fix / Nice to fix), collapsible fix blocks, color-coded left borders (red/amber/blue).
+- **Live feed** — Homepage shows last 10 completed roasts (domain, verdict, score, time ago). Feed cards link to results pages.
+- **Shareable** — Share buttons (X + LinkedIn) + copy link on results page. Feed cards are clickable links.
+
+**Cost:** ~$0.05-0.10 per roast (Tavily extract + Vultr screenshot + GPT-4.1-mini vision).
+
+**Files created/modified:**
+- `src/app/tools/landing-page-roaster/page.tsx` — full page rewrite (hero, 2-step form, live feed, dark upsell card)
+- `src/app/api/landing-page-roaster/feed/route.ts` — NEW, GET endpoint for recent roasts
+- `src/app/tools/landing-page-roaster/[slug]/results-client.tsx` — card redesign + share buttons
+- `src/lib/ai/landing-page-roaster.ts` — prompt rewrite with roast energy
+- `src/app/api/landing-page-roaster/route.ts` — email made optional, per-URL dedup
+- `src/components/ui/SocialShareButtons.tsx` — added "roaster" source type
+
+**Git worktree setup:** `actionboost/` on `feature/ws2-boost-weekly`, `actionboost-main/` on `main`. Use worktrees to work on current and future things simultaneously.
+
+---
+
+## Previous: Homepage Hero Redesign — Option B (Feb 2, 2026)
 
 **Complete hero rewrite. Old animated chaos→clarity hero replaced with static two-column layout.**
 
@@ -56,8 +81,8 @@ All 5 free tool result pages now CTA to `/upgrade?from=<tool>` with personalized
 | Landing Page Roaster | Not started |
 
 **What's NOT done yet:**
-- Landing Page Roaster (last free tool)
-- Brief locks tactical sections behind Weekly upgrade
+- ~~Landing Page Roaster~~ ✅ Shipped
+- ~~Brief locks tactical sections behind Weekly upgrade~~ ✅ Shipped
 - ICP (separate, comes with dashboard)
 
 ---

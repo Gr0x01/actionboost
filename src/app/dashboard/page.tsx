@@ -1,10 +1,13 @@
 import { redirect } from "next/navigation"
 import { requireAuth } from "@/lib/auth/session"
 import { createServiceClient } from "@/lib/supabase/server"
+import { getActiveSubscription } from "@/lib/subscription"
+import { SubscriberDashboard } from "@/components/dashboard/SubscriberDashboard"
 
 /**
- * Dashboard redirects to the user's most recent plan
- * The results page serves as the "home base" with plan switching via dropdown
+ * Dashboard page
+ * - Subscribers → 3-panel dashboard (this week / what's working / draft it)
+ * - Legacy one-shot users → redirect to latest results
  */
 export default async function DashboardPage() {
   const authUser = await requireAuth()
@@ -19,11 +22,52 @@ export default async function DashboardPage() {
     .single()
 
   if (!publicUser) {
-    // No runs yet, go to start
     redirect("/start")
   }
 
-  // Get the latest completed run (follow refinement chains to get the most recent)
+  // Check for active subscription
+  const subscription = await getActiveSubscription(publicUser.id)
+
+  if (subscription) {
+    // Subscriber: render 3-panel dashboard
+    // Get the latest run for this subscription
+    const { data: latestRun } = await supabase
+      .from("runs")
+      .select("id, output, structured_output, week_number, status, created_at")
+      .eq("subscription_id", subscription.id)
+      .order("week_number", { ascending: false })
+      .limit(1)
+      .single()
+
+    // Get checkin for current week
+    const { data: checkin } = await supabase
+      .from("weekly_checkins")
+      .select("sentiment, notes")
+      .eq("subscription_id", subscription.id)
+      .eq("week_number", subscription.current_week)
+      .single()
+
+    return (
+      <SubscriberDashboard
+        subscription={{
+          id: subscription.id,
+          currentWeek: subscription.current_week,
+          status: subscription.status,
+          cancelAtPeriodEnd: subscription.cancel_at_period_end,
+        }}
+        latestRun={latestRun ? {
+          id: latestRun.id,
+          weekNumber: latestRun.week_number ?? 1,
+          status: latestRun.status ?? "pending",
+          output: typeof latestRun.output === "string" ? latestRun.output : null,
+          structuredOutput: latestRun.structured_output as Record<string, unknown> | null,
+        } : null}
+        checkin={checkin ? { sentiment: checkin.sentiment, notes: checkin.notes } : null}
+      />
+    )
+  }
+
+  // Legacy one-shot user: redirect to latest results
   const { data: runs } = await supabase
     .from("runs")
     .select("id, status, parent_run_id, completed_at, created_at")
@@ -32,7 +76,6 @@ export default async function DashboardPage() {
     .order("completed_at", { ascending: false })
 
   if (!runs || runs.length === 0) {
-    // No completed runs, check for pending/processing
     const { data: pendingRuns } = await supabase
       .from("runs")
       .select("id")
@@ -44,13 +87,10 @@ export default async function DashboardPage() {
     if (pendingRuns && pendingRuns.length > 0) {
       redirect(`/results/${pendingRuns[0].id}`)
     }
-
-    // No runs at all, go to start
     redirect("/start")
   }
 
-  // Find the latest leaf in each chain and pick the most recent overall
-  // Build parent->children map
+  // Find latest leaf run
   const childrenMap = new Map<string, typeof runs>()
   const rootRuns: typeof runs = []
 
@@ -64,15 +104,11 @@ export default async function DashboardPage() {
     }
   })
 
-  // For each root, find the latest in its chain
-  let latestRun = runs[0] // Fallback to most recent by date
-
+  let latestRun = runs[0]
   for (const root of rootRuns) {
     let current = root
     let children = childrenMap.get(current.id)
-
     while (children && children.length > 0) {
-      // Sort by date, take most recent
       children.sort((a, b) =>
         new Date(b.completed_at || b.created_at || 0).getTime() -
         new Date(a.completed_at || a.created_at || 0).getTime()
@@ -80,8 +116,6 @@ export default async function DashboardPage() {
       current = children[0]
       children = childrenMap.get(current.id)
     }
-
-    // Check if this is more recent than our current latest
     const currentDate = new Date(current.completed_at || current.created_at || 0).getTime()
     const latestDate = new Date(latestRun.completed_at || latestRun.created_at || 0).getTime()
     if (currentDate > latestDate) {

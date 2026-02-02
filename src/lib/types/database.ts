@@ -229,8 +229,12 @@ export type Database = {
           status: string | null
           stripe_session_id: string | null
           structured_output: Json | null
+          subscription_id: string | null
           task_schedule: Json | null
+          thesis: string | null
           user_id: string | null
+          week_number: number | null
+          parent_plan_id: string | null
         }
         Insert: {
           additional_context?: string | null
@@ -252,8 +256,12 @@ export type Database = {
           status?: string | null
           stripe_session_id?: string | null
           structured_output?: Json | null
+          subscription_id?: string | null
           task_schedule?: Json | null
+          thesis?: string | null
           user_id?: string | null
+          week_number?: number | null
+          parent_plan_id?: string | null
         }
         Update: {
           additional_context?: string | null
@@ -266,6 +274,7 @@ export type Database = {
           input?: Json
           output?: string | null
           parent_run_id?: string | null
+          parent_plan_id?: string | null
           plan_start_date?: string | null
           refinements_used?: number | null
           research_data?: Json | null
@@ -275,8 +284,11 @@ export type Database = {
           status?: string | null
           stripe_session_id?: string | null
           structured_output?: Json | null
+          subscription_id?: string | null
           task_schedule?: Json | null
+          thesis?: string | null
           user_id?: string | null
+          week_number?: number | null
         }
         Relationships: [
           {
@@ -428,6 +440,152 @@ export type Database = {
         }
         Relationships: []
       }
+      subscriptions: {
+        Row: {
+          id: string
+          user_id: string
+          business_id: string
+          stripe_subscription_id: string
+          stripe_customer_id: string
+          status: string
+          current_period_start: string | null
+          current_period_end: string | null
+          current_week: number
+          original_run_id: string | null
+          cancel_at_period_end: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          business_id: string
+          stripe_subscription_id: string
+          stripe_customer_id: string
+          status?: string
+          current_period_start?: string | null
+          current_period_end?: string | null
+          current_week?: number
+          original_run_id?: string | null
+          cancel_at_period_end?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          business_id?: string
+          stripe_subscription_id?: string
+          stripe_customer_id?: string
+          status?: string
+          current_period_start?: string | null
+          current_period_end?: string | null
+          current_week?: number
+          original_run_id?: string | null
+          cancel_at_period_end?: boolean
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_original_run_id_fkey"
+            columns: ["original_run_id"]
+            isOneToOne: false
+            referencedRelation: "runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_completions: {
+        Row: {
+          id: string
+          run_id: string
+          task_index: number
+          track: string
+          completed: boolean
+          completed_at: string | null
+          note: string | null
+          outcome: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          run_id: string
+          task_index: number
+          track?: string
+          completed?: boolean
+          completed_at?: string | null
+          note?: string | null
+          outcome?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          run_id?: string
+          task_index?: number
+          track?: string
+          completed?: boolean
+          completed_at?: string | null
+          note?: string | null
+          outcome?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_completions_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      weekly_checkins: {
+        Row: {
+          id: string
+          subscription_id: string
+          week_number: number
+          sentiment: string | null
+          notes: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          subscription_id: string
+          week_number: number
+          sentiment?: string | null
+          notes?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          subscription_id?: string
+          week_number?: number
+          sentiment?: string | null
+          notes?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_checkins_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       waitlist: {
         Row: {
           created_at: string | null
@@ -485,6 +643,9 @@ export type FreeAudit = Tables<"free_audits">
 
 // Example type for /in-action curated showcases
 export type Example = Tables<"examples">
+export type SubscriptionRow = Tables<"subscriptions">
+export type TaskCompletion = Tables<"task_completions">
+export type WeeklyCheckin = Tables<"weekly_checkins">
 
 export type RunStatus = "pending" | "processing" | "complete" | "failed"
 export type PipelineStage = "researching" | "loading_history" | "generating" | "finalizing"

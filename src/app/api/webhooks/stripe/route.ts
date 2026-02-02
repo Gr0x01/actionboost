@@ -10,6 +10,11 @@ import { applyContextDeltaToBusiness } from "@/lib/context/accumulate";
 import { createBusiness, getOrCreateDefaultBusiness, verifyBusinessOwnership } from "@/lib/business";
 import { isValidEmail } from "@/lib/validation";
 import { inngest } from "@/lib/inngest";
+import {
+  createSubscriptionRecord,
+  updateSubscriptionStatus,
+  getSubscriptionByStripeId,
+} from "@/lib/subscription";
 import type { FocusArea } from "@/lib/types/form";
 
 // Webhook itself is fast - Inngest handles the long-running pipeline
@@ -17,6 +22,14 @@ import type { FocusArea } from "@/lib/types/form";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+
+// Critical events: errors should bubble up so Stripe retries
+const CRITICAL_EVENTS = new Set([
+  "checkout.session.completed",
+  "customer.subscription.created",
+  "customer.subscription.updated",
+  "customer.subscription.deleted",
+]);
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
@@ -35,16 +48,49 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  if (event.type === "checkout.session.completed") {
-    const session = event.data.object as Stripe.Checkout.Session;
-    await handleCheckoutCompleted(session);
+  try {
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object as Stripe.Checkout.Session;
+      await handleCheckoutCompleted(session);
+    }
+
+    if (event.type === "customer.subscription.created") {
+      const subscription = event.data.object as Stripe.Subscription;
+      await handleSubscriptionCreated(subscription);
+    }
+
+    if (event.type === "customer.subscription.updated") {
+      const subscription = event.data.object as Stripe.Subscription;
+      await handleSubscriptionUpdated(subscription);
+    }
+
+    if (event.type === "customer.subscription.deleted") {
+      const subscription = event.data.object as Stripe.Subscription;
+      await handleSubscriptionDeleted(subscription);
+    }
+  } catch (err) {
+    // Critical events: return 500 so Stripe retries
+    if (CRITICAL_EVENTS.has(event.type)) {
+      console.error(`[Webhook] Critical handler failed for ${event.type}:`, err);
+      return NextResponse.json({ error: "Handler failed" }, { status: 500 });
+    }
+    // Non-critical: log and return 200
+    console.error(`[Webhook] Non-critical handler failed for ${event.type}:`, err);
   }
 
-  // Cart abandonment: when checkout expires, send free audit
-  if (event.type === "checkout.session.expired") {
-    const session = event.data.object as Stripe.Checkout.Session;
-    // Fast DB operations + Inngest event - no need for after()
-    await handleCheckoutExpired(session);
+  // Non-critical events handled outside the try/catch above
+  try {
+    if (event.type === "checkout.session.expired") {
+      const session = event.data.object as Stripe.Checkout.Session;
+      await handleCheckoutExpired(session);
+    }
+
+    if (event.type === "invoice.payment_failed") {
+      const invoice = event.data.object as Stripe.Invoice;
+      await handleInvoicePaymentFailed(invoice);
+    }
+  } catch (err) {
+    console.error(`[Webhook] Non-critical handler failed for ${event.type}:`, err);
   }
 
   return NextResponse.json({ received: true });
@@ -57,6 +103,18 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const credits = parseInt(metadata.credits || "1", 10);
   const email = session.customer_details?.email;
   const isCreditsOnly = metadata.credits_only === "true";
+
+  // Idempotency: check if run_credits already exists for this checkout session
+  const { data: existingCredit } = await supabase
+    .from("run_credits")
+    .select("id")
+    .eq("stripe_checkout_session_id", session.id)
+    .maybeSingle();
+
+  if (existingCredit) {
+    console.log(`[Webhook] Checkout ${session.id} already processed (idempotent skip)`);
+    return;
+  }
 
   // Get or create user if email provided
   let userId: string | null = null;
@@ -122,18 +180,22 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         day: "numeric",
       });
 
-      sendReceiptEmail({
-        to: email,
-        productName: credits > 1 ? `${credits} Action Plan Credits` : "Action Plan Credit",
-        amount,
-        date,
-      }).catch((err) => {
+      try {
+        await sendReceiptEmail({
+          to: email,
+          productName: credits > 1 ? `${credits} Action Plan Credits` : "Action Plan Credit",
+          amount,
+          date,
+        });
+      } catch (err) {
         console.error("Receipt email failed for credits-only:", session.id, err);
-      });
+      }
 
-      sendMagicLink(email, "/dashboard").catch((err) => {
+      try {
+        await sendMagicLink(email, "/dashboard");
+      } catch (err) {
         console.error("Magic link failed for credits-only:", session.id, err);
-      });
+      }
     }
     return;
   }
@@ -280,7 +342,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     console.error(`[Webhook] Failed to trigger Inngest for run ${run.id}:`, err);
   }
 
-  // Send receipt + magic link for dashboard access (fire and forget)
+  // Send receipt + magic link for dashboard access (non-critical side-effects)
   if (email) {
     const amount = session.amount_total
       ? `$${(session.amount_total / 100).toFixed(2)}`
@@ -291,18 +353,22 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       day: "numeric",
     });
 
-    sendReceiptEmail({
-      to: email,
-      productName: "Action Plan",
-      amount,
-      date,
-    }).catch((err) => {
+    try {
+      await sendReceiptEmail({
+        to: email,
+        productName: "Action Plan",
+        amount,
+        date,
+      });
+    } catch (err) {
       console.error("Receipt email failed for run:", run.id, err);
-    });
+    }
 
-    sendMagicLink(email, "/dashboard").catch((err) => {
+    try {
+      await sendMagicLink(email, "/dashboard");
+    } catch (err) {
       console.error("Magic link failed for run:", run.id, err);
-    });
+    }
   }
 }
 
@@ -315,6 +381,98 @@ function normalizeEmailForRateLimit(email: string): string {
     return local.split("+")[0].replace(/\./g, "") + "@gmail.com";
   }
   return email.toLowerCase().trim();
+}
+
+// =============================================================================
+// SUBSCRIPTION WEBHOOK HANDLERS
+// =============================================================================
+
+async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
+  const metadata = subscription.metadata || {};
+  const userId = metadata.user_id;
+  const businessId = metadata.business_id;
+
+  if (!userId || !businessId) {
+    console.error("[Webhook] Subscription created without user_id or business_id metadata:", subscription.id);
+    return;
+  }
+
+  // Idempotency: check if subscription record already exists
+  const existing = await getSubscriptionByStripeId(subscription.id);
+  if (existing) {
+    console.log(`[Webhook] Subscription ${subscription.id} already exists (idempotent skip)`);
+    return;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const subData = subscription as any;
+  const sub = await createSubscriptionRecord({
+    userId,
+    businessId,
+    stripeSubscriptionId: subscription.id,
+    stripeCustomerId: subscription.customer as string,
+    status: subscription.status === "active" ? "active" : "trialing",
+    currentPeriodStart: new Date((subData.current_period_start ?? Math.floor(Date.now() / 1000)) * 1000),
+    currentPeriodEnd: new Date((subData.current_period_end ?? Math.floor(Date.now() / 1000) + 30 * 86400) * 1000),
+  });
+
+  console.log(`[Webhook] Created subscription ${sub.id} for user ${userId}`);
+
+  // Trigger initial strategy generation via Inngest
+  await inngest.send({
+    name: "subscription/created",
+    data: {
+      subscriptionId: sub.id,
+      businessId,
+      userId,
+    },
+  });
+}
+
+async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
+  const statusMap: Record<string, string> = {
+    active: "active",
+    past_due: "past_due",
+    canceled: "canceled",
+    paused: "paused",
+    trialing: "trialing",
+    unpaid: "past_due",
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const subData = subscription as any;
+  await updateSubscriptionStatus(subscription.id, {
+    status: (statusMap[subscription.status] || "paused") as "active" | "past_due" | "canceled" | "paused" | "trialing",
+    currentPeriodStart: new Date((subData.current_period_start ?? Math.floor(Date.now() / 1000)) * 1000),
+    currentPeriodEnd: new Date((subData.current_period_end ?? Math.floor(Date.now() / 1000) + 30 * 86400) * 1000),
+    cancelAtPeriodEnd: subscription.cancel_at_period_end,
+  });
+
+  console.log(`[Webhook] Updated subscription ${subscription.id} → ${subscription.status}`);
+}
+
+async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
+  await updateSubscriptionStatus(subscription.id, {
+    status: "canceled",
+  });
+  console.log(`[Webhook] Canceled subscription ${subscription.id}`);
+}
+
+async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const subscriptionId = (invoice as any).subscription as string;
+  if (!subscriptionId) return;
+
+  try {
+    await updateSubscriptionStatus(subscriptionId, {
+      status: "past_due",
+    });
+    console.log(`[Webhook] Marked subscription ${subscriptionId} as past_due`);
+
+    // TODO: Send payment failed email to user
+  } catch (err) {
+    console.error("[Webhook] Failed to handle payment failed:", err);
+  }
 }
 
 /**

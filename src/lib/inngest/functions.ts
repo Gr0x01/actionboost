@@ -220,6 +220,11 @@ export const generateTargetAudience = inngest.createFunction(
   }
 );
 
+/**
+ * Landing page roaster pipeline - triggered for free landing page roaster tool
+ *
+ * Tavily extract + screenshot (full page) + GPT-4.1-mini vision. ~$0.05-0.10.
+ */
 export const generateLandingPageRoast = inngest.createFunction(
   {
     id: "generate-landing-page-roast",
@@ -254,5 +259,8 @@ export const generateLandingPageRoast = inngest.createFunction(
   }
 );
 
+// Subscription functions
+import { subscriptionFunctions } from "./subscription";
+
 // Export all functions for the serve handler
-export const functions = [generateStrategy, refineStrategy, generateFreeAudit, generateMarketingAudit, generateTargetAudience, generateLandingPageRoast];
+export const functions = [generateStrategy, refineStrategy, generateFreeAudit, generateMarketingAudit, generateTargetAudience, generateLandingPageRoast, ...subscriptionFunctions];
