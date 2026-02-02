@@ -29,31 +29,22 @@ export function SubscriberDashboard({ subscription, latestRun, checkin }: Subscr
   const isProcessing = latestRun?.status === "pending" || latestRun?.status === "processing"
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">
-              Week {subscription.currentWeek}
-            </h1>
-            <p className="text-sm text-foreground/50 mt-1">
-              {subscription.cancelAtPeriodEnd
-                ? "Cancels at period end"
-                : subscription.status === "past_due"
-                  ? "Payment issue — please update your card"
-                  : "Boost Weekly"}
-            </p>
-          </div>
-          <a
-            href="/"
-            className="font-mono text-sm text-foreground/40 hover:text-foreground/60 transition-colors"
-          >
-            Boost
-          </a>
-        </div>
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      {/* Week header */}
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-foreground">
+          Week {subscription.currentWeek}
+        </h1>
+        <p className="text-sm text-foreground/50 mt-1">
+          {subscription.cancelAtPeriodEnd
+            ? "Cancels at period end"
+            : subscription.status === "past_due"
+              ? "Payment issue — please update your card"
+              : "Boost Weekly"}
+        </p>
+      </div>
 
-        {isProcessing ? (
+      {isProcessing ? (
           <div
             className="bg-white border-2 border-foreground/20 rounded-md p-12 text-center"
             style={{ boxShadow: "4px 4px 0 rgba(44, 62, 80, 0.1)" }}
@@ -110,7 +101,6 @@ export function SubscriberDashboard({ subscription, latestRun, checkin }: Subscr
             />
           </>
         )}
-      </div>
     </div>
   )
 }
