@@ -5,7 +5,7 @@ import { usePostHog } from "posthog-js/react";
 interface SocialShareButtonsProps {
   url: string;
   text: string;
-  source: "share_modal" | "share_page" | "blog";
+  source: "share_modal" | "share_page" | "blog" | "roaster";
 }
 
 export function SocialShareButtons({ url, text, source }: SocialShareButtonsProps) {
