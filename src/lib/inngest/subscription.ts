@@ -12,6 +12,7 @@ import { inngest } from "./client"
 import { createServiceClient } from "@/lib/supabase/server"
 import { generateStrategyContext } from "@/lib/ai/pipeline-strategy"
 import { generateWeeklyTasks } from "@/lib/ai/pipeline-weekly-tasks"
+import { searchUserContext, formatSearchResults, embedSubscriptionWeekContext } from "@/lib/ai/embeddings"
 import type { BusinessProfile } from "@/lib/types/business-profile"
 import type { StrategyContext, WeeklyTaskOutput } from "@/lib/ai/types"
 import type { Json } from "@/lib/types/database"
@@ -35,7 +36,7 @@ async function fetchBusinessProfile(businessId: string): Promise<BusinessProfile
   }
 
   const context = (business.context as Record<string, unknown>) || {}
-  return (context.profile as BusinessProfile) || {}
+  return (context.profile as BusinessProfile) || (context.product as BusinessProfile) || {}
 }
 
 /**
@@ -180,14 +181,23 @@ export const handleSubscriptionCreated = inngest.createFunction(
     const strategyContext = await step.run("generate-strategy", async () => {
       const profile = await fetchBusinessProfile(businessId)
 
-      const strategy = await generateStrategyContext({
+      const { strategyContext: strategy, researchData, insights } = await generateStrategyContext({
         profile,
         monthNumber: 1,
+        userId,
+        businessId,
       })
 
-      await storeStrategyContext(subscriptionId, strategy)
+      // Attach insights + researchData to strategy_context JSONB (no migration needed)
+      const enrichedStrategy = {
+        ...strategy,
+        ...(insights ? { insights } : {}),
+        ...(researchData ? { researchData } : {}),
+      }
 
-      return strategy
+      await storeStrategyContext(subscriptionId, enrichedStrategy)
+
+      return enrichedStrategy
     })
 
     // Step 2: Generate Sonnet weekly tasks
@@ -198,6 +208,7 @@ export const handleSubscriptionCreated = inngest.createFunction(
         profile,
         strategyContext,
         userId,
+        businessId,
       })
 
       const newRunId = await createWeeklyRun({
@@ -277,17 +288,53 @@ export const weeklyRevector = inngest.createFunction(
           const carryForward = await buildCarryForward(sub.id, sub.current_week)
           const newMonthNumber = strategyContext ? strategyContext.monthNumber + 1 : 1
 
-          strategyContext = await generateStrategyContext({
+          // Pre-retrieve history for Opus strategy
+          const strategyHistory = await searchUserContext(sub.user_id,
+            `${profile.description} growth strategy results outcomes`,
+            { businessId: sub.business_id, limit: 10 }
+          )
+
+          const strategyResult = await generateStrategyContext({
             profile,
             monthNumber: newMonthNumber,
             carryForward,
+            historicalContext: formatSearchResults(strategyHistory),
+            userId: sub.user_id,
+            businessId: sub.business_id,
           })
 
+          strategyContext = {
+            ...strategyResult.strategyContext,
+            ...(strategyResult.insights ? { insights: strategyResult.insights } : {}),
+            ...(strategyResult.researchData ? { researchData: strategyResult.researchData } : {}),
+          }
+
           await storeStrategyContext(sub.id, strategyContext)
+
+          // Embed strategy summary (fire-and-forget)
+          embedSubscriptionWeekContext({
+            userId: sub.user_id,
+            businessId: sub.business_id,
+            subscriptionId: sub.id,
+            weekNumber: nextWeek,
+            strategySummary: {
+              primaryObjective: strategyContext.quarterFocus.primaryObjective,
+              theme: strategyContext.monthlyTheme.theme,
+              focusArea: strategyContext.monthlyTheme.focusArea,
+              milestone: strategyContext.monthlyTheme.milestone,
+              monthNumber: newMonthNumber,
+            },
+          }).catch(err => console.error('[Inngest] Strategy embedding failed:', err))
         }
 
         // Fetch last week's context for task generation
         const { completionSummary, checkinContext } = await fetchLastWeekContext(sub.id, sub.current_week)
+
+        // Pre-retrieve history for Sonnet weekly tasks
+        const taskHistory = await searchUserContext(sub.user_id,
+          `${strategyContext.monthlyTheme.theme} ${strategyContext.quarterFocus.channelStrategy.primary} outcomes`,
+          { businessId: sub.business_id, chunkTypes: ['task_outcome', 'checkin'], limit: 5 }
+        )
 
         // Generate weekly tasks
         const weeklyOutput = await generateWeeklyTasks({
@@ -295,7 +342,9 @@ export const weeklyRevector = inngest.createFunction(
           strategyContext,
           lastWeekSummary: completionSummary,
           checkinContext,
+          historicalContext: formatSearchResults(taskHistory),
           userId: sub.user_id,
+          businessId: sub.business_id,
         })
 
         // Get last run for parent linking
@@ -317,14 +366,57 @@ export const weeklyRevector = inngest.createFunction(
         })
       })
 
-      // Step B: Finalize — increment week + send email (separate step for retry safety)
+      // Step B: Finalize — increment week + send email + embed context
       await step.run(`finalize-${sub.id}`, async () => {
         // Idempotent: incrementSubscriptionWeek uses optimistic lock
         await incrementSubscriptionWeek(sub.id, sub.current_week).catch(() => {
           // Already incremented on prior attempt — expected
         })
 
+        // Embed last week's task outcomes + checkin (fire-and-forget)
         const supabase = createServiceClient()
+
+        // Gather completed task outcomes from last week's run
+        const { data: lastRun } = await supabase
+          .from("runs")
+          .select("id, structured_output")
+          .eq("subscription_id", sub.id)
+          .eq("week_number", sub.current_week)
+          .single()
+
+        if (lastRun) {
+          const { data: completions } = await supabase
+            .from("task_completions")
+            .select("task_index, completed, outcome")
+            .eq("run_id", lastRun.id)
+
+          const output = lastRun.structured_output as WeeklyTaskOutput | null
+          const tasks = output?.tasks || []
+          const taskOutcomes = (completions || [])
+            .filter(c => c.completed && c.outcome)
+            .map(c => ({
+              title: tasks[c.task_index]?.title || `Task ${c.task_index + 1}`,
+              outcome: c.outcome as string,
+            }))
+
+          // Gather checkin
+          const { data: checkin } = await supabase
+            .from("weekly_checkins")
+            .select("sentiment, notes")
+            .eq("subscription_id", sub.id)
+            .eq("week_number", sub.current_week)
+            .single()
+
+          embedSubscriptionWeekContext({
+            userId: sub.user_id,
+            businessId: sub.business_id,
+            subscriptionId: sub.id,
+            weekNumber: sub.current_week,
+            taskOutcomes: taskOutcomes.length > 0 ? taskOutcomes : undefined,
+            checkin: checkin?.sentiment ? { sentiment: checkin.sentiment, notes: checkin.notes || undefined } : undefined,
+          }).catch(err => console.error('[Inngest] Embedding failed:', err))
+        }
+
         const { data: user } = await supabase
           .from("users")
           .select("email")

@@ -52,6 +52,9 @@ export function KeywordOpportunities({ opportunities }: KeywordOpportunitiesProp
     .sort((a, b) => b.volume - a.volume)
     .slice(0, 10)
 
+  // Only show rank column if any keyword actually has rank data
+  const hasRankData = topKeywords.some((kw) => kw.competitorRank > 0)
+
   return (
     <section className="scroll-mt-32">
       {/* Section label */}
@@ -67,74 +70,76 @@ export function KeywordOpportunities({ opportunities }: KeywordOpportunitiesProp
         className="rounded-md border-2 border-foreground/20 overflow-hidden"
         style={{ boxShadow: '4px 4px 0 rgba(44, 62, 80, 0.1)' }}
       >
-        {/* Header */}
-        <div className="grid grid-cols-12 gap-2 px-4 py-2 bg-foreground/[0.03] border-b border-foreground/10">
-          <div className="col-span-6 lg:col-span-5">
-            <span className="font-mono text-[10px] tracking-wider text-foreground/50 uppercase">
-              Keyword
-            </span>
-          </div>
-          <div className="col-span-3 lg:col-span-3 text-right">
-            <span className="font-mono text-[10px] tracking-wider text-foreground/50 uppercase">
-              Volume
-            </span>
-          </div>
-          <div className="col-span-3 lg:col-span-2 text-right">
-            <span className="font-mono text-[10px] tracking-wider text-foreground/50 uppercase">
-              Their Rank
-            </span>
-          </div>
-          <div className="hidden lg:block lg:col-span-2">
-            <span className="font-mono text-[10px] tracking-wider text-foreground/50 uppercase">
-              Competitor
-            </span>
-          </div>
-        </div>
-
-        {/* Rows */}
-        <div className="divide-y divide-foreground/10">
-          {topKeywords.map((kw, index) => {
-            const colors = getDifficultyColor(kw.difficulty)
-
-            return (
-              <div
-                key={`${kw.keyword}-${index}`}
-                className="grid grid-cols-12 gap-2 px-4 py-3 hover:bg-foreground/[0.02] transition-colors"
-              >
-                {/* Keyword */}
-                <div className="col-span-6 lg:col-span-5">
-                  <p className="text-sm font-medium text-foreground truncate">
-                    {kw.keyword}
-                  </p>
-                </div>
-
-                {/* Volume */}
-                <div className="col-span-3 lg:col-span-3 text-right">
-                  <span className="font-mono text-sm font-semibold text-foreground/80">
-                    {formatVolume(kw.volume)}
+        <table className="w-full">
+          <thead>
+            <tr className="bg-foreground/[0.03] border-b border-foreground/10">
+              <th className="text-left px-4 py-2">
+                <span className="font-mono text-[10px] tracking-wider text-foreground/50 uppercase font-normal">
+                  Keyword
+                </span>
+              </th>
+              <th className="text-right px-4 py-2 w-28">
+                <span className="font-mono text-[10px] tracking-wider text-foreground/50 uppercase font-normal">
+                  Volume
+                </span>
+              </th>
+              {hasRankData && (
+                <th className="text-right px-4 py-2 w-24">
+                  <span className="font-mono text-[10px] tracking-wider text-foreground/50 uppercase font-normal">
+                    Their Rank
                   </span>
-                  <span className="text-xs text-foreground/40">/mo</span>
-                </div>
+                </th>
+              )}
+              <th className="text-left px-4 py-2 w-40">
+                <span className="font-mono text-[10px] tracking-wider text-foreground/50 uppercase font-normal">
+                  Competitor
+                </span>
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-foreground/10">
+            {topKeywords.map((kw, index) => {
+              const colors = getDifficultyColor(kw.difficulty)
 
-                {/* Competitor rank */}
-                <div className="col-span-3 lg:col-span-2 text-right">
-                  <span
-                    className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-semibold ${colors.bg} ${colors.text}`}
-                  >
-                    #{kw.competitorRank}
-                  </span>
-                </div>
-
-                {/* Competitor name (desktop only) */}
-                <div className="hidden lg:block lg:col-span-2">
-                  <span className="text-xs text-foreground/50 truncate">
-                    {kw.competitor}
-                  </span>
-                </div>
-              </div>
-            )
-          })}
-        </div>
+              return (
+                <tr
+                  key={`${kw.keyword}-${index}`}
+                  className="hover:bg-foreground/[0.02] transition-colors"
+                >
+                  <td className="px-4 py-3">
+                    <span className="text-sm font-medium text-foreground">
+                      {kw.keyword}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-right whitespace-nowrap">
+                    <span className="font-mono text-sm font-semibold text-foreground/80">
+                      {formatVolume(kw.volume)}
+                    </span>
+                    <span className="text-xs text-foreground/40">/mo</span>
+                  </td>
+                  {hasRankData && (
+                    <td className="px-4 py-3 text-right">
+                      {kw.competitorRank > 0 ? (
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-semibold ${colors.bg} ${colors.text}`}
+                        >
+                          #{kw.competitorRank}
+                        </span>
+                      ) : (
+                        <span className="text-xs text-foreground/30">—</span>
+                      )}
+                    </td>
+                  )}
+                  <td className="px-4 py-3">
+                    <span className="text-xs text-foreground/50">
+                      {kw.competitor}
+                    </span>
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
       </div>
 
       {/* Footer hint */}

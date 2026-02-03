@@ -6,10 +6,9 @@
  * Output: WeeklyTaskOutput stored in runs.structured_output.
  */
 
-import Anthropic from '@anthropic-ai/sdk'
 import type { StrategyContext, WeeklyTaskOutput } from './types'
 import type { BusinessProfile } from '@/lib/types/business-profile'
-import { trackApiCall, calculateApiCost } from '@/lib/analytics'
+import { runAgenticLoop, SEARCH_HISTORY_TOOL, createSearchHistoryExecutor } from './agentic-engine'
 
 const MODEL = 'claude-sonnet-4-20250514'
 const MAX_TOKENS = 4000
@@ -77,20 +76,24 @@ function buildFoundation(profile: BusinessProfile): string {
 
 /**
  * Generate weekly tasks using Sonnet.
+ * Uses a lightweight agentic loop with search_history tool so Sonnet can
+ * look up past outcomes when the pre-retrieved context isn't enough.
  */
 export async function generateWeeklyTasks(params: {
   profile: BusinessProfile
   strategyContext: StrategyContext
   lastWeekSummary?: string // completion summary + outcomes
   checkinContext?: string // sentiment + notes
+  historicalContext?: string // pre-retrieved from vector search
   runId?: string
   userId?: string
+  businessId?: string
 }): Promise<WeeklyTaskOutput> {
-  const { profile, strategyContext, lastWeekSummary, checkinContext, runId, userId } = params
+  const { profile, strategyContext, lastWeekSummary, checkinContext, historicalContext, runId, userId, businessId } = params
 
   const foundation = buildFoundation(profile)
 
-  const userMessage = `${foundation}
+  let userMessage = `${foundation}
 
 ## Quarter Focus
 **Objective**: ${strategyContext.quarterFocus.primaryObjective}
@@ -107,34 +110,38 @@ export async function generateWeeklyTasks(params: {
 ${lastWeekSummary || 'First week — no prior data.'}
 ${checkinContext || ''}`
 
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
-  const distinctId = userId || runId || 'system'
-  const startTime = Date.now()
+  if (historicalContext) {
+    userMessage += `\n\n## Historical Patterns\nRelevant results from past weeks:\n${historicalContext}`
+  }
 
-  const response = await client.messages.create({
+  // Set up search_history tool if we have user/business context
+  const tools = []
+  const customToolExecutors: Record<string, (input: Record<string, unknown>) => Promise<string>> = {}
+
+  if (userId && businessId) {
+    tools.push(SEARCH_HISTORY_TOOL)
+    const executor = createSearchHistoryExecutor(userId, businessId)
+    customToolExecutors['search_history'] = async (input) => executor(input.query as string)
+  }
+
+  const result = await runAgenticLoop({
     model: MODEL,
-    max_tokens: MAX_TOKENS,
-    system: SYSTEM_PROMPT,
+    maxTokens: MAX_TOKENS,
+    systemPrompt: SYSTEM_PROMPT,
     messages: [{ role: 'user', content: userMessage }],
+    tools: tools.length > 0 ? tools : undefined,
+    maxIterations: 2,
+    maxToolCalls: 3,
+    runId,
+    userId,
+    ...(Object.keys(customToolExecutors).length > 0 ? { customToolExecutors } : {}),
   })
 
-  trackApiCall(distinctId, {
-    service: 'anthropic',
-    endpoint: 'messages.create',
-    run_id: runId,
-    latency_ms: Date.now() - startTime,
-    success: true,
-    input_tokens: response.usage?.input_tokens,
-    output_tokens: response.usage?.output_tokens,
-    model: MODEL,
-    estimated_cost_usd: calculateApiCost('anthropic', 'messages.create', {
-      inputTokens: response.usage?.input_tokens,
-      outputTokens: response.usage?.output_tokens,
-    }),
-  })
+  if (!result.success || !result.output) {
+    throw new Error(result.error || 'Weekly task generation failed')
+  }
 
-  const textBlock = response.content.find((b) => b.type === 'text')
-  const text = textBlock && textBlock.type === 'text' ? textBlock.text : ''
+  const text = result.output
 
   // Extract JSON from response (may be wrapped in code fence)
   const fenceMatch = text.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/)

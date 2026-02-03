@@ -654,8 +654,8 @@ export type RunStatus = "pending" | "processing" | "complete" | "failed"
 export type PipelineStage = "researching" | "loading_history" | "generating" | "finalizing"
 export type CreditSource = "stripe" | "code" | "manual"
 export type RunSource = "stripe" | "credits" | "promo" | "refinement"
-export type ChunkType = "product" | "traction" | "tactic" | "insight" | "recommendation"
-export type SourceType = "run_input" | "run_output" | "delta_update"
+export type ChunkType = "product" | "traction" | "tactic" | "insight" | "recommendation" | "task_outcome" | "checkin" | "strategy_summary"
+export type SourceType = "run_input" | "run_output" | "delta_update" | "subscription"
 
 // File attachment metadata (stored in runs.attachments JSONB)
 export type Attachment = {

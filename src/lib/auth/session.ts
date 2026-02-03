@@ -1,3 +1,4 @@
+import { cache } from "react"
 import { redirect } from "next/navigation"
 import { createClient, createServiceClient } from "@/lib/supabase/server"
 import type { User as AuthUser } from "@supabase/supabase-js"
@@ -119,6 +120,28 @@ export async function signOut(): Promise<void> {
   const supabase = await createClient()
   await supabase.auth.signOut()
 }
+
+/**
+ * Get auth user + public user in one cached call.
+ * React cache() deduplicates across layout + page in the same request.
+ * Redirects to /login if not authenticated; redirects to /start if no public user.
+ */
+export const getSessionContext = cache(async (): Promise<{
+  authUser: AuthUser
+  publicUserId: string
+}> => {
+  const authUser = await requireAuth()
+  const supabase = createServiceClient()
+  const { data: publicUser } = await supabase
+    .from("users")
+    .select("id")
+    .eq("auth_id", authUser.id)
+    .single()
+
+  if (!publicUser) redirect("/start")
+
+  return { authUser, publicUserId: publicUser.id }
+})
 
 /**
  * Get authenticated user's public user ID for ownership checks.

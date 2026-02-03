@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation"
-import { requireAuth } from "@/lib/auth/session"
+import { getSessionContext } from "@/lib/auth/session"
 import { createServiceClient } from "@/lib/supabase/server"
 import type { BusinessProfile } from "@/lib/types/business-profile"
 import { BrandClient } from "@/components/dashboard/brand/BrandClient"
@@ -9,23 +9,13 @@ export default async function BrandPage({
 }: {
   searchParams: Promise<{ biz?: string }>
 }) {
-  const authUser = await requireAuth()
+  const { publicUserId } = await getSessionContext()
   const supabase = createServiceClient()
-
-  const { data: publicUser } = await supabase
-    .from("users")
-    .select("id")
-    .eq("auth_id", authUser.id)
-    .single()
-
-  if (!publicUser) {
-    redirect("/start")
-  }
 
   const { data: businesses } = await supabase
     .from("businesses")
     .select("id, name, context")
-    .eq("user_id", publicUser.id)
+    .eq("user_id", publicUserId)
     .order("created_at", { ascending: false })
 
   if (!businesses || businesses.length === 0) {

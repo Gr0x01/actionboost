@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation"
-import { requireAuth } from "@/lib/auth/session"
+import { getSessionContext } from "@/lib/auth/session"
 import { createServiceClient } from "@/lib/supabase/server"
 import { getActiveSubscription } from "@/lib/subscription"
 import { SubscriberDashboard } from "@/components/dashboard/SubscriberDashboard"
@@ -10,23 +10,12 @@ import { SubscriberDashboard } from "@/components/dashboard/SubscriberDashboard"
  * - Legacy one-shot users → redirect to latest results
  */
 export default async function DashboardPage() {
-  const authUser = await requireAuth()
+  const { publicUserId } = await getSessionContext()
 
   const supabase = createServiceClient()
 
-  // Find public user
-  const { data: publicUser } = await supabase
-    .from("users")
-    .select("id")
-    .eq("auth_id", authUser.id)
-    .single()
-
-  if (!publicUser) {
-    redirect("/start")
-  }
-
   // Check for active subscription
-  const subscription = await getActiveSubscription(publicUser.id)
+  const subscription = await getActiveSubscription(publicUserId)
 
   if (subscription) {
     // Subscriber: render 3-panel dashboard
@@ -44,7 +33,7 @@ export default async function DashboardPage() {
       const { data: legacyRun } = await supabase
         .from("runs")
         .select("id, output, structured_output, week_number, status, created_at")
-        .eq("user_id", publicUser.id)
+        .eq("user_id", publicUserId)
         .eq("status", "complete")
         .not("structured_output", "is", null)
         .order("created_at", { ascending: false })
@@ -86,7 +75,7 @@ export default async function DashboardPage() {
   const { data: runs } = await supabase
     .from("runs")
     .select("id, status, parent_run_id, completed_at, created_at")
-    .eq("user_id", publicUser.id)
+    .eq("user_id", publicUserId)
     .eq("status", "complete")
     .order("completed_at", { ascending: false })
 
@@ -94,7 +83,7 @@ export default async function DashboardPage() {
     const { data: pendingRuns } = await supabase
       .from("runs")
       .select("id")
-      .eq("user_id", publicUser.id)
+      .eq("user_id", publicUserId)
       .in("status", ["pending", "processing"])
       .order("created_at", { ascending: false })
       .limit(1)

@@ -12,6 +12,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { tavily } from '@tavily/core'
 import { trackApiCall, calculateApiCost } from '@/lib/analytics'
+import { searchUserContext, formatSearchResults } from './embeddings'
 
 // =============================================================================
 // CONSTANTS
@@ -84,6 +85,7 @@ export type AgenticLoopOptions = {
   runId?: string
   userId?: string
   userDomain?: string              // for keyword_gaps tool
+  customToolExecutors?: Record<string, (input: Record<string, unknown>) => Promise<string>>
 }
 
 // =============================================================================
@@ -184,6 +186,44 @@ Or search without site: for broad results. Be creative - search for:
     },
   },
 ]
+
+/**
+ * search_history tool definition — lets the model search a business's past
+ * task outcomes, checkin notes, and strategy summaries via vector search.
+ */
+export const SEARCH_HISTORY_TOOL: Anthropic.Tool = {
+  name: 'search_history',
+  description:
+    "Search this business's marketing history — past task outcomes, weekly check-in notes, strategy summaries, and insights. Use this when you need to know what was tried before, what worked, what didn't, or how the business responded to specific tactics.",
+  input_schema: {
+    type: 'object' as const,
+    properties: {
+      query: {
+        type: 'string',
+        description:
+          'What to search for (e.g., "Reddit content results", "email campaign outcomes", "what channels worked")',
+      },
+    },
+    required: ['query'],
+  },
+}
+
+/**
+ * Create a search_history tool executor bound to a specific user + business.
+ * Returns a function that runAgenticLoop can call when it encounters the tool.
+ */
+export function createSearchHistoryExecutor(userId: string, businessId: string) {
+  return async (query: string): Promise<string> => {
+    const results = await searchUserContext(userId, query, {
+      businessId,
+      limit: 5,
+    })
+    if (results.length === 0) {
+      return 'No relevant history found for this query.'
+    }
+    return formatSearchResults(results)
+  }
+}
 
 // =============================================================================
 // TOOL EXECUTION
@@ -562,6 +602,8 @@ function describeToolCall(name: string, input: ToolInput): string {
       return `Analyzing keyword gaps vs ${input.competitor_domain}...`
     case 'screenshot':
       return `Capturing screenshot of ${input.url}...`
+    case 'search_history':
+      return 'Searching past results...'
     default:
       return 'Processing...'
   }
@@ -594,6 +636,7 @@ export async function runAgenticLoop(options: AgenticLoopOptions): Promise<Agent
     runId,
     userId,
     userDomain,
+    customToolExecutors,
   } = options
 
   let messages = [...options.messages]
@@ -768,7 +811,18 @@ export async function runAgenticLoop(options: AgenticLoopOptions): Promise<Agent
           console.log(`[AgenticEngine] Tool call: ${callDesc}`)
           toolCalls.push(callDesc)
 
-          const toolResult = await executeTool(block.name, toolInput, context)
+          // Check custom executors first (e.g., search_history)
+          let toolResult: ToolResult
+          if (customToolExecutors?.[block.name]) {
+            try {
+              const text = await customToolExecutors[block.name](toolInput as Record<string, unknown>)
+              toolResult = { text }
+            } catch (err) {
+              toolResult = { text: `Error: ${err instanceof Error ? err.message : String(err)}` }
+            }
+          } else {
+            toolResult = await executeTool(block.name, toolInput, context)
+          }
 
           // Accumulate structured research data
           if (toolResult.data) {

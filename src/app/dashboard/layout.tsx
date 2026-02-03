@@ -1,6 +1,4 @@
-import { redirect } from "next/navigation"
-import { requireAuth } from "@/lib/auth/session"
-import { createServiceClient } from "@/lib/supabase/server"
+import { getSessionContext } from "@/lib/auth/session"
 import { getUserBusinesses } from "@/lib/business"
 import { DashboardShell } from "@/components/dashboard/DashboardShell"
 
@@ -9,25 +7,11 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
-  const authUser = await requireAuth()
-
-  const supabase = createServiceClient()
-  const { data: publicUser, error: userError } = await supabase
-    .from("users")
-    .select("id")
-    .eq("auth_id", authUser.id)
-    .single()
-
-  if (userError || !publicUser) {
-    if (userError) {
-      console.error("[Dashboard Layout] Failed to fetch user:", userError)
-    }
-    redirect("/start")
-  }
+  const { authUser, publicUserId } = await getSessionContext()
 
   let businesses: Awaited<ReturnType<typeof getUserBusinesses>>
   try {
-    businesses = await getUserBusinesses(publicUser.id)
+    businesses = await getUserBusinesses(publicUserId)
   } catch (error) {
     console.error("[Dashboard Layout] Failed to load businesses:", error)
     businesses = []

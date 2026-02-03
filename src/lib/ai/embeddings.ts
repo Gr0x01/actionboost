@@ -337,6 +337,97 @@ async function searchUserContextFallback(
 }
 
 /**
+ * Embed subscription week data: task outcomes, checkin notes, strategy summaries.
+ * Called after each weekly finalize step (fire-and-forget).
+ */
+export async function embedSubscriptionWeekContext(params: {
+  userId: string
+  businessId: string
+  subscriptionId: string
+  weekNumber: number
+  taskOutcomes?: Array<{ title: string; outcome: string }>
+  checkin?: { sentiment: string; notes?: string }
+  strategySummary?: {
+    primaryObjective: string
+    theme: string
+    focusArea: string
+    milestone: string
+    monthNumber: number
+  }
+}): Promise<void> {
+  const { userId, businessId, subscriptionId, weekNumber, taskOutcomes, checkin, strategySummary } = params
+  const chunks: ChunkToEmbed[] = []
+
+  // Task outcomes
+  if (taskOutcomes) {
+    for (const t of taskOutcomes) {
+      chunks.push({
+        content: `Week ${weekNumber}: ${t.title} — ${t.outcome}`,
+        chunkType: 'task_outcome',
+        sourceType: 'subscription',
+        sourceId: subscriptionId,
+      })
+    }
+  }
+
+  // Checkin notes
+  if (checkin?.notes) {
+    chunks.push({
+      content: `Week ${weekNumber} checkin (${checkin.sentiment}): ${checkin.notes}`,
+      chunkType: 'checkin',
+      sourceType: 'subscription',
+      sourceId: subscriptionId,
+    })
+  }
+
+  // Strategy summary (month boundary)
+  if (strategySummary) {
+    chunks.push({
+      content: `Month ${strategySummary.monthNumber} strategy: ${strategySummary.primaryObjective}. Theme: ${strategySummary.theme} — ${strategySummary.focusArea}. Milestone: ${strategySummary.milestone}`,
+      chunkType: 'strategy_summary',
+      sourceType: 'subscription',
+      sourceId: subscriptionId,
+    })
+  }
+
+  if (chunks.length === 0) return
+
+  const embeddings = await createEmbeddings(chunks.map(c => c.content))
+  const supabase = createServiceClient()
+
+  const rows = chunks.map((chunk, i) => ({
+    user_id: userId,
+    business_id: businessId,
+    content: chunk.content,
+    chunk_type: chunk.chunkType,
+    source_type: chunk.sourceType,
+    source_id: chunk.sourceId,
+    embedding: embeddings[i] ? `[${embeddings[i]!.join(',')}]` : null,
+    metadata: {},
+  }))
+
+  const { error } = await supabase.from('user_context_chunks').insert(rows)
+
+  if (error) {
+    console.error('[Embeddings] Failed to store subscription chunks:', error)
+  } else {
+    console.log(`[Embeddings] Stored ${rows.length} subscription chunks for business ${businessId} week ${weekNumber}`)
+  }
+}
+
+/**
+ * Format search results into a readable string for prompt injection.
+ */
+export function formatSearchResults(
+  results: Array<{ content: string; similarity: number; createdAt: string }>
+): string {
+  if (results.length === 0) return ''
+  return results
+    .map(r => `- ${r.content} (relevance: ${(r.similarity * 100).toFixed(0)}%)`)
+    .join('\n')
+}
+
+/**
  * Extract a section from markdown output by header
  */
 function extractSection(markdown: string, sectionName: string): string | null {

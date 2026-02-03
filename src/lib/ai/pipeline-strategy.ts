@@ -9,8 +9,11 @@
 import Anthropic from '@anthropic-ai/sdk'
 import type { StrategyContext } from './types'
 import type { BusinessProfile } from '@/lib/types/business-profile'
+import type { ResearchData } from './agentic-engine'
+import type { StructuredOutput } from './formatter-types'
 import { trackApiCall, calculateApiCost } from '@/lib/analytics'
-import { runAgenticLoop } from './agentic-engine'
+import { runAgenticLoop, SEARCH_HISTORY_TOOL, createSearchHistoryExecutor } from './agentic-engine'
+import { extractStructuredOutput } from './formatter'
 
 // DO NOT CHANGE without explicit approval
 const MODEL = 'claude-opus-4-5-20251101'
@@ -27,16 +30,32 @@ export async function generateStrategyContext(params: {
   profile: BusinessProfile
   monthNumber: number
   carryForward?: StrategyContext['monthlyTheme']['carryForward']
+  historicalContext?: string
   onStageUpdate?: StageCallback
   runId?: string
   userId?: string
-}): Promise<StrategyContext> {
-  const { profile, monthNumber, carryForward, onStageUpdate, runId, userId } = params
+  businessId?: string
+}): Promise<{ strategyContext: StrategyContext; researchData?: ResearchData; insights?: StructuredOutput }> {
+  const { profile, monthNumber, carryForward, historicalContext, onStageUpdate, runId, userId, businessId } = params
 
-  const systemPrompt = buildStrategySystemPrompt(monthNumber, carryForward)
+  let systemPrompt = buildStrategySystemPrompt(monthNumber, carryForward)
+
+  if (historicalContext) {
+    systemPrompt += `\n\n## Historical Context\nPast strategy outcomes, task results, and user feedback from previous weeks:\n${historicalContext}`
+  }
+
   const userMessage = buildStrategyUserMessage(profile)
 
   await onStageUpdate?.('Researching your market...')
+
+  // Add search_history tool alongside research tools if we have user/business context
+  const customToolExecutors: Record<string, (input: Record<string, unknown>) => Promise<string>> = {}
+  const additionalTools: Anthropic.Tool[] = []
+  if (userId && businessId) {
+    additionalTools.push(SEARCH_HISTORY_TOOL)
+    const executor = createSearchHistoryExecutor(userId, businessId)
+    customToolExecutors['search_history'] = async (input) => executor(input.query as string)
+  }
 
   const result = await runAgenticLoop({
     model: MODEL,
@@ -49,6 +68,8 @@ export async function generateStrategyContext(params: {
     runId,
     userId,
     userDomain: profile.websiteUrl?.replace(/^https?:\/\//, '').replace(/\/$/, ''),
+    ...(additionalTools.length > 0 ? { tools: [...(await import('./agentic-engine')).TOOLS, ...additionalTools] } : {}),
+    ...(Object.keys(customToolExecutors).length > 0 ? { customToolExecutors } : {}),
   })
 
   if (!result.success || !result.output) {
@@ -58,7 +79,16 @@ export async function generateStrategyContext(params: {
   // Extract structured StrategyContext from Opus markdown
   const strategyContext = await extractStrategyContext(result.output, monthNumber)
 
-  return strategyContext
+  // Extract StructuredOutput (positioning, competitors, keywords, etc.) from research
+  let insights: StructuredOutput | undefined
+  try {
+    const extracted = await extractStructuredOutput(result.output, result.researchData)
+    if (extracted) insights = extracted
+  } catch (err) {
+    console.warn('[Strategy] Failed to extract insights:', err)
+  }
+
+  return { strategyContext, researchData: result.researchData, insights }
 }
 
 /**
